@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件3.确定每个符号的地址4.在指令中填入新地址 （2.3.4属于重定位） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符号*/int *xp = &amp;amp;">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-链接器（二）">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/02/CSAPP-链接器（二）/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件3.确定每个符号的地址4.在指令中填入新地址 （2.3.4属于重定位） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符号*/int *xp = &amp;amp;">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sign.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sign2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/eg1.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/rede.png">
+<meta property="og:updated_time" content="2018-09-02T17:27:36.201Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-链接器（二）">
+<meta name="twitter:description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件3.确定每个符号的地址4.在指令中填入新地址 （2.3.4属于重定位） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符号*/int *xp = &amp;amp;">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sign.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/09/02/CSAPP-链接器（二）/"/>
+
+
+
+
+
+  <title>CSAPP-链接器（二） | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/02/CSAPP-链接器（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-链接器（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-02T21:01:00+08:00">
+                2018-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="回顾-链接操作的步骤"><a href="#回顾-链接操作的步骤" class="headerlink" title="回顾 链接操作的步骤"></a>回顾 链接操作的步骤</h3><h4 id="1-确定符号的引用关系-（符号解析）"><a href="#1-确定符号的引用关系-（符号解析）" class="headerlink" title="1.确定符号的引用关系 （符号解析）"></a>1.确定符号的引用关系 （符号解析）</h4><h4 id="2-合并-o文件"><a href="#2-合并-o文件" class="headerlink" title="2.合并.o文件"></a>2.合并.o文件</h4><h4 id="3-确定每个符号的地址"><a href="#3-确定每个符号的地址" class="headerlink" title="3.确定每个符号的地址"></a>3.确定每个符号的地址</h4><h4 id="4-在指令中填入新地址-（2-3-4属于重定位）"><a href="#4-在指令中填入新地址-（2-3-4属于重定位）" class="headerlink" title="4.在指令中填入新地址 （2.3.4属于重定位）"></a>4.在指令中填入新地址 （2.3.4属于重定位）</h4><p><br></p>
+<h3 id="符号解析（符号绑定）"><a href="#符号解析（符号绑定）" class="headerlink" title="符号解析（符号绑定）"></a>符号解析（符号绑定）</h3><p>说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联</p>
+<h4 id="程序中有定义和引用的符号"><a href="#程序中有定义和引用的符号" class="headerlink" title="-程序中有定义和引用的符号"></a>-程序中有定义和引用的符号</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void swap()&#123;&#125; /*定义符号swap*/</span><br><span class="line">swap();   /*引用符号*/</span><br><span class="line">int *xp = &amp;x; /*定义符号xp，引用符号 x*/</span><br></pre></td></tr></table></figure>
+<h4 id="编辑器把定义的符号放在一个符号表当中"><a href="#编辑器把定义的符号放在一个符号表当中" class="headerlink" title="-编辑器把定义的符号放在一个符号表当中"></a>-编辑器把定义的符号放在一个符号表当中</h4><p>1.符号表是一个结构数组，在.symtab节中<br><br><br>2.每个表项包含符号名，长度与位置信息</p>
+<h4 id="链接器把符号的引用存放在重定位节中（-rel-text与rel-data）"><a href="#链接器把符号的引用存放在重定位节中（-rel-text与rel-data）" class="headerlink" title="-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）"></a>-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）</h4><h4 id="链接器把每个符号的引用都与一个确定的符号定义建立关联"><a href="#链接器把每个符号的引用都与一个确定的符号定义建立关联" class="headerlink" title="-链接器把每个符号的引用都与一个确定的符号定义建立关联"></a>-链接器把每个符号的引用都与一个确定的符号定义建立关联</h4><p><br></p>
+<h3 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h3><p>1.把多个代码段与数据段合并成一个单独的代码段和数据段<br><br><br>2.计算每个定义的符号在虚拟地址空间中的绝对地址<br><br><br>3.把可执行文件中符号引用处的地址修改为重定位后的地址信息<br><br><br>（局部变量temp分配在栈中，不会在过程外被引用，因此不属于符号定义）</p>
+<h3 id="链接符号的类型"><a href="#链接符号的类型" class="headerlink" title="链接符号的类型"></a>链接符号的类型</h3><h4 id="1-Global-Symbols-（模块内部定义的全局符号）"><a href="#1-Global-Symbols-（模块内部定义的全局符号）" class="headerlink" title="1.Global Symbols （模块内部定义的全局符号）"></a>1.Global Symbols （模块内部定义的全局符号）</h4><p>eg: 全局变量  指在本模块定义，但是在外部模块可以使用的</p>
+<h4 id="2-External-Symbols-（外部定义的外部符号）"><a href="#2-External-Symbols-（外部定义的外部符号）" class="headerlink" title="2.External Symbols （外部定义的外部符号）"></a>2.External Symbols （外部定义的外部符号）</h4><p>eg: 函数原型的函数名，函数中的带extern的变量名  外部模块定义，在本模块可以使用</p>
+<h4 id="3-Local-Symbols-（本模块定义并且引用的局部符号）"><a href="#3-Local-Symbols-（本模块定义并且引用的局部符号）" class="headerlink" title="3.Local Symbols （本模块定义并且引用的局部符号）"></a>3.Local Symbols （本模块定义并且引用的局部符号）</h4><p>eg: 带static的变量名  分配在静态数据区，并不是局部变量！局部变量是分配在栈中的<br>本模块定义，只能在本模块使用</p>
+<p>类型举例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int buf[2] = &#123;1,2&#125;;</span><br><span class="line">void swap();</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	swap();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">extern int buf[];</span><br><span class="line"></span><br><span class="line">int*bufp0 = &amp;buf[0];</span><br><span class="line">static int *bufp1;</span><br><span class="line"></span><br><span class="line">void swap()&#123;</span><br><span class="line">   int temp;</span><br><span class="line">   bufp1 = &amp;buf[1];</span><br><span class="line">   temp = *bufp0;</span><br><span class="line">   *bufp0 = *bufp1;</span><br><span class="line">   *bufp1 = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>全局符号： main.c中的buf,swap.c中的swap（）,bufp0;</p>
+<p>外部符号  swap.c中的buf[],main.c中的swap();</p>
+<p>局部符号  swap.c中的局部符号</p>
+<h4 id="我们说符号的定义，实质上就是分配了存储空间。"><a href="#我们说符号的定义，实质上就是分配了存储空间。" class="headerlink" title="我们说符号的定义，实质上就是分配了存储空间。"></a>我们说符号的定义，实质上就是分配了存储空间。</h4><h4 id="函数名符号指代码所在区"><a href="#函数名符号指代码所在区" class="headerlink" title="函数名符号指代码所在区"></a>函数名符号指代码所在区</h4><h4 id="变量名指静态数据区"><a href="#变量名指静态数据区" class="headerlink" title="变量名指静态数据区"></a>变量名指静态数据区</h4><p>定义符号的值就是目标所在的首地址</p>
+<h4 id="全局符号的强，弱"><a href="#全局符号的强，弱" class="headerlink" title="全局符号的强，弱"></a>全局符号的强，弱</h4><p>函数名以及初始化后的变量是强全局符号</p>
+<p>未初始化变量是弱全局符号</p>
+<p>上面函数 main.c 的swap(),swap.c的 buf[],是弱符号，其余的全局符号都是强符号</p>
+<h5 id="多重定义符号的解析规则"><a href="#多重定义符号的解析规则" class="headerlink" title="多重定义符号的解析规则"></a>多重定义符号的解析规则</h5><p>1.强符号不能多次定义</p>
+<p>2.一个符号被定义为一次强符号和多次弱符号，则按强定义为准</p>
+<p>3.多个弱符号定义，则任选其中一个</p>
+<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p><img src="/home/alex/图片/sign.png" alt="image"></p>
+<p>FLD1指把1.0放在ST（0）处，ST（0）是x87浮点处理器的一个栈</p>
+<p>FSTPL &amp;d  L指double对应的双精度，存放8个字节</p>
+<p><img src="/home/alex/图片/sign2.png" alt="image"></p>
+<p>相当于d变为浮点数表示之后，把x所在的位置给冲掉了，导致x会被改变</p>
+<p>（注意小端方式，意味着位数小的放在地址小的位置）</p>
+<h3 id="静态连接"><a href="#静态连接" class="headerlink" title="静态连接"></a>静态连接</h3><p>多个可重定位目标模块 + 静态库（标准库,自定义库等）<br>(.o文件) + （.a文件，其中包含多个.o模块）</p>
+<h4 id="静态共享库"><a href="#静态共享库" class="headerlink" title="静态共享库"></a>静态共享库</h4><h5 id="静态库（-a-archive-files）"><a href="#静态库（-a-archive-files）" class="headerlink" title="静态库（.a archive files）"></a>静态库（.a archive files）</h5><p>1.把所有相关的目标模块（.o）打包为一个单独的库文件(.a)，称为静态库文件，也成为存档文件</p>
+<p>2.在构建可执行文件的时候，只需要指定库文件名，连接器会自动到库中寻找那些应用程序用到的目标模块，并且只把用到的模块从库中拷贝出来，链接到可执行文件中。</p>
+<p>eg: 在函数中使用printf函数，程序员不需要在文件中包括printf的代码，链接器会自动在静态库查找定义的符号来解析printf符号，及实现直接调用。</p>
+<h5 id="静态库的创建"><a href="#静态库的创建" class="headerlink" title="静态库的创建"></a>静态库的创建</h5><p>ar 能把指定的.o文件打包生成静态库文件（.a文件）</p>
+<p>eg: ar rs libc.a atoi.o printf.o random.o</p>
+<h5 id="自定义库文件"><a href="#自定义库文件" class="headerlink" title="自定义库文件"></a>自定义库文件</h5><p>gcc -c p1.c p2.c<br>ar rcs mylib.a p1.o p2.o </p>
+<p>然后如果你写了一个main.c，想要调用静态库中的函数</p>
+<p>gcc -c main.c<br>gcc -static -o myproc main.o ./mylib.a</p>
+<h4 id="使用静态库的过程"><a href="#使用静态库的过程" class="headerlink" title="使用静态库的过程"></a>使用静态库的过程</h4><p>-按照命令行给出的顺序扫描.o，.a文件</p>
+<p>-扫描期间把当前未解析的引用记录到一个列表U中</p>
+<p>-每遇到一个新的.o与.a模块，试图用其来解析UI中的符号</p>
+<p>-扫描到最后，如果U不为空，则发生错误</p>
+<p><img src="/home/alex/图片/eg1.png" alt="image"></p>
+<h3 id="重定位-1"><a href="#重定位-1" class="headerlink" title="重定位"></a>重定位</h3><h4 id="第一步-合并相同的节"><a href="#第一步-合并相同的节" class="headerlink" title="第一步 合并相同的节"></a>第一步 合并相同的节</h4><p>把集合E中的所有目标模块相同的节合并成新节</p>
+<h4 id="第二步-对集合D中的定义符号进行重定位（确定地址）"><a href="#第二步-对集合D中的定义符号进行重定位（确定地址）" class="headerlink" title="第二步 对集合D中的定义符号进行重定位（确定地址）"></a>第二步 对集合D中的定义符号进行重定位（确定地址）</h4><p>即确定新节中所有定义符号在虚拟地址空间中的地址<br>，为变量确定首地址</p>
+<p>例如为函数确定首地址，进而确定每条指令的地址，为变量确定首地址</p>
+<p>完成这一步之后，每条指令和每个变量的地址都可以确定</p>
+<h4 id="第三步-对引用符号进行重定位"><a href="#第三步-对引用符号进行重定位" class="headerlink" title="第三步 对引用符号进行重定位"></a>第三步 对引用符号进行重定位</h4><p>修改.text和.data节中对每个符号的引用（地址）<br>需要用到.o文件中的.rel_data 和.rel_text中保存的重定位信息</p>
+<h3 id="什么是重定位信息？"><a href="#什么是重定位信息？" class="headerlink" title="什么是重定位信息？"></a>什么是重定位信息？</h3><p><img src="/home/alex/图片/rede.png" alt="imaeg"></p>
+<p>例如 把add B 这一句翻译为机器代码，add翻译为操作码05 B为一个引用，一开始不知道是什么数值，于是写入一个00000000初始位置，同时生成一个重定位条目，提示后面这个位置的值要被修改。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/31/CSAPP-链接器/" rel="next" title="CSAPP-链接器">
+                <i class="fa fa-chevron-left"></i> CSAPP-链接器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#回顾-链接操作的步骤"><span class="nav-number">1.</span> <span class="nav-text">回顾 链接操作的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-确定符号的引用关系-（符号解析）"><span class="nav-number">1.1.</span> <span class="nav-text">1.确定符号的引用关系 （符号解析）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-合并-o文件"><span class="nav-number">1.2.</span> <span class="nav-text">2.合并.o文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-确定每个符号的地址"><span class="nav-number">1.3.</span> <span class="nav-text">3.确定每个符号的地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-在指令中填入新地址-（2-3-4属于重定位）"><span class="nav-number">1.4.</span> <span class="nav-text">4.在指令中填入新地址 （2.3.4属于重定位）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#符号解析（符号绑定）"><span class="nav-number">2.</span> <span class="nav-text">符号解析（符号绑定）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序中有定义和引用的符号"><span class="nav-number">2.1.</span> <span class="nav-text">-程序中有定义和引用的符号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编辑器把定义的符号放在一个符号表当中"><span class="nav-number">2.2.</span> <span class="nav-text">-编辑器把定义的符号放在一个符号表当中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器把符号的引用存放在重定位节中（-rel-text与rel-data）"><span class="nav-number">2.3.</span> <span class="nav-text">-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器把每个符号的引用都与一个确定的符号定义建立关联"><span class="nav-number">2.4.</span> <span class="nav-text">-链接器把每个符号的引用都与一个确定的符号定义建立关联</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位"><span class="nav-number">3.</span> <span class="nav-text">重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链接符号的类型"><span class="nav-number">4.</span> <span class="nav-text">链接符号的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Global-Symbols-（模块内部定义的全局符号）"><span class="nav-number">4.1.</span> <span class="nav-text">1.Global Symbols （模块内部定义的全局符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-External-Symbols-（外部定义的外部符号）"><span class="nav-number">4.2.</span> <span class="nav-text">2.External Symbols （外部定义的外部符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Local-Symbols-（本模块定义并且引用的局部符号）"><span class="nav-number">4.3.</span> <span class="nav-text">3.Local Symbols （本模块定义并且引用的局部符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们说符号的定义，实质上就是分配了存储空间。"><span class="nav-number">4.4.</span> <span class="nav-text">我们说符号的定义，实质上就是分配了存储空间。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数名符号指代码所在区"><span class="nav-number">4.5.</span> <span class="nav-text">函数名符号指代码所在区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#变量名指静态数据区"><span class="nav-number">4.6.</span> <span class="nav-text">变量名指静态数据区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全局符号的强，弱"><span class="nav-number">4.7.</span> <span class="nav-text">全局符号的强，弱</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#多重定义符号的解析规则"><span class="nav-number">4.7.1.</span> <span class="nav-text">多重定义符号的解析规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例子"><span class="nav-number">4.7.2.</span> <span class="nav-text">例子</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态连接"><span class="nav-number">5.</span> <span class="nav-text">静态连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态共享库"><span class="nav-number">5.1.</span> <span class="nav-text">静态共享库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#静态库（-a-archive-files）"><span class="nav-number">5.1.1.</span> <span class="nav-text">静态库（.a archive files）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态库的创建"><span class="nav-number">5.1.2.</span> <span class="nav-text">静态库的创建</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义库文件"><span class="nav-number">5.1.3.</span> <span class="nav-text">自定义库文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用静态库的过程"><span class="nav-number">5.2.</span> <span class="nav-text">使用静态库的过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位-1"><span class="nav-number">6.</span> <span class="nav-text">重定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一步-合并相同的节"><span class="nav-number">6.1.</span> <span class="nav-text">第一步 合并相同的节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第二步-对集合D中的定义符号进行重定位（确定地址）"><span class="nav-number">6.2.</span> <span class="nav-text">第二步 对集合D中的定义符号进行重定位（确定地址）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第三步-对引用符号进行重定位"><span class="nav-number">6.3.</span> <span class="nav-text">第三步 对引用符号进行重定位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是重定位信息？"><span class="nav-number">7.</span> <span class="nav-text">什么是重定位信息？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
