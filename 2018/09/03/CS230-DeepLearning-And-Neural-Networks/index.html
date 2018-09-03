@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="深度学习 ——Coursera学习资源：https://github.com/Kulbear/deep-learning-coursera https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Program">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS230 DeepLearning And Neural Networks">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="深度学习 ——Coursera学习资源：https://github.com/Kulbear/deep-learning-coursera https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Program">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cat.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/擦她.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/便.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-0.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/LR.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/GD.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/GD2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/back.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/LRM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vec.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vm.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/nw.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/borad.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/result.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/bc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/eg2.png">
+<meta property="og:updated_time" content="2018-09-03T01:26:03.064Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CS230 DeepLearning And Neural Networks">
+<meta name="twitter:description" content="深度学习 ——Coursera学习资源：https://github.com/Kulbear/deep-learning-coursera https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Program">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cat.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/"/>
+
+
+
+
+
+  <title>CS230 DeepLearning And Neural Networks | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CS230 DeepLearning And Neural Networks</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-03T02:55:51+08:00">
+                2018-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="深度学习-——Coursera"><a href="#深度学习-——Coursera" class="headerlink" title="深度学习 ——Coursera"></a>深度学习 ——Coursera</h1><p>学习资源：<a href="https://github.com/Kulbear/deep-learning-coursera" target="_blank" rel="noopener">https://github.com/Kulbear/deep-learning-coursera</a></p>
+<p><a href="https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb" target="_blank" rel="noopener">https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb</a></p>
+<p>官网：<a href="https://cs230-stanford.github.io/" target="_blank" rel="noopener">https://cs230-stanford.github.io/</a></p>
+<h2 id="Basic-of-Neural-Network-of-Programming"><a href="#Basic-of-Neural-Network-of-Programming" class="headerlink" title="Basic of Neural Network of Programming"></a>Basic of Neural Network of Programming</h2><h3 id="Logistic-Regression-—-Binary-Classificatoin"><a href="#Logistic-Regression-—-Binary-Classificatoin" class="headerlink" title="Logistic Regression — Binary Classificatoin"></a>Logistic Regression — Binary Classificatoin</h3><p>如果想把图片作为输入，判断这张图片是否为一只猫<br>首先得了解如何在计算机中表示图片。</p>
+<p>图片可以表示为一个3<em>64</em>64的矩阵，分别记录着R，G，B三个颜色通道的数值</p>
+<p>然后定义一个向量x 让矩阵转化为一个向量，向量包含矩阵所有元素</p>
+<p>nx表示特征向量的维度</p>
+<p><img src="/home/alex/图片/cat.png" alt="image"></p>
+<p>X矩阵是把向量按列排列，相应的，结果Y也是按列排列<br>在python中，X.shape 返回数组（nx,m）对应行数和列数，也就是向量维度为nx，个数为m</p>
+<p><img src="/home/alex/图片/擦她.png" alt="image2"></p>
+<p><br></p>
+<h3 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h3><p>1.右上角的红色笔记不必理会</p>
+<p>2.sigma表示sigmoid函数，是一个squashing function，即把结果压缩到0-1范围内</p>
+<p><img src="/home/alex/图片/便.png" alt="image"></p>
+<p>下一步，为了改变w与b，需要定义一个cost function</p>
+<h5 id="w-is-an-nx-dimenstional-vector-while-b-is-a-real-number"><a href="#w-is-an-nx-dimenstional-vector-while-b-is-a-real-number" class="headerlink" title="w is an nx dimenstional vector,while b is a real number."></a>w is an nx dimenstional vector,while b is a real number.</h5><p>如果cost function是半个平方误差的话，可能只会找到局部最优解<br>所以我们这里使用<br><img src="/home/alex/图片/2018-0.png" alt="imgae"></p>
+<p><img src="/home/alex/图片/LR.png" alt="image"></p>
+<h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><p>不要把Loss function 和 cost function 混了！</p>
+<p>loss function 计算的是单个训练样本的误差</p>
+<p>而cost function 计算的是整个训练集的平均误差</p>
+<h3 id="Gradient-Descent"><a href="#Gradient-Descent" class="headerlink" title="Gradient Descent"></a>Gradient Descent</h3><p>梯度下降就是我们要来寻找全局最优点的方法</p>
+<p><img src="/home/alex/图片/GD.png" alt="image"><br><br></p>
+<p>1.learning rate 学习率，控制每一次迭代或者梯度下降法中步长大小</p>
+<p>2.那为什么右上角那个repeat能保证梯度下降是make sense的呢？<br><br><br>d(J)/dw 代表的是斜率，试想在全局最优点左侧，梯度是负数，相当于w加上了一个正数，那么<br>w就会向全局最优点靠近的方向移动。反之亦然，所以通过不停迭代最后一定会达到全局最优点。</p>
+<p><img src="/home/alex/图片/GD2.png" alt="image"></p>
+<h3 id="Computation-Graph"><a href="#Computation-Graph" class="headerlink" title="Computation Graph"></a>Computation Graph</h3><p>1.神经网络正向传播，计算输出，反向传播用来计算导数，为什么要这样组织呢？</p>
+<p><img src="/home/alex/图片/back.png" alt="image"></p>
+<p>反向传播意思是如果你要计算dj/da  按照红色箭头来计算（把从右到左得到的结果依次运用链式法则来求）</p>
+<h3 id="Logistic-Regression-Grdient-Descent-on-m-examples"><a href="#Logistic-Regression-Grdient-Descent-on-m-examples" class="headerlink" title="Logistic Regression Grdient Descent on m examples"></a>Logistic Regression Grdient Descent on m examples</h3><p><img src="/home/alex/图片/LRM.png" alt="image"></p>
+<p>两个循环，时间复杂度是M*N M为特征向量个数 N为特征数</p>
+<p>那如何摆脱这个循环呢？</p>
+<p>可以使用vectorization技巧</p>
+<h3 id="vectorization"><a href="#vectorization" class="headerlink" title="vectorization"></a>vectorization</h3><p><img src="/home/alex/图片/vec.png" alt="image"></p>
+<p>所以要使用向量化来加速代码的运行</p>
+<p>实际上，GPU和CPU都支持并行计算，SIMD指令，当时用内置函数的时候，例如np.dot，CPU和GPU会利用并行化进行更快的运算。</p>
+<h4 id="因此尽量避免使用显式的for循环"><a href="#因此尽量避免使用显式的for循环" class="headerlink" title="因此尽量避免使用显式的for循环"></a>因此尽量避免使用显式的for循环</h4><p>例如下例：</p>
+<p><img src="/home/alex/图片/vm.png" alt="image"></p>
+<p><img src="/home/alex/图片/nw.png" alt="image"></p>
+<h4 id="具体我们来看逻辑回归的向量化"><a href="#具体我们来看逻辑回归的向量化" class="headerlink" title="具体我们来看逻辑回归的向量化"></a>具体我们来看逻辑回归的向量化</h4><p><img src="/home/alex/图片/borad.png" alt="image"></p>
+<p>用<br><code>z = np.dot(w.T,x)+b</code><br>就可实现移除两个for循环的功能</p>
+<p>小知识：python中的broadcasting</p>
+<p>意思就是虽然b是常数，但是当与一个向量相加的时候，b自动扩展为一个与向量维度相同，值全部为b的向量。</p>
+<p>具体实现</p>
+<p><img src="/home/alex/图片/result.png" alt="image"></p>
+<h3 id="python-的-broadcasting"><a href="#python-的-broadcasting" class="headerlink" title="python 的 broadcasting"></a>python 的 broadcasting</h3><p>(axis=0)按列相加<br>(axis=1)按行相加</p>
+<p><img src="/home/alex/图片/bc.png" alt="image"></p>
+<p>小技巧，定义vector的时候，写为下半部分的形式，不要使用np.random.randn(5)这种rank为1的结构</p>
+<p><img src="/home/alex/图片/eg2.png" alt="image"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/02/CSAPP-链接器（二）/" rel="next" title="CSAPP-链接器（二）">
+                <i class="fa fa-chevron-left"></i> CSAPP-链接器（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#深度学习-——Coursera"><span class="nav-number">1.</span> <span class="nav-text">深度学习 ——Coursera</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-of-Neural-Network-of-Programming"><span class="nav-number">1.1.</span> <span class="nav-text">Basic of Neural Network of Programming</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic-Regression-—-Binary-Classificatoin"><span class="nav-number">1.1.1.</span> <span class="nav-text">Logistic Regression — Binary Classificatoin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic-Regression"><span class="nav-number">1.1.2.</span> <span class="nav-text">Logistic Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#w-is-an-nx-dimenstional-vector-while-b-is-a-real-number"><span class="nav-number">1.1.2.0.1.</span> <span class="nav-text">w is an nx dimenstional vector,while b is a real number.</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#注意"><span class="nav-number">1.1.2.0.2.</span> <span class="nav-text">注意</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradient-Descent"><span class="nav-number">1.1.3.</span> <span class="nav-text">Gradient Descent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Computation-Graph"><span class="nav-number">1.1.4.</span> <span class="nav-text">Computation Graph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic-Regression-Grdient-Descent-on-m-examples"><span class="nav-number">1.1.5.</span> <span class="nav-text">Logistic Regression Grdient Descent on m examples</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vectorization"><span class="nav-number">1.1.6.</span> <span class="nav-text">vectorization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#因此尽量避免使用显式的for循环"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">因此尽量避免使用显式的for循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体我们来看逻辑回归的向量化"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">具体我们来看逻辑回归的向量化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-的-broadcasting"><span class="nav-number">1.1.7.</span> <span class="nav-text">python 的 broadcasting</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
