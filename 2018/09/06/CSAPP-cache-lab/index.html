@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="cache lab原函数返回地址—-&amp;lt;保存的%ebp值（栈帧指针）—-&amp;lt;缓冲区—-&amp;lt;缓冲区—-&amp;lt;。。。。。。。。%esp(栈指针)—-&amp;lt; Level2 global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value 我们现在要找到global_value的地址，发现 0x804d100就是value的地址，0x804d1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-buflab">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="cache lab原函数返回地址—-&amp;lt;保存的%ebp值（栈帧指针）—-&amp;lt;缓冲区—-&amp;lt;缓冲区—-&amp;lt;。。。。。。。。%esp(栈指针)—-&amp;lt; Level2 global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value 我们现在要找到global_value的地址，发现 0x804d100就是value的地址，0x804d1">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/c.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/p2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ps2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/obj.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2222.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-1.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/getBuf.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cook.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/re.png">
+<meta property="og:updated_time" content="2018-09-09T13:17:00.126Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-buflab">
+<meta name="twitter:description" content="cache lab原函数返回地址—-&amp;lt;保存的%ebp值（栈帧指针）—-&amp;lt;缓冲区—-&amp;lt;缓冲区—-&amp;lt;。。。。。。。。%esp(栈指针)—-&amp;lt; Level2 global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value 我们现在要找到global_value的地址，发现 0x804d100就是value的地址，0x804d1">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/c.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/"/>
+
+
+
+
+
+  <title>CSAPP-buflab | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-buflab</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T03:18:10+08:00">
+                2018-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="cache-lab"><a href="#cache-lab" class="headerlink" title="cache lab"></a>cache lab</h5><p>原函数返回地址—-&lt;<br>保存的%ebp值（栈帧指针）—-&lt;<br>缓冲区—-&lt;<br>缓冲区—-&lt;<br>。。。。<br>。。。。<br>%esp(栈指针)—-&lt;</p>
+<h3 id="Level2"><a href="#Level2" class="headerlink" title="Level2"></a>Level2</h3><p><img src="/home/alex/图片/c.png" alt="image"></p>
+<p>global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value</p>
+<p>我们现在要找到global_value的地址，发现</p>
+<p>0x804d100就是value的地址，0x804d108就是cookie的地址。因此我们想把0x804d100地址所在的数值改为我们的cookie</p>
+<p><img src="/home/alex/图片/p2.png" alt="image"></p>
+<p>建立p2.s文件</p>
+<p>注意x86是data-load 是利用register来完成的</p>
+<p><img src="/home/alex/图片/ps2.png" alt="image"></p>
+<p>把cookie值传到%eax 临时寄存器，然后把寄存器里面的数值传给global_value的地址</p>
+<p>最后把bang函数地址压栈，那么原来返回地址就会改为执行bang函数了。</p>
+<p>反汇编得到的代码：</p>
+<p><img src="/home/alex/图片/obj.png" alt="image"></p>
+<p>gdb调试寻找缓冲区的位置，注意缓冲区不是esp-0x38，而是ebp-0x28噢</p>
+<p>得到缓冲区首地址为0x55683938</p>
+<p>意思就是说返回地址变回缓冲区首地址，然后原函数返回的时候会跳到缓冲区地址，然后开始访问我们自己写的机器代码，实现把global_value值改为cookie的功能。</p>
+<p><img src="/home/alex/图片/2222.png" alt="image"></p>
+<p>最后结果：</p>
+<p><img src="/home/alex/图片/2018-1.png" alt="image"></p>
+<h3 id="level3"><a href="#level3" class="headerlink" title="level3"></a>level3</h3><p>是把返回地址改为cookie值，同时不改变原函数压栈情况</p>
+<p>因为覆盖栈的时候，会把ebp（基址指针给覆盖掉，所以先记录下基址的地址）</p>
+<p><img src="/home/alex/图片/getBuf.png" alt="image"></p>
+<p>汇编代码<br>我们应该要改变eax的值为cookie,同时把原来getbuf后一条指令的地址压栈</p>
+<p><img src="/home/alex/图片/cook.png" alt="image"></p>
+<p>然后为了求基址地址，这里折腾了好久，原来要求的不是寄存器本身的值，而是求寄存器指向的值</p>
+<p>但why？？？<br><img src="/home/alex/图片/re.png" alt="image"></p>
+<p>最后结果：</p>
+<p>b8 14 03 aa<br>65 68 be 8d<br>04 08 c3 00 &lt;—attack code<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>90 39 68 55 &lt;— address of ebp,to ensure that the original ebp doesn’t change<br>38 39 68 55 &lt;— initial address of buff zone</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/03/CS230-DeepLearning-And-Neural-Networks/" rel="next" title="CS230 DeepLearning And Neural Networks">
+                <i class="fa fa-chevron-left"></i> CS230 DeepLearning And Neural Networks
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/10/CS230-Shallow-Neural-Networks/" rel="prev" title="CS230 Shallow Neural Networks">
+                CS230 Shallow Neural Networks <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#cache-lab"><span class="nav-number">1.</span> <span class="nav-text">cache lab</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Level2"><span class="nav-number"></span> <span class="nav-text">Level2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level3"><span class="nav-number"></span> <span class="nav-text">level3</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

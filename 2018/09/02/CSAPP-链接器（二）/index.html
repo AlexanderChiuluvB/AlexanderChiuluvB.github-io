@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件3.确定每个符号的地址4.在指令中填入新地址 （2.3.4属于重定位） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符号*/int *xp = &amp;amp;">
+<meta name="description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件（同节合并）3.确定每个符号的地址（确定地址）4.在指令中填入新地址 （2.3.4属于重定位）（修改引用） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符">
 <meta name="keywords" content="CSAPP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CSAPP-链接器（二）">
 <meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/02/CSAPP-链接器（二）/index.html">
 <meta property="og:site_name" content="Alex Chiu">
-<meta property="og:description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件3.确定每个符号的地址4.在指令中填入新地址 （2.3.4属于重定位） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符号*/int *xp = &amp;amp;">
+<meta property="og:description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件（同节合并）3.确定每个符号的地址（确定地址）4.在指令中填入新地址 （2.3.4属于重定位）（修改引用） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sign.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sign2.png">
@@ -93,10 +93,20 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/eg1.png">
 <meta property="og:image" content="https://wdxtub.com/images/14613373029640.jpg">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/rede.png">
-<meta property="og:updated_time" content="2018-09-02T18:55:19.696Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/PC.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/reLocation.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/address.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/res.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/R_386_32.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/kb.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/r.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/reallocation.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/nop.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/iso.png">
+<meta property="og:updated_time" content="2018-09-09T15:43:55.190Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-链接器（二）">
-<meta name="twitter:description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件3.确定每个符号的地址4.在指令中填入新地址 （2.3.4属于重定位） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符号*/int *xp = &amp;amp;">
+<meta name="twitter:description" content="回顾 链接操作的步骤1.确定符号的引用关系 （符号解析）2.合并.o文件（同节合并）3.确定每个符号的地址（确定地址）4.在指令中填入新地址 （2.3.4属于重定位）（修改引用） 符号解析（符号绑定）说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联 -程序中有定义和引用的符号123void swap()&amp;#123;&amp;#125; /*定义符号swap*/swap();   /*引用符">
 <meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sign.png">
 
 
@@ -347,7 +357,7 @@
       
 
       
-        <h3 id="回顾-链接操作的步骤"><a href="#回顾-链接操作的步骤" class="headerlink" title="回顾 链接操作的步骤"></a>回顾 链接操作的步骤</h3><h4 id="1-确定符号的引用关系-（符号解析）"><a href="#1-确定符号的引用关系-（符号解析）" class="headerlink" title="1.确定符号的引用关系 （符号解析）"></a>1.确定符号的引用关系 （符号解析）</h4><h4 id="2-合并-o文件"><a href="#2-合并-o文件" class="headerlink" title="2.合并.o文件"></a>2.合并.o文件</h4><h4 id="3-确定每个符号的地址"><a href="#3-确定每个符号的地址" class="headerlink" title="3.确定每个符号的地址"></a>3.确定每个符号的地址</h4><h4 id="4-在指令中填入新地址-（2-3-4属于重定位）"><a href="#4-在指令中填入新地址-（2-3-4属于重定位）" class="headerlink" title="4.在指令中填入新地址 （2.3.4属于重定位）"></a>4.在指令中填入新地址 （2.3.4属于重定位）</h4><p><br></p>
+        <h3 id="回顾-链接操作的步骤"><a href="#回顾-链接操作的步骤" class="headerlink" title="回顾 链接操作的步骤"></a>回顾 链接操作的步骤</h3><h4 id="1-确定符号的引用关系-（符号解析）"><a href="#1-确定符号的引用关系-（符号解析）" class="headerlink" title="1.确定符号的引用关系 （符号解析）"></a>1.确定符号的引用关系 （符号解析）</h4><h4 id="2-合并-o文件（同节合并）"><a href="#2-合并-o文件（同节合并）" class="headerlink" title="2.合并.o文件（同节合并）"></a>2.合并.o文件（同节合并）</h4><h4 id="3-确定每个符号的地址（确定地址）"><a href="#3-确定每个符号的地址（确定地址）" class="headerlink" title="3.确定每个符号的地址（确定地址）"></a>3.确定每个符号的地址（确定地址）</h4><h4 id="4-在指令中填入新地址-（2-3-4属于重定位）（修改引用）"><a href="#4-在指令中填入新地址-（2-3-4属于重定位）（修改引用）" class="headerlink" title="4.在指令中填入新地址 （2.3.4属于重定位）（修改引用）"></a>4.在指令中填入新地址 （2.3.4属于重定位）（修改引用）</h4><p><br></p>
 <h3 id="符号解析（符号绑定）"><a href="#符号解析（符号绑定）" class="headerlink" title="符号解析（符号绑定）"></a>符号解析（符号绑定）</h3><p>说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联</p>
 <h4 id="程序中有定义和引用的符号"><a href="#程序中有定义和引用的符号" class="headerlink" title="-程序中有定义和引用的符号"></a>-程序中有定义和引用的符号</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void swap()&#123;&#125; /*定义符号swap*/</span><br><span class="line">swap();   /*引用符号*/</span><br><span class="line">int *xp = &amp;x; /*定义符号xp，引用符号 x*/</span><br></pre></td></tr></table></figure>
 <h4 id="编辑器把定义的符号放在一个符号表当中"><a href="#编辑器把定义的符号放在一个符号表当中" class="headerlink" title="-编辑器把定义的符号放在一个符号表当中"></a>-编辑器把定义的符号放在一个符号表当中</h4><p>1.符号表是一个结构数组，在.symtab节中<br><br><br>2.每个表项包含符号名，长度与位置信息</p>
@@ -397,13 +407,54 @@
 <p>动态链接可以在首次载入的时候就执行，由ld-linux.so完成，这样所有的程序可以共享同一个库，而不用进行封装。</p>
 <p><img src="https://wdxtub.com/images/14613373029640.jpg" alt="image"></p>
 <p><br></p>
+<p>符号重定位之后，得到两个文件:将要合并的*.o文件的集合以及定义符号的集合</p>
 <h3 id="重定位-1"><a href="#重定位-1" class="headerlink" title="重定位"></a>重定位</h3><h4 id="第一步-合并相同的节"><a href="#第一步-合并相同的节" class="headerlink" title="第一步 合并相同的节"></a>第一步 合并相同的节</h4><p>把集合E中的所有目标模块相同的节合并成新节</p>
-<h4 id="第二步-对集合D中的定义符号进行重定位（确定地址）"><a href="#第二步-对集合D中的定义符号进行重定位（确定地址）" class="headerlink" title="第二步 对集合D中的定义符号进行重定位（确定地址）"></a>第二步 对集合D中的定义符号进行重定位（确定地址）</h4><p>即确定新节中所有定义符号在虚拟地址空间中的地址<br>，为变量确定首地址</p>
+<p>例如把所有.text节合并作为可执行文件中的.text节</p>
+<h4 id="第二步-对集合D中的定义符号进行重定位（确定地址）"><a href="#第二步-对集合D中的定义符号进行重定位（确定地址）" class="headerlink" title="第二步 对集合D中的定义符号进行重定位（确定地址）"></a>第二步 对集合D中的定义符号进行重定位（确定地址）</h4><p>即确定新节中所有定义符号在虚拟地址空间中的地址</p>
 <p>例如为函数确定首地址，进而确定每条指令的地址，为变量确定首地址</p>
 <p>完成这一步之后，每条指令和每个变量的地址都可以确定</p>
 <h4 id="第三步-对引用符号进行重定位"><a href="#第三步-对引用符号进行重定位" class="headerlink" title="第三步 对引用符号进行重定位"></a>第三步 对引用符号进行重定位</h4><p>修改.text和.data节中对每个符号的引用（地址）<br>需要用到.o文件中的.rel_data 和.rel_text中保存的重定位信息</p>
 <h3 id="什么是重定位信息？"><a href="#什么是重定位信息？" class="headerlink" title="什么是重定位信息？"></a>什么是重定位信息？</h3><p><img src="/home/alex/图片/rede.png" alt="imaeg"></p>
 <p>例如 把add B 这一句翻译为机器代码，add翻译为操作码05 B为一个引用，一开始不知道是什么数值，于是写入一个00000000初始位置，同时生成一个重定位条目，提示后面这个位置的值要被修改。</p>
+<p>又例如jmp 后面接的是L0，则在.rel_text节中生成重定位信息，但一开始还没走到L0指令，还不知道L0的定义是什么，于是填了一个随机地址FCFFFFFF，在后续当中修改这个地址，让他指向真正的L0地址</p>
+<p>左下角 offset 0x1 代表从第一个字节开始重定位（下方框是.text节，起始第0个字节为05），两个数字（一共八位）一个字节，那么02就是第五个字节，FC就是第六个字节。</p>
+<p>左下角symbol 表示重定位的符号为B</p>
+<p>左下角 type 重定位类型为绝对地址</p>
+<h3 id="重定位操作举例"><a href="#重定位操作举例" class="headerlink" title="重定位操作举例"></a>重定位操作举例</h3><p>E中有main.o 和 swap.o两个模块！ D中有所有定义的符号！</p>
+<p>在main.o与swap.o的重定位条目中有重定位信息，反映了符号引用位置（offset），绑定的定义符号名，重定位类型）</p>
+<p>读取重定位条目： readelf -r main.o</p>
+<h4 id="PC相对地址重定位"><a href="#PC相对地址重定位" class="headerlink" title="PC相对地址重定位"></a>PC相对地址重定位</h4><p><img src="/home/alex/图片/PC.png" alt="image"></p>
+<p>0： 55 表示main从.text最初的地方开始</p>
+<p>3： and 指令的 0xfffffff0 是为了让栈顶指针esp为16字节的倍数</p>
+<p>swap函数调用： 6： e8 <font color="#00ffff" size="17">fc ff ff ff </font> 注意x86是小端法存储，因此<br>因此立即数为ff ff ff fc 即-4  </p>
+<p>由于 fc ff ff ff 不是swap函数的首地址，所以会生成一个重定位信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">7:R_386_PC32 SWAP</span><br></pre></td></tr></table></figure></p>
+<p>表示在偏移量为7的位置，即fc开始的位置，按相对地址方式进行重定位ie</p>
+<h4 id="数据的存储方式"><a href="#数据的存储方式" class="headerlink" title="数据的存储方式:"></a>数据的存储方式:</h4><p><img src="/home/alex/图片/reLocation.png" alt="image"></p>
+<p>小端方式，第一个数据为 00 00 00 01</p>
+<p>大端方式，第二个数据为 00 00 00 02</p>
+<h4 id="相对地址的重定位方式"><a href="#相对地址的重定位方式" class="headerlink" title="相对地址的重定位方式"></a>相对地址的重定位方式</h4><p>假定：</p>
+<p><img src="/home/alex/图片/address.png" alt="imagel"></p>
+<p>main占 0x12B,因此swap初始地址为</p>
+<p>-0x8048380+0x12=0x8048392</p>
+<p>但由于不是4的倍数，因此在四字节边界对齐的情况下，应该为0x8048394</p>
+<p>call 指令最后的机器代码应该为多少？</p>
+<h6 id="call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址"><a href="#call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址" class="headerlink" title="call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址"></a>call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址</h6><p>转移目标地址 = PC+偏移地址 PC=0x8040380+0x07-init</p>
+<h5 id="注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC"><a href="#注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC" class="headerlink" title="注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC"></a>注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC</h5><h5 id="应该为0x08048380-b-0x0804838b"><a href="#应该为0x08048380-b-0x0804838b" class="headerlink" title="应该为0x08048380+b = 0x0804838b"></a>应该为0x08048380+b = 0x0804838b</h5><p><img src="/home/alex/图片/res.png" alt="image"></p>
+<p>重定位值就是偏移地址</p>
+<p>所以重定位值 = 转移目标地址 - PC = 0X9</p>
+<p>CALL 机器代码就是如上图结果所示</p>
+<h4 id="绝对地址重定位"><a href="#绝对地址重定位" class="headerlink" title="绝对地址重定位"></a>绝对地址重定位</h4><p>绝对地址重定位意思就是把buf的地址直接填到00 00 00 00<br><img src="/home/alex/图片/R_386_32.png" alt="image"></p>
+<p>这两个段都从可执行文件装入，占了4kb</p>
+<p><img src="/home/alex/图片/kb.png" alt="image"></p>
+<h5 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h5><p>buf在运行时候的存储地址ADDR（buf）=0x8049620</p>
+<p>重定位之后，bufp0地址及内容变成什么? bufp0紧接在buf后，故地址为0x8049620+8 = 0x8049628</p>
+<h4 id="符号重定位"><a href="#符号重定位" class="headerlink" title="符号重定位"></a>符号重定位</h4><p><img src="/home/alex/图片/r.png" alt="image"></p>
+<p>重定位结果：</p>
+<p><img src="/home/alex/图片/reallocation.png" alt="image"></p>
+<p>09 00 00 00 含义是当前PC（0x804838b加上一个立即数偏移量9）得到要跳转到的目标地址<br>为什么是不是从8048392开始呢？因为函数地址要求4边界对齐</p>
+<p><img src="/home/alex/图片/nop.png" alt="image"></p>
+<h3 id="可执行文件的存储器映像"><a href="#可执行文件的存储器映像" class="headerlink" title="可执行文件的存储器映像"></a>可执行文件的存储器映像</h3><p><img src="/home/alex/图片/iso.png" alt="image"></p>
+<p>左边是存储在物理磁盘当中的，而右边是存储在内存当中的</p>
 
       
     </div>
@@ -527,7 +578,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -582,7 +633,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#回顾-链接操作的步骤"><span class="nav-number">1.</span> <span class="nav-text">回顾 链接操作的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-确定符号的引用关系-（符号解析）"><span class="nav-number">1.1.</span> <span class="nav-text">1.确定符号的引用关系 （符号解析）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-合并-o文件"><span class="nav-number">1.2.</span> <span class="nav-text">2.合并.o文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-确定每个符号的地址"><span class="nav-number">1.3.</span> <span class="nav-text">3.确定每个符号的地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-在指令中填入新地址-（2-3-4属于重定位）"><span class="nav-number">1.4.</span> <span class="nav-text">4.在指令中填入新地址 （2.3.4属于重定位）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#符号解析（符号绑定）"><span class="nav-number">2.</span> <span class="nav-text">符号解析（符号绑定）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序中有定义和引用的符号"><span class="nav-number">2.1.</span> <span class="nav-text">-程序中有定义和引用的符号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编辑器把定义的符号放在一个符号表当中"><span class="nav-number">2.2.</span> <span class="nav-text">-编辑器把定义的符号放在一个符号表当中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器把符号的引用存放在重定位节中（-rel-text与rel-data）"><span class="nav-number">2.3.</span> <span class="nav-text">-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器把每个符号的引用都与一个确定的符号定义建立关联"><span class="nav-number">2.4.</span> <span class="nav-text">-链接器把每个符号的引用都与一个确定的符号定义建立关联</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位"><span class="nav-number">3.</span> <span class="nav-text">重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链接符号的类型"><span class="nav-number">4.</span> <span class="nav-text">链接符号的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Global-Symbols-（模块内部定义的全局符号）"><span class="nav-number">4.1.</span> <span class="nav-text">1.Global Symbols （模块内部定义的全局符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-External-Symbols-（外部定义的外部符号）"><span class="nav-number">4.2.</span> <span class="nav-text">2.External Symbols （外部定义的外部符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Local-Symbols-（本模块定义并且引用的局部符号）"><span class="nav-number">4.3.</span> <span class="nav-text">3.Local Symbols （本模块定义并且引用的局部符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们说符号的定义，实质上就是分配了存储空间。"><span class="nav-number">4.4.</span> <span class="nav-text">我们说符号的定义，实质上就是分配了存储空间。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数名符号指代码所在区"><span class="nav-number">4.5.</span> <span class="nav-text">函数名符号指代码所在区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#变量名指静态数据区"><span class="nav-number">4.6.</span> <span class="nav-text">变量名指静态数据区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全局符号的强，弱"><span class="nav-number">4.7.</span> <span class="nav-text">全局符号的强，弱</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#多重定义符号的解析规则"><span class="nav-number">4.7.1.</span> <span class="nav-text">多重定义符号的解析规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例子"><span class="nav-number">4.7.2.</span> <span class="nav-text">例子</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态连接"><span class="nav-number">5.</span> <span class="nav-text">静态连接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#静态库（-a-archive-files）"><span class="nav-number">5.0.1.</span> <span class="nav-text">静态库（.a archive files）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态库的创建"><span class="nav-number">5.0.2.</span> <span class="nav-text">静态库的创建</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义库文件"><span class="nav-number">5.0.3.</span> <span class="nav-text">自定义库文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用静态库的过程"><span class="nav-number">5.1.</span> <span class="nav-text">使用静态库的过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#共享库"><span class="nav-number">6.</span> <span class="nav-text">共享库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位-1"><span class="nav-number">7.</span> <span class="nav-text">重定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一步-合并相同的节"><span class="nav-number">7.1.</span> <span class="nav-text">第一步 合并相同的节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第二步-对集合D中的定义符号进行重定位（确定地址）"><span class="nav-number">7.2.</span> <span class="nav-text">第二步 对集合D中的定义符号进行重定位（确定地址）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第三步-对引用符号进行重定位"><span class="nav-number">7.3.</span> <span class="nav-text">第三步 对引用符号进行重定位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是重定位信息？"><span class="nav-number">8.</span> <span class="nav-text">什么是重定位信息？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#回顾-链接操作的步骤"><span class="nav-number">1.</span> <span class="nav-text">回顾 链接操作的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-确定符号的引用关系-（符号解析）"><span class="nav-number">1.1.</span> <span class="nav-text">1.确定符号的引用关系 （符号解析）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-合并-o文件（同节合并）"><span class="nav-number">1.2.</span> <span class="nav-text">2.合并.o文件（同节合并）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-确定每个符号的地址（确定地址）"><span class="nav-number">1.3.</span> <span class="nav-text">3.确定每个符号的地址（确定地址）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-在指令中填入新地址-（2-3-4属于重定位）（修改引用）"><span class="nav-number">1.4.</span> <span class="nav-text">4.在指令中填入新地址 （2.3.4属于重定位）（修改引用）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#符号解析（符号绑定）"><span class="nav-number">2.</span> <span class="nav-text">符号解析（符号绑定）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序中有定义和引用的符号"><span class="nav-number">2.1.</span> <span class="nav-text">-程序中有定义和引用的符号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编辑器把定义的符号放在一个符号表当中"><span class="nav-number">2.2.</span> <span class="nav-text">-编辑器把定义的符号放在一个符号表当中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器把符号的引用存放在重定位节中（-rel-text与rel-data）"><span class="nav-number">2.3.</span> <span class="nav-text">-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器把每个符号的引用都与一个确定的符号定义建立关联"><span class="nav-number">2.4.</span> <span class="nav-text">-链接器把每个符号的引用都与一个确定的符号定义建立关联</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位"><span class="nav-number">3.</span> <span class="nav-text">重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链接符号的类型"><span class="nav-number">4.</span> <span class="nav-text">链接符号的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Global-Symbols-（模块内部定义的全局符号）"><span class="nav-number">4.1.</span> <span class="nav-text">1.Global Symbols （模块内部定义的全局符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-External-Symbols-（外部定义的外部符号）"><span class="nav-number">4.2.</span> <span class="nav-text">2.External Symbols （外部定义的外部符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Local-Symbols-（本模块定义并且引用的局部符号）"><span class="nav-number">4.3.</span> <span class="nav-text">3.Local Symbols （本模块定义并且引用的局部符号）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们说符号的定义，实质上就是分配了存储空间。"><span class="nav-number">4.4.</span> <span class="nav-text">我们说符号的定义，实质上就是分配了存储空间。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数名符号指代码所在区"><span class="nav-number">4.5.</span> <span class="nav-text">函数名符号指代码所在区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#变量名指静态数据区"><span class="nav-number">4.6.</span> <span class="nav-text">变量名指静态数据区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全局符号的强，弱"><span class="nav-number">4.7.</span> <span class="nav-text">全局符号的强，弱</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#多重定义符号的解析规则"><span class="nav-number">4.7.1.</span> <span class="nav-text">多重定义符号的解析规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例子"><span class="nav-number">4.7.2.</span> <span class="nav-text">例子</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态连接"><span class="nav-number">5.</span> <span class="nav-text">静态连接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#静态库（-a-archive-files）"><span class="nav-number">5.0.1.</span> <span class="nav-text">静态库（.a archive files）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态库的创建"><span class="nav-number">5.0.2.</span> <span class="nav-text">静态库的创建</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自定义库文件"><span class="nav-number">5.0.3.</span> <span class="nav-text">自定义库文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用静态库的过程"><span class="nav-number">5.1.</span> <span class="nav-text">使用静态库的过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#共享库"><span class="nav-number">6.</span> <span class="nav-text">共享库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位-1"><span class="nav-number">7.</span> <span class="nav-text">重定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一步-合并相同的节"><span class="nav-number">7.1.</span> <span class="nav-text">第一步 合并相同的节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第二步-对集合D中的定义符号进行重定位（确定地址）"><span class="nav-number">7.2.</span> <span class="nav-text">第二步 对集合D中的定义符号进行重定位（确定地址）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第三步-对引用符号进行重定位"><span class="nav-number">7.3.</span> <span class="nav-text">第三步 对引用符号进行重定位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是重定位信息？"><span class="nav-number">8.</span> <span class="nav-text">什么是重定位信息？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定位操作举例"><span class="nav-number">9.</span> <span class="nav-text">重定位操作举例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PC相对地址重定位"><span class="nav-number">9.1.</span> <span class="nav-text">PC相对地址重定位</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据的存储方式"><span class="nav-number">9.2.</span> <span class="nav-text">数据的存储方式:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相对地址的重定位方式"><span class="nav-number">9.3.</span> <span class="nav-text">相对地址的重定位方式</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址"><span class="nav-number">9.3.0.1.</span> <span class="nav-text">call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC"><span class="nav-number">9.3.1.</span> <span class="nav-text">注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#应该为0x08048380-b-0x0804838b"><span class="nav-number">9.3.2.</span> <span class="nav-text">应该为0x08048380+b = 0x0804838b</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绝对地址重定位"><span class="nav-number">9.4.</span> <span class="nav-text">绝对地址重定位</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#具体过程"><span class="nav-number">9.4.1.</span> <span class="nav-text">具体过程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#符号重定位"><span class="nav-number">9.5.</span> <span class="nav-text">符号重定位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可执行文件的存储器映像"><span class="nav-number">10.</span> <span class="nav-text">可执行文件的存储器映像</span></a></li></ol></div>
             
 
           </div>
