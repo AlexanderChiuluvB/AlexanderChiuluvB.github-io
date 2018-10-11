@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="CPU的基本结构与功能 CPI （Cycles Per Instruction）用于衡量电脑的性能，指每条指令的时钟数 1CPI=TC/IC 表示某个程序的所有指令的条数；TC表示执行某个程序所花费的时钟周期) 加深理解：M【R【ebp】+8】指的是命令行参数首个地址，即char *str的地址，M【地址】等于在内存中取值，相当于这个就是strcpy的第二个实际参数str 而R【ebp】-16 意">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-程序及指令">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/11/CSAPP-程序及指令/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="CPU的基本结构与功能 CPI （Cycles Per Instruction）用于衡量电脑的性能，指每条指令的时钟数 1CPI=TC/IC 表示某个程序的所有指令的条数；TC表示执行某个程序所花费的时钟周期) 加深理解：M【R【ebp】+8】指的是命令行参数首个地址，即char *str的地址，M【地址】等于在内存中取值，相当于这个就是strcpy的第二个实际参数str 而R【ebp】-16 意">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/prog.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/under.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/7.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/lalala.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/MIPS.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/he.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/寄存器.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/von.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/eflags.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/exe.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/kanjia.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/esp.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ssss.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-3.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/alu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dd.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zz.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-4.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/Linked.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-5.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-6.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/term.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/li.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/luan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/存储器.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/neicun.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/relation.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/RAM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/daikuan.png">
+<meta property="og:updated_time" content="2018-09-11T11:43:46.888Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-程序及指令">
+<meta name="twitter:description" content="CPU的基本结构与功能 CPI （Cycles Per Instruction）用于衡量电脑的性能，指每条指令的时钟数 1CPI=TC/IC 表示某个程序的所有指令的条数；TC表示执行某个程序所花费的时钟周期) 加深理解：M【R【ebp】+8】指的是命令行参数首个地址，即char *str的地址，M【地址】等于在内存中取值，相当于这个就是strcpy的第二个实际参数str 而R【ebp】-16 意">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/prog.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/09/11/CSAPP-程序及指令/"/>
+
+
+
+
+
+  <title>CSAPP-程序及指令 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/11/CSAPP-程序及指令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-程序及指令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-11T05:16:28+08:00">
+                2018-09-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="CPU的基本结构与功能"><a href="#CPU的基本结构与功能" class="headerlink" title="CPU的基本结构与功能"></a>CPU的基本结构与功能</h2><p><img src="/home/alex/图片/prog.png" alt="image"></p>
+<p>CPI （Cycles Per Instruction）用于衡量电脑的性能<br>，指每条指令的时钟数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CPI=TC/IC</span><br></pre></td></tr></table></figure>
+<p>表示某个程序的所有指令的条数；TC表示执行某个程序所花费的时钟周期)</p>
+<p><img src="/home/alex/图片/under.png" alt="image"><br>加深理解：<br>M【R【ebp】+8】指的是命令行参数首个地址，即char *str的地址，M【地址】等于在内存中取值，相当于这个就是strcpy的第二个实际参数str</p>
+<p>而R【ebp】-16 意思就是buffer[0]，即buffer的首地址</p>
+<p><img src="/home/alex/图片/7.png" alt="image"></p>
+<p>红线下面都是在CPU了里面进行操作</p>
+<p>红线上面都是通过总线在外面进行操作</p>
+<p><img src="/home/alex/图片/lalala.png" alt="image"></p>
+<p><img src="/home/alex/图片/MIPS.png" alt="image"></p>
+<p>笔记：</p>
+<p>取值令和PC+“1” 是并行的，（同时操作），“1”指一条指令的长度</p>
+<p>在MIPS中，每个指令都是定长的，32位，占4位，因此实际上是PC+4</p>
+<p>而在X86中，每个指令都不是定长的，是边长的，一定要在指令译码之后才能确定指令有多长</p>
+<p>异常和指令区别：</p>
+<p>异常指和处理中的这条指令有关的的问题</p>
+<p>中断指和处理中的指令无关的问题</p>
+<p><img src="/home/alex/图片/he.png" alt="image"></p>
+<p><img src="/home/alex/图片/寄存器.png" alt="image"></p>
+<p><img src="/home/alex/图片/von.png" alt="image"></p>
+<p>MDR：内存数据寄存器</p>
+<p>MAR: 主存地址寄存器</p>
+<p><img src="/home/alex/图片/eflags.png" alt="image"></p>
+<p>GPR 8个通用寄存器  属于可见寄存器</p>
+<p>EFLAGs 标志寄存器  属于半可见寄存器</p>
+<p>EIP 指令指针  属于半可见寄存器</p>
+<p><img src="/home/alex/图片/exe.png" alt="image"></p>
+<p>绿色的地址实际上是虚拟空间的地址。这里假定</p>
+<h4 id="取值令"><a href="#取值令" class="headerlink" title="取值令"></a>取值令</h4><p>取地址放到EIP中，再放到主存地址寄存器当中。55 89 e5 放在主存。</p>
+<p>控制器会发出读命令（红线），存储器会根据读信号根据传入的地址寻找里面的数值</p>
+<p>过一段时间后（取数时间） 数据就会放在数据线上。</p>
+<h4 id="指令译码"><a href="#指令译码" class="headerlink" title="指令译码"></a>指令译码</h4><p>根据功能产生控制信号</p>
+<p><img src="/home/alex/图片/kanjia.png" alt="image"></p>
+<p>R[esp]&lt;-R[esp]-4  ESP处的地址-4 变成 bffefffc</p>
+<p>M[R[esp]]&lt;-R[ebp]</p>
+<h4 id="esp内容放到MAR"><a href="#esp内容放到MAR" class="headerlink" title="esp内容放到MAR"></a>esp内容放到MAR</h4><p><img src="/home/alex/图片/esp.png" alt="image"></p>
+<p><img src="/home/alex/图片/ssss.png" alt="image"></p>
+<p>写信号，把要写的地址bffeffc 和写的内容（MDR中的bfff0020）传输到存储器中</p>
+<p><img src="/home/alex/图片/2018-3.png" alt="image"></p>
+<p><img src="/home/alex/图片/alu.png" alt="image"></p>
+<p>而eax是0号寄存器，edx是2号寄存器</p>
+<p><img src="/home/alex/图片/dd.png" alt="image"></p>
+<p>经过这条指令之后</p>
+<p><img src="/home/alex/图片/zz.png" alt="image"></p>
+<p>结果变成这样</p>
+<p><img src="/home/alex/图片/2018-4.png" alt="image"></p>
+<p>小结</p>
+<p><img src="/home/alex/图片/Linked.png" alt="image"></p>
+<h3 id="练习答案"><a href="#练习答案" class="headerlink" title="练习答案"></a>练习答案</h3><p><img src="/home/alex/图片/2018-5.png" alt="image"></p>
+<p><img src="/home/alex/图片/2018-6.png" alt="image"></p>
+<p>什么是指令寄存器？什么是程序计数器？</p>
+<p>指令寄存器（IR，Instruction Register），是临时放置从内存里面取得的程序指令的寄存器，用于存放当前从主存储器读出的正在执行的一条指令。</p>
+<p>什么是程序计数器PC？</p>
+<p>程序计数器是用于存放下一条指令所在单元的地址的地方。</p>
+<p>当执行一条指令时，首先需要根据PC中存放的指令地址，将指令由内存取到指令寄存器中，此过程称为“取指令”。与此同时，PC中的地址或自动加1或由转移指针给出下一条指令的地址。此后经过分析指令，执行指令。完成第一条指令的执行，而后根据PC取出第二条指令的地址，如此循环，执行每一条指令。</p>
+<h2 id="访问存储操作与基本术语"><a href="#访问存储操作与基本术语" class="headerlink" title="访问存储操作与基本术语"></a>访问存储操作与基本术语</h2><p><img src="/home/alex/图片/term.png" alt="imaeg"></p>
+<p><img src="/home/alex/图片/li.png" alt="image"></p>
+<h3 id="存储器的分类"><a href="#存储器的分类" class="headerlink" title="存储器的分类"></a>存储器的分类</h3><h4 id="按工作性质-存储方式分类"><a href="#按工作性质-存储方式分类" class="headerlink" title="按工作性质/存储方式分类"></a>按工作性质/存储方式分类</h4><ol>
+<li>Random Access Memory(RAM)</li>
+</ol>
+<p>随机存取存储器 </p>
+<p>每个单元读写时间一样，与各单元所在位置无关，如内存</p>
+<p>2.Sequential Access Memo在ry（SAM）</p>
+<p>顺序采取存储器</p>
+<p>数据按照顺序从存储载体的始端读出或者写入，因此存取时间长短与所在信息的位置有关。如磁带</p>
+<p><img src="/home/alex/图片/luan.png" alt="image"></p>
+<h3 id="其他分类方式"><a href="#其他分类方式" class="headerlink" title="其他分类方式"></a>其他分类方式</h3><p><img src="/home/alex/图片/存储器.png" alt="image"></p>
+<h3 id="按功能-容量-速度-所在位置分类"><a href="#按功能-容量-速度-所在位置分类" class="headerlink" title="按功能/容量/速度/所在位置分类"></a>按功能/容量/速度/所在位置分类</h3><h4 id="寄存器："><a href="#寄存器：" class="headerlink" title="寄存器："></a>寄存器：</h4><p>封装在CPU中，用于存放当前执行的指令以及使用的数据</p>
+<p>用触发器实现，速度快，x86 8个,MIPS 32个</p>
+<h4 id="高速存储（cache）："><a href="#高速存储（cache）：" class="headerlink" title="高速存储（cache）："></a>高速存储（cache）：</h4><p>位于CPU内部或者附近，用来存放当前要执行的局部程序段和数据</p>
+<p>用SRAM实现，速度可以与CPU匹配，容量小</p>
+<p><img src="/home/alex/图片/neicun.png" alt="image"></p>
+<h4 id="内存与外存关系："><a href="#内存与外存关系：" class="headerlink" title="内存与外存关系："></a>内存与外存关系：</h4><p><img src="/home/alex/图片/relation.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/RAM.png" alt="存储器受CPU总线控制"></p>
+<p>存储器受CPU总线控制，总线就是链接CPU和存储器的数据线，地址线和控制线</p>
+<p>由于地址线是36位，因此存储单元地址有2^36种可能性，即可以寻找地址的范围为0-2^32-1 即64GB</p>
+<p><img src="/home/alex/图片/daikuan.png" alt="imaeg"></p>
+<p>Tmc&gt;TA</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/10/CS230-Shallow-Neural-Networks/" rel="next" title="CS230 Shallow Neural Networks">
+                <i class="fa fa-chevron-left"></i> CS230 Shallow Neural Networks
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU的基本结构与功能"><span class="nav-number">1.</span> <span class="nav-text">CPU的基本结构与功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#取值令"><span class="nav-number">1.0.1.</span> <span class="nav-text">取值令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指令译码"><span class="nav-number">1.0.2.</span> <span class="nav-text">指令译码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#esp内容放到MAR"><span class="nav-number">1.0.3.</span> <span class="nav-text">esp内容放到MAR</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#练习答案"><span class="nav-number">1.1.</span> <span class="nav-text">练习答案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问存储操作与基本术语"><span class="nav-number">2.</span> <span class="nav-text">访问存储操作与基本术语</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储器的分类"><span class="nav-number">2.1.</span> <span class="nav-text">存储器的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#按工作性质-存储方式分类"><span class="nav-number">2.1.1.</span> <span class="nav-text">按工作性质/存储方式分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他分类方式"><span class="nav-number">2.2.</span> <span class="nav-text">其他分类方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按功能-容量-速度-所在位置分类"><span class="nav-number">2.3.</span> <span class="nav-text">按功能/容量/速度/所在位置分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#寄存器："><span class="nav-number">2.3.1.</span> <span class="nav-text">寄存器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高速存储（cache）："><span class="nav-number">2.3.2.</span> <span class="nav-text">高速存储（cache）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存与外存关系："><span class="nav-number">2.3.3.</span> <span class="nav-text">内存与外存关系：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
