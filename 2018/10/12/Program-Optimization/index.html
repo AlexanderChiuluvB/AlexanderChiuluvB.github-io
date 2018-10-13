@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="General Useful OptimizationsCode Motionreduce the frequency where computation performed try to use shift,add to replace multiply Reduction on strength leaq (%rsi,%rcx),%rcx means %rcx = %rcx+%rsi %rcx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Program Optimization &amp;&amp; Pipeline &amp;&amp;Architecture Lab">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="General Useful OptimizationsCode Motionreduce the frequency where computation performed try to use shift,add to replace multiply Reduction on strength leaq (%rsi,%rcx),%rcx means %rcx = %rcx+%rsi %rcx">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics1.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics3.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics4.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics7.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics5.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics6.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics10.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics11.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics12.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics13.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics15.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics16.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics17.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics18.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics19.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics14.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics21.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics22.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics23.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics24.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics25.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics26.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics27.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics28.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics29.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/delay.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/bubble.png">
+<meta property="og:updated_time" content="2018-10-12T15:22:24.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Program Optimization &amp;&amp; Pipeline &amp;&amp;Architecture Lab">
+<meta name="twitter:description" content="General Useful OptimizationsCode Motionreduce the frequency where computation performed try to use shift,add to replace multiply Reduction on strength leaq (%rsi,%rcx),%rcx means %rcx = %rcx+%rsi %rcx">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/"/>
+
+
+
+
+
+  <title>Program Optimization && Pipeline &&Architecture Lab | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Program Optimization && Pipeline &&Architecture Lab</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T07:39:06+08:00">
+                2018-10-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="General-Useful-Optimizations"><a href="#General-Useful-Optimizations" class="headerlink" title="General Useful Optimizations"></a>General Useful Optimizations</h3><h4 id="Code-Motion"><a href="#Code-Motion" class="headerlink" title="Code Motion"></a>Code Motion</h4><h5 id="reduce-the-frequency-where-computation-performed"><a href="#reduce-the-frequency-where-computation-performed" class="headerlink" title="reduce the frequency where computation performed"></a>reduce the frequency where computation performed</h5><p><img src="/home/alex/图片/ics1.png" alt="ics1"></p>
+<p>try to use shift,add to replace multiply</p>
+<h4 id="Reduction-on-strength"><a href="#Reduction-on-strength" class="headerlink" title="Reduction on strength"></a>Reduction on strength</h4><p><img src="/home/alex/图片/ics2.png" alt="ics2"></p>
+<p>leaq (%rsi,%rcx),%rcx means %rcx = %rcx+%rsi</p>
+<p>%rcx now is n  </p>
+<p>%rsi now is i*n+j</p>
+<h4 id="Share-common-Subexpressions"><a href="#Share-common-Subexpressions" class="headerlink" title="Share common Subexpressions"></a>Share common Subexpressions</h4><p><img src="/home/alex/图片/ics3.png" alt="ics3"></p>
+<p>#### </p>
+<p>possibly the memory of A and B overlap and the change of B might affect A</p>
+<p><img src="/home/alex/图片/ics4.png" alt="ics4"></p>
+<p>Memory aliasing, closely related (arguably synonymous) to pointer aliasing, means that more than one variable name points to the same underlying stored value. </p>
+<h4 id="Benchmark-Computation"><a href="#Benchmark-Computation" class="headerlink" title="Benchmark Computation"></a>Benchmark Computation</h4><p>Cycles Per Element(CPE)</p>
+<p>Length = n</p>
+<p>CPE  =cycles per OP</p>
+<p>T = CPE*n+Overhead??  what is overhead?</p>
+<p><img src="/home/alex/图片/ics7.png" alt="ics7"></p>
+<p><img src="/home/alex/图片/ics5.png" alt="ics5"></p>
+<p>You don’t need to use get_vec in each loop,so avoid bound checking</p>
+<p><img src="/home/alex/图片/ics6.png" alt="ics6"></p>
+<h3 id="流水线的冒险"><a href="#流水线的冒险" class="headerlink" title="流水线的冒险"></a>流水线的冒险</h3><p>阻止下一条指令在下一个时钟周期开始执行的情况</p>
+<p>1.结构冒险</p>
+<p>所需要的硬件部件正在为之前的指令工作</p>
+<p>2.数据冒险</p>
+<p>需要等待之前的指令来完成数据的读写</p>
+<p>3.控制冒险</p>
+<p>需要根据之前指令的结果决定下一步的行为</p>
+<h4 id="结构冒险"><a href="#结构冒险" class="headerlink" title="结构冒险"></a>结构冒险</h4><p>执行指令的硬件发生争抢</p>
+<p><img src="/home/alex/图片/ics10.png" alt="ics10"></p>
+<h6 id="解决方案一：-冒泡停顿"><a href="#解决方案一：-冒泡停顿" class="headerlink" title="解决方案一：  冒泡停顿"></a>解决方案一：  冒泡停顿</h6><p>但如果连续出现冒泡停顿，则会影响指令执行的效率</p>
+<p><img src="/home/alex/图片/ics11.png" alt="ics11"></p>
+<h6 id="解决方案二：-把数据和指令放在不同的存储器"><a href="#解决方案二：-把数据和指令放在不同的存储器" class="headerlink" title="解决方案二：  把数据和指令放在不同的存储器"></a>解决方案二：  把数据和指令放在不同的存储器</h6><p>但值得注意的是，冯诺伊曼结构要求内存（主存储器）同时存放<br>数据和指令，而只是在CPU的高速缓存（cache）当中，数据和指令可以分开存放</p>
+<p>这个在设计CPU就已经处理好了，但是如果要设计一个新的处理器，这是一个要考虑的问题</p>
+<p><img src="/home/alex/图片/ics12.png" alt="ics12"></p>
+<h4 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h4><p>解决方法1：<br><img src="/home/alex/图片/ics13.png" alt="ics13"></p>
+<p>解决方法2：</p>
+<p>冲突产生原因是add 指令 需要 read 上一条指令write的结果（$t0）</p>
+<p>但其实，$t0的值已经在ALU阶段就已经计算好，而add指令中，其实不是非得在<br>R阶段读$t0，只要在ALU阶段读取到数值就行。</p>
+<p>那么就可以在sub指令中，把ALU计算得到的结果$t0送到流水线寄存器当中，<br>然后再送到add指令的ALU中。</p>
+<p><img src="/home/alex/图片/ics15.png" alt="ics15"></p>
+<p>从硬件角度来看，我们要这样修改：</p>
+<p><img src="/home/alex/图片/ics16.png" alt="ics16"></p>
+<p>sub先执行，所以在前面，add后执行，所以在后面</p>
+<p>add指令需要用到前一条指令的结果，因此设置了绿色的旁路，<br>以是否有数据冒险情况作为激活信号。</p>
+<p><img src="/home/alex/图片/ics17.png" alt="ics17"></p>
+<p>第二种情况</p>
+<p>对应下图</p>
+<p><img src="/home/alex/图片/ics18.png" alt="ics18"></p>
+<p>第三条指令需要用到第一条指令得到的结果，第一条的$t0在DMEM与write back阶段之间，所以呢，就是对应上上图，在访存阶段末期，通过旁路把数据传回给ALU</p>
+<p>如果 instruction 3也需要用到$t0，因为R阶段之前，第一条指令刚好完成了write back，因此可以正常运行</p>
+<h5 id="load-use冒险，不能用数据前递来解决"><a href="#load-use冒险，不能用数据前递来解决" class="headerlink" title="load-use冒险，不能用数据前递来解决"></a>load-use冒险，不能用数据前递来解决</h5><p>如下图，因为or需要用到上一条指令的$t1,但是or至少要在ALU阶段读取$t1的数值，然而lw只能在完成了访存阶段后才能把结果写回到$t1,因此只能通过冒泡来延后or指令的执行时间了。</p>
+<p><img src="/home/alex/图片/ics19.png" alt="ics19"></p>
+<h4 id="控制冒险"><a href="#控制冒险" class="headerlink" title="控制冒险"></a>控制冒险</h4><p>要到ALU阶段才能决定是否要取分支</p>
+<p><img src="/home/alex/图片/ics14.png" alt="ics14"></p>
+<h5 id="转移指令对流水线的影响"><a href="#转移指令对流水线的影响" class="headerlink" title="转移指令对流水线的影响"></a>转移指令对流水线的影响</h5><p><img src="/home/alex/图片/ics21.png" alt="ics21"></p>
+<p>beq指令只有在进行完执行（ALU）阶段之后才能确定是否发生跳转，加入跳转条件成立，则说明lw sw是不应该取的。这时跳回sub指令，导致性能被浪费。</p>
+<h5 id="转移指令的分类"><a href="#转移指令的分类" class="headerlink" title="转移指令的分类"></a>转移指令的分类</h5><p><img src="/home/alex/图片/ics22.png" alt="ics22"></p>
+<h6 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h6><p>j指令在取指的时候就能判断是否为j指令，然后取出后26位，加上末两位的00，<br>然后在PC - update 阶段就能取PC+4的前四位，这些操作都能在一个时钟周期内完成。</p>
+<p><img src="/home/alex/图片/ics23.png" alt="ics23"></p>
+<p><img src="/home/alex/图片/ics24.png" alt="ics24"></p>
+<p><img src="/home/alex/图片/ics25.png" alt="ics25"></p>
+<p><img src="/home/alex/图片/ics26.png" alt="ics26"></p>
+<p>译码阶段进行R【rs】，R【rt】的读取，在执行阶段进行两数的比较<br><img src="/home/alex/图片/ics27.png" alt="ics27"></p>
+<p>但实际上进行减法不需要ALU那么复杂的部件，可以在译码阶段进行一点小改动</p>
+<p><img src="/home/alex/图片/ics28.png" alt="ics28"></p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p><img src="/home/alex/图片/ics29.png" alt="ics29"></p>
+<p>为了避免停顿，可以把转移指令的前一条与转移指令无关的指令（xor）移到转移指令的下一条。</p>
+<p><img src="/home/alex/图片/delay.png" alt="ics30"></p>
+<h3 id="Arch-Lab"><a href="#Arch-Lab" class="headerlink" title="Arch Lab"></a>Arch Lab</h3><p>Part C </p>
+<p>利用循环展开技术与加载使用冒险</p>
+<p>加载使用冒险：</p>
+<p><img src="/home/alex/图片/bubble.png" alt="bb"></p>
+<p>因此可以在mrmovl后添加另外一条mrmovl指令，来抵消流水线停顿，同时也使得下一次操作提前取值。</p>
+<p>循环展开大意就是减少循环次数，在每次循环的时候同时进行多次操作。同时也可以配合并行，并行就是例如把每次累加操作的的结果分为两部分，如奇数项累加成S1，偶数项累加成S2，最后结果就是S1+S2。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#You can modify this portion</span><br><span class="line">    # Loop header</span><br><span class="line">    xorq %rax,%rax      # count = 0;</span><br><span class="line">    iaddq $-2,%rdx</span><br><span class="line">    andq %rdx,%rdx      # len &lt;= 0?</span><br><span class="line">    jl newLoop      # if so, goto Done:</span><br><span class="line"></span><br><span class="line">Loop:   mrmovq (%rdi), %r10 # read val from src...</span><br><span class="line">    mrmovq 8(%rdi),%r11</span><br><span class="line">    rmmovq %r10, (%rsi) # ...and store it to dst</span><br><span class="line">    andq %r10, %r10     # val &lt;= 0?</span><br><span class="line">    jle Npos        # if so, goto Npos:</span><br><span class="line">    iaddq $1, %rax      # count++</span><br><span class="line">Npos:</span><br><span class="line">    rmmovq %r11,8(%rsi)</span><br><span class="line">    andq %r11,%r11</span><br><span class="line">    jle judge</span><br><span class="line">    iaddq $1,%rax</span><br><span class="line"></span><br><span class="line">judge:</span><br><span class="line">    iaddq $16,%rdi</span><br><span class="line">    iaddq $16,%rsi</span><br><span class="line">    iaddq $-2,%rdx</span><br><span class="line">    jge Loop</span><br><span class="line"></span><br><span class="line">newLoop:</span><br><span class="line">    iaddq $2,%rdx</span><br><span class="line">    je Done</span><br><span class="line">    mrmovq (%rdi),%r10</span><br><span class="line">    rmmovq %r10,(%rsi)</span><br><span class="line">    andq %r10,%r10</span><br><span class="line">    jle Done</span><br><span class="line">    iaddq $1,%rax</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/11/CSAPP-程序及指令/" rel="next" title="CSAPP-程序及指令">
+                <i class="fa fa-chevron-left"></i> CSAPP-程序及指令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#General-Useful-Optimizations"><span class="nav-number">1.</span> <span class="nav-text">General Useful Optimizations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Code-Motion"><span class="nav-number">1.1.</span> <span class="nav-text">Code Motion</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#reduce-the-frequency-where-computation-performed"><span class="nav-number">1.1.1.</span> <span class="nav-text">reduce the frequency where computation performed</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reduction-on-strength"><span class="nav-number">1.2.</span> <span class="nav-text">Reduction on strength</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Share-common-Subexpressions"><span class="nav-number">1.3.</span> <span class="nav-text">Share common Subexpressions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Benchmark-Computation"><span class="nav-number">1.4.</span> <span class="nav-text">Benchmark Computation</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流水线的冒险"><span class="nav-number">2.</span> <span class="nav-text">流水线的冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#结构冒险"><span class="nav-number">2.1.</span> <span class="nav-text">结构冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#解决方案一：-冒泡停顿"><span class="nav-number">2.1.0.1.</span> <span class="nav-text">解决方案一：  冒泡停顿</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#解决方案二：-把数据和指令放在不同的存储器"><span class="nav-number">2.1.0.2.</span> <span class="nav-text">解决方案二：  把数据和指令放在不同的存储器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据冒险"><span class="nav-number">2.2.</span> <span class="nav-text">数据冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#load-use冒险，不能用数据前递来解决"><span class="nav-number">2.2.1.</span> <span class="nav-text">load-use冒险，不能用数据前递来解决</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制冒险"><span class="nav-number">2.3.</span> <span class="nav-text">控制冒险</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#转移指令对流水线的影响"><span class="nav-number">2.3.1.</span> <span class="nav-text">转移指令对流水线的影响</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#转移指令的分类"><span class="nav-number">2.3.2.</span> <span class="nav-text">转移指令的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#优化"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#总结"><span class="nav-number">2.3.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Arch-Lab"><span class="nav-number">3.</span> <span class="nav-text">Arch Lab</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
