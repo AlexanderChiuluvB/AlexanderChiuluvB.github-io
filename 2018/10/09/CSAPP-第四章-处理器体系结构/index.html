@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Y86 流水线的实现PC的计算在非流水线结构中，计算PC是在时间周期结束的时候进行的。 而在流水线实现中，计算PC作为指令执行的第一步。 Fetch 阶段三种情况： 1.预测错误，从流水线寄存器M（M_valA）读出该指令valP的数值，即下一条指令的地址。 2.RET 指令 W_valM 从流水线寄存器读出返回地址（访存）。 3.其他情况会使用存放在流水线寄存器F中的PC的预测值。 HCL代码如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP 第四章 处理器体系结构——Y86流水线基本原理">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/10/09/CSAPP-第四章-处理器体系结构/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Y86 流水线的实现PC的计算在非流水线结构中，计算PC是在时间周期结束的时候进行的。 而在流水线实现中，计算PC作为指令执行的第一步。 Fetch 阶段三种情况： 1.预测错误，从流水线寄存器M（M_valA）读出该指令valP的数值，即下一条指令的地址。 2.RET 指令 W_valM 从流水线寄存器读出返回地址（访存）。 3.其他情况会使用存放在流水线寄存器F中的PC的预测值。 HCL代码如">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-7.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ICS22.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-8.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics30.png">
+<meta property="og:updated_time" content="2018-10-13T22:58:49.396Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP 第四章 处理器体系结构——Y86流水线基本原理">
+<meta name="twitter:description" content="Y86 流水线的实现PC的计算在非流水线结构中，计算PC是在时间周期结束的时候进行的。 而在流水线实现中，计算PC作为指令执行的第一步。 Fetch 阶段三种情况： 1.预测错误，从流水线寄存器M（M_valA）读出该指令valP的数值，即下一条指令的地址。 2.RET 指令 W_valM 从流水线寄存器读出返回地址（访存）。 3.其他情况会使用存放在流水线寄存器F中的PC的预测值。 HCL代码如">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-7.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/10/09/CSAPP-第四章-处理器体系结构/"/>
+
+
+
+
+
+  <title>CSAPP 第四章 处理器体系结构——Y86流水线基本原理 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/09/CSAPP-第四章-处理器体系结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP 第四章 处理器体系结构——Y86流水线基本原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T03:18:00+08:00">
+                2018-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Y86-流水线的实现"><a href="#Y86-流水线的实现" class="headerlink" title="Y86 流水线的实现"></a>Y86 流水线的实现</h2><h3 id="PC的计算"><a href="#PC的计算" class="headerlink" title="PC的计算"></a>PC的计算</h3><p>在非流水线结构中，计算PC是在时间周期结束的时候进行的。</p>
+<p>而在流水线实现中，计算PC作为指令执行的第一步。</p>
+<h3 id="Fetch-阶段"><a href="#Fetch-阶段" class="headerlink" title="Fetch 阶段"></a>Fetch 阶段</h3><p>三种情况：</p>
+<p>1.预测错误，从流水线寄存器M（M_valA）读出该指令valP的数值，即下一条指令的地址。</p>
+<p>2.RET 指令 W_valM 从流水线寄存器读出返回地址（访存）。</p>
+<p>3.其他情况会使用存放在流水线寄存器F中的PC的预测值。</p>
+<p>HCL代码如下：</p>
+<p><img src="/home/alex/图片/2018-7.png" alt="ics24"></p>
+<p>其中 f_predPC</p>
+<p><img src="/home/alex/图片/ICS22.png" alt="ics22"></p>
+<p>exercises:</p>
+<p>写出 f_stat的HCL代码，提供取出指令的临时状态</p>
+<p>word f_stat = </p>
+<p>f_icode == IHALT : SHLT</p>
+<p>mem_error : SADR</p>
+<p>!instr_valid : SINS</p>
+<p>1: SAOK</p>
+<h3 id="译码和写回阶段"><a href="#译码和写回阶段" class="headerlink" title="译码和写回阶段"></a>译码和写回阶段</h3><h4 id="dsrc-A"><a href="#dsrc-A" class="headerlink" title="dsrc_A"></a>dsrc_A</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">word dsrc_A =</span><br><span class="line"></span><br><span class="line">DICODE in &#123;IRRMOVQ,IRMMOVQ,IPUSHQ,IOPQ&#125; : D_rA</span><br><span class="line"></span><br><span class="line">DICODE in &#123;IPOPQ,IRETURN&#125; : RRSP</span><br><span class="line"></span><br><span class="line">1: RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="PUSH"><a href="#PUSH" class="headerlink" title="PUSH"></a>PUSH</h5><p>RRMOVQ，RMMOVQ source A的值来自于寄存器A</p>
+<p>而push 实际上就是</p>
+<p>subl $4,%esp</p>
+<p>movl %ebp,(%esp)</p>
+<p>call实际上是 push+jump,先把返回地址（此时存放在EIP中）push进%ebp，<br>然后再jump到要执行指令的地址</p>
+<h5 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h5><p>而POP指令实际上是 </p>
+<p>movl (%esp),%eip //eip寄存器是保存CPU所要读取指令地址的寄存器</p>
+<p>addl $4,%esp</p>
+<h5 id="return"><a href="#return" class="headerlink" title="return"></a>return</h5><p>return 实际上是 把栈顶地址弹出到EIP，然后按照EIP指示的指令地址继续执行程序</p>
+<p>需要用到栈指针来作为source A</p>
+<h5 id="dsrc-B"><a href="#dsrc-B" class="headerlink" title="dsrc_B"></a>dsrc_B</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">word d_srcB = </span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IOPQ，IMRMOVQ，IRMOVQ&#125; ：d_srcB</span><br><span class="line">DICODE IN &#123;IPUSHQ,IPOPQ,IRET,ICALL&#125; ：RRSP</span><br><span class="line">1:RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="dstE"><a href="#dstE" class="headerlink" title="dstE"></a>dstE</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">word d_dstE = </span><br><span class="line"></span><br><span class="line">// 目的寄存器是rB而且存储的是由数值运算得到的结果</span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IOPQ,IIRMOVQ,IRRMOVQ&#125; : D_rB:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//因为pushq,popq都需要涉及到</span><br><span class="line"></span><br><span class="line">push: subl $4,%rsp</span><br><span class="line">pop : addl $4,%rsp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IPUSHQ,IPOPQ,IRET,ICALL&#125;： RRSP</span><br><span class="line"></span><br><span class="line">1： RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="dstM"><a href="#dstM" class="headerlink" title="dstM"></a>dstM</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">DICODE IN &#123;IMRMOVQ,IPOPQ&#125;: R_rA</span><br><span class="line"></span><br><span class="line">1: RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="d-valA"><a href="#d-valA" class="headerlink" title="d_valA"></a>d_valA</h5><p>这五个转发源存在优先级，通常流水线的实现总是给处于最早的流水线阶段中的转发源以较高的优先级。</p>
+<p><img src="/home/alex/图片/2018-8.png" alt="ics25"></p>
+<p>只有pop指令关心访存或者写回阶段的两个源之间的优先级</p>
+<p>pop 指令看作是 </p>
+<p>movl (%rsp) , %rsp</p>
+<p>addl $4,%rsp</p>
+<p>因为默认 m_valM 访存的优先级 大于 M_valE 计算的优先级<br>因此加入下一条指令是</p>
+<p>movl %rsp, %rax</p>
+<p>则会把%rsp+4 之前的值传到%rax，满足x86的pop操作规定</p>
+<h5 id="aluA"><a href="#aluA" class="headerlink" title="aluA"></a>aluA</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">word aluA = [</span><br><span class="line">   E_icode in &#123;IRRMOVQ,IOPQ&#125; : E_valA</span><br><span class="line">   E_icode in &#123;IIRMOVQ,IRMMOVQ,IMRMOVQ&#125; : E_valC</span><br><span class="line">   E_icode in &#123;ICALLQ, IPUSHQ&#125; : -8 //如果是iaddl 就是-4</span><br><span class="line">   E_icode in &#123;IPOPQ,IRETQ&#125; : 8</span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h5 id="aluB"><a href="#aluB" class="headerlink" title="aluB"></a>aluB</h5><p><img src="/home/alex/图片/ics30.png" alt="ics30"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/11/CSAPP-程序及指令/" rel="next" title="CSAPP-程序及指令">
+                <i class="fa fa-chevron-left"></i> CSAPP-程序及指令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/12/Program-Optimization/" rel="prev" title="Program Optimization && Pipeline &&Architecture Lab">
+                Program Optimization && Pipeline &&Architecture Lab <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Y86-流水线的实现"><span class="nav-number">1.</span> <span class="nav-text">Y86 流水线的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PC的计算"><span class="nav-number">1.1.</span> <span class="nav-text">PC的计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fetch-阶段"><span class="nav-number">1.2.</span> <span class="nav-text">Fetch 阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#译码和写回阶段"><span class="nav-number">1.3.</span> <span class="nav-text">译码和写回阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dsrc-A"><span class="nav-number">1.3.1.</span> <span class="nav-text">dsrc_A</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PUSH"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">PUSH</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#POP"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">POP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#return"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">return</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dsrc-B"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">dsrc_B</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dstE"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">dstE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dstM"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">dstM</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#d-valA"><span class="nav-number">1.3.1.7.</span> <span class="nav-text">d_valA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#aluA"><span class="nav-number">1.3.1.8.</span> <span class="nav-text">aluA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#aluB"><span class="nav-number">1.3.1.9.</span> <span class="nav-text">aluB</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
