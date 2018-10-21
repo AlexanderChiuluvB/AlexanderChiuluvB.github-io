@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="CSAPP," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -79,26 +79,16 @@
 
 
 
-<meta name="description" content="静态连接构造可执行文件的时候，链接器所完成的任务:1.符号解析每个符号对应于一个函数，一个全局变量或者静态变量，符号解析的目的是把每个符号引用正好和一个符号定义关联起来。 2.重定位把每个符号定义和另一个内存位置关联起来，然后重定位这些节，修改所有对这些符号的引用。  目标文件有三种形式 1.可重定位目标文件：eg: prog.o1.包含二进制代码和数据，编译的时候可以和其他可重定位目标文件合并起">
-<meta name="keywords" content="CSAPP">
-<meta property="og:type" content="article">
-<meta property="og:title" content="CSAPP-链接器">
-<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/08/31/CSAPP-链接器/index.html">
+<meta name="description" content="Alex&apos;s personal blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Alex Chiu">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/page/2/index.html">
 <meta property="og:site_name" content="Alex Chiu">
-<meta property="og:description" content="静态连接构造可执行文件的时候，链接器所完成的任务:1.符号解析每个符号对应于一个函数，一个全局变量或者静态变量，符号解析的目的是把每个符号引用正好和一个符号定义关联起来。 2.重定位把每个符号定义和另一个内存位置关联起来，然后重定位这些节，修改所有对这些符号的引用。  目标文件有三种形式 1.可重定位目标文件：eg: prog.o1.包含二进制代码和数据，编译的时候可以和其他可重定位目标文件合并起">
+<meta property="og:description" content="Alex&apos;s personal blog">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=3b90ca10d2a20cf4529df68d17602053/80cb39dbb6fd5266b2047183a918972bd407367d.jpg">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ELF.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/Linkable.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/elf2.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ELFHEAD.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/elfinfo.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/EXECUABLE.png">
-<meta property="og:updated_time" content="2018-08-31T23:15:29.244Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CSAPP-链接器">
-<meta name="twitter:description" content="静态连接构造可执行文件的时候，链接器所完成的任务:1.符号解析每个符号对应于一个函数，一个全局变量或者静态变量，符号解析的目的是把每个符号引用正好和一个符号定义关联起来。 2.重定位把每个符号定义和另一个内存位置关联起来，然后重定位这些节，修改所有对这些符号的引用。  目标文件有三种形式 1.可重定位目标文件：eg: prog.o1.包含二进制代码和数据，编译的时候可以和其他可重定位目标文件合并起">
-<meta name="twitter:image" content="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=3b90ca10d2a20cf4529df68d17602053/80cb39dbb6fd5266b2047183a918972bd407367d.jpg">
+<meta name="twitter:title" content="Alex Chiu">
+<meta name="twitter:description" content="Alex&apos;s personal blog">
 
 
 
@@ -128,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/08/31/CSAPP-链接器/"/>
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/page/2/"/>
 
 
 
 
 
-  <title>CSAPP-链接器 | Alex Chiu</title>
+  <title>Alex Chiu</title>
   
 
 
@@ -153,7 +143,8 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left 
+  page-home">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -266,9 +257,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -298,7 +289,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">CSAPP-链接器</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/31/CSAPP-链接器/" itemprop="url">CSAPP-链接器</a></h1>
         
 
         <div class="post-meta">
@@ -370,7 +363,9 @@
       
 
       
-        <h1 id="静态连接"><a href="#静态连接" class="headerlink" title="静态连接"></a>静态连接</h1><h5 id="构造可执行文件的时候，链接器所完成的任务"><a href="#构造可执行文件的时候，链接器所完成的任务" class="headerlink" title="构造可执行文件的时候，链接器所完成的任务:"></a>构造可执行文件的时候，链接器所完成的任务:</h5><h3 id="1-符号解析"><a href="#1-符号解析" class="headerlink" title="1.符号解析"></a>1.符号解析</h3><pre><code>每个符号对应于一个函数，一个全局变量或者静态变量，符号解析的目的是把每个符号引用正好和一个符号定义关联起来。
+        
+          
+            <h1 id="静态连接"><a href="#静态连接" class="headerlink" title="静态连接"></a>静态连接</h1><h5 id="构造可执行文件的时候，链接器所完成的任务"><a href="#构造可执行文件的时候，链接器所完成的任务" class="headerlink" title="构造可执行文件的时候，链接器所完成的任务:"></a>构造可执行文件的时候，链接器所完成的任务:</h5><h3 id="1-符号解析"><a href="#1-符号解析" class="headerlink" title="1.符号解析"></a>1.符号解析</h3><pre><code>每个符号对应于一个函数，一个全局变量或者静态变量，符号解析的目的是把每个符号引用正好和一个符号定义关联起来。
 </code></pre><h3 id="2-重定位"><a href="#2-重定位" class="headerlink" title="2.重定位"></a>2.重定位</h3><pre><code>把每个符号定义和另一个内存位置关联起来，然后重定位这些节，修改所有对这些符号的引用。
 </code></pre><p><br></p>
 <h2 id="目标文件有三种形式"><a href="#目标文件有三种形式" class="headerlink" title="目标文件有三种形式"></a>目标文件有三种形式</h2><p><br></p>
@@ -419,6 +414,8 @@
 <h3 id="6-符号解析的含义"><a href="#6-符号解析的含义" class="headerlink" title="6.符号解析的含义"></a>6.符号解析的含义</h3><p>就是对每个需要链接的模块中的符号引用找到对应的符号定义，把符号引用与每一个唯一的符号定义进行绑定。</p>
 <h3 id="7-重定位"><a href="#7-重定位" class="headerlink" title="7.重定位"></a>7.重定位</h3><p>把合并后的只读代码段以及可读可写数据段中符号引用处的引用位置重新填上新的数值，用来指向绑定的定义符号。</p>
 
+          
+        
       
     </div>
     
@@ -433,36 +430,14 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/02/CSAPP-链接器（二）/" rel="prev" title="CSAPP-链接器（二）">
-                CSAPP-链接器（二） <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -472,11 +447,14 @@
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
 
           </div>
@@ -484,10 +462,6 @@
 
 
           
-
-  
-
-
 
         </div>
         
@@ -508,17 +482,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -582,22 +547,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#静态连接"><span class="nav-number">1.</span> <span class="nav-text">静态连接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#构造可执行文件的时候，链接器所完成的任务"><span class="nav-number">1.0.0.0.1.</span> <span class="nav-text">构造可执行文件的时候，链接器所完成的任务:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-符号解析"><span class="nav-number">1.0.1.</span> <span class="nav-text">1.符号解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-重定位"><span class="nav-number">1.0.2.</span> <span class="nav-text">2.重定位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目标文件有三种形式"><span class="nav-number">1.1.</span> <span class="nav-text">目标文件有三种形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-可重定位目标文件：eg-prog-o"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.可重定位目标文件：eg: prog.o</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-可执行目标文件：eg-a-out"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.可执行目标文件：eg: a.out</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-共享目标文件（-so）"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.共享目标文件（*.so）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#符号和符号表"><span class="nav-number">1.1.4.</span> <span class="nav-text">符号和符号表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Coursera-听课笔记"><span class="nav-number">1.1.5.</span> <span class="nav-text">Coursera 听课笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#预处理命令"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">预处理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#处理源文件中以-开头的预编译指令，包括："><span class="nav-number">1.1.5.1.1.</span> <span class="nav-text">处理源文件中以#开头的预编译指令，包括：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-删除-define-并且展开所定义的宏"><span class="nav-number">1.1.5.1.2.</span> <span class="nav-text">1.删除#define 并且展开所定义的宏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-处理所有条件预编译指令"><span class="nav-number">1.1.5.1.3.</span> <span class="nav-text">2.处理所有条件预编译指令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-插入头文件到-include-处，可以用递归方式进行处理"><span class="nav-number">1.1.5.1.4.</span> <span class="nav-text">3.插入头文件到#include 处，可以用递归方式进行处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-删除所有的注释”-“和“-”"><span class="nav-number">1.1.5.1.5.</span> <span class="nav-text">4.删除所有的注释”//“和“/ /”</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-保留所有-pragma编译指令"><span class="nav-number">1.1.5.1.6.</span> <span class="nav-text">5.保留所有#pragma编译指令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-添加行号和文件名标识，方便编译的时候编译器产生调试用的行号信息"><span class="nav-number">1.1.5.1.7.</span> <span class="nav-text">6.添加行号和文件名标识，方便编译的时候编译器产生调试用的行号信息</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编译"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">编译</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#编译命令"><span class="nav-number">1.1.5.2.0.1.</span> <span class="nav-text">编译命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#汇编"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">汇编</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接"><span class="nav-number">1.1.5.4.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接器的由来："><span class="nav-number">1.1.5.5.</span> <span class="nav-text">链接器的由来：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#汇编语言出现："><span class="nav-number">1.1.5.5.1.</span> <span class="nav-text">汇编语言出现：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#高级编程语言的出现"><span class="nav-number">1.1.5.5.2.</span> <span class="nav-text">高级编程语言的出现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接操作的步骤"><span class="nav-number">1.1.5.6.</span> <span class="nav-text">链接操作的步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用链接好处"><span class="nav-number">1.1.5.7.</span> <span class="nav-text">使用链接好处</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#局部变量temp-分配在栈中，不会在过程（函数）被引用，因此不是符号定义"><span class="nav-number">1.1.5.7.0.1.</span> <span class="nav-text">局部变量temp 分配在栈中，不会在过程（函数）被引用，因此不是符号定义</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可执行文件生成-O2-2级优化-g-生成调试信息-o-目标文件名"><span class="nav-number">1.1.5.7.0.2.</span> <span class="nav-text">可执行文件生成 -O2 2级优化  -g 生成调试信息 -o 目标文件名</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#链接本质：合并相同的节"><span class="nav-number">1.1.5.7.1.</span> <span class="nav-text">链接本质：合并相同的节</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#目标文件的格式"><span class="nav-number">1.1.5.8.</span> <span class="nav-text">目标文件的格式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#目标代码：编译器和汇编器处理源代码后生成的机器语言目标代码"><span class="nav-number">1.1.5.8.1.</span> <span class="nav-text">目标代码：编译器和汇编器处理源代码后生成的机器语言目标代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#目标文件：包含目标代码的文件"><span class="nav-number">1.1.5.8.2.</span> <span class="nav-text">目标文件：包含目标代码的文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态连接库文件可以由若干个可重定位目标文件组成"><span class="nav-number">1.1.5.8.3.</span> <span class="nav-text">静态连接库文件可以由若干个可重定位目标文件组成</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF（Executable-and-Linkable-Format）"><span class="nav-number">1.2.</span> <span class="nav-text">ELF（Executable and Linkable Format）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#链接视图——可重定位目标文件格式"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">链接视图——可重定位目标文件格式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#C语言规定"><span class="nav-number">1.2.0.1.1.</span> <span class="nav-text">C语言规定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#把-bss-与-data分开的好处"><span class="nav-number">1.2.0.1.2.</span> <span class="nav-text">把.bss 与 .data分开的好处</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行视图–可执行目标文件"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">执行视图–可执行目标文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-可执行目标文件是ELF的执行视图，由不同的段组成"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.可执行目标文件是ELF的执行视图，由不同的段组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-可重定位目标文件是ELF格式的链接视图，由不同的节组成"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.可重定位目标文件是ELF格式的链接视图，由不同的节组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-两种目标文件的数据都是二进制表示的补码形式"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.两种目标文件的数据都是二进制表示的补码形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-链接的本质："><span class="nav-number">1.3.4.</span> <span class="nav-text">4. 链接的本质：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-链接器主要功能："><span class="nav-number">1.3.5.</span> <span class="nav-text">5. 链接器主要功能：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-符号解析的含义"><span class="nav-number">1.3.6.</span> <span class="nav-text">6.符号解析的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-重定位"><span class="nav-number">1.3.7.</span> <span class="nav-text">7.重定位</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -731,10 +680,6 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 

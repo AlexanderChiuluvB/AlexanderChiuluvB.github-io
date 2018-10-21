@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="存储层次结构概况 存储器的特性1.非易失性，即断电后不会丢失数据 CPU和主存都是易失性，而BIOS和硬盘是非易失的 通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。 2.可读可写3.随机访问访问数据与其位置无关 主存与BIOS(basic input output system)能够实现随即访问数据。 但是硬盘则不是。 4.访问时">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP 存储层次结构&#x2F;Cahce">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="存储层次结构概况 存储器的特性1.非易失性，即断电后不会丢失数据 CPU和主存都是易失性，而BIOS和硬盘是非易失的 通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。 2.可读可写3.随机访问访问数据与其位置无关 主存与BIOS(basic input output system)能够实现随即访问数据。 但是硬盘则不是。 4.访问时">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ccc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/bios.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/DRAM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/MH.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-9.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/refresh.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/SRAM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/upl2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/SDRAM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/hangfangwen.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/column.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/CAIYANG.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/gap.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/data.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/DDR.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/a.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cache.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cao.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-10.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/oc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/write.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/memory.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/策略.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/visi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/x86.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/mapping.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/youxiao.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ex.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/quan.png">
+<meta property="og:updated_time" content="2018-10-21T11:05:17.817Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP 存储层次结构&#x2F;Cahce">
+<meta name="twitter:description" content="存储层次结构概况 存储器的特性1.非易失性，即断电后不会丢失数据 CPU和主存都是易失性，而BIOS和硬盘是非易失的 通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。 2.可读可写3.随机访问访问数据与其位置无关 主存与BIOS(basic input output system)能够实现随即访问数据。 但是硬盘则不是。 4.访问时">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ccc.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/"/>
+
+
+
+
+
+  <title>CSAPP 存储层次结构/Cahce | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP 存储层次结构/Cahce</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T06:01:00+08:00">
+                2018-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="存储层次结构概况"><a href="#存储层次结构概况" class="headerlink" title="存储层次结构概况"></a>存储层次结构概况</h3><p><img src="/home/alex/图片/ccc.png" alt="image"></p>
+<h4 id="存储器的特性"><a href="#存储器的特性" class="headerlink" title="存储器的特性"></a>存储器的特性</h4><h5 id="1-非易失性，即断电后不会丢失数据"><a href="#1-非易失性，即断电后不会丢失数据" class="headerlink" title="1.非易失性，即断电后不会丢失数据"></a>1.非易失性，即断电后不会丢失数据</h5><p><img src="/home/alex/图片/bios.png" alt="bios"></p>
+<p>CPU和主存都是易失性，而BIOS和硬盘是非易失的</p>
+<p>通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。</p>
+<h5 id="2-可读可写"><a href="#2-可读可写" class="headerlink" title="2.可读可写"></a>2.可读可写</h5><h5 id="3-随机访问"><a href="#3-随机访问" class="headerlink" title="3.随机访问"></a>3.随机访问</h5><p>访问数据与其位置无关</p>
+<p>主存与BIOS(basic input output system)能够实现随即访问数据。</p>
+<p>但是硬盘则不是。</p>
+<h5 id="4-访问时间"><a href="#4-访问时间" class="headerlink" title="4.访问时间"></a>4.访问时间</h5><p>主存速度高于硬盘访问时间</p>
+<p><img src="/home/alex/图片/DRAM.png" alt="dram"></p>
+<p>DRAM读取数据时间是CPU读取时间的一百倍，因此执行一条指令的时候非常的慢！</p>
+<p>因此考虑在CPU 和DRAM之间添加一个SRAM，使得CPU所需要的程序和数据大部分时间存放在Cache中，大大缩短执行指令时候所需要的时间周期。</p>
+<p><img src="/home/alex/图片/MH.png" alt="MH"></p>
+<h3 id="DRAM"><a href="#DRAM" class="headerlink" title="DRAM"></a>DRAM</h3><p>右下角就是内存条，通常也叫内存模组，是由若干个DRAM芯片组成的，核心就是左图的内存阵列，从外界输入行列信号，就可以读取一个基本存储单元，如红圈每个存储单元有若干个bit，通常是4个或者8个，每一个放大来看如右上角电路图所示。</p>
+<p><img src="/home/alex/图片/2018-9.png" alt="a"></p>
+<p>基本存储单元</p>
+<p><img src="/home/alex/图片/refresh.png" alt="upload successfu"></p>
+<p>通过存储的电容来表示存储的bit信息，对SDRAM的读写，主要体现在电容的冲放电，而这个是很难再做提高的。</p>
+<p><img src="/home/alex/图片/SRAM.png" alt="upl"></p>
+<p>SRAM采取的是晶体管开关存储，远比电容充电放电要快，所以SRAM比DRAM要快，现代CPU的高速缓存通常用SRAM实现</p>
+<p><img src="/home/alex/图片/upl2.png" alt="upl2"></p>
+<h4 id="内存工作原理"><a href="#内存工作原理" class="headerlink" title="内存工作原理"></a>内存工作原理</h4><p>第一步，申请系统总线，获得总线控制权后，会把地址送到内存控制器中。</p>
+<p>然后内存控制器会把地址分解为行地址和列地址</p>
+<p><img src="/home/alex/图片/SDRAM.png" alt="SDRAM"></p>
+<p>第二步 行访问</p>
+<p>内存控制器向SDRAM发起访存操作</p>
+<p><img src="/home/alex/图片/hangfangwen.png" alt="SDRAM2"></p>
+<p>这一行当中所有存储单元的信号通过放大器之后会放在一个缓冲区当中。这就是激活/行访问</p>
+<p>第三步 列访问<br><img src="/home/alex/图片/column.png" alt="COLUMN"></p>
+<p>第四步 送回CPU</p>
+<p><img src="/home/alex/图片/CAIYANG.png" alt="CAIYANG"></p>
+<p>内存控制器把采样到的数据送回给CPU</p>
+<p>CPU之后又发送地址信号，如果不是同一行，则就要把激活的行关闭。</p>
+<p>这个过程叫做预充电</p>
+<h5 id="SDRAM的关键性能参数："><a href="#SDRAM的关键性能参数：" class="headerlink" title="SDRAM的关键性能参数："></a>SDRAM的关键性能参数：</h5><p>1.tRCD row to column delay  从行选到列选的延迟时间</p>
+<p>2.CL CAS Latency  从列选到数据输出的延迟周期数</p>
+<p>3.tRP 行预充电时间</p>
+<p>数据个数就等同于内存条上DRAM芯片个数<br><img src="/home/alex/图片/gap.png" alt="upload successfu"></p>
+<p>所以整个过程的周期并不等于7.5ns！</p>
+<p>DDR SDRAM 比 SDR SDRAM 要快，原因是前者一次能比后者取多两倍的数据</p>
+<p>DDR是数据传输的方式，不等同于内存</p>
+<p><img src="/home/alex/图片/data.png" alt="upload successf"></p>
+<h5 id="DDR-与-SDR-对比"><a href="#DDR-与-SDR-对比" class="headerlink" title="DDR 与 SDR 对比"></a>DDR 与 SDR 对比</h5><p><img src="/home/alex/图片/DDR.png" alt="ddr"></p>
+<p>DDR由于一次读取两个数据，所以tRCD和CL变慢了，但是每个周期能同时取两个数据。<br>这里的带宽就是由每个周期取得的数据计算出来的。</p>
+<p>衡量CPU有两个指标</p>
+<h6 id="访存带宽"><a href="#访存带宽" class="headerlink" title="访存带宽"></a>访存带宽</h6><p>单位时间内存储器所存取的信息量。</p>
+<h6 id="访存延迟"><a href="#访存延迟" class="headerlink" title="访存延迟"></a>访存延迟</h6><p>读出第一个数据所需要的时间。</p>
+<h4 id="Cache工作原理"><a href="#Cache工作原理" class="headerlink" title="Cache工作原理"></a>Cache工作原理</h4><h5 id="空间局部性："><a href="#空间局部性：" class="headerlink" title="空间局部性："></a>空间局部性：</h5><p>空间局部性是一旦一个指令一个存储单元被访问，那么它附近的单元也将很快被访问</p>
+<h5 id="时间局部性："><a href="#时间局部性：" class="headerlink" title="时间局部性："></a>时间局部性：</h5><p>时间局部性是一旦一个指令被执行了，则在不久的将来，它可能再被执行。</p>
+<p><img src="/home/alex/图片/a.png" alt="uploa"></p>
+<p><img src="/home/alex/图片/cache.png" alt="upload succ"></p>
+<h5 id="操作过程"><a href="#操作过程" class="headerlink" title="操作过程"></a>操作过程</h5><p><img src="/home/alex/图片/cao.png" alt="uploa"></p>
+<p>怎么把虚拟地址转化为实际地址是个问题</p>
+<h5 id="Cache读操作"><a href="#Cache读操作" class="headerlink" title="Cache读操作"></a>Cache读操作</h5><p>1.第一条指令，由于一开始Cache是空的，所以没有命中。因此Cache访问主存。</p>
+<p>之所以分配给表项1，是由地址倒数第二个数字决定的。（不看H）</p>
+<p>然后前面的所有项(20)放到标签处。</p>
+<p><img src="/home/alex/图片/2018-10.png" alt="filename already exists, ren"></p>
+<p>2.第二种情况，没有命中，因为表被占用了。</p>
+<p>4011H，先检查有效位1，发现原来标签是20H，因此把地址替换掉。</p>
+<p><img src="/home/alex/图片/oc.png" alt="upload success"></p>
+<h5 id="Cache写操作"><a href="#Cache写操作" class="headerlink" title="Cache写操作"></a>Cache写操作</h5><p><img src="/home/alex/图片/write.png" alt="write"></p>
+<h4 id="平均访存时间"><a href="#平均访存时间" class="headerlink" title="平均访存时间"></a>平均访存时间</h4><p><img src="/home/alex/图片/memory.png" alt="visit"></p>
+<p><img src="/home/alex/图片/策略.png" alt="upload successfu"></p>
+<p>Cache映射策略，直接映射会遇到这么一个问题：</p>
+<p>就是存储器会每隔八个地址把数据映射到Cache中，如果程序交替访问这两个数据，那么每次访问都会访问主存，把地址写入到Cache中，这样性能比没有Cache的时候还要差。</p>
+<p>也可以通过二路组，四路组相联策略，但是代价是每次取数据的时候，要取多个标签比较，如直接映射只需要取一个标签出来，如图中的0，而二路组则要2个。而且这样会使得硬件电路变得复杂化，增加了命中时间，得不偿失。</p>
+<p><img src="/home/alex/图片/visi.png" alt="upload succe"></p>
+<h4 id="常见Cache替换算法"><a href="#常见Cache替换算法" class="headerlink" title="常见Cache替换算法"></a>常见Cache替换算法</h4><p><img src="/home/alex/图片/x86.png" alt="upload succ"></p>
+<p>LRU的实现：</p>
+<p>1.队列</p>
+<p>2.用LRUnumber，例如初始化每块的LRUnumber为0，当要访问这块Cache的时候重新设置为0，然后其他块++1，然后LRUnumber最大的那个block就是最近最少使用的块。</p>
+<p>计算机领域单位使用情况</p>
+<p><img src="/home/alex/图片/dan.png" alt="upload succesful"></p>
+<h3 id="Cache-映射"><a href="#Cache-映射" class="headerlink" title="Cache 映射"></a>Cache 映射</h3><h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p><img src="/home/alex/图片/mapping.png" alt="map"></p>
+<p>Cache 大小：</p>
+<p>假设每个槽，就是cache的每个block能装512个(2^9)byte，说明b = 9</p>
+<p>然后一共有16个sets，说明 s = 4，</p>
+<p>因此cache地址一共是（s+b = 13位）</p>
+<p>主存的第0块，第16块，第32块。。都能放在cache的0槽当中，但是怎么知道<br>是哪个块群的呢?因此用标记号来说明，那么标记号该有几位？就是块群的个数2^7=128</p>
+<p>所以标记号就是7位，标记号用来指出对应行来自于哪个块群。</p>
+<p>主存大小：<br>2048 块 <em> 512B/块 = 2^11 </em> 2^ 9 = 2^20</p>
+<p>所以主存地址一共20位，包含了9位的块内地址，4位cache索引，剩下7位主存标记。<br>主存一共2048（2^11）块，所以主存标记和cache索引用来标记主存的具体块号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">例如：给定地址 0220CH</span><br><span class="line"></span><br><span class="line">转化为二进制 0000 0010 0001 0000 1100</span><br><span class="line"></span><br><span class="line">前7位 0000 001  决定来自于块群 1</span><br><span class="line"></span><br><span class="line">中间4位 0001 决定来自块群的具体哪个块  第一块</span><br><span class="line"></span><br><span class="line">后面9位，块内地址 决定了块内的哪个单元 第12个单元</span><br></pre></td></tr></table></figure>
+<p><strong>所以大概过程</strong></p>
+<p>拿来一个主存地址，然后划分为三段，根据中间索引号来寻找cache对应槽，然后看<br>valid位和标记位，如果valid=0，说明里面是空的，冷不命中，要从主存把地址送过来。如果valid=1，而且主存标记刚好是标记位，就根据块内地址在槽内寻找对应单元。</p>
+<p><img src="/home/alex/图片/youxiao.png" alt="upload succeul"></p>
+<p>给定32位主存地址，划分为三部分。</p>
+<p>首先由于块大小为16（2^4）B，因此b = 4,偏移位 4位</p>
+<p>索引位呢？  中间的索引位决定于cache有多少行</p>
+<p>因此行数=64KB/16B = 4K = 2^12 行</p>
+<p>因此中间索引位一共有12位</p>
+<p>剩下16位就是tag位，标记位</p>
+<p>给定内存地址，先由中间12行找到cache对应的行，看tag位与valid位是否满足条件，（valid=1说明这一行有数据）满足条件就hit，hit了就根据偏移位寻找对应的数据。</p>
+<p>块大小位16B，即128bit，使用多路选择器MUX来选择取哪个32位的data。</p>
+<p>11 最左边 10 中左 01 中右 00最右边</p>
+<p>如果取的是int型（word），由于word alignment，即内存地址最后的两位其实是不需要理会的。那么只看第三第四位，就是所谓的block offset。决定所取int放在哪个block.</p>
+<p>而如果要取的是char型，要在取了word之后再通过一个MUX，根据主存地址最后两位（Byte Offset）来得到要取哪个byte。</p>
+<p><img src="/home/alex/图片/ex.png" alt="upload successl"></p>
+<h3 id="cache-容量"><a href="#cache-容量" class="headerlink" title="cache 容量"></a>cache 容量</h3><p>上图中容量为  行数 X（每一行的bit数）</p>
+<p>（16+1）<em>4K + 64K </em> 8 = 72.5KB</p>
+<p>数据 64KB/72.5KB   =88.3%</p>
+<p>有一个64行，块容量为16bytes的cache</p>
+<p>十进制地址 1200应该映射到哪一行？</p>
+<p>方法一： 【1200/16】mod 64  = 11</p>
+<p>方法二： 1200转换为二进制 0100 1011 0000</p>
+<p>索引号 = 6 ，即看中间存的是哪一行，001011 就是 11</p>
+<p>实现一个直接映射，16K行数据，块大小为1个字（4B），32位主存地址的cache需要多少容量？</p>
+<p>16K = 2^14 行数据，即中间索引有14位</p>
+<p>byte =4B ，b = 2</p>
+<p>所以tag = 32-2-14  =16</p>
+<p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
+<p>特点</p>
+<p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/12/Program-Optimization/" rel="next" title="Program Optimization && Pipeline &&Architecture Lab">
+                <i class="fa fa-chevron-left"></i> Program Optimization && Pipeline &&Architecture Lab
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/20/CSAPP-Cache-Lab/" rel="prev" title="CSAPP -Cache Lab">
+                CSAPP -Cache Lab <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储层次结构概况"><span class="nav-number">1.</span> <span class="nav-text">存储层次结构概况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#存储器的特性"><span class="nav-number">1.1.</span> <span class="nav-text">存储器的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-非易失性，即断电后不会丢失数据"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.非易失性，即断电后不会丢失数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-可读可写"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.可读可写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-随机访问"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.随机访问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-访问时间"><span class="nav-number">1.1.4.</span> <span class="nav-text">4.访问时间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DRAM"><span class="nav-number">2.</span> <span class="nav-text">DRAM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内存工作原理"><span class="nav-number">2.1.</span> <span class="nav-text">内存工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SDRAM的关键性能参数："><span class="nav-number">2.1.1.</span> <span class="nav-text">SDRAM的关键性能参数：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DDR-与-SDR-对比"><span class="nav-number">2.1.2.</span> <span class="nav-text">DDR 与 SDR 对比</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#访存带宽"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">访存带宽</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#访存延迟"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">访存延迟</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache工作原理"><span class="nav-number">2.2.</span> <span class="nav-text">Cache工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#空间局部性："><span class="nav-number">2.2.1.</span> <span class="nav-text">空间局部性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#时间局部性："><span class="nav-number">2.2.2.</span> <span class="nav-text">时间局部性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#操作过程"><span class="nav-number">2.2.3.</span> <span class="nav-text">操作过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cache读操作"><span class="nav-number">2.2.4.</span> <span class="nav-text">Cache读操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cache写操作"><span class="nav-number">2.2.5.</span> <span class="nav-text">Cache写操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#平均访存时间"><span class="nav-number">2.3.</span> <span class="nav-text">平均访存时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见Cache替换算法"><span class="nav-number">2.4.</span> <span class="nav-text">常见Cache替换算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache-映射"><span class="nav-number">3.</span> <span class="nav-text">Cache 映射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#直接映射"><span class="nav-number">3.1.</span> <span class="nav-text">直接映射</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cache-容量"><span class="nav-number">4.</span> <span class="nav-text">cache 容量</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

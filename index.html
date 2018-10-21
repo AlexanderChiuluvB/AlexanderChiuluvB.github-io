@@ -272,6 +272,453 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/20/CSAPP-Cache-Lab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/20/CSAPP-Cache-Lab/" itemprop="url">CSAPP -Cache Lab</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-20T23:11:27+08:00">
+                2018-10-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Part-B"><a href="#Part-B" class="headerlink" title="Part B"></a>Part B</h3><p>引用<br><a href="https://blog.csdn.net/xbb224007/article/details/81103995?utm_source=blogxgwz0" target="_blank" rel="noopener">https://blog.csdn.net/xbb224007/article/details/81103995?utm_source=blogxgwz0</a></p>
+<p><img src="/home/alex/图片/原函数misses过多原因分析.png" alt="upload successl"></p>
+<h5 id="2-6就是常说的“抖动”"><a href="#2-6就是常说的“抖动”" class="headerlink" title="2-6就是常说的“抖动”"></a>2-6就是常说的“抖动”</h5><p>就是A，B数组下标相同的元素会映射到同一个cache块当中。</p>
+<p>这里不命中本质上是因为访问同一个block的两个元素的时候，由于中间访问了其他块，导致已经加载的块被驱逐，进而导致第二次访问时候不命中。</p>
+<p>解决办法： 同时把一个block若干个元素取出来，即省去了中间访问其他块导致驱逐的过程。利用blocking思想</p>
+<p>CMU 文章<br><a href="http://csapp.cs.cmu.edu/2e/waside/waside-blocking.pdf" target="_blank" rel="noopener">http://csapp.cs.cmu.edu/2e/waside/waside-blocking.pdf</a></p>
+<pre><code>1、A数组访问A[0][0]，冷不命中，将块11装入cache。
+
+ 2、B数组访问B[0][0]，虽然B[0][0]所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组B对应的块11装入cache。
+
+ 3、A数组访问A[0][1]，虽然A[0][1] 所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组A对应的块11装入cache。
+
+ 4、B数组访问B[1][0]，虽然B[1][0]所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组B对应的块11装入cache。
+
+ 5、A数组访问A[0][2]，虽然A[0][2]所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组A对应的块11装入cache。
+
+ 6、B数组访问B[2][0]，B[2][0] 所映射的块12不在cache中，冷不命中，将数组B对应的块12装入cache。
+
+ 7、A数组访问A[0][3]，A[0][3]所映射的块11在cache中，且标记位相同，故命中。
+
+ 8、B数组访问B[3][0]，B[3][0]所映射的块12在cache中，且标记位相同，故命中。
+
+ 9、A数组访问A[1][0]，A[1][0]所映射的块11在cache中，且标记位相同，故命中。
+
+ 10、B数组访问B[0][1]，虽然B[0][1] 所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组B对应的块11装入cache。
+
+ 11、A数组访问A[1][1]，虽然A[1][1]所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组A对应的块11装入cache。
+
+ 12、B数组访问B[1][1]，虽然B[1][1]所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组B对应的块11装入cache。
+
+ 13、A数组访问A[1][2]，虽然A[1][2]所映射的块11在cache中，但是标记位不同，造成冲突不命中，重新将数组A对应的块11装入cache。
+
+ 14、B数组访问B[2][1]，B[2][1] 所映射的块12在cache中，且标记位相同，故命中。
+
+ 15、A数组访问A[1][3]，A[1][3]所映射的块11在cache中，且标记位相同，故命中。
+</code></pre><h4 id="本实验的Cache"><a href="#本实验的Cache" class="headerlink" title="本实验的Cache"></a>本实验的Cache</h4><p>b = 5,s = 5，E=1</p>
+<p>B  =2^b = 2^5 = 32</p>
+<p>S  =2^s  =2^5  =32</p>
+<p>所以就是有32个块，每个块能存 32 bytes，就是8个int</p>
+<h4 id="先分析-32X32"><a href="#先分析-32X32" class="headerlink" title="先分析 32X32"></a>先分析 32X32</h4><p>一行32个元素，所以一行4个block，一共32个block，所以cache能应付8行。</p>
+<p>所以每8行就会遇到冲突。<strong>就是两个int之间相差8行的整数倍，那么读取这两个元素所在的block就会发生替换</strong></p>
+<p>所以使用 8 * 8 blocking ，这样可以避免冲突</p>
+<h5 id="注意处理对角线的情况"><a href="#注意处理对角线的情况" class="headerlink" title="注意处理对角线的情况"></a>注意处理对角线的情况</h5><p>因为矩阵转置之后，A【i,j】 = B【j,i】是相等的。</p>
+<p>所以会发生冲突，可以采取的方法是，遇到对角线上的元素先不放到B，等block的其他七个元素写完之后，再把这个元素写到目的地。避免了由于中间加载B块，导致A块被驱逐所引起的命中冲突。</p>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">if(M==32)</span><br><span class="line">&#123;   //separate the the 32X32 block into 8X8 , decrease the number of misses</span><br><span class="line">    for(row_Block = 0;row_Block &lt; N ;row_Block+=8)&#123;</span><br><span class="line">        for(col_Block =0 ;col_Block &lt; M; col_Block+=8)&#123;</span><br><span class="line">            for(i=row_Block ; i&lt;row_Block+8;i++)&#123;</span><br><span class="line">                for(j=col_Block;j&lt;col_Block+8;j++)&#123;</span><br><span class="line">                    if(i!=j)&#123;</span><br><span class="line">                        B[j][i] = A[i][j];</span><br><span class="line">                    &#125;else&#123;</span><br><span class="line">                        tmp = A[i][j];                  //i==j means is the diagonal. if we set B right now ,the  misses and evictions will increase . because the cache set of B is same to A.</span><br><span class="line">                        index = i;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                if(col_Block == row_Block)&#123;             //just set B on the diagonal. other than shouldn&apos;t set the B</span><br><span class="line">                    B[index][index] = tmp;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="分析-61-x-67-情况"><a href="#分析-61-x-67-情况" class="headerlink" title="分析 61 x 67 情况"></a>分析 61 x 67 情况</h4><p>尝试 8<em>8,16</em>16,17*17等各种情况即可。</p>
+<p>最难的就是</p>
+<h4 id="64-X-64-情况"><a href="#64-X-64-情况" class="headerlink" title="64 X 64 情况"></a>64 X 64 情况</h4><p>一行用掉8个block，所以每4行就会发生冲突。</p>
+<p>1.先要想清楚，转置的时候，对A数组是按行访问的，而对与B数组是按列访问的。</p>
+<p>我们先来分析一下，如果在64 x 64情况下 ，采用8分块，那列访问B的时候，前四行和后四行映射的块是相同的。</p>
+<p>所以会发生这种情况：</p>
+<p>1.访问前4行第一列之后，再访问后4行的第一列，会发生冲突，使得原来的块被驱逐。</p>
+<p>2.再回去访问前四行的第二列，由于原来的块被驱逐，又会导致冲突不命中，</p>
+<p>3.访问后4行第二列又产生冲突不命中。</p>
+<p>如果采用 4 X 4 分块</p>
+<p>对于B 数组而言，访问顺序为<br>前四行前四列-》后四行前四列-》前四行后四列-》后四行后四列</p>
+<p><strong><em>这里有点不懂</em></strong></p>
+<p>参考文章提到，后四行前四列所在的块会覆盖前四行前四列的块，后面两次访问又会有一次不命中。为什么是2次？不是3次？</p>
+<p>因此采取的策略：</p>
+<p><img src="/home/alex/图片/qing.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/up.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/2018-11.png" alt="filename alread"></p>
+<p>按照这个顺序，对于B数组每一个块的元素，只会有一次不命中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">else if(M==64)&#123;</span><br><span class="line">     for (i = 0; i &lt; N; i+=8) &#123;</span><br><span class="line">         for (j = 0; j &lt; M; j+=8) &#123;</span><br><span class="line">             for(x=i;x&lt;i+4;x++)&#123;</span><br><span class="line"></span><br><span class="line">                 x1 = A[x][j];</span><br><span class="line">                 x2 = A[x][j+1];</span><br><span class="line">                 x3 = A[x][j+2];</span><br><span class="line">                 x4 = A[x][j+3];</span><br><span class="line">                 x5 = A[x][j+4];</span><br><span class="line">                 x6 = A[x][j+5];</span><br><span class="line">                 x7 = A[x][j+6];</span><br><span class="line">                 x8 = A[x][j+7];</span><br><span class="line">                 //leftup as usual</span><br><span class="line">                 B[j][x] = x1;</span><br><span class="line">                 B[j+1][x] = x2;</span><br><span class="line">                 B[j+2][x] = x3;</span><br><span class="line">                 B[j+3][x] = x4;</span><br><span class="line">                 B[j][x+4] = x5;</span><br><span class="line">                 B[j+1][x+4] = x6;</span><br><span class="line">                 B[j+2][x+4] = x7;</span><br><span class="line">                 B[j+3][x+4] = x8;</span><br><span class="line">             &#125;</span><br><span class="line">             for(y=j;y&lt;j+4;y++)&#123;</span><br><span class="line">                 </span><br><span class="line">                 x1 = A[i+4][y];</span><br><span class="line">                 x2 = A[i+5][y];</span><br><span class="line">                 x3 = A[i+6][y];</span><br><span class="line">                 x4 = A[i+7][y];</span><br><span class="line">                 x5 = B[y][i+4];</span><br><span class="line">                 x6 = B[y][i+5];</span><br><span class="line">                 x7 = B[y][i+6];</span><br><span class="line">                 x8 = B[y][i+7];</span><br><span class="line"></span><br><span class="line">                 B[y][i+4] = x1;</span><br><span class="line">                 B[y][i+5] = x2;</span><br><span class="line">                 B[y][i+6] = x3;</span><br><span class="line">                 B[y][i+7] = x4;</span><br><span class="line">                 B[y+4][i] = x5; </span><br><span class="line">                 B[y+4][i+1] = x6;</span><br><span class="line">                 B[y+4][i+2] = x7;</span><br><span class="line">                 B[y+4][i+3] = x8;</span><br><span class="line">             &#125;</span><br><span class="line"></span><br><span class="line">             for(x = i+4;x&lt;i+8;x++)&#123;</span><br><span class="line">                 x1 = A[x][j+4];</span><br><span class="line">                 x2 = A[x][j+5];</span><br><span class="line">                 x3 = A[x][j+6];</span><br><span class="line">                 x4 = A[x][j+7];</span><br><span class="line"></span><br><span class="line">                 B[j+4][x] = x1;</span><br><span class="line">                 B[j+5][x] = x2;</span><br><span class="line">                 B[j+6][x] = x3;</span><br><span class="line">                 B[j+7][x] = x4;</span><br><span class="line"></span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码就是：</p>
+<ol>
+<li><p>B数组访问前4行</p>
+</li>
+<li><p>B数组访问前四行后四列，和后四行前四列</p>
+</li>
+<li><p>B数组最后把后四行后四列转置</p>
+</li>
+</ol>
+<p>我感觉就是先把一行的数据处理完再去处理下一行，尽量不要交替着4行访问数据，这样会导致块被驱逐，加载，增加了总的冲突次数。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/15/CSAPP-存储层次结构/" itemprop="url">CSAPP 存储层次结构/Cahce</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T06:01:00+08:00">
+                2018-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="存储层次结构概况"><a href="#存储层次结构概况" class="headerlink" title="存储层次结构概况"></a>存储层次结构概况</h3><p><img src="/home/alex/图片/ccc.png" alt="image"></p>
+<h4 id="存储器的特性"><a href="#存储器的特性" class="headerlink" title="存储器的特性"></a>存储器的特性</h4><h5 id="1-非易失性，即断电后不会丢失数据"><a href="#1-非易失性，即断电后不会丢失数据" class="headerlink" title="1.非易失性，即断电后不会丢失数据"></a>1.非易失性，即断电后不会丢失数据</h5><p><img src="/home/alex/图片/bios.png" alt="bios"></p>
+<p>CPU和主存都是易失性，而BIOS和硬盘是非易失的</p>
+<p>通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。</p>
+<h5 id="2-可读可写"><a href="#2-可读可写" class="headerlink" title="2.可读可写"></a>2.可读可写</h5><h5 id="3-随机访问"><a href="#3-随机访问" class="headerlink" title="3.随机访问"></a>3.随机访问</h5><p>访问数据与其位置无关</p>
+<p>主存与BIOS(basic input output system)能够实现随即访问数据。</p>
+<p>但是硬盘则不是。</p>
+<h5 id="4-访问时间"><a href="#4-访问时间" class="headerlink" title="4.访问时间"></a>4.访问时间</h5><p>主存速度高于硬盘访问时间</p>
+<p><img src="/home/alex/图片/DRAM.png" alt="dram"></p>
+<p>DRAM读取数据时间是CPU读取时间的一百倍，因此执行一条指令的时候非常的慢！</p>
+<p>因此考虑在CPU 和DRAM之间添加一个SRAM，使得CPU所需要的程序和数据大部分时间存放在Cache中，大大缩短执行指令时候所需要的时间周期。</p>
+<p><img src="/home/alex/图片/MH.png" alt="MH"></p>
+<h3 id="DRAM"><a href="#DRAM" class="headerlink" title="DRAM"></a>DRAM</h3><p>右下角就是内存条，通常也叫内存模组，是由若干个DRAM芯片组成的，核心就是左图的内存阵列，从外界输入行列信号，就可以读取一个基本存储单元，如红圈每个存储单元有若干个bit，通常是4个或者8个，每一个放大来看如右上角电路图所示。</p>
+<p><img src="/home/alex/图片/2018-9.png" alt="a"></p>
+<p>基本存储单元</p>
+<p><img src="/home/alex/图片/refresh.png" alt="upload successfu"></p>
+<p>通过存储的电容来表示存储的bit信息，对SDRAM的读写，主要体现在电容的冲放电，而这个是很难再做提高的。</p>
+<p><img src="/home/alex/图片/SRAM.png" alt="upl"></p>
+<p>SRAM采取的是晶体管开关存储，远比电容充电放电要快，所以SRAM比DRAM要快，现代CPU的高速缓存通常用SRAM实现</p>
+<p><img src="/home/alex/图片/upl2.png" alt="upl2"></p>
+<h4 id="内存工作原理"><a href="#内存工作原理" class="headerlink" title="内存工作原理"></a>内存工作原理</h4><p>第一步，申请系统总线，获得总线控制权后，会把地址送到内存控制器中。</p>
+<p>然后内存控制器会把地址分解为行地址和列地址</p>
+<p><img src="/home/alex/图片/SDRAM.png" alt="SDRAM"></p>
+<p>第二步 行访问</p>
+<p>内存控制器向SDRAM发起访存操作</p>
+<p><img src="/home/alex/图片/hangfangwen.png" alt="SDRAM2"></p>
+<p>这一行当中所有存储单元的信号通过放大器之后会放在一个缓冲区当中。这就是激活/行访问</p>
+<p>第三步 列访问<br><img src="/home/alex/图片/column.png" alt="COLUMN"></p>
+<p>第四步 送回CPU</p>
+<p><img src="/home/alex/图片/CAIYANG.png" alt="CAIYANG"></p>
+<p>内存控制器把采样到的数据送回给CPU</p>
+<p>CPU之后又发送地址信号，如果不是同一行，则就要把激活的行关闭。</p>
+<p>这个过程叫做预充电</p>
+<h5 id="SDRAM的关键性能参数："><a href="#SDRAM的关键性能参数：" class="headerlink" title="SDRAM的关键性能参数："></a>SDRAM的关键性能参数：</h5><p>1.tRCD row to column delay  从行选到列选的延迟时间</p>
+<p>2.CL CAS Latency  从列选到数据输出的延迟周期数</p>
+<p>3.tRP 行预充电时间</p>
+<p>数据个数就等同于内存条上DRAM芯片个数<br><img src="/home/alex/图片/gap.png" alt="upload successfu"></p>
+<p>所以整个过程的周期并不等于7.5ns！</p>
+<p>DDR SDRAM 比 SDR SDRAM 要快，原因是前者一次能比后者取多两倍的数据</p>
+<p>DDR是数据传输的方式，不等同于内存</p>
+<p><img src="/home/alex/图片/data.png" alt="upload successf"></p>
+<h5 id="DDR-与-SDR-对比"><a href="#DDR-与-SDR-对比" class="headerlink" title="DDR 与 SDR 对比"></a>DDR 与 SDR 对比</h5><p><img src="/home/alex/图片/DDR.png" alt="ddr"></p>
+<p>DDR由于一次读取两个数据，所以tRCD和CL变慢了，但是每个周期能同时取两个数据。<br>这里的带宽就是由每个周期取得的数据计算出来的。</p>
+<p>衡量CPU有两个指标</p>
+<h6 id="访存带宽"><a href="#访存带宽" class="headerlink" title="访存带宽"></a>访存带宽</h6><p>单位时间内存储器所存取的信息量。</p>
+<h6 id="访存延迟"><a href="#访存延迟" class="headerlink" title="访存延迟"></a>访存延迟</h6><p>读出第一个数据所需要的时间。</p>
+<h4 id="Cache工作原理"><a href="#Cache工作原理" class="headerlink" title="Cache工作原理"></a>Cache工作原理</h4><h5 id="空间局部性："><a href="#空间局部性：" class="headerlink" title="空间局部性："></a>空间局部性：</h5><p>空间局部性是一旦一个指令一个存储单元被访问，那么它附近的单元也将很快被访问</p>
+<h5 id="时间局部性："><a href="#时间局部性：" class="headerlink" title="时间局部性："></a>时间局部性：</h5><p>时间局部性是一旦一个指令被执行了，则在不久的将来，它可能再被执行。</p>
+<p><img src="/home/alex/图片/a.png" alt="uploa"></p>
+<p><img src="/home/alex/图片/cache.png" alt="upload succ"></p>
+<h5 id="操作过程"><a href="#操作过程" class="headerlink" title="操作过程"></a>操作过程</h5><p><img src="/home/alex/图片/cao.png" alt="uploa"></p>
+<p>怎么把虚拟地址转化为实际地址是个问题</p>
+<h5 id="Cache读操作"><a href="#Cache读操作" class="headerlink" title="Cache读操作"></a>Cache读操作</h5><p>1.第一条指令，由于一开始Cache是空的，所以没有命中。因此Cache访问主存。</p>
+<p>之所以分配给表项1，是由地址倒数第二个数字决定的。（不看H）</p>
+<p>然后前面的所有项(20)放到标签处。</p>
+<p><img src="/home/alex/图片/2018-10.png" alt="filename already exists, ren"></p>
+<p>2.第二种情况，没有命中，因为表被占用了。</p>
+<p>4011H，先检查有效位1，发现原来标签是20H，因此把地址替换掉。</p>
+<p><img src="/home/alex/图片/oc.png" alt="upload success"></p>
+<h5 id="Cache写操作"><a href="#Cache写操作" class="headerlink" title="Cache写操作"></a>Cache写操作</h5><p><img src="/home/alex/图片/write.png" alt="write"></p>
+<h4 id="平均访存时间"><a href="#平均访存时间" class="headerlink" title="平均访存时间"></a>平均访存时间</h4><p><img src="/home/alex/图片/memory.png" alt="visit"></p>
+<p><img src="/home/alex/图片/策略.png" alt="upload successfu"></p>
+<p>Cache映射策略，直接映射会遇到这么一个问题：</p>
+<p>就是存储器会每隔八个地址把数据映射到Cache中，如果程序交替访问这两个数据，那么每次访问都会访问主存，把地址写入到Cache中，这样性能比没有Cache的时候还要差。</p>
+<p>也可以通过二路组，四路组相联策略，但是代价是每次取数据的时候，要取多个标签比较，如直接映射只需要取一个标签出来，如图中的0，而二路组则要2个。而且这样会使得硬件电路变得复杂化，增加了命中时间，得不偿失。</p>
+<p><img src="/home/alex/图片/visi.png" alt="upload succe"></p>
+<h4 id="常见Cache替换算法"><a href="#常见Cache替换算法" class="headerlink" title="常见Cache替换算法"></a>常见Cache替换算法</h4><p><img src="/home/alex/图片/x86.png" alt="upload succ"></p>
+<p>LRU的实现：</p>
+<p>1.队列</p>
+<p>2.用LRUnumber，例如初始化每块的LRUnumber为0，当要访问这块Cache的时候重新设置为0，然后其他块++1，然后LRUnumber最大的那个block就是最近最少使用的块。</p>
+<p>计算机领域单位使用情况</p>
+<p><img src="/home/alex/图片/dan.png" alt="upload succesful"></p>
+<h3 id="Cache-映射"><a href="#Cache-映射" class="headerlink" title="Cache 映射"></a>Cache 映射</h3><h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p><img src="/home/alex/图片/mapping.png" alt="map"></p>
+<p>Cache 大小：</p>
+<p>假设每个槽，就是cache的每个block能装512个(2^9)byte，说明b = 9</p>
+<p>然后一共有16个sets，说明 s = 4，</p>
+<p>因此cache地址一共是（s+b = 13位）</p>
+<p>主存的第0块，第16块，第32块。。都能放在cache的0槽当中，但是怎么知道<br>是哪个块群的呢?因此用标记号来说明，那么标记号该有几位？就是块群的个数2^7=128</p>
+<p>所以标记号就是7位，标记号用来指出对应行来自于哪个块群。</p>
+<p>主存大小：<br>2048 块 <em> 512B/块 = 2^11 </em> 2^ 9 = 2^20</p>
+<p>所以主存地址一共20位，包含了9位的块内地址，4位cache索引，剩下7位主存标记。<br>主存一共2048（2^11）块，所以主存标记和cache索引用来标记主存的具体块号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">例如：给定地址 0220CH</span><br><span class="line"></span><br><span class="line">转化为二进制 0000 0010 0001 0000 1100</span><br><span class="line"></span><br><span class="line">前7位 0000 001  决定来自于块群 1</span><br><span class="line"></span><br><span class="line">中间4位 0001 决定来自块群的具体哪个块  第一块</span><br><span class="line"></span><br><span class="line">后面9位，块内地址 决定了块内的哪个单元 第12个单元</span><br></pre></td></tr></table></figure>
+<p><strong>所以大概过程</strong></p>
+<p>拿来一个主存地址，然后划分为三段，根据中间索引号来寻找cache对应槽，然后看<br>valid位和标记位，如果valid=0，说明里面是空的，冷不命中，要从主存把地址送过来。如果valid=1，而且主存标记刚好是标记位，就根据块内地址在槽内寻找对应单元。</p>
+<p><img src="/home/alex/图片/youxiao.png" alt="upload succeul"></p>
+<p>给定32位主存地址，划分为三部分。</p>
+<p>首先由于块大小为16（2^4）B，因此b = 4,偏移位 4位</p>
+<p>索引位呢？  中间的索引位决定于cache有多少行</p>
+<p>因此行数=64KB/16B = 4K = 2^12 行</p>
+<p>因此中间索引位一共有12位</p>
+<p>剩下16位就是tag位，标记位</p>
+<p>给定内存地址，先由中间12行找到cache对应的行，看tag位与valid位是否满足条件，（valid=1说明这一行有数据）满足条件就hit，hit了就根据偏移位寻找对应的数据。</p>
+<p>块大小位16B，即128bit，使用多路选择器MUX来选择取哪个32位的data。</p>
+<p>11 最左边 10 中左 01 中右 00最右边</p>
+<p>如果取的是int型（word），由于word alignment，即内存地址最后的两位其实是不需要理会的。那么只看第三第四位，就是所谓的block offset。决定所取int放在哪个block.</p>
+<p>而如果要取的是char型，要在取了word之后再通过一个MUX，根据主存地址最后两位（Byte Offset）来得到要取哪个byte。</p>
+<p><img src="/home/alex/图片/ex.png" alt="upload successl"></p>
+<h3 id="cache-容量"><a href="#cache-容量" class="headerlink" title="cache 容量"></a>cache 容量</h3><p>上图中容量为  行数 X（每一行的bit数）</p>
+<p>（16+1）<em>4K + 64K </em> 8 = 72.5KB</p>
+<p>数据 64KB/72.5KB   =88.3%</p>
+<p>有一个64行，块容量为16bytes的cache</p>
+<p>十进制地址 1200应该映射到哪一行？</p>
+<p>方法一： 【1200/16】mod 64  = 11</p>
+<p>方法二： 1200转换为二进制 0100 1011 0000</p>
+<p>索引号 = 6 ，即看中间存的是哪一行，001011 就是 11</p>
+<p>实现一个直接映射，16K行数据，块大小为1个字（4B），32位主存地址的cache需要多少容量？</p>
+<p>16K = 2^14 行数据，即中间索引有14位</p>
+<p>byte =4B ，b = 2</p>
+<p>所以tag = 32-2-14  =16</p>
+<p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
+<p>特点</p>
+<p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1707,198 +2154,13 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/08/31/CSAPP-链接器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/31/CSAPP-链接器/" itemprop="url">CSAPP-链接器</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-31T21:08:00+08:00">
-                2018-08-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
-                    <span itemprop="name">CSAPP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="静态连接"><a href="#静态连接" class="headerlink" title="静态连接"></a>静态连接</h1><h5 id="构造可执行文件的时候，链接器所完成的任务"><a href="#构造可执行文件的时候，链接器所完成的任务" class="headerlink" title="构造可执行文件的时候，链接器所完成的任务:"></a>构造可执行文件的时候，链接器所完成的任务:</h5><h3 id="1-符号解析"><a href="#1-符号解析" class="headerlink" title="1.符号解析"></a>1.符号解析</h3><pre><code>每个符号对应于一个函数，一个全局变量或者静态变量，符号解析的目的是把每个符号引用正好和一个符号定义关联起来。
-</code></pre><h3 id="2-重定位"><a href="#2-重定位" class="headerlink" title="2.重定位"></a>2.重定位</h3><pre><code>把每个符号定义和另一个内存位置关联起来，然后重定位这些节，修改所有对这些符号的引用。
-</code></pre><p><br></p>
-<h2 id="目标文件有三种形式"><a href="#目标文件有三种形式" class="headerlink" title="目标文件有三种形式"></a>目标文件有三种形式</h2><p><br></p>
-<h3 id="1-可重定位目标文件：eg-prog-o"><a href="#1-可重定位目标文件：eg-prog-o" class="headerlink" title="1.可重定位目标文件：eg: prog.o"></a>1.可重定位目标文件：eg: prog.o</h3><p>1.包含二进制代码和数据，编译的时候可以和其他可重定位目标文件合并起来，创建一个可执行目标文件。<br><br><br>2.每个.o文件由对应的.c文件生成<br><br><br>3.每个.o文件代码和数据地址都从0开始<br><img src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=3b90ca10d2a20cf4529df68d17602053/80cb39dbb6fd5266b2047183a918972bd407367d.jpg" alt="image"></p>
-<h3 id="2-可执行目标文件：eg-a-out"><a href="#2-可执行目标文件：eg-a-out" class="headerlink" title="2.可执行目标文件：eg: a.out"></a>2.可执行目标文件：eg: a.out</h3><p>1.直接可以复制到内存中执行<br><br><br>2.代码和数据地址为虚拟地址空间中的地址</p>
-<h3 id="3-共享目标文件（-so）"><a href="#3-共享目标文件（-so）" class="headerlink" title="3.共享目标文件（*.so）"></a>3.共享目标文件（*.so）</h3><p>3.特殊的可重定位目标文件，能在装入或者运行的时候被装入到内存并且自动被链接</p>
-<p><br></p>
-<h3 id="符号和符号表"><a href="#符号和符号表" class="headerlink" title="符号和符号表"></a>符号和符号表</h3><p>1.被模块m定义并能够被其他模块引用的全局符号。全局连接器的符号对应于非静态的C函数和全局变量。</p>
-<p>2.被其它模块定义而且被模块m引用的全局符号，这些符号叫做外部符号，对应于在其它模块中定义的非静态C函数和全局变量。</p>
-<p>3.只能被模块m定义和引用的局部符号，对应于带static的C函数和全局变量。</p>
-<p>————————————————————分割线————————————————————————-</p>
-<h3 id="Coursera-听课笔记"><a href="#Coursera-听课笔记" class="headerlink" title="Coursera 听课笔记"></a>Coursera 听课笔记</h3><p>hello.c-&gt;预处理（cpp）-&gt;hello.i(ASCII中间文件)-&gt;编译器（cc1）-&gt;汇编语言文件-&gt;（汇编器）-&gt;可重定位目标文件(main.o)-&gt;链接-&gt;可执行目标文件</p>
-<h4 id="预处理命令"><a href="#预处理命令" class="headerlink" title="预处理命令"></a>预处理命令</h4><p>gcc -E hello.c -o hello.i</p>
-<p>cpp hello.c &gt; hello.i</p>
-<h5 id="处理源文件中以-开头的预编译指令，包括："><a href="#处理源文件中以-开头的预编译指令，包括：" class="headerlink" title="处理源文件中以#开头的预编译指令，包括："></a>处理源文件中以#开头的预编译指令，包括：</h5><h5 id="1-删除-define-并且展开所定义的宏"><a href="#1-删除-define-并且展开所定义的宏" class="headerlink" title="1.删除#define 并且展开所定义的宏"></a>1.删除#define 并且展开所定义的宏</h5><h5 id="2-处理所有条件预编译指令"><a href="#2-处理所有条件预编译指令" class="headerlink" title="2.处理所有条件预编译指令"></a>2.处理所有条件预编译指令</h5><h5 id="3-插入头文件到-include-处，可以用递归方式进行处理"><a href="#3-插入头文件到-include-处，可以用递归方式进行处理" class="headerlink" title="3.插入头文件到#include 处，可以用递归方式进行处理"></a>3.插入头文件到#include 处，可以用递归方式进行处理</h5><h5 id="4-删除所有的注释”-“和“-”"><a href="#4-删除所有的注释”-“和“-”" class="headerlink" title="4.删除所有的注释”//“和“/ /”"></a>4.删除所有的注释”//“和“/<em> </em>/”</h5><h5 id="5-保留所有-pragma编译指令"><a href="#5-保留所有-pragma编译指令" class="headerlink" title="5.保留所有#pragma编译指令"></a>5.保留所有#pragma编译指令</h5><h5 id="6-添加行号和文件名标识，方便编译的时候编译器产生调试用的行号信息"><a href="#6-添加行号和文件名标识，方便编译的时候编译器产生调试用的行号信息" class="headerlink" title="6.添加行号和文件名标识，方便编译的时候编译器产生调试用的行号信息"></a>6.添加行号和文件名标识，方便编译的时候编译器产生调试用的行号信息</h5><h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><p>把预处理文件进行此法分析，语法分析，语义分析并且优化</p>
-<h6 id="编译命令"><a href="#编译命令" class="headerlink" title="编译命令"></a>编译命令</h6><p>gcc -S hello.i -o hello.s<br><br><br>gcc -S hello.c -o hello.s<br><br><br>但是得到的.s 汇编代码文件，机器仍然无法识别</p>
-<h4 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h4><p>.s 文件称为汇编语言源程序<br><br><br>汇编程序用来把汇编语言源程序转换为机器指令序列<br><br><br>汇编指令和机器指令一一对应，前者是后者的符号表示，他们都属于机器级指令，所构成程序称为机器级代码<br><br><br>gcc -c hello.s -o hello.o<br><br><br>gcc -c hello.c -o hello.o<br><br><br>汇编结果是一个可重定位的目标文件</p>
-<h4 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h4><p>把多个可重定位目标文件合并来生成可执行目标文件命令</p>
-<p>gcc -static -o myporc main.o test.o</p>
-<h4 id="链接器的由来："><a href="#链接器的由来：" class="headerlink" title="链接器的由来："></a>链接器的由来：</h4><p>用符号表示跳转位置，无需修改jmp指令的跳转目标</p>
-<h5 id="汇编语言出现："><a href="#汇编语言出现：" class="headerlink" title="汇编语言出现："></a>汇编语言出现：</h5><p>用助记符表示操作码 jmp mov<br><br><br>   用符号表示位置    L0<br><br><br>   用助记符表示寄存器<br><br><br>   最终进行汇编和链接</p>
-<p> 链接，先确定L0的地址，然后在jmp指令中填入L0的地址</p>
-<h5 id="高级编程语言的出现"><a href="#高级编程语言的出现" class="headerlink" title="高级编程语言的出现"></a>高级编程语言的出现</h5><p>子程序起始地址和变量初始地址是符号定义<br><br><br>调用子程序和使用变量是符号的引用</p>
-<h4 id="链接操作的步骤"><a href="#链接操作的步骤" class="headerlink" title="链接操作的步骤"></a>链接操作的步骤</h4><p>1.确定符号引用关系（符号解析）<br><br><br>2.合并相关.o文件<br><br><br>3.确定每个符号的地址<br><br><br>4.在指令中填入新的地址<br>（2.3.4都属于重定位）</p>
-<h4 id="使用链接好处"><a href="#使用链接好处" class="headerlink" title="使用链接好处"></a>使用链接好处</h4><p>模块化<br><br><br>1.一个程序可以分成很多源程序文件<br><br><br>2.可以构建共享函数库<br><br><br>效率高<br><br><br>1.空间上无需包含共享库所有代码<br><br><br>2.源文件当中无需包含共享库所有代码<br>例如只要直接调用printf（）函数，无需包含其源码<br>可执行文件和运行时的内存只需包含所调用函数的代码，不需要包含整个共享库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">main.c</span><br><span class="line">  int buf[2] =&#123;1,2&#125;;</span><br><span class="line">  void swap();</span><br><span class="line">  </span><br><span class="line">  int main()&#123;</span><br><span class="line">  	swap();</span><br><span class="line">    return 0;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">swap.c</span><br><span class="line">extern int buf[];</span><br><span class="line">int *bufp0 = &amp;buf[0];</span><br><span class="line">static int *bufp1;</span><br><span class="line"></span><br><span class="line">void swap()&#123;</span><br><span class="line">	int temp;</span><br><span class="line">    bufp1 = &amp;buf[1];</span><br><span class="line">    temp = *bufp0;</span><br><span class="line">    *bufp0 = *bufp1;</span><br><span class="line">    *bufp1 = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h6 id="局部变量temp-分配在栈中，不会在过程（函数）被引用，因此不是符号定义"><a href="#局部变量temp-分配在栈中，不会在过程（函数）被引用，因此不是符号定义" class="headerlink" title="局部变量temp 分配在栈中，不会在过程（函数）被引用，因此不是符号定义"></a>局部变量temp 分配在栈中，不会在过程（函数）被引用，因此不是符号定义</h6><h6 id="可执行文件生成-O2-2级优化-g-生成调试信息-o-目标文件名"><a href="#可执行文件生成-O2-2级优化-g-生成调试信息-o-目标文件名" class="headerlink" title="可执行文件生成 -O2 2级优化  -g 生成调试信息 -o 目标文件名"></a>可执行文件生成 -O2 2级优化  -g 生成调试信息 -o 目标文件名</h6><h5 id="链接本质：合并相同的节"><a href="#链接本质：合并相同的节" class="headerlink" title="链接本质：合并相同的节"></a>链接本质：合并相同的节</h5><p>系统代码： .text<br><br><br>系统数据： .data<br><br><br>未初始化的静态变量： .bss<br><br><br>未初始化的全局变量 COMMON<br><br><br>链接就是要把不同可重定位目标文件中相同的节合在一起，放在可执行目标文件当中</p>
-<p>程序头表</p>
-<h4 id="目标文件的格式"><a href="#目标文件的格式" class="headerlink" title="目标文件的格式"></a>目标文件的格式</h4><h5 id="目标代码：编译器和汇编器处理源代码后生成的机器语言目标代码"><a href="#目标代码：编译器和汇编器处理源代码后生成的机器语言目标代码" class="headerlink" title="目标代码：编译器和汇编器处理源代码后生成的机器语言目标代码"></a>目标代码：编译器和汇编器处理源代码后生成的机器语言目标代码</h5><h5 id="目标文件：包含目标代码的文件"><a href="#目标文件：包含目标代码的文件" class="headerlink" title="目标文件：包含目标代码的文件"></a>目标文件：包含目标代码的文件</h5><h5 id="静态连接库文件可以由若干个可重定位目标文件组成"><a href="#静态连接库文件可以由若干个可重定位目标文件组成" class="headerlink" title="静态连接库文件可以由若干个可重定位目标文件组成"></a>静态连接库文件可以由若干个可重定位目标文件组成</h5><h2 id="ELF（Executable-and-Linkable-Format）"><a href="#ELF（Executable-and-Linkable-Format）" class="headerlink" title="ELF（Executable and Linkable Format）"></a>ELF（Executable and Linkable Format）</h2><p>两种视图<br><br><br>1.链接视图<br><br><br>2.执行视图</p>
-<p><img src="/home/alex/图片/ELF.png" alt="image"></p>
-<p>可执行目标文件  的节（section）是ELF文件中具有相同特征的最小可处理单位，例如 .text：代码,.data节数据,.rodata只读数据,.bss未初始化的数据</p>
-<p>可重定位目标文件<br>由不同的段（Segment）组成，描述节如何映射到存储段中，多个节可以映射到同一个段中，例如可以合并<br>.data节和.bss节，映射到一个可读可写的数据段中。</p>
-<h4 id="链接视图——可重定位目标文件格式"><a href="#链接视图——可重定位目标文件格式" class="headerlink" title="链接视图——可重定位目标文件格式"></a>链接视图——可重定位目标文件格式</h4><p><img src="/home/alex/图片/Linkable.png" alt="image"></p>
-<p><img src="/home/alex/图片/elf2.png" alt="image"><br><br><br>补充： 节头表包含每个节的节名，偏移以及大小。<br><br><br>从ELF头读取节头表，再在节头表中读取节的信息</p>
-<h5 id="C语言规定"><a href="#C语言规定" class="headerlink" title="C语言规定"></a>C语言规定</h5><p>未初始化的全局变量和局部静态变量默认初始值为0</p>
-<h5 id="把-bss-与-data分开的好处"><a href="#把-bss-与-data分开的好处" class="headerlink" title="把.bss 与 .data分开的好处"></a>把.bss 与 .data分开的好处</h5><p>data节中存放具体的初始值，需要占磁盘空间<br>.bss无需存放初始值，只要说明.bss每个变量将来在执行的时候占用多少字节就行<br>因此.bss实际上不占用磁盘空间，提高了磁盘空间利用率</p>
-<p><br><br>所有 未初始化的全局变量和局部静态变量都被汇总到.bss节中，通过专门的“节头表”来说明应该为.bss节预留多大的空间<br><br><br>.bss 最初是UA-SAP汇编程序中所用的一个伪指令，为符号预留一块内存空间。</p>
-<p><img src="/home/alex/图片/ELFHEAD.png" alt="image"></p>
-<p>ELF头占52个字节<br>Elf_Half 占2个，e_ident 16个， 其他的占4个</p>
-<p><img src="/home/alex/图片/elfinfo.png" alt="image"></p>
-<p>在链接视图中，虚拟地址都为0，因为其并不会执行</p>
-<h4 id="执行视图–可执行目标文件"><a href="#执行视图–可执行目标文件" class="headerlink" title="执行视图–可执行目标文件"></a>执行视图–可执行目标文件</h4><p><img src="/home/alex/图片/EXECUABLE.png" alt="IMGAE"></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="1-可执行目标文件是ELF的执行视图，由不同的段组成"><a href="#1-可执行目标文件是ELF的执行视图，由不同的段组成" class="headerlink" title="1.可执行目标文件是ELF的执行视图，由不同的段组成"></a>1.可执行目标文件是ELF的执行视图，由不同的段组成</h3><h3 id="2-可重定位目标文件是ELF格式的链接视图，由不同的节组成"><a href="#2-可重定位目标文件是ELF格式的链接视图，由不同的节组成" class="headerlink" title="2.可重定位目标文件是ELF格式的链接视图，由不同的节组成"></a>2.可重定位目标文件是ELF格式的链接视图，由不同的节组成</h3><h3 id="3-两种目标文件的数据都是二进制表示的补码形式"><a href="#3-两种目标文件的数据都是二进制表示的补码形式" class="headerlink" title="3.两种目标文件的数据都是二进制表示的补码形式"></a>3.两种目标文件的数据都是二进制表示的补码形式</h3><h3 id="4-链接的本质："><a href="#4-链接的本质：" class="headerlink" title="4. 链接的本质："></a>4. 链接的本质：</h3><p>把指定的若干个可重定位目标模块的代码和数据分别合并，以生成一个只读代码段和一个可读可写数据段</p>
-<h3 id="5-链接器主要功能："><a href="#5-链接器主要功能：" class="headerlink" title="5. 链接器主要功能："></a>5. 链接器主要功能：</h3><p>符号解析以及重定位</p>
-<h3 id="6-符号解析的含义"><a href="#6-符号解析的含义" class="headerlink" title="6.符号解析的含义"></a>6.符号解析的含义</h3><p>就是对每个需要链接的模块中的符号引用找到对应的符号定义，把符号引用与每一个唯一的符号定义进行绑定。</p>
-<h3 id="7-重定位"><a href="#7-重定位" class="headerlink" title="7.重定位"></a>7.重定位</h3><p>把合并后的只读代码段以及可读可写数据段中符号引用处的引用位置重新填上新的数值，用来指向绑定的定义符号。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -1946,7 +2208,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
