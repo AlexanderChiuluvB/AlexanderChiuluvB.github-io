@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="adjustment to the CPU when the results computed by ALU shows that there is an error,then add a signal path from ALU to PC UPDATE now PC update have 3 choice to update its value: 1.PC+4 2.JUMP instruct">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP中断与异常">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="adjustment to the CPU when the results computed by ALU shows that there is an error,then add a signal path from ALU to PC UPDATE now PC update have 3 choice to update its value: 1.PC+4 2.JUMP instruct">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cpu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/excep.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/modify.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/mm.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vector.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/img.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/xuanzang.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-12.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/biaoxi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/huigu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-13.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zhongduan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zhongd.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/chenju.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/googl.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/accu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/man.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/m.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-14.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/shixi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ZONGJIE.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/s.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/juanzi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/danbu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/shangji.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-15.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/duandian.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/duandian2.png">
+<meta property="og:updated_time" content="2018-10-28T22:21:49.468Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP中断与异常">
+<meta name="twitter:description" content="adjustment to the CPU when the results computed by ALU shows that there is an error,then add a signal path from ALU to PC UPDATE now PC update have 3 choice to update its value: 1.PC+4 2.JUMP instruct">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cpu.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/"/>
+
+
+
+
+
+  <title>CSAPP中断与异常 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP中断与异常</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T22:48:00+08:00">
+                2018-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="adjustment-to-the-CPU"><a href="#adjustment-to-the-CPU" class="headerlink" title="adjustment to the CPU"></a>adjustment to the CPU</h5><p><img src="/home/alex/图片/cpu.png" alt="upload success"></p>
+<p><em>when the results computed by ALU shows that there is an error,<br>then add a signal path from ALU to PC UPDATE</em></p>
+<p><em>now PC update have 3 choice to update its value:</em></p>
+<p>1.PC+4</p>
+<p>2.JUMP instruction PC+offset*4</p>
+<p>3.when the error signal is valid PC -&gt; 0  ,which means it turns to address 0 ,execute few instructions from address 0 to rectify the mistakes or show there is an error.</p>
+<p>you can also record the PC value then error occurs, so next time you can jump back to the PC value and then continue the execution.</p>
+<h5 id="what-is-interruption-and-exception"><a href="#what-is-interruption-and-exception" class="headerlink" title="what is interruption and exception"></a>what is interruption and exception</h5><p><img src="/home/alex/图片/excep.png" alt="upload successl"></p>
+<h5 id="the-original-way-to-handle-exception-and-interruptoin"><a href="#the-original-way-to-handle-exception-and-interruptoin" class="headerlink" title="the original way to handle exception and interruptoin"></a>the original way to handle exception and interruptoin</h5><p><img src="/home/alex/图片/modify.png" alt="upload succel"></p>
+<h4 id="interrupt-vector"><a href="#interrupt-vector" class="headerlink" title="interrupt vector"></a>interrupt vector</h4><p>how intel 8086 divide its address space?</p>
+<p><img src="/home/alex/图片/mm.png" alt="upload success"></p>
+<p>中断向量用来存储address which process the interruption</p>
+<p><img src="/home/alex/图片/vector.png" alt="upload successf"></p>
+<p>IP 存放在指令指针寄存器<br>CS 存放在代码段寄存器</p>
+<p>IP，CS寄存器参见<a href="https://blog.csdn.net/qq_35212671/article/details/52752808" target="_blank" rel="noopener">https://blog.csdn.net/qq_35212671/article/details/52752808</a></p>
+<p>总的来说，CS:IP 两个寄存器指示了 CPU 当前将要读取的指令的地址。</p>
+<p>当要执行一个可执行文件的时候，shell程序会把CS：IP寄存器设置这个程序的初始地址,然后CPU从这个地址开始读取指令</p>
+<h5 id="逻辑地址生成物理地址"><a href="#逻辑地址生成物理地址" class="headerlink" title="逻辑地址生成物理地址"></a>逻辑地址生成物理地址</h5><p><img src="/home/alex/图片/img.png" alt="upload su"></p>
+<p><img src="/home/alex/图片/xuanzang.png" alt="upload success"></p>
+<p>中断向量表要在系统启动的时候进行初始化</p>
+<p>一个中断向量占4个字节，1共有1KB空间用来存放中断向量，因此一共有256个中断向量。</p>
+<p>CPU发现中断的时候，如果是1号，转向1号中断向量。由于中断向量的位置是固定的，CPU只需要通过硬件电路来访问中断向量，不需要通过软件。而且CS是段基值，IP是偏移量，根据段偏移计算方法：</p>
+<p>对应地址为43006H<br>因此转到存储器里面的40996H，执行处理1号中断的服务程序。</p>
+<p><em>注意终端服务程序存放顺序不固定</em></p>
+<h5 id="exercise"><a href="#exercise" class="headerlink" title="exercise"></a>exercise</h5><p><img src="/home/alex/图片/2018-12.png" alt="flename already exists, renamed"></p>
+<p>中断类型码就是中断向量序号，由于第0个中断向量是存放在地址0的，因此中断向量码与其存放地址的关系就是 地址 = 向量码×4</p>
+<p>10H 20H 对应IP寄存器  30H 40H 对应CS寄存器</p>
+<p>因此地址为 4030:2010H</p>
+<p><img src="/home/alex/图片/biaoxi.png" alt="upload succes"></p>
+<p>23 40 对应CS寄存器<br>78 90 对应IP寄存器</p>
+<p>因此字节单元对应的内容分别为</p>
+<p>23</p>
+<p>40</p>
+<p>78</p>
+<p>90</p>
+<p>(从上往下地址减少)</p>
+<h4 id="中断向量表的发展"><a href="#中断向量表的发展" class="headerlink" title="中断向量表的发展"></a>中断向量表的发展</h4><p><img src="/home/alex/图片/huigu.png" alt="upload su"></p>
+<p>1.回顾一下，实模式下，地址是有CS寄存器×4 + IP寄存器 来产生一个20位的地址来实现的</p>
+<p>2.但是现在EIP的寻址能力和32位地址线寻址范围是对应的，因此保护模式下寻址方式和实模式有所不同。</p>
+<h5 id="IA-32的存储器寻址"><a href="#IA-32的存储器寻址" class="headerlink" title="IA-32的存储器寻址"></a>IA-32的存储器寻址</h5><p>1.保护模式下，段基址不在CS中，而在内存中</p>
+<p><img src="/home/alex/图片/2018-13.png" alt="upload successful"></p>
+<p>为什么会有8192个描述符？</p>
+<p>因为CS寄存器寻址能力是16位，可以寻找2^16也就是64K个地址，也就是8192个描述符</p>
+<p>而这时候由于不知道起始地址，因此需要一个GDTR寄存器，来存储描述符0所在的地址。这是一个系统寄存器，在系统启动的时候就写好。</p>
+<p>#####总结流程：</p>
+<p>1.GDTR 结合 CS 寄存器，用来访问存储器中的描述符</p>
+<p>2.然后从描述符当中提取出4个保存着基地址的字节，把得到的基地址与EIP指针寄存器结合，得到所要访问的寄存器的地址</p>
+<h4 id="保护模式的中断操作"><a href="#保护模式的中断操作" class="headerlink" title="保护模式的中断操作"></a>保护模式的中断操作</h4><p>中断向量表</p>
+<p><img src="/home/alex/图片/zhongduan.png" alt="upload succe"></p>
+<p>这时候由于地址不是从0开始的，因此与上图类似，CPU需要一个IDTR来记录描述符0所在的地址。</p>
+<p>这时候CPU把 <strong>(中断类型号 * 8 + IDTR)</strong>，得到描述符的地址，然后从描述符中选取2个段选择符字节放到CS寄存器，字节0,1,6,7放到EIP寄存器，（理解为偏移量）。记住实模式下，段基址并不是在CS中，而是需要用CS到内存中寻找。</p>
+<p>所以当从中断向量取回CS与EIP后，要利用CS和GDTR结合，来寻找段基址，再把段基址与EIP结合，这样最后才能得到<strong>中断服务程序</strong>的入口地址</p>
+<p>与实模式下的不同:</p>
+<p><em>实模式下中断向量4个字节，其中低位的两个放到IP寄存器，高位的两个放到CS寄存器</em></p>
+<h4 id="中断处理过程"><a href="#中断处理过程" class="headerlink" title="中断处理过程"></a>中断处理过程</h4><p><img src="/home/alex/图片/zhongd.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/chenju.png" alt="upload succeful"></p>
+<p><img src="/home/alex/图片/googl.png" alt="upload"></p>
+<p><img src="/home/alex/图片/accu.png" alt="uploada"></p>
+<p><img src="/home/alex/图片/man.png" alt="upload"></p>
+<p><img src="/home/alex/图片/m.png" alt="upload succ"></p>
+<p><img src="/home/alex/图片/2018-14.png" alt="filename already exists, remed"></p>
+<p>根据上图： 发生中断的时候先压栈，保存好处理完中断后应该返回的地址的信息。</p>
+<p>Flags保存好标志，以免处理的时候会改变某些标志位。</p>
+<p>清楚IF-TF 起到关中断的作用？？？</p>
+<p>然后再从存储器找到中断向量，取到CS、IP之后就找到了终端服务程序的入口地址。</p>
+<p><img src="/home/alex/图片/shixi.png" alt="upload succul"></p>
+<p>总结：</p>
+<p><img src="/home/alex/图片/ZONGJIE.png" alt="upload succes"></p>
+<p>集中内部中断的类型：</p>
+<p><img src="/home/alex/图片/s.png" alt="upload succesl"></p>
+<p><img src="/home/alex/图片/juanzi.png" alt="upload succ"></p>
+<p>注意上述两种中断类型的时机是不同的哦。</p>
+<p>中断类型0 是在检测出异常的时候立即发生，而内部中断需要自己主动执行INTO指令才可以检测出来</p>
+<p><img src="/home/alex/图片/danbu.png" alt="upload successfl"></p>
+<p><img src="/home/alex/图片/shangji.png" alt="upload success"></p>
+<p>为什么INT n是两字节指令？ 因为 INT 指令操作码 首先占一个字节 ，然后n范围是0-255 需要8位来表示，所以用2个字节。</p>
+<p>那为啥INT 3用1个字节呢？</p>
+<p>因为x86地址最短的就是一个字节。如果INT 3 是两个字节或以上，可能会覆盖掉下面的指令的一些字节。</p>
+<p>例如：</p>
+<p>OFFSET      instruction 1, one byte</p>
+<p>OFFSET+1    instruction 2, one byte</p>
+<p>如果在inst1设置断点，则而且inst1内容是跳到inst2，则替换的时候INT 3会把inst2某些字节覆盖掉。那么就不能实现跳到inst2的指令了。</p>
+<p>OFFSET     INT3……………….</p>
+<p>OFFSET+1    ………………….</p>
+<p>详情参考 <a href="http://www.cs.columbia.edu/~junfeng/09sp-w4118/lectures/int3/int3.txt" target="_blank" rel="noopener">http://www.cs.columbia.edu/~junfeng/09sp-w4118/lectures/int3/int3.txt</a></p>
+<p><img src="/home/alex/图片/2018-15.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/duandian.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/duandian2.png" alt="upload succe"></p>
+<p>INT 3对应的中断服务程序可以查看 AL寄存器的值 </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/20/CSAPP-Cache-Lab/" rel="next" title="CSAPP -Cache Lab">
+                <i class="fa fa-chevron-left"></i> CSAPP -Cache Lab
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#adjustment-to-the-CPU"><span class="nav-number">1.</span> <span class="nav-text">adjustment to the CPU</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#what-is-interruption-and-exception"><span class="nav-number">2.</span> <span class="nav-text">what is interruption and exception</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#the-original-way-to-handle-exception-and-interruptoin"><span class="nav-number">3.</span> <span class="nav-text">the original way to handle exception and interruptoin</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#interrupt-vector"><span class="nav-number"></span> <span class="nav-text">interrupt vector</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#逻辑地址生成物理地址"><span class="nav-number">1.</span> <span class="nav-text">逻辑地址生成物理地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#exercise"><span class="nav-number">2.</span> <span class="nav-text">exercise</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#中断向量表的发展"><span class="nav-number"></span> <span class="nav-text">中断向量表的发展</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IA-32的存储器寻址"><span class="nav-number">1.</span> <span class="nav-text">IA-32的存储器寻址</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#保护模式的中断操作"><span class="nav-number"></span> <span class="nav-text">保护模式的中断操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#中断处理过程"><span class="nav-number"></span> <span class="nav-text">中断处理过程</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

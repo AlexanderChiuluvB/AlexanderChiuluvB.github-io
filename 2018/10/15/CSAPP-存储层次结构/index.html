@@ -117,7 +117,30 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/youxiao.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ex.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/quan.png">
-<meta property="og:updated_time" content="2018-10-21T11:05:17.817Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/this.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-16.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ans.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-17.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/bome.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zombi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/over.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/inyourhead.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ra.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/shell.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sudden.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/animal.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/am.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dlearning.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/today.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/we.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/way.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/para.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/haleluya.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/hale.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/shumu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/silence.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/eg.png">
+<meta property="og:updated_time" content="2018-10-28T22:55:06.676Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP 存储层次结构&#x2F;Cahce">
 <meta name="twitter:description" content="存储层次结构概况 存储器的特性1.非易失性，即断电后不会丢失数据 CPU和主存都是易失性，而BIOS和硬盘是非易失的 通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。 2.可读可写3.随机访问访问数据与其位置无关 主存与BIOS(basic input output system)能够实现随即访问数据。 但是硬盘则不是。 4.访问时">
@@ -505,6 +528,77 @@
 <p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
 <p>特点</p>
 <p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
+<h4 id="全相联映射方式"><a href="#全相联映射方式" class="headerlink" title="全相联映射方式"></a>全相联映射方式</h4><p><img src="/home/alex/图片/this.png" alt="upload successf"></p>
+<p>给定地址，根据标记主存块号找到数据所在主存的哪一块，00000001111就是第15块，但是不知道在Cache的哪个槽中，所以只能一个一个槽比较。所以叫按内容访问。</p>
+<p>为什么没有cache索引字段？</p>
+<p>因为其可以任意映射到某一个行当中.</p>
+<p><img src="/home/alex/图片/2018-16.png" alt="filename already exists, remed"></p>
+<p>优点就是没有冲突，时间相对加快，但是tag长了，而且每一行都有一个比较器，比较时间长了，相当于命中时间会加长，而且比较成本也增加了，cache容量也变大了！</p>
+<p><img src="/home/alex/图片/ans.png" alt="upload successf"></p>
+<p>前8位标记表示cache属于哪个组群</p>
+<p>中间3位表示属于哪个组</p>
+<p>后面9位表示偏移量，表示要找到那个数据</p>
+<p>Eg: 地址 0000 0001 001 00000 1100</p>
+<p>前8位表示在第一组群 中间三位（cache索引）表示cache的第一个set  ，就是第一个族群的第001块，就是第九块，把这一块映射到cache的第一组当中。</p>
+<p><img src="/home/alex/图片/2018-17.png" alt="filename already exists, renam"></p>
+<p>两个比较器并向同时比较，最多有一个cache的tag与主存地址的tag相同，OR选择器的结果就是hit的结果。</p>
+<p>通过多路选择器把所要找的cache data的block找出来！</p>
+<p><img src="/home/alex/图片/bome.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/zombi.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/over.png" alt="upload succes"></p>
+<p><img src="/home/alex/图片/inyourhead.png" alt="upload succe"></p>
+<p>顺便讲一下什么叫按字节编址，按字编址。</p>
+<p>字 word = 4byte</p>
+<p>字节 byte = 8bit</p>
+<p>位 bit</p>
+<p><img src="/home/alex/图片/ra.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/shell.png" alt="upload succe"></p>
+<p><img src="/home/alex/图片/sudden.png" alt="upload succes"></p>
+<p><img src="/home/alex/图片/animal.png" alt="upload succesl"></p>
+<p><img src="/home/alex/图片/am.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/dlearning.png" alt="upload succe"></p>
+<p><img src="/home/alex/图片/today.png" alt="upload successf"></p>
+<p>上面的图怎么看？</p>
+<pre><code>1. 每一block64个字。访问第0block，冷不命中，放到第0组。那哪一行呢？都可以，一般按照顺序来，因此放在第0组第0行。然后第0组所有元素就都在第0组第0行中取。
+2. 然后访问第1组，冷不命中，放在第1组第0行。第0，16，32，48block都放在第0组，分别放在第0，1，2，3行。
+3. 当取到第64block的时候，miss，根据LRU把第0组行第0行替换掉。一直到第67block结束第一次循环。
+4. 然后来到第二次循环，想要找第0组，但是已经被刚才第64组替换掉了，而且第0block只能放在第0组，因此根据LRU，替换掉第0组第一行，一直到第四个block的时候，这时候第4block放在第4组的的第0行，没有miss。
+5. 由于第16，17，18，19个block已经被替换，当访问第16,17,18,19个block的时候，根据LRU，分别吧0，1，2，3组的第二行的32，33，34，35block替换。同理，当访问32，33，34，35block的时候，又把第三行的48495051替换。同理，访问48，49，50，51的时候，又miss，又把第一行的对应64，65，66，67替换掉。
+6. 所以第二次-第九次循环，每次都有5*4=20次miss
+</code></pre><p>命中率： (43520-68-9*20)/43520 = 99.43%</p>
+<h4 id="Cache读和写的一致性问题"><a href="#Cache读和写的一致性问题" class="headerlink" title="Cache读和写的一致性问题"></a>Cache读和写的一致性问题</h4><p><img src="/home/alex/图片/we.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/way.png" alt="upload succeful"></p>
+<p>同时写cache和主存，但是主存要慢得多，这样写完了cache之后要等待主存。<br>所以可以增加一个buffer 写缓冲。<br>就是CPU可以把数据写到cache中。写完了之后不等写道主存，继续写cache，写到主存的工作就交给write buffer，由memory controller传回到DRAM</p>
+<p><img src="/home/alex/图片/para.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/haleluya.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/hale.png" alt="upload successful"></p>
+<p>写穿透就是同时写cache和主存，写分配就是同时更新主存和cache<br>Write Trough 算法<br>如果能够找到i，使得TAG（i） == X,<br>如果是读操作，就直接返回块内地址DATA[i]；<br>写操作就除了要写块内地址，还要写主存</p>
+<p>如果miss掉<br>读操作就是读主存的数据，然后打标签，送到cache<br>写操作就是先写主存，然后打标签，最后在块内new一个新的数据</p>
+<p>Cache越大越好，命中率越高，但是越大的话成本越高<br>Block 不能太大，也不能太小</p>
+<h4 id="Cache-数目"><a href="#Cache-数目" class="headerlink" title="Cache 数目"></a>Cache 数目</h4><p><img src="/home/alex/图片/shumu.png" alt="upload successl"></p>
+<p>L1，分立cache，为了实现流水线，同时取数据和指令，提高并行性。</p>
+<p>第二个问题：<br>因为他有L1，L2两个cache，即使不命中也没有关系</p>
+<p>第三个问题：最后Level的cache与指令流无关，不需要考虑并行。因此优先考虑空间的利用率，同时命中率比命中时间更重要。</p>
+<p>L1比L2容量小，（越大命中率越高）比L2快，命中时间短，如果L1不命中，只好寄托在L2身上，因此L2的命中率就显得特别重要。</p>
+<h4 id="Cache-实现举例"><a href="#Cache-实现举例" class="headerlink" title="Cache 实现举例"></a>Cache 实现举例</h4><p>用2个状态位：</p>
+<pre><code>S: SHARE
+E：EXCLUSIVE
+M: MODIFIED （是否dirty bit）
+VALID 是否有效
+</code></pre><p>LRU用1位： </p>
+<p><img src="/home/alex/图片/silence.png" alt="upload succel"></p>
+<h4 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h4><p><img src="/home/alex/图片/eg.png" alt="upload successful"></p>
+<h5 id="1-不考虑一致性：dirty-bit-；替换控制即LRU位"><a href="#1-不考虑一致性：dirty-bit-；替换控制即LRU位" class="headerlink" title="1. 不考虑一致性：dirty bit ；替换控制即LRU位"></a>1. 不考虑一致性：dirty bit ；替换控制即LRU位</h5><p>256MB 表示主存地址 28位</p>
+<p>64B – b = 6</p>
+<p>Cache 8行 -中间索引位 3</p>
+<p>Tag位 19位 别忘了要考虑valid位</p>
+<p>（1+19）<em>8 + 64</em>8*8 （每行一个block）(64B是64byte，1byte 8 bits)</p>
+<h5 id="2-64B-16个元素-一行16个元素"><a href="#2-64B-16个元素-一行16个元素" class="headerlink" title="2. 64B-16个元素 一行16个元素"></a>2. 64B-16个元素 一行16个元素</h5><p>A[0][31] 地址 320+4*31 = 444 [444/64] = 6</p>
+<p>因此主存块号为6，6mod8 = 6因此在第六行。</p>
+<p>或者444 为0000110111100B 中间三位是索引位，就是第六行</p>
+<p>而A[1][1] = (320+256*4+8 )/64 mod 8=5 同理也可以把地址转化为二进制来计算。</p>
+<h5 id="3-A-每隔16元素一次冷不命中，命中率（15-16）"><a href="#3-A-每隔16元素一次冷不命中，命中率（15-16）" class="headerlink" title="3.A 每隔16元素一次冷不命中，命中率（15/16）"></a>3.A 每隔16元素一次冷不命中，命中率（15/16）</h5><p>B 每次相隔256个元素，256/16 = 16 块，16mod 8=0，每次访问后面数组元素的时候，总会把上一次装入到cache中的主存块覆盖掉。</p>
+<p>所以每次访问的时候都会发生冲突，替换，因此没有一次命中。</p>
 
       
     </div>
@@ -628,7 +722,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -683,7 +777,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储层次结构概况"><span class="nav-number">1.</span> <span class="nav-text">存储层次结构概况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#存储器的特性"><span class="nav-number">1.1.</span> <span class="nav-text">存储器的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-非易失性，即断电后不会丢失数据"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.非易失性，即断电后不会丢失数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-可读可写"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.可读可写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-随机访问"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.随机访问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-访问时间"><span class="nav-number">1.1.4.</span> <span class="nav-text">4.访问时间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DRAM"><span class="nav-number">2.</span> <span class="nav-text">DRAM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内存工作原理"><span class="nav-number">2.1.</span> <span class="nav-text">内存工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SDRAM的关键性能参数："><span class="nav-number">2.1.1.</span> <span class="nav-text">SDRAM的关键性能参数：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DDR-与-SDR-对比"><span class="nav-number">2.1.2.</span> <span class="nav-text">DDR 与 SDR 对比</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#访存带宽"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">访存带宽</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#访存延迟"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">访存延迟</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache工作原理"><span class="nav-number">2.2.</span> <span class="nav-text">Cache工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#空间局部性："><span class="nav-number">2.2.1.</span> <span class="nav-text">空间局部性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#时间局部性："><span class="nav-number">2.2.2.</span> <span class="nav-text">时间局部性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#操作过程"><span class="nav-number">2.2.3.</span> <span class="nav-text">操作过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cache读操作"><span class="nav-number">2.2.4.</span> <span class="nav-text">Cache读操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cache写操作"><span class="nav-number">2.2.5.</span> <span class="nav-text">Cache写操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#平均访存时间"><span class="nav-number">2.3.</span> <span class="nav-text">平均访存时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见Cache替换算法"><span class="nav-number">2.4.</span> <span class="nav-text">常见Cache替换算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache-映射"><span class="nav-number">3.</span> <span class="nav-text">Cache 映射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#直接映射"><span class="nav-number">3.1.</span> <span class="nav-text">直接映射</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cache-容量"><span class="nav-number">4.</span> <span class="nav-text">cache 容量</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储层次结构概况"><span class="nav-number">1.</span> <span class="nav-text">存储层次结构概况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#存储器的特性"><span class="nav-number">1.1.</span> <span class="nav-text">存储器的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-非易失性，即断电后不会丢失数据"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.非易失性，即断电后不会丢失数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-可读可写"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.可读可写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-随机访问"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.随机访问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-访问时间"><span class="nav-number">1.1.4.</span> <span class="nav-text">4.访问时间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DRAM"><span class="nav-number">2.</span> <span class="nav-text">DRAM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内存工作原理"><span class="nav-number">2.1.</span> <span class="nav-text">内存工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SDRAM的关键性能参数："><span class="nav-number">2.1.1.</span> <span class="nav-text">SDRAM的关键性能参数：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DDR-与-SDR-对比"><span class="nav-number">2.1.2.</span> <span class="nav-text">DDR 与 SDR 对比</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#访存带宽"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">访存带宽</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#访存延迟"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">访存延迟</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache工作原理"><span class="nav-number">2.2.</span> <span class="nav-text">Cache工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#空间局部性："><span class="nav-number">2.2.1.</span> <span class="nav-text">空间局部性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#时间局部性："><span class="nav-number">2.2.2.</span> <span class="nav-text">时间局部性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#操作过程"><span class="nav-number">2.2.3.</span> <span class="nav-text">操作过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cache读操作"><span class="nav-number">2.2.4.</span> <span class="nav-text">Cache读操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cache写操作"><span class="nav-number">2.2.5.</span> <span class="nav-text">Cache写操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#平均访存时间"><span class="nav-number">2.3.</span> <span class="nav-text">平均访存时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见Cache替换算法"><span class="nav-number">2.4.</span> <span class="nav-text">常见Cache替换算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache-映射"><span class="nav-number">3.</span> <span class="nav-text">Cache 映射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#直接映射"><span class="nav-number">3.1.</span> <span class="nav-text">直接映射</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cache-容量"><span class="nav-number">4.</span> <span class="nav-text">cache 容量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全相联映射方式"><span class="nav-number">4.1.</span> <span class="nav-text">全相联映射方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache读和写的一致性问题"><span class="nav-number">4.2.</span> <span class="nav-text">Cache读和写的一致性问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache-数目"><span class="nav-number">4.3.</span> <span class="nav-text">Cache 数目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache-实现举例"><span class="nav-number">4.4.</span> <span class="nav-text">Cache 实现举例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例题"><span class="nav-number">4.5.</span> <span class="nav-text">例题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-不考虑一致性：dirty-bit-；替换控制即LRU位"><span class="nav-number">4.5.1.</span> <span class="nav-text">1. 不考虑一致性：dirty bit ；替换控制即LRU位</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-64B-16个元素-一行16个元素"><span class="nav-number">4.5.2.</span> <span class="nav-text">2. 64B-16个元素 一行16个元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-A-每隔16元素一次冷不命中，命中率（15-16）"><span class="nav-number">4.5.3.</span> <span class="nav-text">3.A 每隔16元素一次冷不命中，命中率（15/16）</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

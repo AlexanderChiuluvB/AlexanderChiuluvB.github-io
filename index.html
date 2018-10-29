@@ -272,6 +272,236 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/27/中断与异常的来源/" itemprop="url">CSAPP中断与异常</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T22:48:00+08:00">
+                2018-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="adjustment-to-the-CPU"><a href="#adjustment-to-the-CPU" class="headerlink" title="adjustment to the CPU"></a>adjustment to the CPU</h5><p><img src="/home/alex/图片/cpu.png" alt="upload success"></p>
+<p><em>when the results computed by ALU shows that there is an error,<br>then add a signal path from ALU to PC UPDATE</em></p>
+<p><em>now PC update have 3 choice to update its value:</em></p>
+<p>1.PC+4</p>
+<p>2.JUMP instruction PC+offset*4</p>
+<p>3.when the error signal is valid PC -&gt; 0  ,which means it turns to address 0 ,execute few instructions from address 0 to rectify the mistakes or show there is an error.</p>
+<p>you can also record the PC value then error occurs, so next time you can jump back to the PC value and then continue the execution.</p>
+<h5 id="what-is-interruption-and-exception"><a href="#what-is-interruption-and-exception" class="headerlink" title="what is interruption and exception"></a>what is interruption and exception</h5><p><img src="/home/alex/图片/excep.png" alt="upload successl"></p>
+<h5 id="the-original-way-to-handle-exception-and-interruptoin"><a href="#the-original-way-to-handle-exception-and-interruptoin" class="headerlink" title="the original way to handle exception and interruptoin"></a>the original way to handle exception and interruptoin</h5><p><img src="/home/alex/图片/modify.png" alt="upload succel"></p>
+<h4 id="interrupt-vector"><a href="#interrupt-vector" class="headerlink" title="interrupt vector"></a>interrupt vector</h4><p>how intel 8086 divide its address space?</p>
+<p><img src="/home/alex/图片/mm.png" alt="upload success"></p>
+<p>中断向量用来存储address which process the interruption</p>
+<p><img src="/home/alex/图片/vector.png" alt="upload successf"></p>
+<p>IP 存放在指令指针寄存器<br>CS 存放在代码段寄存器</p>
+<p>IP，CS寄存器参见<a href="https://blog.csdn.net/qq_35212671/article/details/52752808" target="_blank" rel="noopener">https://blog.csdn.net/qq_35212671/article/details/52752808</a></p>
+<p>总的来说，CS:IP 两个寄存器指示了 CPU 当前将要读取的指令的地址。</p>
+<p>当要执行一个可执行文件的时候，shell程序会把CS：IP寄存器设置这个程序的初始地址,然后CPU从这个地址开始读取指令</p>
+<h5 id="逻辑地址生成物理地址"><a href="#逻辑地址生成物理地址" class="headerlink" title="逻辑地址生成物理地址"></a>逻辑地址生成物理地址</h5><p><img src="/home/alex/图片/img.png" alt="upload su"></p>
+<p><img src="/home/alex/图片/xuanzang.png" alt="upload success"></p>
+<p>中断向量表要在系统启动的时候进行初始化</p>
+<p>一个中断向量占4个字节，1共有1KB空间用来存放中断向量，因此一共有256个中断向量。</p>
+<p>CPU发现中断的时候，如果是1号，转向1号中断向量。由于中断向量的位置是固定的，CPU只需要通过硬件电路来访问中断向量，不需要通过软件。而且CS是段基值，IP是偏移量，根据段偏移计算方法：</p>
+<p>对应地址为43006H<br>因此转到存储器里面的40996H，执行处理1号中断的服务程序。</p>
+<p><em>注意终端服务程序存放顺序不固定</em></p>
+<h5 id="exercise"><a href="#exercise" class="headerlink" title="exercise"></a>exercise</h5><p><img src="/home/alex/图片/2018-12.png" alt="flename already exists, renamed"></p>
+<p>中断类型码就是中断向量序号，由于第0个中断向量是存放在地址0的，因此中断向量码与其存放地址的关系就是 地址 = 向量码×4</p>
+<p>10H 20H 对应IP寄存器  30H 40H 对应CS寄存器</p>
+<p>因此地址为 4030:2010H</p>
+<p><img src="/home/alex/图片/biaoxi.png" alt="upload succes"></p>
+<p>23 40 对应CS寄存器<br>78 90 对应IP寄存器</p>
+<p>因此字节单元对应的内容分别为</p>
+<p>23</p>
+<p>40</p>
+<p>78</p>
+<p>90</p>
+<p>(从上往下地址减少)</p>
+<h4 id="中断向量表的发展"><a href="#中断向量表的发展" class="headerlink" title="中断向量表的发展"></a>中断向量表的发展</h4><p><img src="/home/alex/图片/huigu.png" alt="upload su"></p>
+<p>1.回顾一下，实模式下，地址是有CS寄存器×4 + IP寄存器 来产生一个20位的地址来实现的</p>
+<p>2.但是现在EIP的寻址能力和32位地址线寻址范围是对应的，因此保护模式下寻址方式和实模式有所不同。</p>
+<h5 id="IA-32的存储器寻址"><a href="#IA-32的存储器寻址" class="headerlink" title="IA-32的存储器寻址"></a>IA-32的存储器寻址</h5><p>1.保护模式下，段基址不在CS中，而在内存中</p>
+<p><img src="/home/alex/图片/2018-13.png" alt="upload successful"></p>
+<p>为什么会有8192个描述符？</p>
+<p>因为CS寄存器寻址能力是16位，可以寻找2^16也就是64K个地址，也就是8192个描述符</p>
+<p>而这时候由于不知道起始地址，因此需要一个GDTR寄存器，来存储描述符0所在的地址。这是一个系统寄存器，在系统启动的时候就写好。</p>
+<p>#####总结流程：</p>
+<p>1.GDTR 结合 CS 寄存器，用来访问存储器中的描述符</p>
+<p>2.然后从描述符当中提取出4个保存着基地址的字节，把得到的基地址与EIP指针寄存器结合，得到所要访问的寄存器的地址</p>
+<h4 id="保护模式的中断操作"><a href="#保护模式的中断操作" class="headerlink" title="保护模式的中断操作"></a>保护模式的中断操作</h4><p>中断向量表</p>
+<p><img src="/home/alex/图片/zhongduan.png" alt="upload succe"></p>
+<p>这时候由于地址不是从0开始的，因此与上图类似，CPU需要一个IDTR来记录描述符0所在的地址。</p>
+<p>这时候CPU把 <strong>(中断类型号 * 8 + IDTR)</strong>，得到描述符的地址，然后从描述符中选取2个段选择符字节放到CS寄存器，字节0,1,6,7放到EIP寄存器，（理解为偏移量）。记住实模式下，段基址并不是在CS中，而是需要用CS到内存中寻找。</p>
+<p>所以当从中断向量取回CS与EIP后，要利用CS和GDTR结合，来寻找段基址，再把段基址与EIP结合，这样最后才能得到<strong>中断服务程序</strong>的入口地址</p>
+<p>与实模式下的不同:</p>
+<p><em>实模式下中断向量4个字节，其中低位的两个放到IP寄存器，高位的两个放到CS寄存器</em></p>
+<h4 id="中断处理过程"><a href="#中断处理过程" class="headerlink" title="中断处理过程"></a>中断处理过程</h4><p><img src="/home/alex/图片/zhongd.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/chenju.png" alt="upload succeful"></p>
+<p><img src="/home/alex/图片/googl.png" alt="upload"></p>
+<p><img src="/home/alex/图片/accu.png" alt="uploada"></p>
+<p><img src="/home/alex/图片/man.png" alt="upload"></p>
+<p><img src="/home/alex/图片/m.png" alt="upload succ"></p>
+<p><img src="/home/alex/图片/2018-14.png" alt="filename already exists, remed"></p>
+<p>根据上图： 发生中断的时候先压栈，保存好处理完中断后应该返回的地址的信息。</p>
+<p>Flags保存好标志，以免处理的时候会改变某些标志位。</p>
+<p>清楚IF-TF 起到关中断的作用？？？</p>
+<p>然后再从存储器找到中断向量，取到CS、IP之后就找到了终端服务程序的入口地址。</p>
+<p><img src="/home/alex/图片/shixi.png" alt="upload succul"></p>
+<p>总结：</p>
+<p><img src="/home/alex/图片/ZONGJIE.png" alt="upload succes"></p>
+<p>集中内部中断的类型：</p>
+<p><img src="/home/alex/图片/s.png" alt="upload succesl"></p>
+<p><img src="/home/alex/图片/juanzi.png" alt="upload succ"></p>
+<p>注意上述两种中断类型的时机是不同的哦。</p>
+<p>中断类型0 是在检测出异常的时候立即发生，而内部中断需要自己主动执行INTO指令才可以检测出来</p>
+<p><img src="/home/alex/图片/danbu.png" alt="upload successfl"></p>
+<p><img src="/home/alex/图片/shangji.png" alt="upload success"></p>
+<p>为什么INT n是两字节指令？ 因为 INT 指令操作码 首先占一个字节 ，然后n范围是0-255 需要8位来表示，所以用2个字节。</p>
+<p>那为啥INT 3用1个字节呢？</p>
+<p>因为x86地址最短的就是一个字节。如果INT 3 是两个字节或以上，可能会覆盖掉下面的指令的一些字节。</p>
+<p>例如：</p>
+<p>OFFSET      instruction 1, one byte</p>
+<p>OFFSET+1    instruction 2, one byte</p>
+<p>如果在inst1设置断点，则而且inst1内容是跳到inst2，则替换的时候INT 3会把inst2某些字节覆盖掉。那么就不能实现跳到inst2的指令了。</p>
+<p>OFFSET     INT3……………….</p>
+<p>OFFSET+1    ………………….</p>
+<p>详情参考 <a href="http://www.cs.columbia.edu/~junfeng/09sp-w4118/lectures/int3/int3.txt" target="_blank" rel="noopener">http://www.cs.columbia.edu/~junfeng/09sp-w4118/lectures/int3/int3.txt</a></p>
+<p><img src="/home/alex/图片/2018-15.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/duandian.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/duandian2.png" alt="upload succe"></p>
+<p>INT 3对应的中断服务程序可以查看 AL寄存器的值 </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/20/CSAPP-Cache-Lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -671,6 +901,77 @@
 <p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
 <p>特点</p>
 <p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
+<h4 id="全相联映射方式"><a href="#全相联映射方式" class="headerlink" title="全相联映射方式"></a>全相联映射方式</h4><p><img src="/home/alex/图片/this.png" alt="upload successf"></p>
+<p>给定地址，根据标记主存块号找到数据所在主存的哪一块，00000001111就是第15块，但是不知道在Cache的哪个槽中，所以只能一个一个槽比较。所以叫按内容访问。</p>
+<p>为什么没有cache索引字段？</p>
+<p>因为其可以任意映射到某一个行当中.</p>
+<p><img src="/home/alex/图片/2018-16.png" alt="filename already exists, remed"></p>
+<p>优点就是没有冲突，时间相对加快，但是tag长了，而且每一行都有一个比较器，比较时间长了，相当于命中时间会加长，而且比较成本也增加了，cache容量也变大了！</p>
+<p><img src="/home/alex/图片/ans.png" alt="upload successf"></p>
+<p>前8位标记表示cache属于哪个组群</p>
+<p>中间3位表示属于哪个组</p>
+<p>后面9位表示偏移量，表示要找到那个数据</p>
+<p>Eg: 地址 0000 0001 001 00000 1100</p>
+<p>前8位表示在第一组群 中间三位（cache索引）表示cache的第一个set  ，就是第一个族群的第001块，就是第九块，把这一块映射到cache的第一组当中。</p>
+<p><img src="/home/alex/图片/2018-17.png" alt="filename already exists, renam"></p>
+<p>两个比较器并向同时比较，最多有一个cache的tag与主存地址的tag相同，OR选择器的结果就是hit的结果。</p>
+<p>通过多路选择器把所要找的cache data的block找出来！</p>
+<p><img src="/home/alex/图片/bome.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/zombi.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/over.png" alt="upload succes"></p>
+<p><img src="/home/alex/图片/inyourhead.png" alt="upload succe"></p>
+<p>顺便讲一下什么叫按字节编址，按字编址。</p>
+<p>字 word = 4byte</p>
+<p>字节 byte = 8bit</p>
+<p>位 bit</p>
+<p><img src="/home/alex/图片/ra.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/shell.png" alt="upload succe"></p>
+<p><img src="/home/alex/图片/sudden.png" alt="upload succes"></p>
+<p><img src="/home/alex/图片/animal.png" alt="upload succesl"></p>
+<p><img src="/home/alex/图片/am.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/dlearning.png" alt="upload succe"></p>
+<p><img src="/home/alex/图片/today.png" alt="upload successf"></p>
+<p>上面的图怎么看？</p>
+<pre><code>1. 每一block64个字。访问第0block，冷不命中，放到第0组。那哪一行呢？都可以，一般按照顺序来，因此放在第0组第0行。然后第0组所有元素就都在第0组第0行中取。
+2. 然后访问第1组，冷不命中，放在第1组第0行。第0，16，32，48block都放在第0组，分别放在第0，1，2，3行。
+3. 当取到第64block的时候，miss，根据LRU把第0组行第0行替换掉。一直到第67block结束第一次循环。
+4. 然后来到第二次循环，想要找第0组，但是已经被刚才第64组替换掉了，而且第0block只能放在第0组，因此根据LRU，替换掉第0组第一行，一直到第四个block的时候，这时候第4block放在第4组的的第0行，没有miss。
+5. 由于第16，17，18，19个block已经被替换，当访问第16,17,18,19个block的时候，根据LRU，分别吧0，1，2，3组的第二行的32，33，34，35block替换。同理，当访问32，33，34，35block的时候，又把第三行的48495051替换。同理，访问48，49，50，51的时候，又miss，又把第一行的对应64，65，66，67替换掉。
+6. 所以第二次-第九次循环，每次都有5*4=20次miss
+</code></pre><p>命中率： (43520-68-9*20)/43520 = 99.43%</p>
+<h4 id="Cache读和写的一致性问题"><a href="#Cache读和写的一致性问题" class="headerlink" title="Cache读和写的一致性问题"></a>Cache读和写的一致性问题</h4><p><img src="/home/alex/图片/we.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/way.png" alt="upload succeful"></p>
+<p>同时写cache和主存，但是主存要慢得多，这样写完了cache之后要等待主存。<br>所以可以增加一个buffer 写缓冲。<br>就是CPU可以把数据写到cache中。写完了之后不等写道主存，继续写cache，写到主存的工作就交给write buffer，由memory controller传回到DRAM</p>
+<p><img src="/home/alex/图片/para.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/haleluya.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/hale.png" alt="upload successful"></p>
+<p>写穿透就是同时写cache和主存，写分配就是同时更新主存和cache<br>Write Trough 算法<br>如果能够找到i，使得TAG（i） == X,<br>如果是读操作，就直接返回块内地址DATA[i]；<br>写操作就除了要写块内地址，还要写主存</p>
+<p>如果miss掉<br>读操作就是读主存的数据，然后打标签，送到cache<br>写操作就是先写主存，然后打标签，最后在块内new一个新的数据</p>
+<p>Cache越大越好，命中率越高，但是越大的话成本越高<br>Block 不能太大，也不能太小</p>
+<h4 id="Cache-数目"><a href="#Cache-数目" class="headerlink" title="Cache 数目"></a>Cache 数目</h4><p><img src="/home/alex/图片/shumu.png" alt="upload successl"></p>
+<p>L1，分立cache，为了实现流水线，同时取数据和指令，提高并行性。</p>
+<p>第二个问题：<br>因为他有L1，L2两个cache，即使不命中也没有关系</p>
+<p>第三个问题：最后Level的cache与指令流无关，不需要考虑并行。因此优先考虑空间的利用率，同时命中率比命中时间更重要。</p>
+<p>L1比L2容量小，（越大命中率越高）比L2快，命中时间短，如果L1不命中，只好寄托在L2身上，因此L2的命中率就显得特别重要。</p>
+<h4 id="Cache-实现举例"><a href="#Cache-实现举例" class="headerlink" title="Cache 实现举例"></a>Cache 实现举例</h4><p>用2个状态位：</p>
+<pre><code>S: SHARE
+E：EXCLUSIVE
+M: MODIFIED （是否dirty bit）
+VALID 是否有效
+</code></pre><p>LRU用1位： </p>
+<p><img src="/home/alex/图片/silence.png" alt="upload succel"></p>
+<h4 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h4><p><img src="/home/alex/图片/eg.png" alt="upload successful"></p>
+<h5 id="1-不考虑一致性：dirty-bit-；替换控制即LRU位"><a href="#1-不考虑一致性：dirty-bit-；替换控制即LRU位" class="headerlink" title="1. 不考虑一致性：dirty bit ；替换控制即LRU位"></a>1. 不考虑一致性：dirty bit ；替换控制即LRU位</h5><p>256MB 表示主存地址 28位</p>
+<p>64B – b = 6</p>
+<p>Cache 8行 -中间索引位 3</p>
+<p>Tag位 19位 别忘了要考虑valid位</p>
+<p>（1+19）<em>8 + 64</em>8*8 （每行一个block）(64B是64byte，1byte 8 bits)</p>
+<h5 id="2-64B-16个元素-一行16个元素"><a href="#2-64B-16个元素-一行16个元素" class="headerlink" title="2. 64B-16个元素 一行16个元素"></a>2. 64B-16个元素 一行16个元素</h5><p>A[0][31] 地址 320+4*31 = 444 [444/64] = 6</p>
+<p>因此主存块号为6，6mod8 = 6因此在第六行。</p>
+<p>或者444 为0000110111100B 中间三位是索引位，就是第六行</p>
+<p>而A[1][1] = (320+256*4+8 )/64 mod 8=5 同理也可以把地址转化为二进制来计算。</p>
+<h5 id="3-A-每隔16元素一次冷不命中，命中率（15-16）"><a href="#3-A-每隔16元素一次冷不命中，命中率（15-16）" class="headerlink" title="3.A 每隔16元素一次冷不命中，命中率（15/16）"></a>3.A 每隔16元素一次冷不命中，命中率（15/16）</h5><p>B 每次相隔256个元素，256/16 = 16 块，16mod 8=0，每次访问后面数组元素的时候，总会把上一次装入到cache中的主存块覆盖掉。</p>
+<p>所以每次访问的时候都会发生冲突，替换，因此没有一次命中。</p>
 
           
         
@@ -1915,245 +2216,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/02/CSAPP-链接器（二）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/02/CSAPP-链接器（二）/" itemprop="url">CSAPP-链接器（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-02T21:01:00+08:00">
-                2018-09-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ICS/" itemprop="url" rel="index">
-                    <span itemprop="name">ICS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="回顾-链接操作的步骤"><a href="#回顾-链接操作的步骤" class="headerlink" title="回顾 链接操作的步骤"></a>回顾 链接操作的步骤</h3><h4 id="1-确定符号的引用关系-（符号解析）"><a href="#1-确定符号的引用关系-（符号解析）" class="headerlink" title="1.确定符号的引用关系 （符号解析）"></a>1.确定符号的引用关系 （符号解析）</h4><h4 id="2-合并-o文件（同节合并）"><a href="#2-合并-o文件（同节合并）" class="headerlink" title="2.合并.o文件（同节合并）"></a>2.合并.o文件（同节合并）</h4><h4 id="3-确定每个符号的地址（确定地址）"><a href="#3-确定每个符号的地址（确定地址）" class="headerlink" title="3.确定每个符号的地址（确定地址）"></a>3.确定每个符号的地址（确定地址）</h4><h4 id="4-在指令中填入新地址-（2-3-4属于重定位）（修改引用）"><a href="#4-在指令中填入新地址-（2-3-4属于重定位）（修改引用）" class="headerlink" title="4.在指令中填入新地址 （2.3.4属于重定位）（修改引用）"></a>4.在指令中填入新地址 （2.3.4属于重定位）（修改引用）</h4><p><br></p>
-<h3 id="符号解析（符号绑定）"><a href="#符号解析（符号绑定）" class="headerlink" title="符号解析（符号绑定）"></a>符号解析（符号绑定）</h3><p>说白了就是把每个模块引用的符号与某个目标模块中的定义符号建立关联</p>
-<h4 id="程序中有定义和引用的符号"><a href="#程序中有定义和引用的符号" class="headerlink" title="-程序中有定义和引用的符号"></a>-程序中有定义和引用的符号</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void swap()&#123;&#125; /*定义符号swap*/</span><br><span class="line">swap();   /*引用符号*/</span><br><span class="line">int *xp = &amp;x; /*定义符号xp，引用符号 x*/</span><br></pre></td></tr></table></figure>
-<h4 id="编辑器把定义的符号放在一个符号表当中"><a href="#编辑器把定义的符号放在一个符号表当中" class="headerlink" title="-编辑器把定义的符号放在一个符号表当中"></a>-编辑器把定义的符号放在一个符号表当中</h4><p>1.符号表是一个结构数组，在.symtab节中<br><br><br>2.每个表项包含符号名，长度与位置信息</p>
-<h4 id="链接器把符号的引用存放在重定位节中（-rel-text与rel-data）"><a href="#链接器把符号的引用存放在重定位节中（-rel-text与rel-data）" class="headerlink" title="-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）"></a>-链接器把符号的引用存放在重定位节中（.rel.text与rel.data）</h4><h4 id="链接器把每个符号的引用都与一个确定的符号定义建立关联"><a href="#链接器把每个符号的引用都与一个确定的符号定义建立关联" class="headerlink" title="-链接器把每个符号的引用都与一个确定的符号定义建立关联"></a>-链接器把每个符号的引用都与一个确定的符号定义建立关联</h4><p><br></p>
-<h3 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h3><p>1.把多个代码段与数据段合并成一个单独的代码段和数据段<br><br><br>2.计算每个定义的符号在虚拟地址空间中的绝对地址<br><br><br>3.把可执行文件中符号引用处的地址修改为重定位后的地址信息<br><br><br>（局部变量temp分配在栈中，不会在过程外被引用，因此不属于符号定义）</p>
-<h3 id="链接符号的类型"><a href="#链接符号的类型" class="headerlink" title="链接符号的类型"></a>链接符号的类型</h3><h4 id="1-Global-Symbols-（模块内部定义的全局符号）"><a href="#1-Global-Symbols-（模块内部定义的全局符号）" class="headerlink" title="1.Global Symbols （模块内部定义的全局符号）"></a>1.Global Symbols （模块内部定义的全局符号）</h4><p>eg: 全局变量  指在本模块定义，但是在外部模块可以使用的</p>
-<h4 id="2-External-Symbols-（外部定义的外部符号）"><a href="#2-External-Symbols-（外部定义的外部符号）" class="headerlink" title="2.External Symbols （外部定义的外部符号）"></a>2.External Symbols （外部定义的外部符号）</h4><p>eg: 函数原型的函数名，函数中的带extern的变量名  外部模块定义，在本模块可以使用</p>
-<h4 id="3-Local-Symbols-（本模块定义并且引用的局部符号）"><a href="#3-Local-Symbols-（本模块定义并且引用的局部符号）" class="headerlink" title="3.Local Symbols （本模块定义并且引用的局部符号）"></a>3.Local Symbols （本模块定义并且引用的局部符号）</h4><p>eg: 带static的变量名  分配在静态数据区，并不是局部变量！局部变量是分配在栈中的<br>本模块定义，只能在本模块使用</p>
-<p>类型举例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int buf[2] = &#123;1,2&#125;;</span><br><span class="line">void swap();</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	swap();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">extern int buf[];</span><br><span class="line"></span><br><span class="line">int*bufp0 = &amp;buf[0];</span><br><span class="line">static int *bufp1;</span><br><span class="line"></span><br><span class="line">void swap()&#123;</span><br><span class="line">   int temp;</span><br><span class="line">   bufp1 = &amp;buf[1];</span><br><span class="line">   temp = *bufp0;</span><br><span class="line">   *bufp0 = *bufp1;</span><br><span class="line">   *bufp1 = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>全局符号： main.c中的buf,swap.c中的swap（）,bufp0;</p>
-<p>外部符号  swap.c中的buf[],main.c中的swap();</p>
-<p>局部符号  swap.c中的局部符号</p>
-<h4 id="我们说符号的定义，实质上就是分配了存储空间。"><a href="#我们说符号的定义，实质上就是分配了存储空间。" class="headerlink" title="我们说符号的定义，实质上就是分配了存储空间。"></a>我们说符号的定义，实质上就是分配了存储空间。</h4><h4 id="函数名符号指代码所在区"><a href="#函数名符号指代码所在区" class="headerlink" title="函数名符号指代码所在区"></a>函数名符号指代码所在区</h4><h4 id="变量名指静态数据区"><a href="#变量名指静态数据区" class="headerlink" title="变量名指静态数据区"></a>变量名指静态数据区</h4><p>定义符号的值就是目标所在的首地址</p>
-<h4 id="全局符号的强，弱"><a href="#全局符号的强，弱" class="headerlink" title="全局符号的强，弱"></a>全局符号的强，弱</h4><p>函数名以及初始化后的变量是强全局符号</p>
-<p>未初始化变量是弱全局符号</p>
-<p>上面函数 main.c 的swap(),swap.c的 buf[],是弱符号，其余的全局符号都是强符号</p>
-<h5 id="多重定义符号的解析规则"><a href="#多重定义符号的解析规则" class="headerlink" title="多重定义符号的解析规则"></a>多重定义符号的解析规则</h5><p>1.强符号不能多次定义</p>
-<p>2.一个符号被定义为一次强符号和多次弱符号，则按强定义为准</p>
-<p>3.多个弱符号定义，则任选其中一个</p>
-<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p><img src="/home/alex/图片/sign.png" alt="image"></p>
-<p>FLD1指把1.0放在ST（0）处，ST（0）是x87浮点处理器的一个栈</p>
-<p>FSTPL &amp;d  L指double对应的双精度，存放8个字节</p>
-<p><img src="/home/alex/图片/sign2.png" alt="image"></p>
-<p>相当于d变为浮点数表示之后，把x所在的位置给冲掉了，导致x会被改变</p>
-<p>（注意小端方式，意味着位数小的放在地址小的位置）</p>
-<p><br></p>
-<h3 id="静态连接"><a href="#静态连接" class="headerlink" title="静态连接"></a>静态连接</h3><p>多个可重定位目标模块 + 静态库（标准库,自定义库等）<br>(.o文件) + （.a文件，其中包含多个.o模块）</p>
-<h5 id="静态库（-a-archive-files）"><a href="#静态库（-a-archive-files）" class="headerlink" title="静态库（.a archive files）"></a>静态库（.a archive files）</h5><p>1.把所有相关的目标模块（.o）打包为一个单独的库文件(.a)，称为静态库文件，也成为存档文件</p>
-<p>2.在构建可执行文件的时候，只需要指定库文件名，连接器会自动到库中寻找那些应用程序用到的目标模块，并且只把用到的模块从库中拷贝出来，链接到可执行文件中。</p>
-<p>eg: 在函数中使用printf函数，程序员不需要在文件中包括printf的代码，链接器会自动在静态库查找定义的符号来解析printf符号，及实现直接调用。</p>
-<h5 id="静态库的创建"><a href="#静态库的创建" class="headerlink" title="静态库的创建"></a>静态库的创建</h5><p>ar 能把指定的.o文件打包生成静态库文件（.a文件）</p>
-<p>eg: ar rs libc.a atoi.o printf.o random.o</p>
-<h5 id="自定义库文件"><a href="#自定义库文件" class="headerlink" title="自定义库文件"></a>自定义库文件</h5><p>gcc -c p1.c p2.c<br>ar rcs mylib.a p1.o p2.o </p>
-<p>然后如果你写了一个main.c，想要调用静态库中的函数</p>
-<p>gcc -c main.c<br>gcc -static -o myproc main.o ./mylib.a</p>
-<h4 id="使用静态库的过程"><a href="#使用静态库的过程" class="headerlink" title="使用静态库的过程"></a>使用静态库的过程</h4><p><img src="https://wdxtub.com/images/14613353540958.jpg" alt="image"></p>
-<p>-按照命令行给出的顺序扫描.o，.a文件</p>
-<p>-扫描期间把当前未解析的引用记录到一个列表U中</p>
-<p>-每遇到一个新的.o与.a模块，试图用其来解析UI中的符号</p>
-<p>-扫描到最后，如果U不为空，则发生错误</p>
-<p><img src="/home/alex/图片/eg1.png" alt="image"></p>
-<p>总结出来的技巧： 把静态库都放到后面去</p>
-<p><br></p>
-<h3 id="共享库"><a href="#共享库" class="headerlink" title="共享库"></a>共享库</h3><p>但如果我们只是想用库中的某一函数，却仍然要把所有内容都链接进去，会造成文件中静态库的大量重复。</p>
-<p>动态链接可以在首次载入的时候就执行，由ld-linux.so完成，这样所有的程序可以共享同一个库，而不用进行封装。</p>
-<p><img src="https://wdxtub.com/images/14613373029640.jpg" alt="image"></p>
-<p><br></p>
-<p>符号重定位之后，得到两个文件:将要合并的*.o文件的集合以及定义符号的集合</p>
-<h3 id="重定位-1"><a href="#重定位-1" class="headerlink" title="重定位"></a>重定位</h3><h4 id="第一步-合并相同的节"><a href="#第一步-合并相同的节" class="headerlink" title="第一步 合并相同的节"></a>第一步 合并相同的节</h4><p>把集合E中的所有目标模块相同的节合并成新节</p>
-<p>例如把所有.text节合并作为可执行文件中的.text节</p>
-<h4 id="第二步-对集合D中的定义符号进行重定位（确定地址）"><a href="#第二步-对集合D中的定义符号进行重定位（确定地址）" class="headerlink" title="第二步 对集合D中的定义符号进行重定位（确定地址）"></a>第二步 对集合D中的定义符号进行重定位（确定地址）</h4><p>即确定新节中所有定义符号在虚拟地址空间中的地址</p>
-<p>例如为函数确定首地址，进而确定每条指令的地址，为变量确定首地址</p>
-<p>完成这一步之后，每条指令和每个变量的地址都可以确定</p>
-<h4 id="第三步-对引用符号进行重定位"><a href="#第三步-对引用符号进行重定位" class="headerlink" title="第三步 对引用符号进行重定位"></a>第三步 对引用符号进行重定位</h4><p>修改.text和.data节中对每个符号的引用（地址）<br>需要用到.o文件中的.rel_data 和.rel_text中保存的重定位信息</p>
-<h3 id="什么是重定位信息？"><a href="#什么是重定位信息？" class="headerlink" title="什么是重定位信息？"></a>什么是重定位信息？</h3><p><img src="/home/alex/图片/rede.png" alt="imaeg"></p>
-<p>例如 把add B 这一句翻译为机器代码，add翻译为操作码05 B为一个引用，一开始不知道是什么数值，于是写入一个00000000初始位置，同时生成一个重定位条目，提示后面这个位置的值要被修改。</p>
-<p>又例如jmp 后面接的是L0，则在.rel_text节中生成重定位信息，但一开始还没走到L0指令，还不知道L0的定义是什么，于是填了一个随机地址FCFFFFFF，在后续当中修改这个地址，让他指向真正的L0地址</p>
-<p>左下角 offset 0x1 代表从第一个字节开始重定位（下方框是.text节，起始第0个字节为05），两个数字（一共八位）一个字节，那么02就是第五个字节，FC就是第六个字节。</p>
-<p>左下角symbol 表示重定位的符号为B</p>
-<p>左下角 type 重定位类型为绝对地址</p>
-<h3 id="重定位操作举例"><a href="#重定位操作举例" class="headerlink" title="重定位操作举例"></a>重定位操作举例</h3><p>E中有main.o 和 swap.o两个模块！ D中有所有定义的符号！</p>
-<p>在main.o与swap.o的重定位条目中有重定位信息，反映了符号引用位置（offset），绑定的定义符号名，重定位类型）</p>
-<p>读取重定位条目： readelf -r main.o</p>
-<h4 id="PC相对地址重定位"><a href="#PC相对地址重定位" class="headerlink" title="PC相对地址重定位"></a>PC相对地址重定位</h4><p><img src="/home/alex/图片/PC.png" alt="image"></p>
-<p>0： 55 表示main从.text最初的地方开始</p>
-<p>3： and 指令的 0xfffffff0 是为了让栈顶指针esp为16字节的倍数</p>
-<p>swap函数调用： 6： e8 <font color="#00ffff" size="17">fc ff ff ff </font> 注意x86是小端法存储，因此<br>因此立即数为ff ff ff fc 即-4  </p>
-<p>由于 fc ff ff ff 不是swap函数的首地址，所以会生成一个重定位信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">7:R_386_PC32 SWAP</span><br></pre></td></tr></table></figure></p>
-<p>表示在偏移量为7的位置，即fc开始的位置，按相对地址方式进行重定位ie</p>
-<h4 id="数据的存储方式"><a href="#数据的存储方式" class="headerlink" title="数据的存储方式:"></a>数据的存储方式:</h4><p><img src="/home/alex/图片/reLocation.png" alt="image"></p>
-<p>小端方式，第一个数据为 00 00 00 01</p>
-<p>大端方式，第二个数据为 00 00 00 02</p>
-<h4 id="相对地址的重定位方式"><a href="#相对地址的重定位方式" class="headerlink" title="相对地址的重定位方式"></a>相对地址的重定位方式</h4><p>假定：</p>
-<p><img src="/home/alex/图片/address.png" alt="imagel"></p>
-<p>main占 0x12B,因此swap初始地址为</p>
-<p>-0x8048380+0x12=0x8048392</p>
-<p>但由于不是4的倍数，因此在四字节边界对齐的情况下，应该为0x8048394</p>
-<p>call 指令最后的机器代码应该为多少？</p>
-<h6 id="call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址"><a href="#call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址" class="headerlink" title="call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址"></a>call指令运行机理：把call指令的下一条指令压栈，然后跳转到swap函数的首地址</h6><p>转移目标地址 = PC+偏移地址 PC=0x8040380+0x07-init</p>
-<h5 id="注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC"><a href="#注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC" class="headerlink" title="注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC"></a>注意当执行到某一条指令的时候，PC为该条指令下一条指令的地址噢，所以PC</h5><h5 id="应该为0x08048380-b-0x0804838b"><a href="#应该为0x08048380-b-0x0804838b" class="headerlink" title="应该为0x08048380+b = 0x0804838b"></a>应该为0x08048380+b = 0x0804838b</h5><p><img src="/home/alex/图片/res.png" alt="image"></p>
-<p>重定位值就是偏移地址</p>
-<p>所以重定位值 = 转移目标地址 - PC = 0X9</p>
-<p>CALL 机器代码就是如上图结果所示</p>
-<h4 id="绝对地址重定位"><a href="#绝对地址重定位" class="headerlink" title="绝对地址重定位"></a>绝对地址重定位</h4><p>绝对地址重定位意思就是把buf的地址直接填到00 00 00 00<br><img src="/home/alex/图片/R_386_32.png" alt="image"></p>
-<p>这两个段都从可执行文件装入，占了4kb</p>
-<p><img src="/home/alex/图片/kb.png" alt="image"></p>
-<h5 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h5><p>buf在运行时候的存储地址ADDR（buf）=0x8049620</p>
-<p>重定位之后，bufp0地址及内容变成什么? bufp0紧接在buf后，故地址为0x8049620+8 = 0x8049628</p>
-<h4 id="符号重定位"><a href="#符号重定位" class="headerlink" title="符号重定位"></a>符号重定位</h4><p><img src="/home/alex/图片/r.png" alt="image"></p>
-<p>重定位结果：</p>
-<p><img src="/home/alex/图片/reallocation.png" alt="image"></p>
-<p>09 00 00 00 含义是当前PC（0x804838b加上一个立即数偏移量9）得到要跳转到的目标地址<br>为什么是不是从8048392开始呢？因为函数地址要求4边界对齐</p>
-<p><img src="/home/alex/图片/nop.png" alt="image"></p>
-<h3 id="可执行文件的存储器映像"><a href="#可执行文件的存储器映像" class="headerlink" title="可执行文件的存储器映像"></a>可执行文件的存储器映像</h3><p><img src="/home/alex/图片/iso.png" alt="image"></p>
-<p>左边是存储在物理磁盘当中的，而右边是存储在内存当中的</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2208,7 +2270,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
