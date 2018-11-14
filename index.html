@@ -272,6 +272,397 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/CSAPP-MIPS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/14/CSAPP-MIPS/" itemprop="url">CSAPP-MIPS</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T21:00:00+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="Registers-寄存器"><a href="#Registers-寄存器" class="headerlink" title="Registers 寄存器"></a>Registers 寄存器</h5><hr>
+<p>1.一共有32个general register</p>
+<p>2.有两种使用方法: 直接使用对应的编号或者是对应的寄存器名称</p>
+<table>
+<thead>
+<tr>
+<th>寄存器编号</th>
+<th>寄存器名称</th>
+<th>寄存器用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>zero</td>
+<td>return 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>$at</td>
+<td>汇编保留寄存器</td>
+</tr>
+<tr>
+<td>2-3</td>
+<td>$v0-$v1</td>
+<td>（value）存储表达式或者是函数的返回值</td>
+</tr>
+<tr>
+<td>4-7</td>
+<td>$a0-$a3</td>
+<td>(Argument) 存储子程序前四个参数，调用时不保存</td>
+</tr>
+<tr>
+<td>8-15</td>
+<td>$t0-$t7</td>
+<td>临时变量，调用时不保存，调用完成后要恢复</td>
+</tr>
+<tr>
+<td>16-23</td>
+<td>$s0-$s7</td>
+<td>函数调用的时候必须保存，调用完成后需要恢复</td>
+</tr>
+<tr>
+<td>24-25</td>
+<td>$t8-$t9</td>
+<td>属性和$t0-$t7一致</td>
+</tr>
+<tr>
+<td>26-27</td>
+<td>$k0-$k1</td>
+<td>（kernel）中断函数返回值</td>
+</tr>
+<tr>
+<td>28</td>
+<td>$gp</td>
+<td>global pointer 指向64K大小的静态数据块的中间地址</td>
+</tr>
+<tr>
+<td>29</td>
+<td>$sp</td>
+<td>stack pointer</td>
+</tr>
+<tr>
+<td>30</td>
+<td>$fp/$s8</td>
+<td>frame pointer</td>
+</tr>
+<tr>
+<td>31</td>
+<td>$ra</td>
+<td>return address</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h5 id="Program-Structure-程序结构"><a href="#Program-Structure-程序结构" class="headerlink" title="Program Structure 程序结构"></a>Program Structure 程序结构</h5><hr>
+<p>本质其实就只是数据声明+普通文本+程序编码（文件后缀为.s，或者.asm也行） 数据声明在代码段之后（其实在其之前也没啥问题，也更符合高级程序设计的习惯）<br>Data Declarations 数据声明</p>
+<pre><code>数据段以 .data为开始标志
+声明变量后，即在主存中分配空间。
+</code></pre><p>Code 代码</p>
+<pre><code>代码段以 .text为开始标志
+其实就是各项指令操作
+程序入口为main：标志
+程序结束标志（详见下文）
+</code></pre><h6 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">		.data  # 数据变量声明</span><br><span class="line">		</span><br><span class="line">        .text  #代码段</span><br><span class="line">        </span><br><span class="line">main:   主函数入口</span><br></pre></td></tr></table></figure>
+<hr>
+<h5 id="数据声明"><a href="#数据声明" class="headerlink" title="数据声明"></a>数据声明</h5><p>example</p>
+<p>var1:   &emsp;  .word 3     </p>
+<p>array:  &emsp;  .byte ‘a’,’b’  # 声明一个存储两个字符的数组array1，并赋值’a’,’b’</p>
+<p>array1:  &emsp;  .space 40    #为变量array2 分配40个未使用的连续空间</p>
+<hr>
+<h6 id="其他指令汇总"><a href="#其他指令汇总" class="headerlink" title="其他指令汇总"></a>其他指令汇总</h6><hr>
+<p><a href="https://blog.csdn.net/king523103/article/details/45967991" target="_blank" rel="noopener">MIPS入门</a></p>
+<h5 id="实战-冒泡排序"><a href="#实战-冒泡排序" class="headerlink" title="实战-冒泡排序"></a>实战-冒泡排序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">array: .space 1024</span><br><span class="line">input_msg: .asciiz &quot;Enter the number of integers:\n&quot;</span><br><span class="line">input_int_msg: .asciiz &quot;Enter integers to be sorted\n&quot;</span><br><span class="line">output_msg: .asciiz &quot;the sorted numbers are\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.globl main</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">	la $a0,input_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	 </span><br><span class="line">	li $v0,5  #接受用户输入的数组长度</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	la $t6,array #数组首地址</span><br><span class="line">	move $t7,$zero #循环变量i</span><br><span class="line">	move $t8,$zero #循环变量j</span><br><span class="line">	move $t9,$v0  #数组长度</span><br><span class="line"></span><br><span class="line">	addi $t3,$zero,1</span><br><span class="line">	beq $v0,$t3,special</span><br><span class="line">			</span><br><span class="line">input:</span><br><span class="line"></span><br><span class="line">	la $a0,input_int_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	li $v0,5  </span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	#for(int i=0;i&lt;num;i++)</span><br><span class="line">        #cin&gt;&gt;arr[i];</span><br><span class="line">        </span><br><span class="line">        move $t0,$t7 #$t0 is i</span><br><span class="line">        sll $t0,$t0,2 #i become byte offset</span><br><span class="line">        move $t1,$t6 #$t1 is &amp;array[0]</span><br><span class="line">        add $t1,$t1,$t0 #$t1 is &amp;array[i]</span><br><span class="line">        sw $v0,0($t1) #cin&gt;&gt;array[i]</span><br><span class="line">	</span><br><span class="line">	addi $t7,$t7,1</span><br><span class="line">	blt $t7,$t9,input #if ++i&lt;length</span><br><span class="line"> </span><br><span class="line">	move $t7,$zero</span><br><span class="line">	</span><br><span class="line">loop1:	# 每次外层循环比内层循环的循环变量设为0</span><br><span class="line">	move $t8,$zero</span><br><span class="line">loop2:</span><br><span class="line">	#read arr[j+1] and arr[j]</span><br><span class="line">	</span><br><span class="line">	move $t2,$t8 #t2 is j</span><br><span class="line">	sll $t2,$t2,2 #j=*4;</span><br><span class="line">	addu $t1,$t2,$t6 #&amp;arr[j]</span><br><span class="line">	lw $t4,0($t1)  #arr[j]</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	addi $t2,$t8,1 #j+1</span><br><span class="line">	sll $t2,$t2,2 #(j+1)*4</span><br><span class="line">	addu $t0,$t2,$t6 #&amp;arr[j+1]</span><br><span class="line">	lw   $t5,0($t0) #$t5 = arr[j+1]</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	bge $t5,$t4,skip #if arr[j+1]&gt;arr[j] skip</span><br><span class="line"></span><br><span class="line">	sw  $t5,0($t1)</span><br><span class="line">	sw  $t4,0($t0)</span><br><span class="line">	</span><br><span class="line">skip:</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	addi $t8,$t8,1 #j++</span><br><span class="line">	subi $t1,$t9,1 #t1 = num-1</span><br><span class="line">	sub  $t1,$t1,$t7 #t1 = num-1-i</span><br><span class="line">	blt  $t8,$t1,loop2 # if j&lt;num-i-1 t2=1</span><br><span class="line">	addi $t7,$t7,1 #i++</span><br><span class="line">	sub  $t3,$t9,1</span><br><span class="line">	blt  $t7,$t3,loop1  #if i&lt;num-1 then continue loop1</span><br><span class="line">	j output</span><br><span class="line">	</span><br><span class="line">special:</span><br><span class="line">	la $a0,input_int_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	li $v0,5  </span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	#for(int i=0;i&lt;num;i++)</span><br><span class="line">        #cin&gt;&gt;arr[i];</span><br><span class="line">        </span><br><span class="line">        move $t0,$t7 #$t0 is i</span><br><span class="line">        sll $t0,$t0,2 #i become byte offset</span><br><span class="line">        move $t1,$t6 #$t1 is &amp;array[0]</span><br><span class="line">        add $t1,$t1,$t0 #$t1 is &amp;array[i]</span><br><span class="line">        sw $v0,0($t1) #cin&gt;&gt;array[i]</span><br><span class="line">	</span><br><span class="line">output:</span><br><span class="line">	</span><br><span class="line">	la $a0,output_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	move $t7,$zero</span><br><span class="line">print:</span><br><span class="line">	</span><br><span class="line">	move $t0,$t7</span><br><span class="line">	</span><br><span class="line">	sll $t0,$t0,2</span><br><span class="line">	</span><br><span class="line">	add $t1,$t6,$t0</span><br><span class="line">	</span><br><span class="line">	lw $a0,0($t1) #argument a0</span><br><span class="line">	</span><br><span class="line">	li $v0,1</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	addi $t7,$t7,1</span><br><span class="line">	blt $t7,$t9,print</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/算法-Sliding-Window/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/14/算法-Sliding-Window/" itemprop="url">算法-(2018-11-14) Sliding Window&Dijkstra枚举</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T15:58:00+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="sliding-window-leetcode-239"><a href="#sliding-window-leetcode-239" class="headerlink" title="sliding window leetcode 239"></a>sliding window leetcode 239</h5><p><a href="https://leetcode.com/problems/sliding-window-maximum/description/" target="_blank" rel="noopener">https://leetcode.com/problems/sliding-window-maximum/description/</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">method 1: time complexity O(Nlog(k))</span><br><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">        </span><br><span class="line">        multiset&lt;int&gt;st;</span><br><span class="line">        vector&lt;int&gt;vec;</span><br><span class="line">        list&lt;int&gt; lst;</span><br><span class="line">        for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            if(i-k&gt;=0)&#123;</span><br><span class="line">                int top = lst.front();</span><br><span class="line">                lst.pop_front();</span><br><span class="line">                st.erase(st.find(top));</span><br><span class="line">            &#125;</span><br><span class="line">         </span><br><span class="line">            lst.push_back(nums[i]);</span><br><span class="line">            st.insert(nums[i]);</span><br><span class="line">              if(i-k&gt;=-1)&#123;</span><br><span class="line">                vec.push_back(*st.rbegin());</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return vec;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">method 2</span><br><span class="line"></span><br><span class="line">1. use a deque to store the index in the window , each window must fall in the range(i-k+1,i). so whenever an index smaller than i-k+1,pop_front() to discard the element; </span><br><span class="line"></span><br><span class="line">2. when insert a new element nums[i], compare it with the top of the queue , until q[front]&gt;nums[i] ,that is to say, q[front] is always the max element in the window</span><br><span class="line"></span><br><span class="line">  vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">       </span><br><span class="line">         deque&lt;int&gt;dq;</span><br><span class="line">         vector&lt;int&gt;res;</span><br><span class="line">         if(nums.empty())</span><br><span class="line">             return res;</span><br><span class="line">         for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            while(!dq.empty()&amp;&amp;dq.front()&lt;i-k+1)&#123;</span><br><span class="line">                dq.pop_front();</span><br><span class="line">            &#125;</span><br><span class="line">            //remove smaller elements in window</span><br><span class="line">            while(!dq.empty()&amp;&amp;nums[dq.back()]&lt;=nums[i])&#123;</span><br><span class="line">                dq.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">             dq.push_back(i);</span><br><span class="line">             if(i-k+1&gt;=0)&#123;</span><br><span class="line">                 res.push_back(nums[dq.front()]);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         return res;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里sliding window就是移动窗口的时候，每次把最左边的值pop掉，然后不断比较最右边的值与新插入的值，保证新插入的值是最好的candidate，那么窗口最左边的值就会是最大值。</p>
+<p>Kattis</p>
+<p>#include <algorithm></algorithm></p>
+<p>#include <set></set></p>
+<p>#include <iostream></iostream></p>
+<p>#include <queue></queue></p>
+<p>#include <vector></vector></p>
+<p>#include <string></string></p>
+<p>#include <map></map></p>
+<p>using namespace std;</p>
+<p>struct edge{<br>    int from;<br>    int to;<br>    int weight;<br>};</p>
+<p>typedef pair&lt;int,int&gt; ip;</p>
+<p>#define INF 0x3f3f3f3f</p>
+<p>void dijkstra(vector&lt;vector<ip>&gt;&amp;adj,vector<int>&amp;dist,int source){</int></ip></p>
+<pre><code>priority_queue&lt;ip,vector&lt;ip&gt;,greater&lt;ip&gt;&gt; q;
+q.push({0,source});
+dist[source] = 0;
+while(!q.empty()){
+    auto top = q.top();
+    q.pop();
+    int u = top.second;
+    for(auto p:adj[u]){
+        int v = p.first;
+        int weight = p.second;
+        if(dist[v]==INF||dist[v]&gt;dist[u]+weight){
+            dist[v] = dist[u]+weight;
+            q.push(make_pair(dist[v],v));
+        }
+    }
+}
+</code></pre><p>}</p>
+<p><a href="https://open.kattis.com/problems/flowerytrails" target="_blank" rel="noopener">https://open.kattis.com/problems/flowerytrails</a></p>
+<p><strong><em>对于有多条最短路，并且求所有最短路的路径之和</em></strong></p>
+<p>1.分别对起始点和终点跑DIjkstra</p>
+<p>2.枚举每一条初始点与终点分别到这条边距离，分别为d1,d2，如果d1+d2+w==shortestPath,则ans+=w;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int P,T;</span><br><span class="line">    cin&gt;&gt;P&gt;&gt;T;</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; adj(P);</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; parent(P);</span><br><span class="line">    vector&lt;int&gt;distStart(P,INF);</span><br><span class="line">    vector&lt;int&gt;distEnd(P,INF);</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;edgeVec;</span><br><span class="line"></span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from,to,w;</span><br><span class="line">        cin&gt;&gt;from&gt;&gt;to&gt;&gt;w;</span><br><span class="line">        edgeVec.push_back(make_tuple(from,to,w));</span><br><span class="line">        adj[from].push_back(make_pair(to,w));</span><br><span class="line">        adj[to].push_back(make_pair(from,w));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dijkstra(adj,distStart,0);</span><br><span class="line">    dijkstra(adj,distEnd,P-1);</span><br><span class="line"></span><br><span class="line">    int shortestPath = distStart[P-1];</span><br><span class="line">    int ans=0;</span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(edgeVec[i]);</span><br><span class="line">        int to = get&lt;1&gt;(edgeVec[i]);</span><br><span class="line">        int weight = get&lt;2&gt;(edgeVec[i]);</span><br><span class="line"></span><br><span class="line">        if(distStart[to]+distEnd[from]+weight==shortestPath||</span><br><span class="line">        distStart[from]+distEnd[to]+weight==shortestPath)&#123;</span><br><span class="line">            ans+=weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout&lt;&lt;ans*2;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1880,342 +2271,6 @@ VALID 是否有效
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/06/CSAPP-cache-lab/" itemprop="url">CSAPP-buflab</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T03:18:00+08:00">
-                2018-09-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="cache-lab"><a href="#cache-lab" class="headerlink" title="cache lab"></a>cache lab</h5><p>原函数返回地址—-&lt;<br>保存的%ebp值（栈帧指针）—-&lt;<br>缓冲区—-&lt;<br>缓冲区—-&lt;<br>。。。。<br>。。。。<br>%esp(栈指针)—-&lt;</p>
-<h3 id="Level2"><a href="#Level2" class="headerlink" title="Level2"></a>Level2</h3><p><img src="/home/alex/图片/c.png" alt="image"></p>
-<p>global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value</p>
-<p>我们现在要找到global_value的地址，发现</p>
-<p>0x804d100就是value的地址，0x804d108就是cookie的地址。因此我们想把0x804d100地址所在的数值改为我们的cookie</p>
-<p><img src="/home/alex/图片/p2.png" alt="image"></p>
-<p>建立p2.s文件</p>
-<p>注意x86是data-load 是利用register来完成的</p>
-<p><img src="/home/alex/图片/ps2.png" alt="image"></p>
-<p>把cookie值传到%eax 临时寄存器，然后把寄存器里面的数值传给global_value的地址</p>
-<p>最后把bang函数地址压栈，那么原来返回地址就会改为执行bang函数了。</p>
-<p>反汇编得到的代码：</p>
-<p><img src="/home/alex/图片/obj.png" alt="image"></p>
-<p>gdb调试寻找缓冲区的位置，注意缓冲区不是esp-0x38，而是ebp-0x28噢</p>
-<p>得到缓冲区首地址为0x55683938</p>
-<p>意思就是说返回地址变回缓冲区首地址，然后原函数返回的时候会跳到缓冲区地址，然后开始访问我们自己写的机器代码，实现把global_value值改为cookie的功能。</p>
-<p><img src="/home/alex/图片/2222.png" alt="image"></p>
-<p>最后结果：</p>
-<p><img src="/home/alex/图片/2018-1.png" alt="image"></p>
-<h3 id="level3"><a href="#level3" class="headerlink" title="level3"></a>level3</h3><p>是把返回地址改为cookie值，同时不改变原函数压栈情况</p>
-<p>因为覆盖栈的时候，会把ebp（基址指针给覆盖掉，所以先记录下基址的地址）</p>
-<p><img src="/home/alex/图片/getBuf.png" alt="image"></p>
-<p>汇编代码<br>我们应该要改变eax的值为cookie,同时把原来getbuf后一条指令的地址压栈</p>
-<p><img src="/home/alex/图片/cook.png" alt="image"></p>
-<p>然后为了求基址地址，这里折腾了好久，原来要求的不是寄存器本身的值，而是求寄存器指向的值</p>
-<p>但why？？？<br><img src="/home/alex/图片/re.png" alt="image"></p>
-<p>最后结果：</p>
-<p>b8 14 03 aa<br>65 68 be 8d<br>04 08 c3 00 &lt;—attack code<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>90 39 68 55 &lt;— address of ebp,to ensure that the original ebp doesn’t change<br>38 39 68 55 &lt;— initial address of buff zone</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/03/CS230-DeepLearning-And-Neural-Networks/" itemprop="url">CS230 DeepLearning And Neural Networks</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-03T02:55:00+08:00">
-                2018-09-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/PRML/" itemprop="url" rel="index">
-                    <span itemprop="name">PRML</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="深度学习-——Coursera"><a href="#深度学习-——Coursera" class="headerlink" title="深度学习 ——Coursera"></a>深度学习 ——Coursera</h1><p>学习资源：<a href="https://github.com/Kulbear/deep-learning-coursera" target="_blank" rel="noopener">https://github.com/Kulbear/deep-learning-coursera</a></p>
-<p><a href="https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb" target="_blank" rel="noopener">https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb</a></p>
-<p>官网：<a href="https://cs230-stanford.github.io/" target="_blank" rel="noopener">https://cs230-stanford.github.io/</a></p>
-<h2 id="Basic-of-Neural-Network-of-Programming"><a href="#Basic-of-Neural-Network-of-Programming" class="headerlink" title="Basic of Neural Network of Programming"></a>Basic of Neural Network of Programming</h2><h3 id="Logistic-Regression-—-Binary-Classificatoin"><a href="#Logistic-Regression-—-Binary-Classificatoin" class="headerlink" title="Logistic Regression — Binary Classificatoin"></a>Logistic Regression — Binary Classificatoin</h3><p>如果想把图片作为输入，判断这张图片是否为一只猫<br>首先得了解如何在计算机中表示图片。</p>
-<p>图片可以表示为一个3<em>64</em>64的矩阵，分别记录着R，G，B三个颜色通道的数值</p>
-<p>然后定义一个向量x 让矩阵转化为一个向量，向量包含矩阵所有元素</p>
-<p>nx表示特征向量的维度</p>
-<p><img src="/home/alex/图片/cat.png" alt="image"></p>
-<p>X矩阵是把向量按列排列，相应的，结果Y也是按列排列<br>在python中，X.shape 返回数组（nx,m）对应行数和列数，也就是向量维度为nx，个数为m</p>
-<p><img src="/home/alex/图片/擦她.png" alt="image2"></p>
-<p><br></p>
-<h3 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h3><p>1.右上角的红色笔记不必理会</p>
-<p>2.sigma表示sigmoid函数，是一个squashing function，即把结果压缩到0-1范围内</p>
-<p><img src="/home/alex/图片/便.png" alt="image"></p>
-<p>下一步，为了改变w与b，需要定义一个cost function</p>
-<h5 id="w-is-an-nx-dimenstional-vector-while-b-is-a-real-number"><a href="#w-is-an-nx-dimenstional-vector-while-b-is-a-real-number" class="headerlink" title="w is an nx dimenstional vector,while b is a real number."></a>w is an nx dimenstional vector,while b is a real number.</h5><p>如果cost function是半个平方误差的话，可能只会找到局部最优解<br>所以我们这里使用<br><img src="/home/alex/图片/2018-0.png" alt="imgae"></p>
-<p><img src="/home/alex/图片/LR.png" alt="image"></p>
-<h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><p>不要把Loss function 和 cost function 混了！</p>
-<p>loss function 计算的是单个训练样本的误差</p>
-<p>而cost function 计算的是整个训练集的平均误差</p>
-<h3 id="Gradient-Descent"><a href="#Gradient-Descent" class="headerlink" title="Gradient Descent"></a>Gradient Descent</h3><p>梯度下降就是我们要来寻找全局最优点的方法</p>
-<p><img src="/home/alex/图片/GD.png" alt="image"><br><br></p>
-<p>1.learning rate 学习率，控制每一次迭代或者梯度下降法中步长大小</p>
-<p>2.那为什么右上角那个repeat能保证梯度下降是make sense的呢？<br><br><br>d(J)/dw 代表的是斜率，试想在全局最优点左侧，梯度是负数，相当于w加上了一个正数，那么<br>w就会向全局最优点靠近的方向移动。反之亦然，所以通过不停迭代最后一定会达到全局最优点。</p>
-<p><img src="/home/alex/图片/GD2.png" alt="image"></p>
-<h3 id="Computation-Graph"><a href="#Computation-Graph" class="headerlink" title="Computation Graph"></a>Computation Graph</h3><p>1.神经网络正向传播，计算输出，反向传播用来计算导数，为什么要这样组织呢？</p>
-<p><img src="/home/alex/图片/back.png" alt="image"></p>
-<p>反向传播意思是如果你要计算dj/da  按照红色箭头来计算（把从右到左得到的结果依次运用链式法则来求）</p>
-<h3 id="Logistic-Regression-Grdient-Descent-on-m-examples"><a href="#Logistic-Regression-Grdient-Descent-on-m-examples" class="headerlink" title="Logistic Regression Grdient Descent on m examples"></a>Logistic Regression Grdient Descent on m examples</h3><p><img src="/home/alex/图片/LRM.png" alt="image"></p>
-<p>两个循环，时间复杂度是M*N M为特征向量个数 N为特征数</p>
-<p>那如何摆脱这个循环呢？</p>
-<p>可以使用vectorization技巧</p>
-<h3 id="vectorization"><a href="#vectorization" class="headerlink" title="vectorization"></a>vectorization</h3><p><img src="/home/alex/图片/vec.png" alt="image"></p>
-<p>所以要使用向量化来加速代码的运行</p>
-<p>实际上，GPU和CPU都支持并行计算，SIMD指令，当时用内置函数的时候，例如np.dot，CPU和GPU会利用并行化进行更快的运算。</p>
-<h4 id="因此尽量避免使用显式的for循环"><a href="#因此尽量避免使用显式的for循环" class="headerlink" title="因此尽量避免使用显式的for循环"></a>因此尽量避免使用显式的for循环</h4><p>例如下例：</p>
-<p><img src="/home/alex/图片/vm.png" alt="image"></p>
-<p><img src="/home/alex/图片/nw.png" alt="image"></p>
-<h4 id="具体我们来看逻辑回归的向量化"><a href="#具体我们来看逻辑回归的向量化" class="headerlink" title="具体我们来看逻辑回归的向量化"></a>具体我们来看逻辑回归的向量化</h4><p><img src="/home/alex/图片/borad.png" alt="image"></p>
-<p>用<br><code>z = np.dot(w.T,x)+b</code><br>就可实现移除两个for循环的功能</p>
-<p>小知识：python中的broadcasting</p>
-<p>意思就是虽然b是常数，但是当与一个向量相加的时候，b自动扩展为一个与向量维度相同，值全部为b的向量。</p>
-<p>具体实现</p>
-<p><img src="/home/alex/图片/result.png" alt="image"></p>
-<h3 id="python-的-broadcasting"><a href="#python-的-broadcasting" class="headerlink" title="python 的 broadcasting"></a>python 的 broadcasting</h3><p>(axis=0)按列相加<br>(axis=1)按行相加</p>
-<p><img src="/home/alex/图片/bc.png" alt="image"></p>
-<p>小技巧，定义vector的时候，写为下半部分的形式，不要使用np.random.randn(5)这种rank为1的结构</p>
-<p><img src="/home/alex/图片/eg2.png" alt="image"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2270,7 +2325,7 @@ VALID 是否有效
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2292,7 +2347,7 @@ VALID 是否有效
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">tags</span>
                 
               </div>
