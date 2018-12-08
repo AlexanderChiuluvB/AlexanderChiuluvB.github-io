@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Stack Frame firstly, callee stack save the old caller ‘s stack ‘s ebp lastly, the argument build means the arguments for calling any other function   pushl $zip2,$zip1 把参数压进栈顶，然后call swap，会把caller的ret">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stack Pointer&#x2F;Frame Pointer">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/06/Stack-Pointer-Frame-Pointer/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Stack Frame firstly, callee stack save the old caller ‘s stack ‘s ebp lastly, the argument build means the arguments for calling any other function   pushl $zip2,$zip1 把参数压进栈顶，然后call swap，会把caller的ret">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-18.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/whole.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-19.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ebp.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sp.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/d.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/tong.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-20.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-21.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-22.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/you.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-23.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/st.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-24.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dij.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/y.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-25.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cltq.png">
+<meta property="og:updated_time" content="2018-12-06T11:49:17.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Stack Pointer&#x2F;Frame Pointer">
+<meta name="twitter:description" content="Stack Frame firstly, callee stack save the old caller ‘s stack ‘s ebp lastly, the argument build means the arguments for calling any other function   pushl $zip2,$zip1 把参数压进栈顶，然后call swap，会把caller的ret">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-18.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/06/Stack-Pointer-Frame-Pointer/"/>
+
+
+
+
+
+  <title>Stack Pointer/Frame Pointer | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/06/Stack-Pointer-Frame-Pointer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Stack Pointer/Frame Pointer</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-06T14:16:08+08:00">
+                2018-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Stack-Frame"><a href="#Stack-Frame" class="headerlink" title="Stack Frame"></a>Stack Frame</h3><p><img src="/home/alex/图片/2018-18.png" alt="fil"></p>
+<p>firstly, callee stack save the old caller ‘s stack ‘s ebp</p>
+<p>lastly, the argument build means the arguments for calling any other function </p>
+<p><img src="/home/alex/图片/2.png" alt="upload successfl"></p>
+<p>pushl $zip2,$zip1 把参数压进栈顶，然后call swap，会把caller的return address压入栈</p>
+<h3 id="whole-code"><a href="#whole-code" class="headerlink" title="whole code"></a>whole code</h3><p><img src="/home/alex/图片/whole.png" alt="upload succesful"></p>
+<h4 id="set-up-code"><a href="#set-up-code" class="headerlink" title="set up code"></a>set up code</h4><p><img src="/home/alex/图片/2018-19.png" alt="filename already exists, amed"></p>
+<p>一. push %ebp 把caller的 bast pointer 的数值压栈</p>
+<p>二.movl %esp,%ebp （把esp 移动到ebp，即设置ebp = esp，这一步是设置callee的base pointer）</p>
+<p>三.%ebx 是swap过程中可能会调用的参数</p>
+<p><a href="https://www.cnblogs.com/qq78292959/archive/2012/07/20/2600865.html" target="_blank" rel="noopener">https://www.cnblogs.com/qq78292959/archive/2012/07/20/2600865.html</a></p>
+<p>附上：EAX 是”累加器”(accumulator), 它是很多加法乘法指令的缺省寄存器。</p>
+<p>EBX 是”基地址”(base)寄存器, 在内存寻址时存放基地址。</p>
+<p>ECX 是计数器(counter), 是重复(REP)前缀指令和LOOP指令的内定计数器。</p>
+<p>EDX 则总是被用来放整数除法产生的余数。</p>
+<p>但是对于　%eax,%ecx,%edx　不能像ｅｂｘ一样，保存在callee中</p>
+<h4 id="body-code"><a href="#body-code" class="headerlink" title="body code"></a>body code</h4><p><img src="/home/alex/图片/ebp.png" alt="upload successfl"></p>
+<h4 id="finish-code"><a href="#finish-code" class="headerlink" title="finish code"></a>finish code</h4><p><img src="/home/alex/图片/sp.png" alt="upload sucu"></p>
+<ol>
+<li>%ebp-4 就是 old %ebx 的地址 ，把-4（%ebp）移到%ebx，相当于把原来的%ebx复原</li>
+</ol>
+<p>2.第二是 把 %ebp 移到 %esp，即现在%esp指向%ebp</p>
+<p>(第一第二条指令相当于 pop %ebx)<br><img src="/home/alex/图片/d.png" alt="upload successf"></p>
+<p>3.popl %ebp<br>本质上是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0(%esp),%ebp </span><br><span class="line">%esp +4</span><br></pre></td></tr></table></figure></p>
+<p>这个时候base pointer复原，变回caller stack　的数值</p>
+<p>４.ret 根据返回地址返回</p>
+<p>其中leave instruction<br>等价于<br>mov ％ebp,%esp</p>
+<p>popl %ebp</p>
+<h3 id="register-saving-convention"><a href="#register-saving-convention" class="headerlink" title="register saving convention"></a>register saving convention</h3><p><img src="/home/alex/图片/tong.png" alt="upload succesul"></p>
+<p>yoo当中，我们希望%edx不会因为调用了who函数之后发生改变，问题是，who调用过程中，%edx是可能发生改变的。</p>
+<p>因此我们要制定convention，在使用这些寄存器之前先保存他们！</p>
+<p><img src="/home/alex/图片/2018-20.png" alt="filename already exists, rnamed"></p>
+<p>分类如下<br><img src="/home/alex/图片/2018-21.png" alt="fileame already exists, renamed"></p>
+<p>%eax save the return address so it is caller saved register</p>
+<h4 id="example"><a href="#example" class="headerlink" title="example"></a>example</h4><p><img src="/home/alex/图片/2018-22.png" alt="filename already exis, renamed"></p>
+<p><img src="/home/alex/图片/you.png" alt="upload successf"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.pushl %ebp #save the caller&apos;s ebp</span><br><span class="line"></span><br><span class="line">2.movl %esp,%ebp  #set callee&apos;s ebp</span><br><span class="line"></span><br><span class="line">3.subl $16,%esp   # add 16 bytes, add temporary space</span><br><span class="line"></span><br><span class="line">4.movl 8(%ebp),%edx  # set edx = x</span><br><span class="line"></span><br><span class="line">5.movl $1,-4(%ebp)</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-23.png" alt="filename already eists, renamed"></p>
+<p>两个pushl 相当于把 s_helper函数的两个参数传了进去</p>
+<p>&amp;val始终指向val，当函数结束的时候，返回的值就保存在了-4(%ebp)当中</p>
+<p><img src="/home/alex/图片/st.png" alt="upload sucessful"></p>
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>1.若调用函数有多个参数，stack从下到上，依次为第一个，第二个函数。</p>
+<p>2.函数调用的参数在stack的上方，就是在caller准备好参数后再调用callee,就是说argument 是caller saved 的</p>
+<p>3.函数结果返回在%eax</p>
+<p>4.local variable 是存放在 callee-saved registers那里</p>
+<h3 id="x86-64-conventions"><a href="#x86-64-conventions" class="headerlink" title="x86-64 conventions"></a>x86-64 conventions</h3><p>在x86 中，由于registers 的数目变多，因此可以把local variable 和argument存储在register当中，那样就可以减少对stack 的使用了</p>
+<p>下图是16个 8-byte gpr<br><img src="/home/alex/图片/2018-24.png" alt="filename exists, rena"></p>
+<p>黄色的是caller saved</p>
+<p>绿色的是 callee saved</p>
+<h4 id="specifications"><a href="#specifications" class="headerlink" title="specifications"></a>specifications</h4><p><img src="/home/alex/图片/dij.png" alt="up"></p>
+<p>1.用callq 而不用call，因为要返回一个64-bit address,also decrement 8而不是4（8 bytes）</p>
+<p>2.因为gpr实现了ebp / rbp 功能，因此不需要使用stack来更新 ，而且rsp能代替实现frame pointer 的功能</p>
+<p>3.由于gpr只有6个argument register，所以当函数参数少于六个的时候，不需要用到栈结构</p>
+<h3 id="example-1"><a href="#example-1" class="headerlink" title="example"></a>example</h3><p><img src="/home/alex/图片/y.png" alt="upload successfu"></p>
+<p>q - 8byte - 64bits</p>
+<p>l - 4byte - 32bits</p>
+<p>w - 2byte - 16bits</p>
+<p>b - 1byte - 8bits</p>
+<p><img src="/home/alex/图片/2018-25.png" alt="filename already exists, rena"></p>
+<h4 id="prepare-for-the-arguments"><a href="#prepare-for-the-arguments" class="headerlink" title="prepare for the arguments"></a>prepare for the arguments</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">movq $1,%rdi</span><br><span class="line">leaq 16(%rsp),%rsi</span><br><span class="line">movl $2,%rdx</span><br><span class="line">leaq 24(%rsp),%rcx</span><br><span class="line">movl $3,%r8</span><br><span class="line">leaq 28(%rsp),%r9</span><br><span class="line">movl $4,(%rsp)     #Arg 7</span><br><span class="line">leaq 31(%rsp),%rax</span><br><span class="line">movq %rax,8(%rsp)  #Arg 8</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/cltq.png" alt="upload succesul"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">movswl 28(%rsp),%eax # %eax = x3</span><br><span class="line"></span><br><span class="line">movsbl 31(%rsp),%edx # %edx = x4</span><br><span class="line"></span><br><span class="line">s 表示 signextend</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/14/CSAPP-MIPS/" rel="next" title="CSAPP-MIPS">
+                <i class="fa fa-chevron-left"></i> CSAPP-MIPS
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/06/CSAPP-Virtural-Memory/" rel="prev" title="CSAPP-Virtural Memory">
+                CSAPP-Virtural Memory <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Stack-Frame"><span class="nav-number">1.</span> <span class="nav-text">Stack Frame</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#whole-code"><span class="nav-number">2.</span> <span class="nav-text">whole code</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#set-up-code"><span class="nav-number">2.1.</span> <span class="nav-text">set up code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#body-code"><span class="nav-number">2.2.</span> <span class="nav-text">body code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#finish-code"><span class="nav-number">2.3.</span> <span class="nav-text">finish code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#register-saving-convention"><span class="nav-number">3.</span> <span class="nav-text">register saving convention</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#example"><span class="nav-number">3.1.</span> <span class="nav-text">example</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary"><span class="nav-number">4.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x86-64-conventions"><span class="nav-number">5.</span> <span class="nav-text">x86-64 conventions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#specifications"><span class="nav-number">5.1.</span> <span class="nav-text">specifications</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-1"><span class="nav-number">6.</span> <span class="nav-text">example</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#prepare-for-the-arguments"><span class="nav-number">6.1.</span> <span class="nav-text">prepare for the arguments</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

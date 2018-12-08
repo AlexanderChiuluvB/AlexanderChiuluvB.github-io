@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1.逻辑地址-》线性地址是 分段2.线性地址-》内存地址是 分页 这里的8是偏移量A%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S 分段过程线性地址的计算  段选择符是在上图的段寄存器里面的  段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。 线性地址 = 段基址+有效地址 有效地址 = 基址寄存器+变址寄存器×比">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IA-32&#x2F;linux中的地址转换">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/07/IA-32-linux中的地址转换/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="1.逻辑地址-》线性地址是 分段2.线性地址-》内存地址是 分页 这里的8是偏移量A%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S 分段过程线性地址的计算  段选择符是在上图的段寄存器里面的  段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。 线性地址 = 段基址+有效地址 有效地址 = 基址寄存器+变址寄存器×比">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-32.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/IA32.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/duanxuanze.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dizhizhuanhuan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/duan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-33.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-35.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-36.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/logical.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-37.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-38.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/GDT.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/GDTR.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/risc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ldtgdt.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-39.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-40.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/logic.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-41.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/yedizhi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/mmu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/imge.png">
+<meta property="og:updated_time" content="2018-12-07T11:18:01.701Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IA-32&#x2F;linux中的地址转换">
+<meta name="twitter:description" content="1.逻辑地址-》线性地址是 分段2.线性地址-》内存地址是 分页 这里的8是偏移量A%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S 分段过程线性地址的计算  段选择符是在上图的段寄存器里面的  段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。 线性地址 = 段基址+有效地址 有效地址 = 基址寄存器+变址寄存器×比">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-32.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/07/IA-32-linux中的地址转换/"/>
+
+
+
+
+
+  <title>IA-32/linux中的地址转换 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/07/IA-32-linux中的地址转换/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">IA-32/linux中的地址转换</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-07T15:28:00+08:00">
+                2018-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/home/alex/图片/2018-32.png" alt="filename alrady exists, renamed"></p>
+<p><img src="/home/alex/图片/IA32.png" alt="upload succeful"></p>
+<p>1.逻辑地址-》线性地址是 分段<br>2.线性地址-》内存地址是 分页</p>
+<p>这里的8是偏移量A<br>%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S</p>
+<h3 id="分段过程"><a href="#分段过程" class="headerlink" title="分段过程"></a>分段过程</h3><p>线性地址的计算</p>
+<p><img src="/home/alex/图片/duanxuanze.png" alt="upload sucsful"></p>
+<p>段选择符是在上图的段寄存器里面的</p>
+<p><img src="/home/alex/图片/dizhizhuanhuan.png" alt="upload success"></p>
+<p>段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。</p>
+<p>线性地址 = 段基址+有效地址</p>
+<p>有效地址 = 基址寄存器+变址寄存器×比例因子</p>
+<p>有效地址实际上是一个段内的偏移量，首地址+段内偏移量 = 线性地址。</p>
+<p><img src="/home/alex/图片/duan.png" alt="upload succesful"></p>
+<p>得到的线性地址再通过分页，通过页表转换为主存地址</p>
+<h3 id="段寄存器的含义"><a href="#段寄存器的含义" class="headerlink" title="段寄存器的含义"></a>段寄存器的含义</h3><p><img src="/home/alex/图片/2018-33.png" alt="filename already exists, rend"></p>
+<p>RPL： 最后两位表示管理状态（request privilege level）</p>
+<p><img src="/home/alex/图片/2018-35.png" alt="filename alreadmed"></p>
+<h3 id="段描述符和段描述符表"><a href="#段描述符和段描述符表" class="headerlink" title="段描述符和段描述符表"></a>段描述符和段描述符表</h3><p><img src="/home/alex/图片/2018-36.png" alt="filename already exists, renamed"></p>
+<p>什么叫任务状态段？</p>
+<p>这里的任务指的是进程，就是进程执行到某个阶段的时候，CS.SS.EIP，ESP，GPR内容等信息（代码算段，堆栈段，指令指针，栈指针，通用寄存器内容等）</p>
+<p>中断门描述符记录了处理中断等异常处理的程序的首地址</p>
+<p><img src="/home/alex/图片/logical.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/2018-37.png" alt="filename already enamed"></p>
+<p>为了减少从主存中找段描述符，使用cache</p>
+<p><img src="/home/alex/图片/cc.png" alt="upload succsful"></p>
+<p><img src="/home/alex/图片/2018-38.png" alt="upload suessful"></p>
+<p>TSS描述符在进行进程切换的时候，TR里面的内容也要进行切换。</p>
+<p>所有表的起始地址是放在GDR，而所有异常中断程序的首地址放在IDT，IDT的首地址也放在IDTR里面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GDT和IDT只有一个，GDTR 和 IDTR指向各自起始的地方，根据TR取GDT中的TSS描述符的时候，GDTR给出首地址</span><br></pre></td></tr></table></figure>
+<h4 id="Linux的全局段描述符表"><a href="#Linux的全局段描述符表" class="headerlink" title="Linux的全局段描述符表"></a>Linux的全局段描述符表</h4><p><img src="/home/alex/图片/GDT.png" alt="upload sucssful"></p>
+<p>最后两位是RPL,都为0表示其在第0环，位于内核</p>
+<p>倒数第三位表示这个描述符在GDT中，剩下的位便是索引号，<br>TSS索引是0x0010,即全局描述符表的第16项，LDT索引是0x0011，是第17项</p>
+<p>因此在上上图中，操作系统会分别把0x80与0x88放在TR与LDTR中</p>
+<h4 id="逻辑地址向线性地址转换"><a href="#逻辑地址向线性地址转换" class="headerlink" title="逻辑地址向线性地址转换"></a>逻辑地址向线性地址转换</h4><p><img src="/home/alex/图片/GDTR.png" alt="upload succesful"></p>
+<p>逻辑地址（48位）=》 线性地址（32位）</p>
+<p>16位的段选择符，根据TI选择去GDT还是去LDT，其中GDT，LDT的首地址分别存储在GDTR和LDTR里面，（不可见寄存器）</p>
+<p><strong><em>段描述符 = 首地址+8×段选择符的索引</em></strong></p>
+<p>所以得到的段基地址加上段偏移量，就得到32位线性地址</p>
+<p>段描述符只有在第一次进行访问，访问过后就放在了cache里面，所以之后求线性地址，只需要在cache里面取基地址然后相加就行</p>
+<p><img src="/home/alex/图片/risc.png" alt="upoad successful"></p>
+<p>1.就是初始化时候上述4个段描述符放在GDT中<br>2.每个段都被初始化在0-4GB的线性地址空间中</p>
+<p><img src="/home/alex/图片/ldtgdt.png" alt="uploauccessful"></p>
+<p><img src="/home/alex/图片/2018-39.png" alt="filename already exists, reamed"></p>
+<p>有效地址（偏移量） = 基址寄存器+变址寄存器×比例因子</p>
+<p><img src="/home/alex/图片/2018-40.png" alt="filename alreay exists, renamed"></p>
+<p>所以<strong><em>线性地址就等于EA = 有效地址 </em></strong></p>
+<p><img src="/home/alex/图片/logic.png" alt="upload succeul"></p>
+<p>指令的线性地址 = 代码段基地址+有效地址，而linux编译器默认了代码段基地址位0，因此指令的线性地址就等于有效地址就等于段的偏移量。</p>
+<p>而数据的线性地址 = 数据段基地址+EA =0+ R[ECX]+R[EDX]*4</p>
+<p>0X8048A00+(400)的16进制，注意进制的转换</p>
+<h3 id="分页过程（线性地址-》物理地址）"><a href="#分页过程（线性地址-》物理地址）" class="headerlink" title="分页过程（线性地址-》物理地址）"></a>分页过程（线性地址-》物理地址）</h3><p>如果页大小为4KB，每个页表项占4B则理论上一个页表大小：</p>
+<p>项个数：2^32/2^12 = 2^20 ，因此每个页表大小位4MB</p>
+<p>比页还要大，因此采用多级页表方式来存储</p>
+<p>—————————————————————————————————————————</p>
+<p><img src="/home/alex/图片/2018-41.png" alt="filename already exists, red"></p>
+<p>IA-32采用二级页表方式来存储</p>
+<p><img src="/home/alex/图片/yedizhi.png" alt="upload sucssful"></p>
+<p>每个页表起始位置按4KB对齐意思就是每个页表起始的20位都是相同的，只有后面的12位（4KB）不同</p>
+<p><img src="/home/alex/图片/mmu.png" alt="upload"></p>
+<p><img src="/home/alex/图片/imge.png" alt="upload succeul"></p>
+<p>MMU 完成从逻辑地址到线性地址的过程</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/06/CSAPP-Virtural-Memory/" rel="next" title="CSAPP-Virtural Memory">
+                <i class="fa fa-chevron-left"></i> CSAPP-Virtural Memory
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/07/程序的机器级表示与执行/" rel="prev" title="CSAPP-异常控制流">
+                CSAPP-异常控制流 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分段过程"><span class="nav-number">1.</span> <span class="nav-text">分段过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段寄存器的含义"><span class="nav-number">2.</span> <span class="nav-text">段寄存器的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段描述符和段描述符表"><span class="nav-number">3.</span> <span class="nav-text">段描述符和段描述符表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux的全局段描述符表"><span class="nav-number">3.1.</span> <span class="nav-text">Linux的全局段描述符表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址向线性地址转换"><span class="nav-number">3.2.</span> <span class="nav-text">逻辑地址向线性地址转换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页过程（线性地址-》物理地址）"><span class="nav-number">4.</span> <span class="nav-text">分页过程（线性地址-》物理地址）</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

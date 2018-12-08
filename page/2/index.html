@@ -272,6 +272,879 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/12/Program-Optimization/" itemprop="url">Program Optimization && Pipeline &&Architecture Lab</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T07:39:00+08:00">
+                2018-10-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ICS/" itemprop="url" rel="index">
+                    <span itemprop="name">ICS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="General-Useful-Optimizations"><a href="#General-Useful-Optimizations" class="headerlink" title="General Useful Optimizations"></a>General Useful Optimizations</h3><h4 id="Code-Motion"><a href="#Code-Motion" class="headerlink" title="Code Motion"></a>Code Motion</h4><h5 id="reduce-the-frequency-where-computation-performed"><a href="#reduce-the-frequency-where-computation-performed" class="headerlink" title="reduce the frequency where computation performed"></a>reduce the frequency where computation performed</h5><p><img src="/home/alex/图片/ics1.png" alt="ics1"></p>
+<p>try to use shift,add to replace multiply</p>
+<h4 id="Reduction-on-strength"><a href="#Reduction-on-strength" class="headerlink" title="Reduction on strength"></a>Reduction on strength</h4><p><img src="/home/alex/图片/ics2.png" alt="ics2"></p>
+<p>leaq (%rsi,%rcx),%rcx means %rcx = %rcx+%rsi</p>
+<p>%rcx now is n  </p>
+<p>%rsi now is i*n+j</p>
+<h4 id="Share-common-Subexpressions"><a href="#Share-common-Subexpressions" class="headerlink" title="Share common Subexpressions"></a>Share common Subexpressions</h4><p><img src="/home/alex/图片/ics3.png" alt="ics3"></p>
+<p>#### </p>
+<p>possibly the memory of A and B overlap and the change of B might affect A</p>
+<p><img src="/home/alex/图片/ics4.png" alt="ics4"></p>
+<p>Memory aliasing, closely related (arguably synonymous) to pointer aliasing, means that more than one variable name points to the same underlying stored value. </p>
+<h4 id="Benchmark-Computation"><a href="#Benchmark-Computation" class="headerlink" title="Benchmark Computation"></a>Benchmark Computation</h4><p>Cycles Per Element(CPE)</p>
+<p>Length = n</p>
+<p>CPE  =cycles per OP</p>
+<p>T = CPE*n+Overhead??  what is overhead?</p>
+<p><img src="/home/alex/图片/ics7.png" alt="ics7"></p>
+<p><img src="/home/alex/图片/ics5.png" alt="ics5"></p>
+<p>You don’t need to use get_vec in each loop,so avoid bound checking</p>
+<p><img src="/home/alex/图片/ics6.png" alt="ics6"></p>
+<h3 id="流水线的冒险"><a href="#流水线的冒险" class="headerlink" title="流水线的冒险"></a>流水线的冒险</h3><p>阻止下一条指令在下一个时钟周期开始执行的情况</p>
+<p>1.结构冒险</p>
+<p>所需要的硬件部件正在为之前的指令工作</p>
+<p>2.数据冒险</p>
+<p>需要等待之前的指令来完成数据的读写</p>
+<p>3.控制冒险</p>
+<p>需要根据之前指令的结果决定下一步的行为</p>
+<h4 id="结构冒险"><a href="#结构冒险" class="headerlink" title="结构冒险"></a>结构冒险</h4><p>执行指令的硬件发生争抢</p>
+<p><img src="/home/alex/图片/ics10.png" alt="ics10"></p>
+<h6 id="解决方案一：-冒泡停顿"><a href="#解决方案一：-冒泡停顿" class="headerlink" title="解决方案一：  冒泡停顿"></a>解决方案一：  冒泡停顿</h6><p>但如果连续出现冒泡停顿，则会影响指令执行的效率</p>
+<p><img src="/home/alex/图片/ics11.png" alt="ics11"></p>
+<h6 id="解决方案二：-把数据和指令放在不同的存储器"><a href="#解决方案二：-把数据和指令放在不同的存储器" class="headerlink" title="解决方案二：  把数据和指令放在不同的存储器"></a>解决方案二：  把数据和指令放在不同的存储器</h6><p>但值得注意的是，冯诺伊曼结构要求内存（主存储器）同时存放<br>数据和指令，而只是在CPU的高速缓存（cache）当中，数据和指令可以分开存放</p>
+<p>这个在设计CPU就已经处理好了，但是如果要设计一个新的处理器，这是一个要考虑的问题</p>
+<p><img src="/home/alex/图片/ics12.png" alt="ics12"></p>
+<h4 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h4><p>解决方法1：<br><img src="/home/alex/图片/ics13.png" alt="ics13"></p>
+<p>解决方法2：</p>
+<p>冲突产生原因是add 指令 需要 read 上一条指令write的结果（$t0）</p>
+<p>但其实，$t0的值已经在ALU阶段就已经计算好，而add指令中，其实不是非得在<br>R阶段读$t0，只要在ALU阶段读取到数值就行。</p>
+<p>那么就可以在sub指令中，把ALU计算得到的结果$t0送到流水线寄存器当中，<br>然后再送到add指令的ALU中。</p>
+<p><img src="/home/alex/图片/ics15.png" alt="ics15"></p>
+<p>从硬件角度来看，我们要这样修改：</p>
+<p><img src="/home/alex/图片/ics16.png" alt="ics16"></p>
+<p>sub先执行，所以在前面，add后执行，所以在后面</p>
+<p>add指令需要用到前一条指令的结果，因此设置了绿色的旁路，<br>以是否有数据冒险情况作为激活信号。</p>
+<p><img src="/home/alex/图片/ics17.png" alt="ics17"></p>
+<p>第二种情况</p>
+<p>对应下图</p>
+<p><img src="/home/alex/图片/ics18.png" alt="ics18"></p>
+<p>第三条指令需要用到第一条指令得到的结果，第一条的$t0在DMEM与write back阶段之间，所以呢，就是对应上上图，在访存阶段末期，通过旁路把数据传回给ALU</p>
+<p>如果 instruction 3也需要用到$t0，因为R阶段之前，第一条指令刚好完成了write back，因此可以正常运行</p>
+<h5 id="load-use冒险，不能用数据前递来解决"><a href="#load-use冒险，不能用数据前递来解决" class="headerlink" title="load-use冒险，不能用数据前递来解决"></a>load-use冒险，不能用数据前递来解决</h5><p>如下图，因为or需要用到上一条指令的$t1,但是or至少要在ALU阶段读取$t1的数值，然而lw只能在完成了访存阶段后才能把结果写回到$t1,因此只能通过冒泡来延后or指令的执行时间了。</p>
+<p><img src="/home/alex/图片/ics19.png" alt="ics19"></p>
+<h4 id="控制冒险"><a href="#控制冒险" class="headerlink" title="控制冒险"></a>控制冒险</h4><p>要到ALU阶段才能决定是否要取分支</p>
+<p><img src="/home/alex/图片/ics14.png" alt="ics14"></p>
+<h5 id="转移指令对流水线的影响"><a href="#转移指令对流水线的影响" class="headerlink" title="转移指令对流水线的影响"></a>转移指令对流水线的影响</h5><p><img src="/home/alex/图片/ics21.png" alt="ics21"></p>
+<p>beq指令只有在进行完执行（ALU）阶段之后才能确定是否发生跳转，加入跳转条件成立，则说明lw sw是不应该取的。这时跳回sub指令，导致性能被浪费。</p>
+<h5 id="转移指令的分类"><a href="#转移指令的分类" class="headerlink" title="转移指令的分类"></a>转移指令的分类</h5><p><img src="/home/alex/图片/ics22.png" alt="ics22"></p>
+<h6 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h6><p>j指令在取指的时候就能判断是否为j指令，然后取出后26位，加上末两位的00，<br>然后在PC - update 阶段就能取PC+4的前四位，这些操作都能在一个时钟周期内完成。</p>
+<p><img src="/home/alex/图片/ics23.png" alt="ics23"></p>
+<p><img src="/home/alex/图片/ics24.png" alt="ics24"></p>
+<p><img src="/home/alex/图片/ics25.png" alt="ics25"></p>
+<p><img src="/home/alex/图片/ics26.png" alt="ics26"></p>
+<p>译码阶段进行R【rs】，R【rt】的读取，在执行阶段进行两数的比较<br><img src="/home/alex/图片/ics27.png" alt="ics27"></p>
+<p>但实际上进行减法不需要ALU那么复杂的部件，可以在译码阶段进行一点小改动</p>
+<p><img src="/home/alex/图片/ics28.png" alt="ics28"></p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p><img src="/home/alex/图片/ics29.png" alt="ics29"></p>
+<p>为了避免停顿，可以把转移指令的前一条与转移指令无关的指令（xor）移到转移指令的下一条。</p>
+<p><img src="/home/alex/图片/delay.png" alt="ics30"></p>
+<h3 id="Arch-Lab"><a href="#Arch-Lab" class="headerlink" title="Arch Lab"></a>Arch Lab</h3><p>Part C </p>
+<p>利用循环展开技术与加载使用冒险</p>
+<p>加载使用冒险：</p>
+<p><img src="/home/alex/图片/bubble.png" alt="bb"></p>
+<p>因此可以在mrmovl后添加另外一条mrmovl指令，来抵消流水线停顿，同时也使得下一次操作提前取值。</p>
+<p>循环展开大意就是减少循环次数，在每次循环的时候同时进行多次操作。同时也可以配合并行，并行就是例如把每次累加操作的的结果分为两部分，如奇数项累加成S1，偶数项累加成S2，最后结果就是S1+S2。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#You can modify this portion</span><br><span class="line">    # Loop header</span><br><span class="line">    xorq %rax,%rax      # count = 0;</span><br><span class="line">    iaddq $-2,%rdx</span><br><span class="line">    andq %rdx,%rdx      # len &lt;= 0?</span><br><span class="line">    jl newLoop      # if so, goto Done:</span><br><span class="line"></span><br><span class="line">Loop:   mrmovq (%rdi), %r10 # read val from src...</span><br><span class="line">    mrmovq 8(%rdi),%r11</span><br><span class="line">    rmmovq %r10, (%rsi) # ...and store it to dst</span><br><span class="line">    andq %r10, %r10     # val &lt;= 0?</span><br><span class="line">    jle Npos        # if so, goto Npos:</span><br><span class="line">    iaddq $1, %rax      # count++</span><br><span class="line">Npos:</span><br><span class="line">    rmmovq %r11,8(%rsi)</span><br><span class="line">    andq %r11,%r11</span><br><span class="line">    jle judge</span><br><span class="line">    iaddq $1,%rax</span><br><span class="line"></span><br><span class="line">judge:</span><br><span class="line">    iaddq $16,%rdi</span><br><span class="line">    iaddq $16,%rsi</span><br><span class="line">    iaddq $-2,%rdx</span><br><span class="line">    jge Loop</span><br><span class="line"></span><br><span class="line">newLoop:</span><br><span class="line">    iaddq $2,%rdx</span><br><span class="line">    je Done</span><br><span class="line">    mrmovq (%rdi),%r10</span><br><span class="line">    rmmovq %r10,(%rsi)</span><br><span class="line">    andq %r10,%r10</span><br><span class="line">    jle Done</span><br><span class="line">    iaddq $1,%rax</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/09/CSAPP-第四章-处理器体系结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/09/CSAPP-第四章-处理器体系结构/" itemprop="url">CSAPP 第四章 处理器体系结构——Y86流水线基本原理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T03:18:00+08:00">
+                2018-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Y86-流水线的实现"><a href="#Y86-流水线的实现" class="headerlink" title="Y86 流水线的实现"></a>Y86 流水线的实现</h2><h3 id="PC的计算"><a href="#PC的计算" class="headerlink" title="PC的计算"></a>PC的计算</h3><p>在非流水线结构中，计算PC是在时间周期结束的时候进行的。</p>
+<p>而在流水线实现中，计算PC作为指令执行的第一步。</p>
+<h3 id="Fetch-阶段"><a href="#Fetch-阶段" class="headerlink" title="Fetch 阶段"></a>Fetch 阶段</h3><p>三种情况：</p>
+<p>1.预测错误，从流水线寄存器M（M_valA）读出该指令valP的数值，即下一条指令的地址。</p>
+<p>2.RET 指令 W_valM 从流水线寄存器读出返回地址（访存）。</p>
+<p>3.其他情况会使用存放在流水线寄存器F中的PC的预测值。</p>
+<p>HCL代码如下：</p>
+<p><img src="/home/alex/图片/2018-7.png" alt="ics24"></p>
+<p>其中 f_predPC</p>
+<p><img src="/home/alex/图片/ICS22.png" alt="ics22"></p>
+<p>exercises:</p>
+<p>写出 f_stat的HCL代码，提供取出指令的临时状态</p>
+<p>word f_stat = </p>
+<p>f_icode == IHALT : SHLT</p>
+<p>mem_error : SADR</p>
+<p>!instr_valid : SINS</p>
+<p>1: SAOK</p>
+<h3 id="译码和写回阶段"><a href="#译码和写回阶段" class="headerlink" title="译码和写回阶段"></a>译码和写回阶段</h3><h4 id="dsrc-A"><a href="#dsrc-A" class="headerlink" title="dsrc_A"></a>dsrc_A</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">word dsrc_A =</span><br><span class="line"></span><br><span class="line">DICODE in &#123;IRRMOVQ,IRMMOVQ,IPUSHQ,IOPQ&#125; : D_rA</span><br><span class="line"></span><br><span class="line">DICODE in &#123;IPOPQ,IRETURN&#125; : RRSP</span><br><span class="line"></span><br><span class="line">1: RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="PUSH"><a href="#PUSH" class="headerlink" title="PUSH"></a>PUSH</h5><p>RRMOVQ，RMMOVQ source A的值来自于寄存器A</p>
+<p>而push 实际上就是</p>
+<p>subl $4,%esp</p>
+<p>movl %ebp,(%esp)</p>
+<p>call实际上是 push+jump,先把返回地址（此时存放在EIP中）push进%ebp，<br>然后再jump到要执行指令的地址</p>
+<h5 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h5><p>而POP指令实际上是 </p>
+<p>movl (%esp),%eip //eip寄存器是保存CPU所要读取指令地址的寄存器</p>
+<p>addl $4,%esp</p>
+<h5 id="return"><a href="#return" class="headerlink" title="return"></a>return</h5><p>return 实际上是 把栈顶地址弹出到EIP，然后按照EIP指示的指令地址继续执行程序</p>
+<p>需要用到栈指针来作为source A</p>
+<h5 id="dsrc-B"><a href="#dsrc-B" class="headerlink" title="dsrc_B"></a>dsrc_B</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">word d_srcB = </span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IOPQ，IMRMOVQ，IRMOVQ&#125; ：d_srcB</span><br><span class="line">DICODE IN &#123;IPUSHQ,IPOPQ,IRET,ICALL&#125; ：RRSP</span><br><span class="line">1:RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="dstE"><a href="#dstE" class="headerlink" title="dstE"></a>dstE</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">word d_dstE = </span><br><span class="line"></span><br><span class="line">// 目的寄存器是rB而且存储的是由数值运算得到的结果</span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IOPQ,IIRMOVQ,IRRMOVQ&#125; : D_rB:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//因为pushq,popq都需要涉及到</span><br><span class="line"></span><br><span class="line">push: subl $4,%rsp</span><br><span class="line">pop : addl $4,%rsp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IPUSHQ,IPOPQ,IRET,ICALL&#125;： RRSP</span><br><span class="line"></span><br><span class="line">1： RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="dstM"><a href="#dstM" class="headerlink" title="dstM"></a>dstM</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">DICODE IN &#123;IMRMOVQ,IPOPQ&#125;: R_rA</span><br><span class="line"></span><br><span class="line">1: RNONE</span><br></pre></td></tr></table></figure>
+<h5 id="d-valA"><a href="#d-valA" class="headerlink" title="d_valA"></a>d_valA</h5><p>这五个转发源存在优先级，通常流水线的实现总是给处于最早的流水线阶段中的转发源以较高的优先级。</p>
+<p><img src="/home/alex/图片/2018-8.png" alt="ics25"></p>
+<p>只有pop指令关心访存或者写回阶段的两个源之间的优先级</p>
+<p>pop 指令看作是 </p>
+<p>movl (%rsp) , %rsp</p>
+<p>addl $4,%rsp</p>
+<p>因为默认 m_valM 访存的优先级 大于 M_valE 计算的优先级<br>因此加入下一条指令是</p>
+<p>movl %rsp, %rax</p>
+<p>则会把%rsp+4 之前的值传到%rax，满足x86的pop操作规定</p>
+<h5 id="aluA"><a href="#aluA" class="headerlink" title="aluA"></a>aluA</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">word aluA = [</span><br><span class="line">   E_icode in &#123;IRRMOVQ,IOPQ&#125; : E_valA</span><br><span class="line">   E_icode in &#123;IIRMOVQ,IRMMOVQ,IMRMOVQ&#125; : E_valC</span><br><span class="line">   E_icode in &#123;ICALLQ, IPUSHQ&#125; : -8 //如果是iaddl 就是-4</span><br><span class="line">   E_icode in &#123;IPOPQ,IRETQ&#125; : 8</span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h5 id="aluB"><a href="#aluB" class="headerlink" title="aluB"></a>aluB</h5><p><img src="/home/alex/图片/ics30.png" alt="ics30"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/11/CSAPP-程序及指令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/11/CSAPP-程序及指令/" itemprop="url">CSAPP-程序及指令</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-11T05:16:00+08:00">
+                2018-09-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="CPU的基本结构与功能"><a href="#CPU的基本结构与功能" class="headerlink" title="CPU的基本结构与功能"></a>CPU的基本结构与功能</h2><p><img src="/home/alex/图片/prog.png" alt="image"></p>
+<p>CPI （Cycles Per Instruction）用于衡量电脑的性能<br>，指每条指令的时钟数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CPI=TC/IC</span><br></pre></td></tr></table></figure>
+<p>表示某个程序的所有指令的条数；TC表示执行某个程序所花费的时钟周期)</p>
+<p><img src="/home/alex/图片/under.png" alt="image"><br>加深理解：<br>M【R【ebp】+8】指的是命令行参数首个地址，即char *str的地址，M【地址】等于在内存中取值，相当于这个就是strcpy的第二个实际参数str</p>
+<p>而R【ebp】-16 意思就是buffer[0]，即buffer的首地址</p>
+<p><img src="/home/alex/图片/7.png" alt="image"></p>
+<p>红线下面都是在CPU了里面进行操作</p>
+<p>红线上面都是通过总线在外面进行操作</p>
+<p><img src="/home/alex/图片/lalala.png" alt="image"></p>
+<p><img src="/home/alex/图片/MIPS.png" alt="image"></p>
+<p>笔记：</p>
+<p>取值令和PC+“1” 是并行的，（同时操作），“1”指一条指令的长度</p>
+<p>在MIPS中，每个指令都是定长的，32位，占4位，因此实际上是PC+4</p>
+<p>而在X86中，每个指令都不是定长的，是边长的，一定要在指令译码之后才能确定指令有多长</p>
+<p>异常和指令区别：</p>
+<p>异常指和处理中的这条指令有关的的问题</p>
+<p>中断指和处理中的指令无关的问题</p>
+<p><img src="/home/alex/图片/he.png" alt="image"></p>
+<p><img src="/home/alex/图片/寄存器.png" alt="image"></p>
+<p><img src="/home/alex/图片/von.png" alt="image"></p>
+<p>MDR：内存数据寄存器</p>
+<p>MAR: 主存地址寄存器</p>
+<p><img src="/home/alex/图片/eflags.png" alt="image"></p>
+<p>GPR 8个通用寄存器  属于可见寄存器</p>
+<p>EFLAGs 标志寄存器  属于半可见寄存器</p>
+<p>EIP 指令指针  属于半可见寄存器</p>
+<p><img src="/home/alex/图片/exe.png" alt="image"></p>
+<p>绿色的地址实际上是虚拟空间的地址。这里假定</p>
+<h4 id="取值令"><a href="#取值令" class="headerlink" title="取值令"></a>取值令</h4><p>取地址放到EIP中，再放到主存地址寄存器当中。55 89 e5 放在主存。</p>
+<p>控制器会发出读命令（红线），存储器会根据读信号根据传入的地址寻找里面的数值</p>
+<p>过一段时间后（取数时间） 数据就会放在数据线上。</p>
+<h4 id="指令译码"><a href="#指令译码" class="headerlink" title="指令译码"></a>指令译码</h4><p>根据功能产生控制信号</p>
+<p><img src="/home/alex/图片/kanjia.png" alt="image"></p>
+<p>R[esp]&lt;-R[esp]-4  ESP处的地址-4 变成 bffefffc</p>
+<p>M[R[esp]]&lt;-R[ebp]</p>
+<h4 id="esp内容放到MAR"><a href="#esp内容放到MAR" class="headerlink" title="esp内容放到MAR"></a>esp内容放到MAR</h4><p><img src="/home/alex/图片/esp.png" alt="image"></p>
+<p><img src="/home/alex/图片/ssss.png" alt="image"></p>
+<p>写信号，把要写的地址bffeffc 和写的内容（MDR中的bfff0020）传输到存储器中</p>
+<p><img src="/home/alex/图片/2018-3.png" alt="image"></p>
+<p><img src="/home/alex/图片/alu.png" alt="image"></p>
+<p>而eax是0号寄存器，edx是2号寄存器</p>
+<p><img src="/home/alex/图片/dd.png" alt="image"></p>
+<p>经过这条指令之后</p>
+<p><img src="/home/alex/图片/zz.png" alt="image"></p>
+<p>结果变成这样</p>
+<p><img src="/home/alex/图片/2018-4.png" alt="image"></p>
+<p>小结</p>
+<p><img src="/home/alex/图片/Linked.png" alt="image"></p>
+<h3 id="练习答案"><a href="#练习答案" class="headerlink" title="练习答案"></a>练习答案</h3><p><img src="/home/alex/图片/2018-5.png" alt="image"></p>
+<p><img src="/home/alex/图片/2018-6.png" alt="image"></p>
+<p>什么是指令寄存器？什么是程序计数器？</p>
+<p>指令寄存器（IR，Instruction Register），是临时放置从内存里面取得的程序指令的寄存器，用于存放当前从主存储器读出的正在执行的一条指令。</p>
+<p>什么是程序计数器PC？</p>
+<p>程序计数器是用于存放下一条指令所在单元的地址的地方。</p>
+<p>当执行一条指令时，首先需要根据PC中存放的指令地址，将指令由内存取到指令寄存器中，此过程称为“取指令”。与此同时，PC中的地址或自动加1或由转移指针给出下一条指令的地址。此后经过分析指令，执行指令。完成第一条指令的执行，而后根据PC取出第二条指令的地址，如此循环，执行每一条指令。</p>
+<h2 id="访问存储操作与基本术语"><a href="#访问存储操作与基本术语" class="headerlink" title="访问存储操作与基本术语"></a>访问存储操作与基本术语</h2><p><img src="/home/alex/图片/term.png" alt="imaeg"></p>
+<p><img src="/home/alex/图片/li.png" alt="image"></p>
+<h3 id="存储器的分类"><a href="#存储器的分类" class="headerlink" title="存储器的分类"></a>存储器的分类</h3><h4 id="按工作性质-存储方式分类"><a href="#按工作性质-存储方式分类" class="headerlink" title="按工作性质/存储方式分类"></a>按工作性质/存储方式分类</h4><ol>
+<li>Random Access Memory(RAM)</li>
+</ol>
+<p>随机存取存储器 </p>
+<p>每个单元读写时间一样，与各单元所在位置无关，如内存</p>
+<p>2.Sequential Access Memo在ry（SAM）</p>
+<p>顺序采取存储器</p>
+<p>数据按照顺序从存储载体的始端读出或者写入，因此存取时间长短与所在信息的位置有关。如磁带</p>
+<p><img src="/home/alex/图片/luan.png" alt="image"></p>
+<h3 id="其他分类方式"><a href="#其他分类方式" class="headerlink" title="其他分类方式"></a>其他分类方式</h3><p><img src="/home/alex/图片/存储器.png" alt="image"></p>
+<h3 id="按功能-容量-速度-所在位置分类"><a href="#按功能-容量-速度-所在位置分类" class="headerlink" title="按功能/容量/速度/所在位置分类"></a>按功能/容量/速度/所在位置分类</h3><h4 id="寄存器："><a href="#寄存器：" class="headerlink" title="寄存器："></a>寄存器：</h4><p>封装在CPU中，用于存放当前执行的指令以及使用的数据</p>
+<p>用触发器实现，速度快，x86 8个,MIPS 32个</p>
+<h4 id="高速存储（cache）："><a href="#高速存储（cache）：" class="headerlink" title="高速存储（cache）："></a>高速存储（cache）：</h4><p>位于CPU内部或者附近，用来存放当前要执行的局部程序段和数据</p>
+<p>用SRAM实现，速度可以与CPU匹配，容量小</p>
+<p><img src="/home/alex/图片/neicun.png" alt="image"></p>
+<h4 id="内存与外存关系："><a href="#内存与外存关系：" class="headerlink" title="内存与外存关系："></a>内存与外存关系：</h4><p><img src="/home/alex/图片/relation.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/RAM.png" alt="存储器受CPU总线控制"></p>
+<p>存储器受CPU总线控制，总线就是链接CPU和存储器的数据线，地址线和控制线</p>
+<p>由于地址线是36位，因此存储单元地址有2^36种可能性，即可以寻找地址的范围为0-2^32-1 即64GB</p>
+<p><img src="/home/alex/图片/daikuan.png" alt="imaeg"></p>
+<p>Tmc&gt;TA</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/10/CS230-Shallow-Neural-Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/10/CS230-Shallow-Neural-Networks/" itemprop="url">CS230 Shallow Neural Networks</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-10T04:19:00+08:00">
+                2018-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="神经网络是什么"><a href="#神经网络是什么" class="headerlink" title="神经网络是什么"></a>神经网络是什么</h2><p><img src="/home/alex/图片/sn.png" alt="image"></p>
+<p>左下角，第一层就是计算a[1]，然后加上更新后的W【2】，b【2】，在第二层计算新的结果<br>z【2】</p>
+<p><img src="/home/alex/图片/Presentation.png" alt="image"></p>
+<h5 id="注意一般不把输入层算在神经网络层内"><a href="#注意一般不把输入层算在神经网络层内" class="headerlink" title="注意一般不把输入层算在神经网络层内"></a>注意一般不把输入层算在神经网络层内</h5><p>注意hidden layer 其实就是一个4x1的列矩阵</p>
+<h5 id="神经网络表示"><a href="#神经网络表示" class="headerlink" title="神经网络表示"></a>神经网络表示</h5><p><br><br><img src="/home/alex/图片/ss.png" alt="image"></p>
+<p>符号右上角表示层数，右下角表示该层第几个结点</p>
+<p>实际上可以把神经网络计算过错化为向量矩阵运算</p>
+<p><img src="/home/alex/图片/NNRL.png" alt="image"></p>
+<p>Z （4X1） =  W (4X3) * x(3,1) +b(4,1)</p>
+<h3 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h3><h4 id="tanh"><a href="#tanh" class="headerlink" title="tanh"></a>tanh</h4><p>用tanh效果会比sigmodi好，因为均值为0，说明能起到数据中心化效果</p>
+<p><img src="/home/alex/图片/ac1.png" alt="image"></p>
+<h4 id="线性整流函数（ReLU）"><a href="#线性整流函数（ReLU）" class="headerlink" title="线性整流函数（ReLU）"></a>线性整流函数（ReLU）</h4><p><img src="/home/alex/图片/relu.png" alt="image"></p>
+<p>使用ReLU 会使得神经网络学习的速度加快，因为在tanh与sigmoid当中，当斜率降低的时候，学习的速度也会相应的下降。</p>
+<p>而ReLu则会减少则种情况</p>
+<p><img src="/home/alex/图片/PAC.png" alt="image"></p>
+<p>一般而言，不用sigmoid</p>
+<h4 id="激活函数的导数"><a href="#激活函数的导数" class="headerlink" title="激活函数的导数"></a>激活函数的导数</h4><p>在反向传播的时候，需要计算激活函数的导数</p>
+<h4 id="神经网络的梯度下降"><a href="#神经网络的梯度下降" class="headerlink" title="神经网络的梯度下降"></a>神经网络的梯度下降</h4><p>重点关注dZ【1】 dW的计算原理<br><img src="/home/alex/图片/ressss.png" alt="image"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/09/CSAPP-重定位/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/09/CSAPP-重定位/" itemprop="url">CSAPP-重定位</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-09T23:56:00+08:00">
+                2018-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ICS/" itemprop="url" rel="index">
+                    <span itemprop="name">ICS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="共享库与动态链接概述"><a href="#共享库与动态链接概述" class="headerlink" title="共享库与动态链接概述"></a>共享库与动态链接概述</h2><p>使用静态库 .a文件有一些缺点</p>
+<p>1.静态库函数被包含在每个进程的代码段中，对于并发运行上百个进程的系统，会造成极大的主存资源浪费</p>
+<p>2.静态库函数会被和并在可执行目标中，磁盘上存放着数千个可执行文件，会造成磁盘空间的极大浪费</p>
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>Shared Libraries(共享库)</p>
+<p>Linux 称为 动态共享对象 (Dynamic Shared Objects,.so文件)</p>
+<p>Windows 中的.dll 文件</p>
+<p>原理就是： 包含目标模块的文件，每个模块包含有代码和数据，从程序中分离出来，磁盘和内存中只有一个备份，可以在装入或者运行的时候被动态加载与链接。</p>
+<p>举个例子，printf（）的代码不会包含在每个调用其的文件当中，所有进程共享调用这一份代码。</p>
+<h3 id="共享库优点："><a href="#共享库优点：" class="headerlink" title="共享库优点："></a>共享库优点：</h3><h5 id="第一次加载的时候进行：（load-time-linking）"><a href="#第一次加载的时候进行：（load-time-linking）" class="headerlink" title="第一次加载的时候进行：（load-time linking）"></a>第一次加载的时候进行：（load-time linking）</h5><p>在linux当中通常由动态链接器自动处理</p>
+<p>libc.so 通常按这种方式被动态链接</p>
+<h5 id="在开始运行后进行："><a href="#在开始运行后进行：" class="headerlink" title="在开始运行后进行："></a>在开始运行后进行：</h5><p>在linux中，调用dlopen()等接口实现</p>
+<p><img src="/home/alex/图片/dynamic.png" alt="image"></p>
+<p>生成的代码文件是放在内存当中</p>
+<h4 id="位置无关代码（PIC）"><a href="#位置无关代码（PIC）" class="headerlink" title="位置无关代码（PIC）"></a>位置无关代码（PIC）</h4><p><img src="/home/alex/图片/222.png" alt="image"></p>
+<p>要跳转的目标地址 = 当前PC（当前指令下一条指令地址）+ 立即数<br><img src="/home/alex/图片/33.png" alt="image"></p>
+<p>不需要重定位<br><img src="/home/alex/图片/yinyong.png" alt="image"></p>
+<p>第三种情况</p>
+<p><img src="/home/alex/图片/2018-2.png" alt="image"></p>
+<p>call 指令的功能是：<br>1.把下一条指令地址压栈</p>
+<p>2.jump到那条指令</p>
+<p>popl %ebx 的功能就是把该条指令的地址送到 %ebx寄存器当中</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1077,7 +1950,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

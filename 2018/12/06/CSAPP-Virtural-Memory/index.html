@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2 区间就是页(page)，主存中存放页的区域成为页框 分页  逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容 14代">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-Virtural Memory">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/06/CSAPP-Virtural-Memory/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2 区间就是页(page)，主存中存放页的区域成为页框 分页  逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容 14代">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/page.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-26.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/paging.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dazi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/durian.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/xuange.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vmm.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-27.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/images.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vlid.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-28.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ju.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/VA.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vm2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/um.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/TLB.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cmt.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-30.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ca.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/HMM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/lee.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/phy.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/bufen.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/china.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jizz.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/fenduan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-31.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ta.png">
+<meta property="og:updated_time" content="2018-12-07T07:13:55.616Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-Virtural Memory">
+<meta name="twitter:description" content="早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2 区间就是页(page)，主存中存放页的区域成为页框 分页  逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容 14代">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/page.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/06/CSAPP-Virtural-Memory/"/>
+
+
+
+
+
+  <title>CSAPP-Virtural Memory | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/06/CSAPP-Virtural-Memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-Virtural Memory</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-06T20:12:21+08:00">
+                2018-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="早期分页方式的概念"><a href="#早期分页方式的概念" class="headerlink" title="早期分页方式的概念"></a>早期分页方式的概念</h3><p>大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。</p>
+<p><img src="/home/alex/图片/page.png" alt="upload successf"></p>
+<p>就是程序可能会有2^16byte长，但是物理容量只有4K</p>
+<p><img src="/home/alex/图片/2018-26.png" alt="filename alrady exists, renamed"></p>
+<p>这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2</p>
+<p><strong><em>区间就是页(page)，主存中存放页的区域成为页框</em></strong></p>
+<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><p><img src="/home/alex/图片/paging.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/dazi.png" alt="upad successful"></p>
+<p>逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容</p>
+<p>14代表页框号 </p>
+<p>所以页表就是用来映射页号和物理地址中的页框号</p>
+<p><img src="/home/alex/图片/durian.png" alt="upload successl"></p>
+<p>页框之间内容可以离散，页框内部内容连续</p>
+<h3 id="虚拟存储系统"><a href="#虚拟存储系统" class="headerlink" title="虚拟存储系统"></a>虚拟存储系统</h3><p>大白话：程序可能很长，但是主存容量有限，于是把活跃的程序段放到主存中运行，然后自动进行切换</p>
+<p>实质：</p>
+<p>1.程序员在比实际主存空间大得多的逻辑地址空间中编写程序</p>
+<p>2.程序执行的时候，要把当前需要的程序段以及相应的数据块调入主存当中，不用的部分放在磁盘上</p>
+<h4 id="虚拟存储技术的实质"><a href="#虚拟存储技术的实质" class="headerlink" title="虚拟存储技术的实质"></a>虚拟存储技术的实质</h4><p>进程调入物理主存的空间（程序中活跃的片段占用了主存的物理空间）</p>
+<p><img src="/home/alex/图片/xuange.png" alt="upload successl"></p>
+<p>每个程序会有一个页表来说明它这一页的情况<br>（在磁盘上/内存上/空页）</p>
+<p><img src="/home/alex/图片/vmm.png" alt="upload successl"></p>
+<p>cpu拿到的是虚拟地址，要求转化为主存地址，而这个过程是在执行指令的时候完成的，只能通过硬件来完成</p>
+<p><img src="/home/alex/图片/2018-27.png" alt="filename already exists, med"></p>
+<p>加载一个可执行文件，执行的时候，不会实际上把数据都加载到内存当中，而是生成该程序对应的一个页表。然后按照按需调页原则，通过pageFault异常来实现，把数据装入到内存当中。</p>
+<h4 id="主存–磁盘"><a href="#主存–磁盘" class="headerlink" title="主存–磁盘"></a>主存–磁盘</h4><p><img src="/home/alex/图片/images.png" alt="upload successl"></p>
+<p>因为访问磁盘的时间会比较长，因此要尽可能减少磁盘的次数</p>
+<p>write back 只写主存，不写磁盘</p>
+<h4 id="页表"><a href="#页表" class="headerlink" title="页表"></a>页表</h4><p>用结构数组来实现</p>
+<p><img src="/home/alex/图片/vlid.png" alt="upload successfu"></p>
+<p>装入位-&gt;valid bit</p>
+<p>修改位-&gt;dirty bit</p>
+<p>替换控制位-&gt;根据其使用情况，决定该page是淘汰掉还是保留<br>eg（LRU.LMU）</p>
+<p>实页号-&gt;页框号</p>
+<p><strong>每个进程有一个页表，其中有装入位，dirty位，替换控制位，访问权限位（确定是否可读/可写）还有禁止缓存位，实页号</strong></p>
+<p>一个页数的项数有什么来决定？<strong>虚拟地址空间大小来决定</strong></p>
+<p>项数 = 虚拟地址空间大小 / 页大小</p>
+<p>4GB/4KB = 2^20 项</p>
+<p>每个进程的页表大小一样吗？</p>
+<p><strong><em>各个进程有相同虚拟空间，所以理论上一样。实际大小看具体实现方式，如“空洞：页面如何处理</em></strong></p>
+<p><img src="/home/alex/图片/2018-28.png" alt="fil"></p>
+<p>页表分三种</p>
+<p><img src="/home/alex/图片/ju.png" alt="upload successl"></p>
+<h4 id="逻辑地址转换为物理地址"><a href="#逻辑地址转换为物理地址" class="headerlink" title="逻辑地址转换为物理地址"></a>逻辑地址转换为物理地址</h4><p><img src="/home/alex/图片/VA.png" alt="upload success"></p>
+<p>VA：VIRTUAL ADDRESS</p>
+<p>类比于全相连cache，地址只有两部分，高位的tag，低位的偏移量。这里也是类似，page no,表示页表索引，页表基址存放在一个寄存器当中，<strong><em>页表的地址 = 基址+页表索引×页框大小</em></strong> </p>
+<p>PF： frame no. ，即物理页号，其加上disp偏移量就等于PA，物理地址。</p>
+<p>V = 0时，发生缺页。</p>
+<h4 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h4><p>这个时候就需要操作系统来帮忙处理</p>
+<p><img src="/home/alex/图片/vm2.png" alt="upload success"></p>
+<h4 id="TLB（快表）"><a href="#TLB（快表）" class="headerlink" title="TLB（快表）"></a>TLB（快表）</h4><p><img src="/home/alex/图片/um.png" alt="upload sssful"></p>
+<p>全相连中，tag = 标签号，没有组号</p>
+<p>组相连当中，虚页号高位作为tag，低位作为组号（index）</p>
+<p><img src="/home/alex/图片/TLB.png" alt="upload succe"></p>
+<p>1.从virtual page中得到虚页号，把虚页号与TLB中的tag作比较，如果valid=0 or valid = 1 but tag!=VA,then 发生缺页。</p>
+<p>2.于是从主存的页表(慢表)开始寻找，由于页表中的表项是按照索引号排列的，所以并不需要tag号。如果V=0，还找不到，则时候就要到外存当中的磁盘找对应的表项。</p>
+<p>3.如果找到了，可以直接从page frame中生成物理地址号，这样就不需要访问向前面部分介绍的那样，访问主存。</p>
+<p><strong><em>所以引入快表（在cache）目的就是减少主存的访问次数，提高逻辑地址与物理地址转换的速度。</em></strong></p>
+<p><img src="/home/alex/图片/cmt.png" alt="upload successfl"></p>
+<p>最理想路径： VA-&gt;HIT1-&gt;HIT3-&gt;CPU 不用访问主存</p>
+<p>如果发生了TLB缺失（miss1），在主存中的的页表中寻找，如果找到了就是hit2，继续送到cache里面，否则就是miss 2 ，发生page fault</p>
+<p>如果送到cache，cache miss了，就发生miss 3，从主存那里找。</p>
+<h4 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h4><p><img src="/home/alex/图片/2018-30.png" alt="filename already exists, renaed"></p>
+<p>最上面那一段属于页表，中间段属于TLB，下面那一段是cache</p>
+<p>大概过程：虚拟地址从TLB表中寻找，如果找不到就去页表找，然后映射为物理地址后，物理地址在cache中找，找不到就访问主存，从主存中找。</p>
+<p>虚拟地址分为20位的虚拟页号，12位的页内地址</p>
+<p>上图中由于是组相连，因此虚拟页号分为tag标记以及组索引，当v=1而且TLB标记等于标记号的时候，就找到了物理页号，然后物理页号与虚拟地址的业内地址结合起来，就找到了物理地址。然后物理地址就又分为标记号，组索引以及块内地址，于cache中寻找所要寻找的字节。</p>
+<p><img src="/home/alex/图片/ca.png" alt="upload successl"></p>
+<p>缺页处理是由操作系统来作的</p>
+<p><img src="/home/alex/图片/HMM.png" alt="upload ful"></p>
+<p>如果不在页表当中，就绝对不可能再快表当中；如果页表缺失，说明信息不在主存，cache也一定不可能有！</p>
+<p>三个都miss过程：</p>
+<p>1.快表miss，去页表（在主存）中找，访存1次</p>
+<p>2.页表miss，只能从磁盘中寻找，访问磁盘一次</p>
+<p>3.cache miss，从主存当中寻找，访存第二次</p>
+<h3 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h3><p><img src="/home/alex/图片/lee.png" alt="upload succesul"></p>
+<p>页表项数： 虚拟地址大小 / 页大小</p>
+<p><img src="/home/alex/图片/phy.png" alt="upload succesl"></p>
+<p>虚拟地址中，高8位就是虚拟页号，低6位就是偏移量。</p>
+<p>物理地址中，高6位是实页号，低6号是偏移量。</p>
+<p>快表：</p>
+<p><img src="/home/alex/图片/bufen.png" alt="upload successl"></p>
+<p>16个TLB项，4路组相连，说明TLBI是2，剩下6位就是tag位</p>
+<p>快表中0A34数据有误，因为其VPN就是tag+set号</p>
+<p> tag是0A,set是03，所以VPN为 00101011 就是0x2B</p>
+<p>但是在慢表中，0x2Bvalid位是0，所以说明数据有误</p>
+<p>cache：</p>
+<p><img src="/home/alex/图片/china.png" alt="upload succesful"></p>
+<p>一共有16行，所以CI是4，偏移量是2（主存块4B）</p>
+<p><img src="/home/alex/图片/jizz.png" alt="upload succesul"></p>
+<p>VPN = 0xF TLBI = 0x3 TLBT = 0x3</p>
+<p>即在快表的第三组中找tag==3的，找到了，说明其命中，没有page fault，PPN是0D</p>
+<p>0D = 1101</p>
+<p>所以物理地址为（PPN+VPO）<br>001101010100</p>
+<p>C0 = 00<br>CI = 0101<br>CT = 001101</p>
+<p>在cache中找第5行，tag为001101的16位数据</p>
+<p>B0 = 36 B1 = 72</p>
+<p>所以要找的数据是7236(小端，高位数据在高位)</p>
+<h3 id="分段式虚拟存储器"><a href="#分段式虚拟存储器" class="headerlink" title="分段式虚拟存储器"></a>分段式虚拟存储器</h3><p>分段方式很好管理，但是占的空间多，储存空间管理不好管理。</p>
+<p><img src="/home/alex/图片/fenduan.png" alt="oad successful"></p>
+<p><img src="/home/alex/图片/2018-31.png" alt="file already exists, renamed"></p>
+<h3 id="段页式存储器"><a href="#段页式存储器" class="headerlink" title="段页式存储器"></a>段页式存储器</h3><p><img src="/home/alex/图片/ta.png" alt="upload succful"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/06/Stack-Pointer-Frame-Pointer/" rel="next" title="Stack Pointer/Frame Pointer">
+                <i class="fa fa-chevron-left"></i> Stack Pointer/Frame Pointer
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/07/IA-32-linux中的地址转换/" rel="prev" title="IA-32/linux中的地址转换">
+                IA-32/linux中的地址转换 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#早期分页方式的概念"><span class="nav-number">1.</span> <span class="nav-text">早期分页方式的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页"><span class="nav-number">2.</span> <span class="nav-text">分页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟存储系统"><span class="nav-number">3.</span> <span class="nav-text">虚拟存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟存储技术的实质"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟存储技术的实质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主存–磁盘"><span class="nav-number">3.2.</span> <span class="nav-text">主存–磁盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页表"><span class="nav-number">3.3.</span> <span class="nav-text">页表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址转换为物理地址"><span class="nav-number">3.4.</span> <span class="nav-text">逻辑地址转换为物理地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常情况"><span class="nav-number">3.5.</span> <span class="nav-text">异常情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB（快表）"><span class="nav-number">3.6.</span> <span class="nav-text">TLB（快表）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示意图"><span class="nav-number">3.7.</span> <span class="nav-text">示意图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个例子"><span class="nav-number">4.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分段式虚拟存储器"><span class="nav-number">5.</span> <span class="nav-text">分段式虚拟存储器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段页式存储器"><span class="nav-number">6.</span> <span class="nav-text">段页式存储器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
