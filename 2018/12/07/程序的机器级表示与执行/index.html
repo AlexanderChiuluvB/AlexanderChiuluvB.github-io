@@ -95,6 +95,9 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-43.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/chuliqi.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/js.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-68.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/double.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/进程.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/、、.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-44.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/taipei.png">
@@ -102,7 +105,9 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-45.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ke.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/fork.png">
-<meta property="og:updated_time" content="2018-12-07T16:04:10.593Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/maye.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/kundao.png">
+<meta property="og:updated_time" content="2018-12-12T01:34:02.992Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-异常控制流">
 <meta name="twitter:description" content="CPU所执行的指令的地址序列称为CPU的控制流，通过下述两种方式得到的控制流为正常控制流。 1.按顺序取下一条指令执行。 2.通过CALL/RET/Jcc/JMP等指令跳转到转移目标地址处执行 异常控制流 硬件层面有两种情况： 1.执行指令的硬件发现指令有异常。eg:除0 2.外部中断 ctrl+c 异常控制流形成原因（1.2硬件层面） 1.内部异常：缺页，越权，越级，整除0，溢出等，都是CPU可">
@@ -402,7 +407,23 @@
 <h4 id="进程与上下文切换"><a href="#进程与上下文切换" class="headerlink" title="进程与上下文切换"></a>进程与上下文切换</h4><p>什么叫进程的上下文？<br><img src="/home/alex/图片/chuliqi.png" alt="upload sucessful"></p>
 <p><img src="/home/alex/图片/js.png" alt="upload succeul"></p>
 <p><strong><em>用户级上下文地址空间和系统级上下文地址空间一起构成了一个进程的整个存储器映像</em></strong></p>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>以下内容引用<br><a href="https://wdxtub.com/2016/04/16/thin-csapp-5/" target="_blank" rel="noopener">https://wdxtub.com/2016/04/16/thin-csapp-5/</a></p>
+<p>进程才是程序（指令和数据）的真正运行实例。之所以重要，是因为进程给每个应用提供了两个非常关键的抽象：一是逻辑控制流，二是私有地址空间。逻辑控制流通过称为上下文切换(context switching)的内核机制让每个程序都感觉自己在独占处理器。私有地址空间则是通过称为虚拟内存(virtual memory)的机制让每个程序都感觉自己在独占内存。这样的抽象使得具体的进程不需要操心处理器和内存的相关适宜，也保证了在不同情况下运行同样的程序能得到相同的结果。</p>
+<p><img src="/home/alex/图片/2018-68.png" alt="filename already exists, ramed"></p>
+<p>左边是单进程的模型，内存中保存着进程所需的各种信息，因为该进程独占 CPU，所以并不需要保存寄存器值。而在右边的单核多进程模型中，虚线部分可以认为是当前正在执行的进程，因为我们可能会切换到其他进程，所以内存中需要另一块区域来保存当前的寄存器值，以便下次执行的时候进行恢复（也就是所谓的上下文切换）。整个过程中，CPU 交替执行不同的进程，虚拟内存系统会负责管理地址空间，而没有执行的进程的寄存器值会被保存在内存中。切换到另一个进程的时候，会载入已保存的对应于将要执行的进程的寄存器值。</p>
+<p>我们所讲的“双核”</p>
+<p><img src="/home/alex/图片/double.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/进程.png" alt="upload successfu"></p>
+<p>上下文切换是指把运行内核代码的环境调出来，然后把用户代码的环境（PC，寄存器等）保存起来</p>
 <h4 id="进程地址空间"><a href="#进程地址空间" class="headerlink" title="进程地址空间"></a>进程地址空间</h4><p>虚拟地址空间由内核空间和用户空间两部分组成。用户空间（32位）都从0x08048000组成。<br><img src="/home/alex/图片/、、.png" alt="upload successfl"></p>
+<h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p>在遇到错误的时候，Linux 系统级函数通常会返回 -1 并且设置 errno 这个全局变量来表示错误的原因。使用的时候记住两个规则：</p>
+<p>1.对于每个系统调用都应该检查返回值<br>2.当然有一些系统调用的返回值为 void，在这里就不适用</p>
+<p>fork函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">void unix_error(char *msg) /* Unix-style error */</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;%s: %s\n&quot;, msg, strerror(errno));</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pid_t Fork(void)</span><br><span class="line">&#123;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    if ((pid = fork()) &lt; 0)</span><br><span class="line">        unix_error(&quot;Fork error&quot;);</span><br><span class="line">    return pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="获取进程信息"><a href="#获取进程信息" class="headerlink" title="获取进程信息"></a>获取进程信息</h4><p>我们可以用下面两个函数获取进程的相关信息：</p>
+<p>1.pid_t getpid(void) - 返回当前进程的 PID<br>2.pid_t getppid(void) - 返回当前进程的父进程的 PID</p>
+<p>我们可以认为，进程有三个主要状态：</p>
+<p>1.运行 Running<br>        正在被执行、正在等待执行或者最终将会被执行<br>2.停止 Stopped<br>        执行被挂起，在进一步通知前不会计划执行<br>3.终止 Terminated<br>        进程被永久停止</p>
 <h3 id="用户态和内核态"><a href="#用户态和内核态" class="headerlink" title="用户态和内核态"></a>用户态和内核态</h3><p><img src="/home/alex/图片/2018-44.png" alt="filename alredy exists, renamed"></p>
 <h3 id="程序的加载和运行"><a href="#程序的加载和运行" class="headerlink" title="程序的加载和运行"></a>程序的加载和运行</h3><p><img src="/home/alex/图片/taipei.png" alt="upload succesful"></p>
 <p><img src="/home/alex/图片/jiazai.png" alt="upload successl"></p>
@@ -413,6 +434,39 @@
 <p><img src="/home/alex/图片/fork.png" alt="upload successful"></p>
 <p>第一个参数先压栈，最后一个参数最后压栈，注意上图，argv是一个指针，指向一个数组，即图中argv【0】处，每一个元素又本身是一个指针，指向一个字符串，envp也是一个指针数组，每一个元素指向一个环境变量。</p>
 <p>然后如果main函数调用了其它函数，就会又长出一个栈帧，这就是程序加载与运行的过程。</p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>可以用kill函数发射信号</p>
+<p>子进程陷入无限循环，则父进程发射KILL信号，终结子进程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void forkandkill()</span><br><span class="line">&#123;</span><br><span class="line">    pid_t pid[N];</span><br><span class="line">    int i;</span><br><span class="line">    int child_status;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">        if ((pid[i] = fork()) == 0)</span><br><span class="line">            while(1) ;  // 死循环</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;Killing process %d\n&quot;, pid[i]);</span><br><span class="line">        kill(pid[i], SIGINT);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        pid_t wpid = wait(&amp;child_status);</span><br><span class="line">        if (WIFEXITED(child_status))</span><br><span class="line"> printf(&quot;Child %d terminated with exit status  %d\n&quot;,wpid,WEXITSTATUS(child_status));</span><br><span class="line">        else</span><br><span class="line">            printf(&quot;Child %d terminated abnormally\n&quot;, wpid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="接收信号"><a href="#接收信号" class="headerlink" title="接收信号"></a>接收信号</h4><p>所有上下文切换都是通过调用某个异常处理器（exception handler）完成的，内核会计算对易于某个进程p的pnb值：pnb=pending&amp;~blocked</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">void unix_error(char *msg) /* Unix-style error */</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;%s: %s\n&quot;, msg, strerror(errno));</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void sigint_handler(int sig) // SIGINT 处理器</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;想通过 ctrl+c 来关闭我？\n&quot;);</span><br><span class="line">    sleep(2);</span><br><span class="line">    fflush(stdout);</span><br><span class="line">    sleep(1);</span><br><span class="line">    printf(&quot;OK. :-)\n&quot;);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    // 设定 SIGINT 处理器</span><br><span class="line">    if (signal(SIGINT, sigint_handler) == SIG_ERR)</span><br><span class="line">        unix_error(&quot;signal error&quot;);</span><br><span class="line">        </span><br><span class="line">    // 等待接收信号</span><br><span class="line">    pause();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/maye.png" alt="upload succeful"></p>
+<p>信号处理器的工作流程可以认为是和当前用户进程“并发”的同一个伪进程。</p>
+<h4 id="并行与并发的区别"><a href="#并行与并发的区别" class="headerlink" title="并行与并发的区别"></a>并行与并发的区别</h4><p>并行：多个CPU同时执行程序</p>
+<p>并发(concurrent)：即使只有一个CPU，但操作系统能够把程序的执行单位细化，然后分开执行。是一种伪并行执行</p>
+<h4 id="阻塞信号"><a href="#阻塞信号" class="headerlink" title="阻塞信号"></a>阻塞信号</h4><p>内核会阻塞与当前在处理的信号同类型的其他正在等待的信号，也就是说一个SIGINT信号处理是不能被另外一个SIGINT信号中断的。</p>
+<p>如果要显示阻塞，需要用sigprocmask函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sigset_t mask, prev_mask;</span><br><span class="line">Sigemptyset(&amp;mask); // 创建空集</span><br><span class="line">Sigaddset(&amp;mask, SIGINT); // 把 SIGINT 信号加入屏蔽列表中</span><br><span class="line">// 阻塞对应信号，并保存之前的集合作为备份</span><br><span class="line">Sigprocmask(SIG_BLOCK, &amp;mask, &amp;prev_mask);</span><br><span class="line">...</span><br><span class="line">... // 这部分代码不会被 SIGINT 中断</span><br><span class="line">...</span><br><span class="line">// 取消阻塞信号，恢复原来的状态</span><br><span class="line">Sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL);</span><br></pre></td></tr></table></figure>
+<p>并行访问可能会导致数据毁坏问题，以下是一些编写程序的规则。</p>
+<pre><code>规则 1：信号处理器越简单越好
+    例如：设置一个全局的标记，并返回
+规则 2：信号处理器中只调用异步且信号安全(async-signal-safe)的函数
+    诸如 printf, sprintf, malloc 和 exit 都是不安全的！
+规则 3：在进入和退出的时候保存和恢复 errno
+    这样信号处理器就不会覆盖原有的 errno 值
+规则 4：临时阻塞所有的信号以保证对于共享数据结构的访问
+    防止可能出现的数据损坏
+规则 5：用 volatile 关键字声明全局变量
+    这样编译器就不会把它们保存在寄存器中，保证一致性
+规则 6：用 volatile sig_atomic_t 来声明全局标识符(flag)
+    这样可以防止出现访问异常
+</code></pre><p>异步信号安全：指的是如下两类函数：</p>
+<p>1.所有的变量都保存在栈帧当中<br>2.不会被信号中断的函数</p>
+<h3 id="非本地跳转-Non-local-jump"><a href="#非本地跳转-Non-local-jump" class="headerlink" title="非本地跳转 Non local jump"></a>非本地跳转 Non local jump</h3><p>从一个函数跳转到另一个函数中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setjmp 保存当前程序的堆栈上下文环境(stack context)，注意，这个保存的堆栈上下文环境仅在调用 setjmp 的函数内有效，如果调用 setjmp 的函数返回了，这个保存的堆栈上下文环境就失效了。调用 setjmp 的直接返回值为 0。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">longjmp 将会恢复由 setjmp 保存的程序堆栈上下文，即程序从调用 setjmp 处重新开始执行，不过此时的 setjmp 的返回值将是由 longjmp 指定的值。注意longjmp 不能指定0为返回值，即使指定了 0，longjmp 也会使 setjmp 返回 1。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">jmp_buf env;</span><br><span class="line">P1()</span><br><span class="line">&#123;</span><br><span class="line">    if (setjmp(env))</span><br><span class="line">    &#123;</span><br><span class="line">        // 跳转到这里</span><br><span class="line">    &#125; else </span><br><span class="line">    &#123;</span><br><span class="line">        P2();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">P2()</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    P2();</span><br><span class="line">    ...</span><br><span class="line">    P3();</span><br><span class="line">&#125;</span><br><span class="line">P3()</span><br><span class="line">&#123;</span><br><span class="line">    longjmp(env, 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/kundao.png" alt="uploadccessful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">jmp_buf env;</span><br><span class="line">P1()</span><br><span class="line">&#123;</span><br><span class="line">    P2(); P3();</span><br><span class="line">&#125;</span><br><span class="line">P2()</span><br><span class="line">&#123;</span><br><span class="line">    if (setjmp(env))</span><br><span class="line">    &#123;</span><br><span class="line">        // 跳转到这里</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">P3()</span><br><span class="line">&#123;</span><br><span class="line">    longjmp(env, 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为P2在跳转的时候，已经在P3前返回了，内存已经清理了其对应的栈帧，所以P3的longjmp不能实现期望的操作。</p>
 
       
     </div>
@@ -443,8 +497,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/07/IA-32-linux中的地址转换/" rel="next" title="IA-32/linux中的地址转换">
-                <i class="fa fa-chevron-left"></i> IA-32/linux中的地址转换
+              <a href="/2018/12/07/IA-32-linux中的地址转换/" rel="next" title="CSAPP-IA-32/linux中的地址转换">
+                <i class="fa fa-chevron-left"></i> CSAPP-IA-32/linux中的地址转换
               </a>
             
           </div>
@@ -532,7 +586,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -587,7 +641,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常控制流"><span class="nav-number">1.</span> <span class="nav-text">异常控制流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序和进程"><span class="nav-number">2.</span> <span class="nav-text">程序和进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引入进程的好处"><span class="nav-number">2.1.</span> <span class="nav-text">引入进程的好处</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑控制流"><span class="nav-number">2.2.</span> <span class="nav-text">逻辑控制流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程与上下文切换"><span class="nav-number">2.3.</span> <span class="nav-text">进程与上下文切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程地址空间"><span class="nav-number">2.4.</span> <span class="nav-text">进程地址空间</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户态和内核态"><span class="nav-number">3.</span> <span class="nav-text">用户态和内核态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序的加载和运行"><span class="nav-number">4.</span> <span class="nav-text">程序的加载和运行</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常控制流"><span class="nav-number">1.</span> <span class="nav-text">异常控制流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序和进程"><span class="nav-number">2.</span> <span class="nav-text">程序和进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引入进程的好处"><span class="nav-number">2.1.</span> <span class="nav-text">引入进程的好处</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑控制流"><span class="nav-number">2.2.</span> <span class="nav-text">逻辑控制流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程与上下文切换"><span class="nav-number">2.3.</span> <span class="nav-text">进程与上下文切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">3.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程地址空间"><span class="nav-number">3.1.</span> <span class="nav-text">进程地址空间</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程控制"><span class="nav-number">4.</span> <span class="nav-text">进程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取进程信息"><span class="nav-number">4.1.</span> <span class="nav-text">获取进程信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户态和内核态"><span class="nav-number">5.</span> <span class="nav-text">用户态和内核态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序的加载和运行"><span class="nav-number">6.</span> <span class="nav-text">程序的加载和运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号"><span class="nav-number">7.</span> <span class="nav-text">信号</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#接收信号"><span class="nav-number">7.1.</span> <span class="nav-text">接收信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#并行与并发的区别"><span class="nav-number">7.2.</span> <span class="nav-text">并行与并发的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阻塞信号"><span class="nav-number">7.3.</span> <span class="nav-text">阻塞信号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非本地跳转-Non-local-jump"><span class="nav-number">8.</span> <span class="nav-text">非本地跳转 Non local jump</span></a></li></ol></div>
             
 
           </div>

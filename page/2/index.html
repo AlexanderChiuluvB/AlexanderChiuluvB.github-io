@@ -272,6 +272,330 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/15/CSAPP-存储层次结构/" itemprop="url">CSAPP 存储层次结构/Cahce</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T06:01:00+08:00">
+                2018-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="存储层次结构概况"><a href="#存储层次结构概况" class="headerlink" title="存储层次结构概况"></a>存储层次结构概况</h3><p><img src="/home/alex/图片/ccc.png" alt="image"></p>
+<h4 id="存储器的特性"><a href="#存储器的特性" class="headerlink" title="存储器的特性"></a>存储器的特性</h4><h5 id="1-非易失性，即断电后不会丢失数据"><a href="#1-非易失性，即断电后不会丢失数据" class="headerlink" title="1.非易失性，即断电后不会丢失数据"></a>1.非易失性，即断电后不会丢失数据</h5><p><img src="/home/alex/图片/bios.png" alt="bios"></p>
+<p>CPU和主存都是易失性，而BIOS和硬盘是非易失的</p>
+<p>通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。</p>
+<h5 id="2-可读可写"><a href="#2-可读可写" class="headerlink" title="2.可读可写"></a>2.可读可写</h5><h5 id="3-随机访问"><a href="#3-随机访问" class="headerlink" title="3.随机访问"></a>3.随机访问</h5><p>访问数据与其位置无关</p>
+<p>主存与BIOS(basic input output system)能够实现随即访问数据。</p>
+<p>但是硬盘则不是。</p>
+<h5 id="4-访问时间"><a href="#4-访问时间" class="headerlink" title="4.访问时间"></a>4.访问时间</h5><p>主存速度高于硬盘访问时间</p>
+<p><img src="/home/alex/图片/DRAM.png" alt="dram"></p>
+<p>DRAM读取数据时间是CPU读取时间的一百倍，因此执行一条指令的时候非常的慢！</p>
+<p>因此考虑在CPU 和DRAM之间添加一个SRAM，使得CPU所需要的程序和数据大部分时间存放在Cache中，大大缩短执行指令时候所需要的时间周期。</p>
+<p><img src="/home/alex/图片/MH.png" alt="MH"></p>
+<h3 id="DRAM"><a href="#DRAM" class="headerlink" title="DRAM"></a>DRAM</h3><p>右下角就是内存条，通常也叫内存模组，是由若干个DRAM芯片组成的，核心就是左图的内存阵列，从外界输入行列信号，就可以读取一个基本存储单元，如红圈每个存储单元有若干个bit，通常是4个或者8个，每一个放大来看如右上角电路图所示。</p>
+<p><img src="/home/alex/图片/2018-9.png" alt="a"></p>
+<p>基本存储单元</p>
+<p><img src="/home/alex/图片/refresh.png" alt="upload successfu"></p>
+<p>通过存储的电容来表示存储的bit信息，对SDRAM的读写，主要体现在电容的冲放电，而这个是很难再做提高的。</p>
+<p><img src="/home/alex/图片/SRAM.png" alt="upl"></p>
+<p>SRAM采取的是晶体管开关存储，远比电容充电放电要快，所以SRAM比DRAM要快，现代CPU的高速缓存通常用SRAM实现</p>
+<p><img src="/home/alex/图片/upl2.png" alt="upl2"></p>
+<h4 id="内存工作原理"><a href="#内存工作原理" class="headerlink" title="内存工作原理"></a>内存工作原理</h4><p>第一步，申请系统总线，获得总线控制权后，会把地址送到内存控制器中。</p>
+<p>然后内存控制器会把地址分解为行地址和列地址</p>
+<p><img src="/home/alex/图片/SDRAM.png" alt="SDRAM"></p>
+<p>第二步 行访问</p>
+<p>内存控制器向SDRAM发起访存操作</p>
+<p><img src="/home/alex/图片/hangfangwen.png" alt="SDRAM2"></p>
+<p>这一行当中所有存储单元的信号通过放大器之后会放在一个缓冲区当中。这就是激活/行访问</p>
+<p>第三步 列访问<br><img src="/home/alex/图片/column.png" alt="COLUMN"></p>
+<p>第四步 送回CPU</p>
+<p><img src="/home/alex/图片/CAIYANG.png" alt="CAIYANG"></p>
+<p>内存控制器把采样到的数据送回给CPU</p>
+<p>CPU之后又发送地址信号，如果不是同一行，则就要把激活的行关闭。</p>
+<p>这个过程叫做预充电</p>
+<h5 id="SDRAM的关键性能参数："><a href="#SDRAM的关键性能参数：" class="headerlink" title="SDRAM的关键性能参数："></a>SDRAM的关键性能参数：</h5><p>1.tRCD row to column delay  从行选到列选的延迟时间</p>
+<p>2.CL CAS Latency  从列选到数据输出的延迟周期数</p>
+<p>3.tRP 行预充电时间</p>
+<p>数据个数就等同于内存条上DRAM芯片个数<br><img src="/home/alex/图片/gap.png" alt="upload successfu"></p>
+<p>所以整个过程的周期并不等于7.5ns！</p>
+<p>DDR SDRAM 比 SDR SDRAM 要快，原因是前者一次能比后者取多两倍的数据</p>
+<p>DDR是数据传输的方式，不等同于内存</p>
+<p><img src="/home/alex/图片/data.png" alt="upload successf"></p>
+<h5 id="DDR-与-SDR-对比"><a href="#DDR-与-SDR-对比" class="headerlink" title="DDR 与 SDR 对比"></a>DDR 与 SDR 对比</h5><p><img src="/home/alex/图片/DDR.png" alt="ddr"></p>
+<p>DDR由于一次读取两个数据，所以tRCD和CL变慢了，但是每个周期能同时取两个数据。<br>这里的带宽就是由每个周期取得的数据计算出来的。</p>
+<p>衡量CPU有两个指标</p>
+<h6 id="访存带宽"><a href="#访存带宽" class="headerlink" title="访存带宽"></a>访存带宽</h6><p>单位时间内存储器所存取的信息量。</p>
+<h6 id="访存延迟"><a href="#访存延迟" class="headerlink" title="访存延迟"></a>访存延迟</h6><p>读出第一个数据所需要的时间。</p>
+<h4 id="Cache工作原理"><a href="#Cache工作原理" class="headerlink" title="Cache工作原理"></a>Cache工作原理</h4><h5 id="空间局部性："><a href="#空间局部性：" class="headerlink" title="空间局部性："></a>空间局部性：</h5><p>空间局部性是一旦一个指令一个存储单元被访问，那么它附近的单元也将很快被访问</p>
+<h5 id="时间局部性："><a href="#时间局部性：" class="headerlink" title="时间局部性："></a>时间局部性：</h5><p>时间局部性是一旦一个指令被执行了，则在不久的将来，它可能再被执行。</p>
+<p><img src="/home/alex/图片/a.png" alt="uploa"></p>
+<p><img src="/home/alex/图片/cache.png" alt="upload succ"></p>
+<h5 id="操作过程"><a href="#操作过程" class="headerlink" title="操作过程"></a>操作过程</h5><p><img src="/home/alex/图片/cao.png" alt="uploa"></p>
+<p>怎么把虚拟地址转化为实际地址是个问题</p>
+<h5 id="Cache读操作"><a href="#Cache读操作" class="headerlink" title="Cache读操作"></a>Cache读操作</h5><p>1.第一条指令，由于一开始Cache是空的，所以没有命中。因此Cache访问主存。</p>
+<p>之所以分配给表项1，是由地址倒数第二个数字决定的。（不看H）</p>
+<p>然后前面的所有项(20)放到标签处。</p>
+<p><img src="/home/alex/图片/2018-10.png" alt="filename already exists, ren"></p>
+<p>2.第二种情况，没有命中，因为表被占用了。</p>
+<p>4011H，先检查有效位1，发现原来标签是20H，因此把地址替换掉。</p>
+<p><img src="/home/alex/图片/oc.png" alt="upload success"></p>
+<h5 id="Cache写操作"><a href="#Cache写操作" class="headerlink" title="Cache写操作"></a>Cache写操作</h5><p><img src="/home/alex/图片/write.png" alt="write"></p>
+<h4 id="平均访存时间"><a href="#平均访存时间" class="headerlink" title="平均访存时间"></a>平均访存时间</h4><p><img src="/home/alex/图片/memory.png" alt="visit"></p>
+<p><img src="/home/alex/图片/策略.png" alt="upload successfu"></p>
+<p>Cache映射策略，直接映射会遇到这么一个问题：</p>
+<p>就是存储器会每隔八个地址把数据映射到Cache中，如果程序交替访问这两个数据，那么每次访问都会访问主存，把地址写入到Cache中，这样性能比没有Cache的时候还要差。</p>
+<p>也可以通过二路组，四路组相联策略，但是代价是每次取数据的时候，要取多个标签比较，如直接映射只需要取一个标签出来，如图中的0，而二路组则要2个。而且这样会使得硬件电路变得复杂化，增加了命中时间，得不偿失。</p>
+<p><img src="/home/alex/图片/visi.png" alt="upload succe"></p>
+<h4 id="常见Cache替换算法"><a href="#常见Cache替换算法" class="headerlink" title="常见Cache替换算法"></a>常见Cache替换算法</h4><p><img src="/home/alex/图片/x86.png" alt="upload succ"></p>
+<p>LRU的实现：</p>
+<p>1.队列</p>
+<p>2.用LRUnumber，例如初始化每块的LRUnumber为0，当要访问这块Cache的时候重新设置为0，然后其他块++1，然后LRUnumber最大的那个block就是最近最少使用的块。</p>
+<p>计算机领域单位使用情况</p>
+<p><img src="/home/alex/图片/dan.png" alt="upload succesful"></p>
+<h3 id="Cache-映射"><a href="#Cache-映射" class="headerlink" title="Cache 映射"></a>Cache 映射</h3><h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p><img src="/home/alex/图片/mapping.png" alt="map"></p>
+<p>Cache 大小：</p>
+<p>假设每个槽，就是cache的每个block能装512个(2^9)byte，说明b = 9</p>
+<p>然后一共有16个sets，说明 s = 4，</p>
+<p>因此cache地址一共是（s+b = 13位）</p>
+<p>主存的第0块，第16块，第32块。。都能放在cache的0槽当中，但是怎么知道<br>是哪个块群的呢?因此用标记号来说明，那么标记号该有几位？就是块群的个数2^7=128</p>
+<p>所以标记号就是7位，标记号用来指出对应行来自于哪个块群。</p>
+<p>主存大小：<br>2048 块 <em> 512B/块 = 2^11 </em> 2^ 9 = 2^20</p>
+<p>所以主存地址一共20位，包含了9位的块内地址，4位cache索引，剩下7位主存标记。<br>主存一共2048（2^11）块，所以主存标记和cache索引用来标记主存的具体块号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">例如：给定地址 0220CH</span><br><span class="line"></span><br><span class="line">转化为二进制 0000 0010 0001 0000 1100</span><br><span class="line"></span><br><span class="line">前7位 0000 001  决定来自于块群 1</span><br><span class="line"></span><br><span class="line">中间4位 0001 决定来自块群的具体哪个块  第一块</span><br><span class="line"></span><br><span class="line">后面9位，块内地址 决定了块内的哪个单元 第12个单元</span><br></pre></td></tr></table></figure>
+<p><strong>所以大概过程</strong></p>
+<p>拿来一个主存地址，然后划分为三段，根据中间索引号来寻找cache对应槽，然后看<br>valid位和标记位，如果valid=0，说明里面是空的，冷不命中，要从主存把地址送过来。如果valid=1，而且主存标记刚好是标记位，就根据块内地址在槽内寻找对应单元。</p>
+<p><img src="/home/alex/图片/youxiao.png" alt="upload succeul"></p>
+<p>给定32位主存地址，划分为三部分。</p>
+<p>首先由于块大小为16（2^4）B，因此b = 4,偏移位 4位</p>
+<p>索引位呢？  中间的索引位决定于cache有多少行</p>
+<p>因此行数=64KB/16B = 4K = 2^12 行</p>
+<p>因此中间索引位一共有12位</p>
+<p>剩下16位就是tag位，标记位</p>
+<p>给定内存地址，先由中间12行找到cache对应的行，看tag位与valid位是否满足条件，（valid=1说明这一行有数据）满足条件就hit，hit了就根据偏移位寻找对应的数据。</p>
+<p>块大小位16B，即128bit，使用多路选择器MUX来选择取哪个32位的data。</p>
+<p>11 最左边 10 中左 01 中右 00最右边</p>
+<p>如果取的是int型（word），由于word alignment，即内存地址最后的两位其实是不需要理会的。那么只看第三第四位，就是所谓的block offset。决定所取int放在哪个block.</p>
+<p>而如果要取的是char型，要在取了word之后再通过一个MUX，根据主存地址最后两位（Byte Offset）来得到要取哪个byte。</p>
+<p><img src="/home/alex/图片/ex.png" alt="upload successl"></p>
+<h3 id="cache-容量"><a href="#cache-容量" class="headerlink" title="cache 容量"></a>cache 容量</h3><p>上图中容量为  行数 X（每一行的bit数）</p>
+<p>（16+1）<em>4K + 64K </em> 8 = 72.5KB</p>
+<p>数据 64KB/72.5KB   =88.3%</p>
+<p>有一个64行，块容量为16bytes的cache</p>
+<p>十进制地址 1200应该映射到哪一行？</p>
+<p>方法一： 【1200/16】mod 64  = 11</p>
+<p>方法二： 1200转换为二进制 0100 1011 0000</p>
+<p>索引号 = 6 ，即看中间存的是哪一行，001011 就是 11</p>
+<p>实现一个直接映射，16K行数据，块大小为1个字（4B），32位主存地址的cache需要多少容量？</p>
+<p>16K = 2^14 行数据，即中间索引有14位</p>
+<p>byte =4B ，b = 2</p>
+<p>所以tag = 32-2-14  =16</p>
+<p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
+<p>特点</p>
+<p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
+<h4 id="全相联映射方式"><a href="#全相联映射方式" class="headerlink" title="全相联映射方式"></a>全相联映射方式</h4><p><img src="/home/alex/图片/this.png" alt="upload successf"></p>
+<p>给定地址，根据标记主存块号找到数据所在主存的哪一块，00000001111就是第15块，但是不知道在Cache的哪个槽中，所以只能一个一个槽比较。所以叫按内容访问。</p>
+<p>为什么没有cache索引字段？</p>
+<p>因为其可以任意映射到某一个行当中.</p>
+<p><img src="/home/alex/图片/2018-16.png" alt="filename already exists, remed"></p>
+<p>优点就是没有冲突，时间相对加快，但是tag长了，而且每一行都有一个比较器，比较时间长了，相当于命中时间会加长，而且比较成本也增加了，cache容量也变大了！</p>
+<p><img src="/home/alex/图片/ans.png" alt="upload successf"></p>
+<p>前8位标记表示cache属于哪个组群</p>
+<p>中间3位表示属于哪个组</p>
+<p>后面9位表示偏移量，表示要找到那个数据</p>
+<p>Eg: 地址 0000 0001 001 00000 1100</p>
+<p>前8位表示在第一组群 中间三位（cache索引）表示cache的第一个set  ，就是第一个族群的第001块，就是第九块，把这一块映射到cache的第一组当中。</p>
+<p><img src="/home/alex/图片/2018-17.png" alt="filename already exists, renam"></p>
+<p>两个比较器并向同时比较，最多有一个cache的tag与主存地址的tag相同，OR选择器的结果就是hit的结果。</p>
+<p>通过多路选择器把所要找的cache data的block找出来！</p>
+<p><img src="/home/alex/图片/bome.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/zombi.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/over.png" alt="upload succes"></p>
+<p><img src="/home/alex/图片/inyourhead.png" alt="upload succe"></p>
+<p>顺便讲一下什么叫按字节编址，按字编址。</p>
+<p>字 word = 4byte</p>
+<p>字节 byte = 8bit</p>
+<p>位 bit</p>
+<p><img src="/home/alex/图片/ra.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/shell.png" alt="upload succe"></p>
+<p><img src="/home/alex/图片/sudden.png" alt="upload succes"></p>
+<p><img src="/home/alex/图片/animal.png" alt="upload succesl"></p>
+<p><img src="/home/alex/图片/am.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/dlearning.png" alt="upload succe"></p>
+<p><img src="/home/alex/图片/today.png" alt="upload successf"></p>
+<p>上面的图怎么看？</p>
+<pre><code>1. 每一block64个字。访问第0block，冷不命中，放到第0组。那哪一行呢？都可以，一般按照顺序来，因此放在第0组第0行。然后第0组所有元素就都在第0组第0行中取。
+2. 然后访问第1组，冷不命中，放在第1组第0行。第0，16，32，48block都放在第0组，分别放在第0，1，2，3行。
+3. 当取到第64block的时候，miss，根据LRU把第0组行第0行替换掉。一直到第67block结束第一次循环。
+4. 然后来到第二次循环，想要找第0组，但是已经被刚才第64组替换掉了，而且第0block只能放在第0组，因此根据LRU，替换掉第0组第一行，一直到第四个block的时候，这时候第4block放在第4组的的第0行，没有miss。
+5. 由于第16，17，18，19个block已经被替换，当访问第16,17,18,19个block的时候，根据LRU，分别吧0，1，2，3组的第二行的32，33，34，35block替换。同理，当访问32，33，34，35block的时候，又把第三行的48495051替换。同理，访问48，49，50，51的时候，又miss，又把第一行的对应64，65，66，67替换掉。
+6. 所以第二次-第九次循环，每次都有5*4=20次miss
+</code></pre><p>命中率： (43520-68-9*20)/43520 = 99.43%</p>
+<h4 id="Cache读和写的一致性问题"><a href="#Cache读和写的一致性问题" class="headerlink" title="Cache读和写的一致性问题"></a>Cache读和写的一致性问题</h4><p><img src="/home/alex/图片/we.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/way.png" alt="upload succeful"></p>
+<p>同时写cache和主存，但是主存要慢得多，这样写完了cache之后要等待主存。<br>所以可以增加一个buffer 写缓冲。<br>就是CPU可以把数据写到cache中。写完了之后不等写道主存，继续写cache，写到主存的工作就交给write buffer，由memory controller传回到DRAM</p>
+<p><img src="/home/alex/图片/para.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/haleluya.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/hale.png" alt="upload successful"></p>
+<p>写穿透就是同时写cache和主存，写分配就是同时更新主存和cache<br>Write Trough 算法<br>如果能够找到i，使得TAG（i） == X,<br>如果是读操作，就直接返回块内地址DATA[i]；<br>写操作就除了要写块内地址，还要写主存</p>
+<p>如果miss掉<br>读操作就是读主存的数据，然后打标签，送到cache<br>写操作就是先写主存，然后打标签，最后在块内new一个新的数据</p>
+<p>Cache越大越好，命中率越高，但是越大的话成本越高<br>Block 不能太大，也不能太小</p>
+<h4 id="Cache-数目"><a href="#Cache-数目" class="headerlink" title="Cache 数目"></a>Cache 数目</h4><p><img src="/home/alex/图片/shumu.png" alt="upload successl"></p>
+<p>L1，分立cache，为了实现流水线，同时取数据和指令，提高并行性。</p>
+<p>第二个问题：<br>因为他有L1，L2两个cache，即使不命中也没有关系</p>
+<p>第三个问题：最后Level的cache与指令流无关，不需要考虑并行。因此优先考虑空间的利用率，同时命中率比命中时间更重要。</p>
+<p>L1比L2容量小，（越大命中率越高）比L2快，命中时间短，如果L1不命中，只好寄托在L2身上，因此L2的命中率就显得特别重要。</p>
+<h4 id="Cache-实现举例"><a href="#Cache-实现举例" class="headerlink" title="Cache 实现举例"></a>Cache 实现举例</h4><p>用2个状态位：</p>
+<pre><code>S: SHARE
+E：EXCLUSIVE
+M: MODIFIED （是否dirty bit）
+VALID 是否有效
+</code></pre><p>LRU用1位： </p>
+<p><img src="/home/alex/图片/silence.png" alt="upload succel"></p>
+<h4 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h4><p><img src="/home/alex/图片/eg.png" alt="upload successful"></p>
+<h5 id="1-不考虑一致性：dirty-bit-；替换控制即LRU位"><a href="#1-不考虑一致性：dirty-bit-；替换控制即LRU位" class="headerlink" title="1. 不考虑一致性：dirty bit ；替换控制即LRU位"></a>1. 不考虑一致性：dirty bit ；替换控制即LRU位</h5><p>256MB 表示主存地址 28位</p>
+<p>64B – b = 6</p>
+<p>Cache 8行 -中间索引位 3</p>
+<p>Tag位 19位 别忘了要考虑valid位</p>
+<p>（1+19）<em>8 + 64</em>8*8 （每行一个block）(64B是64byte，1byte 8 bits)</p>
+<h5 id="2-64B-16个元素-一行16个元素"><a href="#2-64B-16个元素-一行16个元素" class="headerlink" title="2. 64B-16个元素 一行16个元素"></a>2. 64B-16个元素 一行16个元素</h5><p>A[0][31] 地址 320+4*31 = 444 [444/64] = 6</p>
+<p>因此主存块号为6，6mod8 = 6因此在第六行。</p>
+<p>或者444 为0000110111100B 中间三位是索引位，就是第六行</p>
+<p>而A[1][1] = (320+256*4+8 )/64 mod 8=5 同理也可以把地址转化为二进制来计算。</p>
+<h5 id="3-A-每隔16元素一次冷不命中，命中率（15-16）"><a href="#3-A-每隔16元素一次冷不命中，命中率（15-16）" class="headerlink" title="3.A 每隔16元素一次冷不命中，命中率（15/16）"></a>3.A 每隔16元素一次冷不命中，命中率（15/16）</h5><p>B 每次相隔256个元素，256/16 = 16 块，16mod 8=0，每次访问后面数组元素的时候，总会把上一次装入到cache中的主存块覆盖掉。</p>
+<p>所以每次访问的时候都会发生冲突，替换，因此没有一次命中。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1950,7 +2274,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

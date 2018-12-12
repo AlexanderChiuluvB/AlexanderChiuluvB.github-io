@@ -82,7 +82,7 @@
 <meta name="description" content="1.逻辑地址-》线性地址是 分段2.线性地址-》内存地址是 分页 这里的8是偏移量A%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S 分段过程线性地址的计算  段选择符是在上图的段寄存器里面的  段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。 线性地址 = 段基址+有效地址 有效地址 = 基址寄存器+变址寄存器×比">
 <meta name="keywords" content="CSAPP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="IA-32&#x2F;linux中的地址转换">
+<meta property="og:title" content="CSAPP-IA-32&#x2F;linux中的地址转换">
 <meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/07/IA-32-linux中的地址转换/index.html">
 <meta property="og:site_name" content="Alex Chiu">
 <meta property="og:description" content="1.逻辑地址-》线性地址是 分段2.线性地址-》内存地址是 分页 这里的8是偏移量A%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S 分段过程线性地址的计算  段选择符是在上图的段寄存器里面的  段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。 线性地址 = 段基址+有效地址 有效地址 = 基址寄存器+变址寄存器×比">
@@ -110,9 +110,9 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/yedizhi.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/mmu.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/imge.png">
-<meta property="og:updated_time" content="2018-12-07T11:18:01.701Z">
+<meta property="og:updated_time" content="2018-12-12T01:47:07.107Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="IA-32&#x2F;linux中的地址转换">
+<meta name="twitter:title" content="CSAPP-IA-32&#x2F;linux中的地址转换">
 <meta name="twitter:description" content="1.逻辑地址-》线性地址是 分段2.线性地址-》内存地址是 分页 这里的8是偏移量A%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S 分段过程线性地址的计算  段选择符是在上图的段寄存器里面的  段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。 线性地址 = 段基址+有效地址 有效地址 = 基址寄存器+变址寄存器×比">
 <meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-32.png">
 
@@ -150,7 +150,7 @@
 
 
 
-  <title>IA-32/linux中的地址转换 | Alex Chiu</title>
+  <title>CSAPP-IA-32/linux中的地址转换 | Alex Chiu</title>
   
 
 
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">IA-32/linux中的地址转换</h1>
+          <h1 class="post-title" itemprop="name headline">CSAPP-IA-32/linux中的地址转换</h1>
         
 
         <div class="post-meta">
@@ -432,6 +432,8 @@
 <p>有效地址（偏移量） = 基址寄存器+变址寄存器×比例因子</p>
 <p><img src="/home/alex/图片/2018-40.png" alt="filename alreay exists, renamed"></p>
 <p>所以<strong><em>线性地址就等于EA = 有效地址 </em></strong></p>
+<p>线性地址 = 基地址+有效地址</p>
+<p>所谓EA其实只是一个segment内的一个段内偏移量</p>
 <p><img src="/home/alex/图片/logic.png" alt="upload succeul"></p>
 <p>指令的线性地址 = 代码段基地址+有效地址，而linux编译器默认了代码段基地址位0，因此指令的线性地址就等于有效地址就等于段的偏移量。</p>
 <p>而数据的线性地址 = 数据段基地址+EA =0+ R[ECX]+R[EDX]*4</p>
@@ -447,6 +449,13 @@
 <p><img src="/home/alex/图片/mmu.png" alt="upload"></p>
 <p><img src="/home/alex/图片/imge.png" alt="upload succeul"></p>
 <p>MMU 完成从逻辑地址到线性地址的过程</p>
+<h3 id="CPL-RPL-DPL区别与联系"><a href="#CPL-RPL-DPL区别与联系" class="headerlink" title="CPL,RPL,DPL区别与联系"></a>CPL,RPL,DPL区别与联系</h3><p>1.CPL是当前进程的权限级别(Current Privilege Level)，是当前正在执行的代码所在的段的特权级，存在于cs寄存器的低两位。
+　　</p>
+<p>2.RPL说明的是进程对段访问的请求权限(Request Privilege Level)，是对于段选择子而言的，每个段选择子有自己的RPL，它说明的是进程对段访问的请求权限，有点像函数参数。而且RPL对每个段来说不是固定的，两次访问同一段时的RPL可以不同。RPL可能会削弱CPL的作用，例如当前CPL=0的进程要访问一个数据段，它把段选择符中的RPL设为3，这样虽然它对该段仍然只有特权为3的访问权限。
+　　　　</p>
+<p>3.DPL存储在段描述符中，规定访问该段的权限级别(Descriptor Privilege Level)，每个段的DPL固定。<br>当进程访问一个段时，需要进程特权级检查，一般要求DPL &gt;= max {CPL, RPL}</p>
+<p>下面打一个比方，中国官员分为6级国家主席1、总理2、省长3、市长4、县长5、乡长6，假设我是当前进程，级别总理（CPL=2）,我去聊城市(DPL=4)考察(呵呵),我用省长的级别(RPL=3 这样也能吓死他们:-))去访问,可以吧，如果我用县长的级别，人家就不理咱了(你看看电视上的微服私访，呵呵)，明白了吧！为什么采用RPL，是考虑到安全的问题，就好像你明明对一个文件用有写权限，为什么用只读打开它呢，还不是为了安全！</p>
+<p>ref：<a href="https://blog.csdn.net/better0332/article/details/3416749" target="_blank" rel="noopener">https://blog.csdn.net/better0332/article/details/3416749</a></p>
 
       
     </div>
@@ -570,7 +579,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -625,7 +634,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分段过程"><span class="nav-number">1.</span> <span class="nav-text">分段过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段寄存器的含义"><span class="nav-number">2.</span> <span class="nav-text">段寄存器的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段描述符和段描述符表"><span class="nav-number">3.</span> <span class="nav-text">段描述符和段描述符表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux的全局段描述符表"><span class="nav-number">3.1.</span> <span class="nav-text">Linux的全局段描述符表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址向线性地址转换"><span class="nav-number">3.2.</span> <span class="nav-text">逻辑地址向线性地址转换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页过程（线性地址-》物理地址）"><span class="nav-number">4.</span> <span class="nav-text">分页过程（线性地址-》物理地址）</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#分段过程"><span class="nav-number">1.</span> <span class="nav-text">分段过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段寄存器的含义"><span class="nav-number">2.</span> <span class="nav-text">段寄存器的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段描述符和段描述符表"><span class="nav-number">3.</span> <span class="nav-text">段描述符和段描述符表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux的全局段描述符表"><span class="nav-number">3.1.</span> <span class="nav-text">Linux的全局段描述符表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址向线性地址转换"><span class="nav-number">3.2.</span> <span class="nav-text">逻辑地址向线性地址转换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页过程（线性地址-》物理地址）"><span class="nav-number">4.</span> <span class="nav-text">分页过程（线性地址-》物理地址）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPL-RPL-DPL区别与联系"><span class="nav-number">5.</span> <span class="nav-text">CPL,RPL,DPL区别与联系</span></a></li></ol></div>
             
 
           </div>

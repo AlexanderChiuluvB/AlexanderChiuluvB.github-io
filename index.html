@@ -389,7 +389,23 @@
 <h4 id="进程与上下文切换"><a href="#进程与上下文切换" class="headerlink" title="进程与上下文切换"></a>进程与上下文切换</h4><p>什么叫进程的上下文？<br><img src="/home/alex/图片/chuliqi.png" alt="upload sucessful"></p>
 <p><img src="/home/alex/图片/js.png" alt="upload succeul"></p>
 <p><strong><em>用户级上下文地址空间和系统级上下文地址空间一起构成了一个进程的整个存储器映像</em></strong></p>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>以下内容引用<br><a href="https://wdxtub.com/2016/04/16/thin-csapp-5/" target="_blank" rel="noopener">https://wdxtub.com/2016/04/16/thin-csapp-5/</a></p>
+<p>进程才是程序（指令和数据）的真正运行实例。之所以重要，是因为进程给每个应用提供了两个非常关键的抽象：一是逻辑控制流，二是私有地址空间。逻辑控制流通过称为上下文切换(context switching)的内核机制让每个程序都感觉自己在独占处理器。私有地址空间则是通过称为虚拟内存(virtual memory)的机制让每个程序都感觉自己在独占内存。这样的抽象使得具体的进程不需要操心处理器和内存的相关适宜，也保证了在不同情况下运行同样的程序能得到相同的结果。</p>
+<p><img src="/home/alex/图片/2018-68.png" alt="filename already exists, ramed"></p>
+<p>左边是单进程的模型，内存中保存着进程所需的各种信息，因为该进程独占 CPU，所以并不需要保存寄存器值。而在右边的单核多进程模型中，虚线部分可以认为是当前正在执行的进程，因为我们可能会切换到其他进程，所以内存中需要另一块区域来保存当前的寄存器值，以便下次执行的时候进行恢复（也就是所谓的上下文切换）。整个过程中，CPU 交替执行不同的进程，虚拟内存系统会负责管理地址空间，而没有执行的进程的寄存器值会被保存在内存中。切换到另一个进程的时候，会载入已保存的对应于将要执行的进程的寄存器值。</p>
+<p>我们所讲的“双核”</p>
+<p><img src="/home/alex/图片/double.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/进程.png" alt="upload successfu"></p>
+<p>上下文切换是指把运行内核代码的环境调出来，然后把用户代码的环境（PC，寄存器等）保存起来</p>
 <h4 id="进程地址空间"><a href="#进程地址空间" class="headerlink" title="进程地址空间"></a>进程地址空间</h4><p>虚拟地址空间由内核空间和用户空间两部分组成。用户空间（32位）都从0x08048000组成。<br><img src="/home/alex/图片/、、.png" alt="upload successfl"></p>
+<h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p>在遇到错误的时候，Linux 系统级函数通常会返回 -1 并且设置 errno 这个全局变量来表示错误的原因。使用的时候记住两个规则：</p>
+<p>1.对于每个系统调用都应该检查返回值<br>2.当然有一些系统调用的返回值为 void，在这里就不适用</p>
+<p>fork函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">void unix_error(char *msg) /* Unix-style error */</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;%s: %s\n&quot;, msg, strerror(errno));</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pid_t Fork(void)</span><br><span class="line">&#123;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    if ((pid = fork()) &lt; 0)</span><br><span class="line">        unix_error(&quot;Fork error&quot;);</span><br><span class="line">    return pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="获取进程信息"><a href="#获取进程信息" class="headerlink" title="获取进程信息"></a>获取进程信息</h4><p>我们可以用下面两个函数获取进程的相关信息：</p>
+<p>1.pid_t getpid(void) - 返回当前进程的 PID<br>2.pid_t getppid(void) - 返回当前进程的父进程的 PID</p>
+<p>我们可以认为，进程有三个主要状态：</p>
+<p>1.运行 Running<br>        正在被执行、正在等待执行或者最终将会被执行<br>2.停止 Stopped<br>        执行被挂起，在进一步通知前不会计划执行<br>3.终止 Terminated<br>        进程被永久停止</p>
 <h3 id="用户态和内核态"><a href="#用户态和内核态" class="headerlink" title="用户态和内核态"></a>用户态和内核态</h3><p><img src="/home/alex/图片/2018-44.png" alt="filename alredy exists, renamed"></p>
 <h3 id="程序的加载和运行"><a href="#程序的加载和运行" class="headerlink" title="程序的加载和运行"></a>程序的加载和运行</h3><p><img src="/home/alex/图片/taipei.png" alt="upload succesful"></p>
 <p><img src="/home/alex/图片/jiazai.png" alt="upload successl"></p>
@@ -400,6 +416,39 @@
 <p><img src="/home/alex/图片/fork.png" alt="upload successful"></p>
 <p>第一个参数先压栈，最后一个参数最后压栈，注意上图，argv是一个指针，指向一个数组，即图中argv【0】处，每一个元素又本身是一个指针，指向一个字符串，envp也是一个指针数组，每一个元素指向一个环境变量。</p>
 <p>然后如果main函数调用了其它函数，就会又长出一个栈帧，这就是程序加载与运行的过程。</p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>可以用kill函数发射信号</p>
+<p>子进程陷入无限循环，则父进程发射KILL信号，终结子进程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void forkandkill()</span><br><span class="line">&#123;</span><br><span class="line">    pid_t pid[N];</span><br><span class="line">    int i;</span><br><span class="line">    int child_status;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">        if ((pid[i] = fork()) == 0)</span><br><span class="line">            while(1) ;  // 死循环</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;Killing process %d\n&quot;, pid[i]);</span><br><span class="line">        kill(pid[i], SIGINT);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        pid_t wpid = wait(&amp;child_status);</span><br><span class="line">        if (WIFEXITED(child_status))</span><br><span class="line"> printf(&quot;Child %d terminated with exit status  %d\n&quot;,wpid,WEXITSTATUS(child_status));</span><br><span class="line">        else</span><br><span class="line">            printf(&quot;Child %d terminated abnormally\n&quot;, wpid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="接收信号"><a href="#接收信号" class="headerlink" title="接收信号"></a>接收信号</h4><p>所有上下文切换都是通过调用某个异常处理器（exception handler）完成的，内核会计算对易于某个进程p的pnb值：pnb=pending&amp;~blocked</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">void unix_error(char *msg) /* Unix-style error */</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;%s: %s\n&quot;, msg, strerror(errno));</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void sigint_handler(int sig) // SIGINT 处理器</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;想通过 ctrl+c 来关闭我？\n&quot;);</span><br><span class="line">    sleep(2);</span><br><span class="line">    fflush(stdout);</span><br><span class="line">    sleep(1);</span><br><span class="line">    printf(&quot;OK. :-)\n&quot;);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    // 设定 SIGINT 处理器</span><br><span class="line">    if (signal(SIGINT, sigint_handler) == SIG_ERR)</span><br><span class="line">        unix_error(&quot;signal error&quot;);</span><br><span class="line">        </span><br><span class="line">    // 等待接收信号</span><br><span class="line">    pause();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/maye.png" alt="upload succeful"></p>
+<p>信号处理器的工作流程可以认为是和当前用户进程“并发”的同一个伪进程。</p>
+<h4 id="并行与并发的区别"><a href="#并行与并发的区别" class="headerlink" title="并行与并发的区别"></a>并行与并发的区别</h4><p>并行：多个CPU同时执行程序</p>
+<p>并发(concurrent)：即使只有一个CPU，但操作系统能够把程序的执行单位细化，然后分开执行。是一种伪并行执行</p>
+<h4 id="阻塞信号"><a href="#阻塞信号" class="headerlink" title="阻塞信号"></a>阻塞信号</h4><p>内核会阻塞与当前在处理的信号同类型的其他正在等待的信号，也就是说一个SIGINT信号处理是不能被另外一个SIGINT信号中断的。</p>
+<p>如果要显示阻塞，需要用sigprocmask函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sigset_t mask, prev_mask;</span><br><span class="line">Sigemptyset(&amp;mask); // 创建空集</span><br><span class="line">Sigaddset(&amp;mask, SIGINT); // 把 SIGINT 信号加入屏蔽列表中</span><br><span class="line">// 阻塞对应信号，并保存之前的集合作为备份</span><br><span class="line">Sigprocmask(SIG_BLOCK, &amp;mask, &amp;prev_mask);</span><br><span class="line">...</span><br><span class="line">... // 这部分代码不会被 SIGINT 中断</span><br><span class="line">...</span><br><span class="line">// 取消阻塞信号，恢复原来的状态</span><br><span class="line">Sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL);</span><br></pre></td></tr></table></figure>
+<p>并行访问可能会导致数据毁坏问题，以下是一些编写程序的规则。</p>
+<pre><code>规则 1：信号处理器越简单越好
+    例如：设置一个全局的标记，并返回
+规则 2：信号处理器中只调用异步且信号安全(async-signal-safe)的函数
+    诸如 printf, sprintf, malloc 和 exit 都是不安全的！
+规则 3：在进入和退出的时候保存和恢复 errno
+    这样信号处理器就不会覆盖原有的 errno 值
+规则 4：临时阻塞所有的信号以保证对于共享数据结构的访问
+    防止可能出现的数据损坏
+规则 5：用 volatile 关键字声明全局变量
+    这样编译器就不会把它们保存在寄存器中，保证一致性
+规则 6：用 volatile sig_atomic_t 来声明全局标识符(flag)
+    这样可以防止出现访问异常
+</code></pre><p>异步信号安全：指的是如下两类函数：</p>
+<p>1.所有的变量都保存在栈帧当中<br>2.不会被信号中断的函数</p>
+<h3 id="非本地跳转-Non-local-jump"><a href="#非本地跳转-Non-local-jump" class="headerlink" title="非本地跳转 Non local jump"></a>非本地跳转 Non local jump</h3><p>从一个函数跳转到另一个函数中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setjmp 保存当前程序的堆栈上下文环境(stack context)，注意，这个保存的堆栈上下文环境仅在调用 setjmp 的函数内有效，如果调用 setjmp 的函数返回了，这个保存的堆栈上下文环境就失效了。调用 setjmp 的直接返回值为 0。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">longjmp 将会恢复由 setjmp 保存的程序堆栈上下文，即程序从调用 setjmp 处重新开始执行，不过此时的 setjmp 的返回值将是由 longjmp 指定的值。注意longjmp 不能指定0为返回值，即使指定了 0，longjmp 也会使 setjmp 返回 1。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">jmp_buf env;</span><br><span class="line">P1()</span><br><span class="line">&#123;</span><br><span class="line">    if (setjmp(env))</span><br><span class="line">    &#123;</span><br><span class="line">        // 跳转到这里</span><br><span class="line">    &#125; else </span><br><span class="line">    &#123;</span><br><span class="line">        P2();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">P2()</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    P2();</span><br><span class="line">    ...</span><br><span class="line">    P3();</span><br><span class="line">&#125;</span><br><span class="line">P3()</span><br><span class="line">&#123;</span><br><span class="line">    longjmp(env, 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/kundao.png" alt="uploadccessful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">jmp_buf env;</span><br><span class="line">P1()</span><br><span class="line">&#123;</span><br><span class="line">    P2(); P3();</span><br><span class="line">&#125;</span><br><span class="line">P2()</span><br><span class="line">&#123;</span><br><span class="line">    if (setjmp(env))</span><br><span class="line">    &#123;</span><br><span class="line">        // 跳转到这里</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">P3()</span><br><span class="line">&#123;</span><br><span class="line">    longjmp(env, 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为P2在跳转的时候，已经在P3前返回了，内存已经清理了其对应的栈帧，所以P3的longjmp不能实现期望的操作。</p>
 
           
         
@@ -467,7 +516,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/07/IA-32-linux中的地址转换/" itemprop="url">IA-32/linux中的地址转换</a></h1>
+                <a class="post-title-link" href="/2018/12/07/IA-32-linux中的地址转换/" itemprop="url">CSAPP-IA-32/linux中的地址转换</a></h1>
         
 
         <div class="post-meta">
@@ -587,6 +636,8 @@
 <p>有效地址（偏移量） = 基址寄存器+变址寄存器×比例因子</p>
 <p><img src="/home/alex/图片/2018-40.png" alt="filename alreay exists, renamed"></p>
 <p>所以<strong><em>线性地址就等于EA = 有效地址 </em></strong></p>
+<p>线性地址 = 基地址+有效地址</p>
+<p>所谓EA其实只是一个segment内的一个段内偏移量</p>
 <p><img src="/home/alex/图片/logic.png" alt="upload succeul"></p>
 <p>指令的线性地址 = 代码段基地址+有效地址，而linux编译器默认了代码段基地址位0，因此指令的线性地址就等于有效地址就等于段的偏移量。</p>
 <p>而数据的线性地址 = 数据段基地址+EA =0+ R[ECX]+R[EDX]*4</p>
@@ -602,6 +653,13 @@
 <p><img src="/home/alex/图片/mmu.png" alt="upload"></p>
 <p><img src="/home/alex/图片/imge.png" alt="upload succeul"></p>
 <p>MMU 完成从逻辑地址到线性地址的过程</p>
+<h3 id="CPL-RPL-DPL区别与联系"><a href="#CPL-RPL-DPL区别与联系" class="headerlink" title="CPL,RPL,DPL区别与联系"></a>CPL,RPL,DPL区别与联系</h3><p>1.CPL是当前进程的权限级别(Current Privilege Level)，是当前正在执行的代码所在的段的特权级，存在于cs寄存器的低两位。
+　　</p>
+<p>2.RPL说明的是进程对段访问的请求权限(Request Privilege Level)，是对于段选择子而言的，每个段选择子有自己的RPL，它说明的是进程对段访问的请求权限，有点像函数参数。而且RPL对每个段来说不是固定的，两次访问同一段时的RPL可以不同。RPL可能会削弱CPL的作用，例如当前CPL=0的进程要访问一个数据段，它把段选择符中的RPL设为3，这样虽然它对该段仍然只有特权为3的访问权限。
+　　　　</p>
+<p>3.DPL存储在段描述符中，规定访问该段的权限级别(Descriptor Privilege Level)，每个段的DPL固定。<br>当进程访问一个段时，需要进程特权级检查，一般要求DPL &gt;= max {CPL, RPL}</p>
+<p>下面打一个比方，中国官员分为6级国家主席1、总理2、省长3、市长4、县长5、乡长6，假设我是当前进程，级别总理（CPL=2）,我去聊城市(DPL=4)考察(呵呵),我用省长的级别(RPL=3 这样也能吓死他们:-))去访问,可以吧，如果我用县长的级别，人家就不理咱了(你看看电视上的微服私访，呵呵)，明白了吧！为什么采用RPL，是考虑到安全的问题，就好像你明明对一个文件用有写权限，为什么用只读打开它呢，还不是为了安全！</p>
+<p>ref：<a href="https://blog.csdn.net/better0332/article/details/3416749" target="_blank" rel="noopener">https://blog.csdn.net/better0332/article/details/3416749</a></p>
 
           
         
@@ -1608,6 +1666,191 @@ can decrease flow on backward edge(not empty.)
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/stack-and-heap-and-memory-leak/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/27/stack-and-heap-and-memory-leak/" itemprop="url">CSAPP-进程控制</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T23:40:00+08:00">
+                2018-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="获取进程ID"><a href="#获取进程ID" class="headerlink" title="获取进程ID"></a>获取进程ID</h3><p>每个进程都有一个唯一的正数进程ID，getpid函数返回调用进程的PID，getppid函数返回它的父进程的PID（创建调用进程的进程）</p>
+<h3 id="创建和终止进程"><a href="#创建和终止进程" class="headerlink" title="创建和终止进程"></a>创建和终止进程</h3><p>1.运行 </p>
+<p>2.停止</p>
+<p>3.终止</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	pid_t pid;</span><br><span class="line">    int x= 1;</span><br><span class="line">    </span><br><span class="line">    pid = Fork();</span><br><span class="line">    if(pid==0)&#123;</span><br><span class="line">		printf(&quot;child : x=%d\n&quot;,++x);    </span><br><span class="line">    	exit(0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	printf(&quot;parent: x=%d\n&quot;,--x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要点：</p>
+<p>1.fork函数只调用一次，但是会返回两次，一次是在父进程中，另外一次是在子进程中。</p>
+<p>2.父进程总会返回子进程的PID，在子进程当中，fork总会返回0</p>
+<p>3.并发执行，内核能够一任意方式交替执行它们逻辑控制流中的指令<br>在x86上，先完成父进程，再完成子进程,这个顺序不同的系统会不同，画出进程图，所有拓扑排序序列都可以。</p>
+<p>4.相同但是独立的地址空间，每个进程都有相同的用户栈，相同的本地变量值，堆等“环境”，但却是独立的，就是说一个进程改变内部的环境不会影响另外一个进程</p>
+<p>5.共享文件共享文件</p>
+<p>结果如下<br><img src="/home/alex/图片/2018-65.png" alt="filename  exists, renamed"></p>
+<p>所以上面程序的分析：</p>
+<p>pid==0，即子进程</p>
+<p>那如果是以下程序呢？</p>
+<p><img src="/home/alex/图片/pro.png" alt="upload succful"></p>
+<p><img src="/home/alex/图片/2018-66.png" alt="filename ready exists, renamed"></p>
+<p>解析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">先调用父进程，x=1，所以输出--x=0;</span><br><span class="line">然后调用子进程，子进程除了会执行if内的printf语句，同时还会执行if外的printf语句。</span><br></pre></td></tr></table></figure>
+<h3 id="回收子进程"><a href="#回收子进程" class="headerlink" title="回收子进程"></a>回收子进程</h3><p>当一个进程由于某种原因中止的时候，内核不会立刻把它从系统中清除，而是保存在一个已经终止的状态中，等待被父进程回收。</p>
+<p>所以一个终止了的但是还没有被回收的进程，成为僵死进程</p>
+<p>如果父进程终止了，内核会安排init进程成为它孤儿进程的养父，init进程的PID位1，是系统启动的时候由内核创建的，不会终止，是所有进程的祖先。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pid_t waitpid(pid_t pid,int *statsup,int options)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>pid参数用来判断等待集合的成员。</p>
+<p>如果pid&gt;0，那么等待集合就是一个单独的子进程，它的进程ID等于pid</p>
+<p>如果pid=-1，那么等待集合是由父进程的所有子进程组成的</p>
+<h4 id="wait函数"><a href="#wait函数" class="headerlink" title="wait函数"></a>wait函数</h4><p>wait函数是waitpid函数的简单版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid_t wait(int *statusp); // = waitpid(-1,&amp;status,0);</span><br></pre></td></tr></table></figure>
+<h3 id="让进程休眠"><a href="#让进程休眠" class="headerlink" title="让进程休眠"></a>让进程休眠</h3><p>//返回要休眠的秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unsigned int sleep(unsigned int secs);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int pause (void)</span><br><span class="line"></span><br><span class="line">让函数休眠，知道进程收到一个信号</span><br><span class="line">//always return -1</span><br></pre></td></tr></table></figure>
+<h3 id="加载并运行程序"><a href="#加载并运行程序" class="headerlink" title="加载并运行程序"></a>加载并运行程序</h3><p>execve函数在当前进程上下文当中加载并且运行一个新程序<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int execve(const char *filename,const char *argv[],const char *envp[])</span><br></pre></td></tr></table></figure></p>
+<p>execve函数加载并且运行可执行目标文件，且带参数列表argv和环境变量envp，只有当出现错误例如找不到filename的时候，execve才会返回到调用程序。</p>
+<p>execve函数调用一次，而且从不返回</p>
+<p>当execve加载了filename后，启动代码设置栈，并将控制传递给新程序的主函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char *argv,char **envp)</span><br></pre></td></tr></table></figure>
+<p>1.argc argv[]数组中非空指针的数量</p>
+<p>2.argv argb[]数组中的第一个条目</p>
+<p>3.envp 指向argv[]数组的第一个条目</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">char *getenv(const char *name) 函数</span><br><span class="line"></span><br><span class="line">搜索字符串 name==value,找到就返回一个指向其的指针，否则返回NULL；</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int setenv(const char *name,const char *newvalue,int overwrite)//当overwrite非0的时候，如果name不存在，那么setenv把“name=newvalue&quot;添加到数组当中</span><br><span class="line"></span><br><span class="line">unsetenv就是会删除它</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//查看函数的命令行参数和环境变量</span><br><span class="line"></span><br><span class="line">int main(int argc,char *argv[],char *envp[])</span><br><span class="line">  &#123;</span><br><span class="line">      int i;</span><br><span class="line">      printf(&quot;command-line arguments:\n&quot;);</span><br><span class="line">      for(i=0;argv[i]!=NULL;i++)&#123;</span><br><span class="line">  </span><br><span class="line">          printf(&quot;    argv[%2d]: %s\n&quot;,i,argv[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      printf(&quot;\n&quot;);</span><br><span class="line">      printf(&quot;environmental variables:\n&quot;);</span><br><span class="line">      for(i=0;envp[i]!=NULL;i++)&#123;</span><br><span class="line">  </span><br><span class="line">          printf(&quot;    envp[%2d]: %s\n&quot;,i,envp[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      exit(0);</span><br><span class="line">  </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="用户栈的组织结构"><a href="#用户栈的组织结构" class="headerlink" title="用户栈的组织结构"></a>用户栈的组织结构</h3><p>动态链接器变量下的envp,argv,与argc是libc_start_main的栈帧</p>
+<p><img src="/home/alex/图片/yonghu.png" alt="upload succful"></p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>def：一条通知进程系统发生了一个某种类型事件的小信息</p>
+<p>传送一个信号到目的进程由两个不同步骤组成：</p>
+<h4 id="发送信号"><a href="#发送信号" class="headerlink" title="发送信号"></a>发送信号</h4><h5 id="进程组："><a href="#进程组：" class="headerlink" title="进程组："></a>进程组：</h5><p>每个进程属于一个进程组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid_t getpgrp(void); return id of id group</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int setpgid(pid_t pid,pit_t pgid);</span><br></pre></td></tr></table></figure>
+<h5 id="用-bin-kill发送信号"><a href="#用-bin-kill发送信号" class="headerlink" title="用/bin/kill发送信号"></a>用/bin/kill发送信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/bin/kill -9 15213</span><br><span class="line"></span><br><span class="line">/bin/kill -9 -15213 负的PID会导致信号被发送到进程组PID中的每个进程</span><br></pre></td></tr></table></figure>
+<h5 id="从键盘发射信号"><a href="#从键盘发射信号" class="headerlink" title="从键盘发射信号"></a>从键盘发射信号</h5><p>作业（job）用来表示为一条命令行求值而创建的进程，在任何时候，至多只有一个前台作业和0个或多个后台作业。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls | sort //会创建一个由两个进程组成的前台作业</span><br></pre></td></tr></table></figure>
+<h5 id="用kill发射信号"><a href="#用kill发射信号" class="headerlink" title="用kill发射信号"></a>用kill发射信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int kill (pid_t pid,int sig);</span><br><span class="line">成功则返回0，错误则返回-1</span><br><span class="line"></span><br><span class="line">如果pid大于0，则kill函数发送信号号码sig给进程pid，如果pid为0，则kill发送信号sig给调用进程所在进程组的每个进程，如果pid小于0，kill发送信号sig给进程组pig绝对值中的每个进程</span><br></pre></td></tr></table></figure>
+<h4 id="接收信号"><a href="#接收信号" class="headerlink" title="接收信号"></a>接收信号</h4><p>1.内核位每个进程在pending位向量维护着待处理信号的集合，而在blocked位向量维护着被阻塞的信号集合。所以任何时刻一种类型的信号只会被接收一次，在处理它的时候，会先把该类型的信号block，进程可以忽略信号，也可以捕捉这个信号，执行信号处理程序。</p>
+<p>2.当内核从一个异常处理程序返回的时候，准备吧控制传递给某个进程p的时候，会检查进程p违背阻塞的待处理信号集合。如果这个集合不为空，那么内核选择集合中的某个信号k（越小越好，因为linux里面编号越小，优先级越高），并且进入k的处理程序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/* 改变blocked向量的值，若oldset!=null，会用来保存以前blocked向量的值 */ </span><br><span class="line"></span><br><span class="line">int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);</span><br><span class="line"></span><br><span class="line">/* 初始化set为空集 */ int sigemptyset(sigset_t *set); /* 初始化set全为1，每个信号都填入blocked向量 */ </span><br><span class="line"></span><br><span class="line">int sigfillset(sigset *set); </span><br><span class="line"></span><br><span class="line">/* 添加、删除signum到set */ </span><br><span class="line">int sigaddset(sigset_t *set, int signum); int sigdelset(sigset_t *set, int signum);</span><br><span class="line"></span><br><span class="line">/* set中对应signum是否置1 */ </span><br><span class="line"></span><br><span class="line">int sigismember(const sigset_t *set, int signum);</span><br><span class="line">--------------------- </span><br><span class="line"></span><br><span class="line">原文：https://blog.csdn.net/WMLWONDER/article/details/53728630</span><br></pre></td></tr></table></figure>
+<p>singal函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sighandler_t signal(int signum,sighandler_t handler)</span><br></pre></td></tr></table></figure>
+<p>如果handler不是SIG_IGN或者SIG_DFL，handler 就是用户定义的函数的地址，这个函数叫做信号处理程序。这个过程叫<strong><em>设置信号处理程序</em></strong>，调用过程叫做捕获信号，执行信号处理过程叫做处理信号</p>
+<h5 id="阻塞和解除阻塞信号"><a href="#阻塞和解除阻塞信号" class="headerlink" title="阻塞和解除阻塞信号"></a>阻塞和解除阻塞信号</h5><p>隐式阻塞：例如信号s对应程序S，当在处理程序S的时候，如果发送进程一个信号s，那么直到S返回，s会一直是待处理而不被接收。</p>
+<p>显式阻塞：使用sigprocmask函数和其辅助函数，明确阻塞和解除阻塞选定的信号。</p>
+<h5 id="临时阻塞一个信号"><a href="#临时阻塞一个信号" class="headerlink" title="临时阻塞一个信号"></a>临时阻塞一个信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sigset_t mask,prev_mask;</span><br><span class="line">Sigemptyset(&amp;mask);</span><br><span class="line">Sigaddset(&amp;mask,SIGINT);</span><br><span class="line"></span><br><span class="line">//block sigint and save previous blocked set</span><br><span class="line"></span><br><span class="line">Sigprocmask(SIG_BLOCK，&amp;mask，&amp;prev_mask);</span><br><span class="line"></span><br><span class="line">	//Code region that will not be interrupt by SIGINT</span><br><span class="line">    </span><br><span class="line">Sigprocmask(SIG_SETMASK,&amp;prev_mask,NULL);</span><br></pre></td></tr></table></figure>
+<h5 id="非本地跳转"><a href="#非本地跳转" class="headerlink" title="非本地跳转"></a>非本地跳转</h5><p><img src="/home/alex/图片/2018-67.png" alt="filename aready exists, renamed"></p>
+<p>一些原则：</p>
+<p>1.注意保存与恢复errno</p>
+<p>2.当访问一个全局数据结构的时候，阻塞所有的信号</p>
+<p>3.用volatile声明全局变量，告诉编译器不要缓存这个变量，那么每次引用g的时候，都要从内存中读取g的数值。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2019,330 +2262,6 @@ can decrease flow on backward edge(not empty.)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/15/CSAPP-存储层次结构/" itemprop="url">CSAPP 存储层次结构/Cahce</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T06:01:00+08:00">
-                2018-10-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
-                    <span itemprop="name">CSAPP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="存储层次结构概况"><a href="#存储层次结构概况" class="headerlink" title="存储层次结构概况"></a>存储层次结构概况</h3><p><img src="/home/alex/图片/ccc.png" alt="image"></p>
-<h4 id="存储器的特性"><a href="#存储器的特性" class="headerlink" title="存储器的特性"></a>存储器的特性</h4><h5 id="1-非易失性，即断电后不会丢失数据"><a href="#1-非易失性，即断电后不会丢失数据" class="headerlink" title="1.非易失性，即断电后不会丢失数据"></a>1.非易失性，即断电后不会丢失数据</h5><p><img src="/home/alex/图片/bios.png" alt="bios"></p>
-<p>CPU和主存都是易失性，而BIOS和硬盘是非易失的</p>
-<p>通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。</p>
-<h5 id="2-可读可写"><a href="#2-可读可写" class="headerlink" title="2.可读可写"></a>2.可读可写</h5><h5 id="3-随机访问"><a href="#3-随机访问" class="headerlink" title="3.随机访问"></a>3.随机访问</h5><p>访问数据与其位置无关</p>
-<p>主存与BIOS(basic input output system)能够实现随即访问数据。</p>
-<p>但是硬盘则不是。</p>
-<h5 id="4-访问时间"><a href="#4-访问时间" class="headerlink" title="4.访问时间"></a>4.访问时间</h5><p>主存速度高于硬盘访问时间</p>
-<p><img src="/home/alex/图片/DRAM.png" alt="dram"></p>
-<p>DRAM读取数据时间是CPU读取时间的一百倍，因此执行一条指令的时候非常的慢！</p>
-<p>因此考虑在CPU 和DRAM之间添加一个SRAM，使得CPU所需要的程序和数据大部分时间存放在Cache中，大大缩短执行指令时候所需要的时间周期。</p>
-<p><img src="/home/alex/图片/MH.png" alt="MH"></p>
-<h3 id="DRAM"><a href="#DRAM" class="headerlink" title="DRAM"></a>DRAM</h3><p>右下角就是内存条，通常也叫内存模组，是由若干个DRAM芯片组成的，核心就是左图的内存阵列，从外界输入行列信号，就可以读取一个基本存储单元，如红圈每个存储单元有若干个bit，通常是4个或者8个，每一个放大来看如右上角电路图所示。</p>
-<p><img src="/home/alex/图片/2018-9.png" alt="a"></p>
-<p>基本存储单元</p>
-<p><img src="/home/alex/图片/refresh.png" alt="upload successfu"></p>
-<p>通过存储的电容来表示存储的bit信息，对SDRAM的读写，主要体现在电容的冲放电，而这个是很难再做提高的。</p>
-<p><img src="/home/alex/图片/SRAM.png" alt="upl"></p>
-<p>SRAM采取的是晶体管开关存储，远比电容充电放电要快，所以SRAM比DRAM要快，现代CPU的高速缓存通常用SRAM实现</p>
-<p><img src="/home/alex/图片/upl2.png" alt="upl2"></p>
-<h4 id="内存工作原理"><a href="#内存工作原理" class="headerlink" title="内存工作原理"></a>内存工作原理</h4><p>第一步，申请系统总线，获得总线控制权后，会把地址送到内存控制器中。</p>
-<p>然后内存控制器会把地址分解为行地址和列地址</p>
-<p><img src="/home/alex/图片/SDRAM.png" alt="SDRAM"></p>
-<p>第二步 行访问</p>
-<p>内存控制器向SDRAM发起访存操作</p>
-<p><img src="/home/alex/图片/hangfangwen.png" alt="SDRAM2"></p>
-<p>这一行当中所有存储单元的信号通过放大器之后会放在一个缓冲区当中。这就是激活/行访问</p>
-<p>第三步 列访问<br><img src="/home/alex/图片/column.png" alt="COLUMN"></p>
-<p>第四步 送回CPU</p>
-<p><img src="/home/alex/图片/CAIYANG.png" alt="CAIYANG"></p>
-<p>内存控制器把采样到的数据送回给CPU</p>
-<p>CPU之后又发送地址信号，如果不是同一行，则就要把激活的行关闭。</p>
-<p>这个过程叫做预充电</p>
-<h5 id="SDRAM的关键性能参数："><a href="#SDRAM的关键性能参数：" class="headerlink" title="SDRAM的关键性能参数："></a>SDRAM的关键性能参数：</h5><p>1.tRCD row to column delay  从行选到列选的延迟时间</p>
-<p>2.CL CAS Latency  从列选到数据输出的延迟周期数</p>
-<p>3.tRP 行预充电时间</p>
-<p>数据个数就等同于内存条上DRAM芯片个数<br><img src="/home/alex/图片/gap.png" alt="upload successfu"></p>
-<p>所以整个过程的周期并不等于7.5ns！</p>
-<p>DDR SDRAM 比 SDR SDRAM 要快，原因是前者一次能比后者取多两倍的数据</p>
-<p>DDR是数据传输的方式，不等同于内存</p>
-<p><img src="/home/alex/图片/data.png" alt="upload successf"></p>
-<h5 id="DDR-与-SDR-对比"><a href="#DDR-与-SDR-对比" class="headerlink" title="DDR 与 SDR 对比"></a>DDR 与 SDR 对比</h5><p><img src="/home/alex/图片/DDR.png" alt="ddr"></p>
-<p>DDR由于一次读取两个数据，所以tRCD和CL变慢了，但是每个周期能同时取两个数据。<br>这里的带宽就是由每个周期取得的数据计算出来的。</p>
-<p>衡量CPU有两个指标</p>
-<h6 id="访存带宽"><a href="#访存带宽" class="headerlink" title="访存带宽"></a>访存带宽</h6><p>单位时间内存储器所存取的信息量。</p>
-<h6 id="访存延迟"><a href="#访存延迟" class="headerlink" title="访存延迟"></a>访存延迟</h6><p>读出第一个数据所需要的时间。</p>
-<h4 id="Cache工作原理"><a href="#Cache工作原理" class="headerlink" title="Cache工作原理"></a>Cache工作原理</h4><h5 id="空间局部性："><a href="#空间局部性：" class="headerlink" title="空间局部性："></a>空间局部性：</h5><p>空间局部性是一旦一个指令一个存储单元被访问，那么它附近的单元也将很快被访问</p>
-<h5 id="时间局部性："><a href="#时间局部性：" class="headerlink" title="时间局部性："></a>时间局部性：</h5><p>时间局部性是一旦一个指令被执行了，则在不久的将来，它可能再被执行。</p>
-<p><img src="/home/alex/图片/a.png" alt="uploa"></p>
-<p><img src="/home/alex/图片/cache.png" alt="upload succ"></p>
-<h5 id="操作过程"><a href="#操作过程" class="headerlink" title="操作过程"></a>操作过程</h5><p><img src="/home/alex/图片/cao.png" alt="uploa"></p>
-<p>怎么把虚拟地址转化为实际地址是个问题</p>
-<h5 id="Cache读操作"><a href="#Cache读操作" class="headerlink" title="Cache读操作"></a>Cache读操作</h5><p>1.第一条指令，由于一开始Cache是空的，所以没有命中。因此Cache访问主存。</p>
-<p>之所以分配给表项1，是由地址倒数第二个数字决定的。（不看H）</p>
-<p>然后前面的所有项(20)放到标签处。</p>
-<p><img src="/home/alex/图片/2018-10.png" alt="filename already exists, ren"></p>
-<p>2.第二种情况，没有命中，因为表被占用了。</p>
-<p>4011H，先检查有效位1，发现原来标签是20H，因此把地址替换掉。</p>
-<p><img src="/home/alex/图片/oc.png" alt="upload success"></p>
-<h5 id="Cache写操作"><a href="#Cache写操作" class="headerlink" title="Cache写操作"></a>Cache写操作</h5><p><img src="/home/alex/图片/write.png" alt="write"></p>
-<h4 id="平均访存时间"><a href="#平均访存时间" class="headerlink" title="平均访存时间"></a>平均访存时间</h4><p><img src="/home/alex/图片/memory.png" alt="visit"></p>
-<p><img src="/home/alex/图片/策略.png" alt="upload successfu"></p>
-<p>Cache映射策略，直接映射会遇到这么一个问题：</p>
-<p>就是存储器会每隔八个地址把数据映射到Cache中，如果程序交替访问这两个数据，那么每次访问都会访问主存，把地址写入到Cache中，这样性能比没有Cache的时候还要差。</p>
-<p>也可以通过二路组，四路组相联策略，但是代价是每次取数据的时候，要取多个标签比较，如直接映射只需要取一个标签出来，如图中的0，而二路组则要2个。而且这样会使得硬件电路变得复杂化，增加了命中时间，得不偿失。</p>
-<p><img src="/home/alex/图片/visi.png" alt="upload succe"></p>
-<h4 id="常见Cache替换算法"><a href="#常见Cache替换算法" class="headerlink" title="常见Cache替换算法"></a>常见Cache替换算法</h4><p><img src="/home/alex/图片/x86.png" alt="upload succ"></p>
-<p>LRU的实现：</p>
-<p>1.队列</p>
-<p>2.用LRUnumber，例如初始化每块的LRUnumber为0，当要访问这块Cache的时候重新设置为0，然后其他块++1，然后LRUnumber最大的那个block就是最近最少使用的块。</p>
-<p>计算机领域单位使用情况</p>
-<p><img src="/home/alex/图片/dan.png" alt="upload succesful"></p>
-<h3 id="Cache-映射"><a href="#Cache-映射" class="headerlink" title="Cache 映射"></a>Cache 映射</h3><h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p><img src="/home/alex/图片/mapping.png" alt="map"></p>
-<p>Cache 大小：</p>
-<p>假设每个槽，就是cache的每个block能装512个(2^9)byte，说明b = 9</p>
-<p>然后一共有16个sets，说明 s = 4，</p>
-<p>因此cache地址一共是（s+b = 13位）</p>
-<p>主存的第0块，第16块，第32块。。都能放在cache的0槽当中，但是怎么知道<br>是哪个块群的呢?因此用标记号来说明，那么标记号该有几位？就是块群的个数2^7=128</p>
-<p>所以标记号就是7位，标记号用来指出对应行来自于哪个块群。</p>
-<p>主存大小：<br>2048 块 <em> 512B/块 = 2^11 </em> 2^ 9 = 2^20</p>
-<p>所以主存地址一共20位，包含了9位的块内地址，4位cache索引，剩下7位主存标记。<br>主存一共2048（2^11）块，所以主存标记和cache索引用来标记主存的具体块号。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">例如：给定地址 0220CH</span><br><span class="line"></span><br><span class="line">转化为二进制 0000 0010 0001 0000 1100</span><br><span class="line"></span><br><span class="line">前7位 0000 001  决定来自于块群 1</span><br><span class="line"></span><br><span class="line">中间4位 0001 决定来自块群的具体哪个块  第一块</span><br><span class="line"></span><br><span class="line">后面9位，块内地址 决定了块内的哪个单元 第12个单元</span><br></pre></td></tr></table></figure>
-<p><strong>所以大概过程</strong></p>
-<p>拿来一个主存地址，然后划分为三段，根据中间索引号来寻找cache对应槽，然后看<br>valid位和标记位，如果valid=0，说明里面是空的，冷不命中，要从主存把地址送过来。如果valid=1，而且主存标记刚好是标记位，就根据块内地址在槽内寻找对应单元。</p>
-<p><img src="/home/alex/图片/youxiao.png" alt="upload succeul"></p>
-<p>给定32位主存地址，划分为三部分。</p>
-<p>首先由于块大小为16（2^4）B，因此b = 4,偏移位 4位</p>
-<p>索引位呢？  中间的索引位决定于cache有多少行</p>
-<p>因此行数=64KB/16B = 4K = 2^12 行</p>
-<p>因此中间索引位一共有12位</p>
-<p>剩下16位就是tag位，标记位</p>
-<p>给定内存地址，先由中间12行找到cache对应的行，看tag位与valid位是否满足条件，（valid=1说明这一行有数据）满足条件就hit，hit了就根据偏移位寻找对应的数据。</p>
-<p>块大小位16B，即128bit，使用多路选择器MUX来选择取哪个32位的data。</p>
-<p>11 最左边 10 中左 01 中右 00最右边</p>
-<p>如果取的是int型（word），由于word alignment，即内存地址最后的两位其实是不需要理会的。那么只看第三第四位，就是所谓的block offset。决定所取int放在哪个block.</p>
-<p>而如果要取的是char型，要在取了word之后再通过一个MUX，根据主存地址最后两位（Byte Offset）来得到要取哪个byte。</p>
-<p><img src="/home/alex/图片/ex.png" alt="upload successl"></p>
-<h3 id="cache-容量"><a href="#cache-容量" class="headerlink" title="cache 容量"></a>cache 容量</h3><p>上图中容量为  行数 X（每一行的bit数）</p>
-<p>（16+1）<em>4K + 64K </em> 8 = 72.5KB</p>
-<p>数据 64KB/72.5KB   =88.3%</p>
-<p>有一个64行，块容量为16bytes的cache</p>
-<p>十进制地址 1200应该映射到哪一行？</p>
-<p>方法一： 【1200/16】mod 64  = 11</p>
-<p>方法二： 1200转换为二进制 0100 1011 0000</p>
-<p>索引号 = 6 ，即看中间存的是哪一行，001011 就是 11</p>
-<p>实现一个直接映射，16K行数据，块大小为1个字（4B），32位主存地址的cache需要多少容量？</p>
-<p>16K = 2^14 行数据，即中间索引有14位</p>
-<p>byte =4B ，b = 2</p>
-<p>所以tag = 32-2-14  =16</p>
-<p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
-<p>特点</p>
-<p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
-<h4 id="全相联映射方式"><a href="#全相联映射方式" class="headerlink" title="全相联映射方式"></a>全相联映射方式</h4><p><img src="/home/alex/图片/this.png" alt="upload successf"></p>
-<p>给定地址，根据标记主存块号找到数据所在主存的哪一块，00000001111就是第15块，但是不知道在Cache的哪个槽中，所以只能一个一个槽比较。所以叫按内容访问。</p>
-<p>为什么没有cache索引字段？</p>
-<p>因为其可以任意映射到某一个行当中.</p>
-<p><img src="/home/alex/图片/2018-16.png" alt="filename already exists, remed"></p>
-<p>优点就是没有冲突，时间相对加快，但是tag长了，而且每一行都有一个比较器，比较时间长了，相当于命中时间会加长，而且比较成本也增加了，cache容量也变大了！</p>
-<p><img src="/home/alex/图片/ans.png" alt="upload successf"></p>
-<p>前8位标记表示cache属于哪个组群</p>
-<p>中间3位表示属于哪个组</p>
-<p>后面9位表示偏移量，表示要找到那个数据</p>
-<p>Eg: 地址 0000 0001 001 00000 1100</p>
-<p>前8位表示在第一组群 中间三位（cache索引）表示cache的第一个set  ，就是第一个族群的第001块，就是第九块，把这一块映射到cache的第一组当中。</p>
-<p><img src="/home/alex/图片/2018-17.png" alt="filename already exists, renam"></p>
-<p>两个比较器并向同时比较，最多有一个cache的tag与主存地址的tag相同，OR选择器的结果就是hit的结果。</p>
-<p>通过多路选择器把所要找的cache data的block找出来！</p>
-<p><img src="/home/alex/图片/bome.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/zombi.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/over.png" alt="upload succes"></p>
-<p><img src="/home/alex/图片/inyourhead.png" alt="upload succe"></p>
-<p>顺便讲一下什么叫按字节编址，按字编址。</p>
-<p>字 word = 4byte</p>
-<p>字节 byte = 8bit</p>
-<p>位 bit</p>
-<p><img src="/home/alex/图片/ra.png" alt="upload success"></p>
-<p><img src="/home/alex/图片/shell.png" alt="upload succe"></p>
-<p><img src="/home/alex/图片/sudden.png" alt="upload succes"></p>
-<p><img src="/home/alex/图片/animal.png" alt="upload succesl"></p>
-<p><img src="/home/alex/图片/am.png" alt="upload success"></p>
-<p><img src="/home/alex/图片/dlearning.png" alt="upload succe"></p>
-<p><img src="/home/alex/图片/today.png" alt="upload successf"></p>
-<p>上面的图怎么看？</p>
-<pre><code>1. 每一block64个字。访问第0block，冷不命中，放到第0组。那哪一行呢？都可以，一般按照顺序来，因此放在第0组第0行。然后第0组所有元素就都在第0组第0行中取。
-2. 然后访问第1组，冷不命中，放在第1组第0行。第0，16，32，48block都放在第0组，分别放在第0，1，2，3行。
-3. 当取到第64block的时候，miss，根据LRU把第0组行第0行替换掉。一直到第67block结束第一次循环。
-4. 然后来到第二次循环，想要找第0组，但是已经被刚才第64组替换掉了，而且第0block只能放在第0组，因此根据LRU，替换掉第0组第一行，一直到第四个block的时候，这时候第4block放在第4组的的第0行，没有miss。
-5. 由于第16，17，18，19个block已经被替换，当访问第16,17,18,19个block的时候，根据LRU，分别吧0，1，2，3组的第二行的32，33，34，35block替换。同理，当访问32，33，34，35block的时候，又把第三行的48495051替换。同理，访问48，49，50，51的时候，又miss，又把第一行的对应64，65，66，67替换掉。
-6. 所以第二次-第九次循环，每次都有5*4=20次miss
-</code></pre><p>命中率： (43520-68-9*20)/43520 = 99.43%</p>
-<h4 id="Cache读和写的一致性问题"><a href="#Cache读和写的一致性问题" class="headerlink" title="Cache读和写的一致性问题"></a>Cache读和写的一致性问题</h4><p><img src="/home/alex/图片/we.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/way.png" alt="upload succeful"></p>
-<p>同时写cache和主存，但是主存要慢得多，这样写完了cache之后要等待主存。<br>所以可以增加一个buffer 写缓冲。<br>就是CPU可以把数据写到cache中。写完了之后不等写道主存，继续写cache，写到主存的工作就交给write buffer，由memory controller传回到DRAM</p>
-<p><img src="/home/alex/图片/para.png" alt="upload successf"></p>
-<p><img src="/home/alex/图片/haleluya.png" alt="upload successful"></p>
-<p><img src="/home/alex/图片/hale.png" alt="upload successful"></p>
-<p>写穿透就是同时写cache和主存，写分配就是同时更新主存和cache<br>Write Trough 算法<br>如果能够找到i，使得TAG（i） == X,<br>如果是读操作，就直接返回块内地址DATA[i]；<br>写操作就除了要写块内地址，还要写主存</p>
-<p>如果miss掉<br>读操作就是读主存的数据，然后打标签，送到cache<br>写操作就是先写主存，然后打标签，最后在块内new一个新的数据</p>
-<p>Cache越大越好，命中率越高，但是越大的话成本越高<br>Block 不能太大，也不能太小</p>
-<h4 id="Cache-数目"><a href="#Cache-数目" class="headerlink" title="Cache 数目"></a>Cache 数目</h4><p><img src="/home/alex/图片/shumu.png" alt="upload successl"></p>
-<p>L1，分立cache，为了实现流水线，同时取数据和指令，提高并行性。</p>
-<p>第二个问题：<br>因为他有L1，L2两个cache，即使不命中也没有关系</p>
-<p>第三个问题：最后Level的cache与指令流无关，不需要考虑并行。因此优先考虑空间的利用率，同时命中率比命中时间更重要。</p>
-<p>L1比L2容量小，（越大命中率越高）比L2快，命中时间短，如果L1不命中，只好寄托在L2身上，因此L2的命中率就显得特别重要。</p>
-<h4 id="Cache-实现举例"><a href="#Cache-实现举例" class="headerlink" title="Cache 实现举例"></a>Cache 实现举例</h4><p>用2个状态位：</p>
-<pre><code>S: SHARE
-E：EXCLUSIVE
-M: MODIFIED （是否dirty bit）
-VALID 是否有效
-</code></pre><p>LRU用1位： </p>
-<p><img src="/home/alex/图片/silence.png" alt="upload succel"></p>
-<h4 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h4><p><img src="/home/alex/图片/eg.png" alt="upload successful"></p>
-<h5 id="1-不考虑一致性：dirty-bit-；替换控制即LRU位"><a href="#1-不考虑一致性：dirty-bit-；替换控制即LRU位" class="headerlink" title="1. 不考虑一致性：dirty bit ；替换控制即LRU位"></a>1. 不考虑一致性：dirty bit ；替换控制即LRU位</h5><p>256MB 表示主存地址 28位</p>
-<p>64B – b = 6</p>
-<p>Cache 8行 -中间索引位 3</p>
-<p>Tag位 19位 别忘了要考虑valid位</p>
-<p>（1+19）<em>8 + 64</em>8*8 （每行一个block）(64B是64byte，1byte 8 bits)</p>
-<h5 id="2-64B-16个元素-一行16个元素"><a href="#2-64B-16个元素-一行16个元素" class="headerlink" title="2. 64B-16个元素 一行16个元素"></a>2. 64B-16个元素 一行16个元素</h5><p>A[0][31] 地址 320+4*31 = 444 [444/64] = 6</p>
-<p>因此主存块号为6，6mod8 = 6因此在第六行。</p>
-<p>或者444 为0000110111100B 中间三位是索引位，就是第六行</p>
-<p>而A[1][1] = (320+256*4+8 )/64 mod 8=5 同理也可以把地址转化为二进制来计算。</p>
-<h5 id="3-A-每隔16元素一次冷不命中，命中率（15-16）"><a href="#3-A-每隔16元素一次冷不命中，命中率（15-16）" class="headerlink" title="3.A 每隔16元素一次冷不命中，命中率（15/16）"></a>3.A 每隔16元素一次冷不命中，命中率（15/16）</h5><p>B 每次相隔256个元素，256/16 = 16 块，16mod 8=0，每次访问后面数组元素的时候，总会把上一次装入到cache中的主存块覆盖掉。</p>
-<p>所以每次访问的时候都会发生冲突，替换，因此没有一次命中。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2397,7 +2316,7 @@ VALID 是否有效
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
