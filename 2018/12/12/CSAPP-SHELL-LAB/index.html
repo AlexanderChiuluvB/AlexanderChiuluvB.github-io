@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="整个过程中要考虑显式阻塞 1.在访问全局变量（jobs）以及调用给定函数的时候，要阻塞所有的信号，务必保证这些使用for循环遍历的函数不被中断。 2.在一些函数或者指令有必须的先后顺序的时候，要阻塞，保证前一个函数调用完成，再调用后面一个函数。 其他事项： 12//判断是否是当前引起停止信号的是否是前台进程volatile sig_atomic_t fg_stop_or_exit; eval函数功">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-SHELL LAB">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/12/CSAPP-SHELL-LAB/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="整个过程中要考虑显式阻塞 1.在访问全局变量（jobs）以及调用给定函数的时候，要阻塞所有的信号，务必保证这些使用for循环遍历的函数不被中断。 2.在一些函数或者指令有必须的先后顺序的时候，要阻塞，保证前一个函数调用完成，再调用后面一个函数。 其他事项： 12//判断是否是当前引起停止信号的是否是前台进程volatile sig_atomic_t fg_stop_or_exit; eval函数功">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-70.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-69.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jinchengzu.png">
+<meta property="og:updated_time" content="2018-12-12T15:58:26.196Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-SHELL LAB">
+<meta name="twitter:description" content="整个过程中要考虑显式阻塞 1.在访问全局变量（jobs）以及调用给定函数的时候，要阻塞所有的信号，务必保证这些使用for循环遍历的函数不被中断。 2.在一些函数或者指令有必须的先后顺序的时候，要阻塞，保证前一个函数调用完成，再调用后面一个函数。 其他事项： 12//判断是否是当前引起停止信号的是否是前台进程volatile sig_atomic_t fg_stop_or_exit; eval函数功">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-70.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/12/CSAPP-SHELL-LAB/"/>
+
+
+
+
+
+  <title>CSAPP-SHELL LAB | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/12/CSAPP-SHELL-LAB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-SHELL LAB</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-12T13:45:47+08:00">
+                2018-12-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>整个过程中要考虑显式阻塞</p>
+<p>1.在访问全局变量（jobs）以及调用给定函数的时候，要阻塞所有的信号，务必保证这些使用for循环遍历的函数不被中断。</p>
+<p>2.在一些函数或者指令有必须的先后顺序的时候，要阻塞，保证前一个函数调用完成，再调用后面一个函数。</p>
+<p>其他事项：</p>
+<p><img src="/home/alex/图片/2018-70.png" alt="filename already exists, renaed"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//判断是否是当前引起停止信号的是否是前台进程</span><br><span class="line">volatile sig_atomic_t fg_stop_or_exit;</span><br></pre></td></tr></table></figure></p>
+<h3 id="eval函数"><a href="#eval函数" class="headerlink" title="eval函数"></a>eval函数</h3><p>功能是对用户输入的参数进行解析，命令有两种，一种是内置的命令，会立刻执行，否则就要ｆｏｒｋ一个新的子进程并且把该任务在子进程的上下文中运行。<strong><em>如果是前台任务则需要等到它运行结束才返回</em></strong></p>
+<p>每个子进程必须有一个独一无二的进程组id，通过在fork（）之后子进程的Setpgid(0,0)实现，这样当我们向前台程序发送ctrl+c或者ctrl+z命令才不会影响到后台程序。否则所有的子进程会与当前的tsh shell进程为同一个进程组，发送信号的时候，前后台子进程都会收到。</p>
+<p>同时fork新进程的前后要阻塞SIGCHLD信号，防止出现竞争的同步错误：fork之后会在job列表里添加job，信号处理函数sigchld_handler回收进程后会在job列表中删除，如果信号来得很早，那么就可能发生先删除后添加的情况，那么job就会永远在列表中（内存泄漏？），所以我们先block掉SIGCHLD，添加job后再还原。</p>
+<p>说白了就是要避免僵尸进程，防止父进程没有给子进程收尸，屏蔽这个信号，那么父亲进程就会不关心这个子进程，子进程结束将由init进程去处理。</p>
+<h6 id="setpgid-函数"><a href="#setpgid-函数" class="headerlink" title="setpgid 函数"></a>setpgid 函数</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int setpgid (pid_t pid,pgid_t pgid);</span><br></pre></td></tr></table></figure>
+<p>该函数的意义是找到进程ID为pid的进程，将其进程组ID修改为pgid，如果pid=0，说明要修改进程组ID。如果是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setpgid(0,0)</span><br></pre></td></tr></table></figure>
+<p>表示创立新的进程组，并且指定的进程会成为进程组的首进程。</p>
+<p>如果执行成功就返回组识别码，如果有错误则返回-1，错误原因保存在errno中。</p>
+<h4 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h4><p>eval函数实现如下：</p>
+<p>if builtin_command return 0,then shell starts a new child process,and execute the requested programs in the child process,if the user asks for running the program in background, then shell return back to the top of the loop,waiting for next command. otherwise shell uses the waitpid function to wait for the jobs ‘ termination. when jobs terminates,shell begin a new loop.</p>
+<p>参考：<br><a href="https://blog.csdn.net/zxygww/article/details/25976107" target="_blank" rel="noopener">https://blog.csdn.net/zxygww/article/details/25976107</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">void eval(char *cmdline)</span><br><span class="line">&#123;</span><br><span class="line">    char *argv[MAXARGS];  //argument list execve()</span><br><span class="line">    char buf[MAXLINE];</span><br><span class="line">    int argc;</span><br><span class="line">    int bg; //whether the job is in fg or bg</span><br><span class="line">    bg = parseline(cmdline,argv);</span><br><span class="line">    sigset_t mask_chld,mask_all,mask_prev;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    </span><br><span class="line">    sigemptyset(&amp;mask_chld);</span><br><span class="line">    #把SIGCHLD信号赋给mask_chld</span><br><span class="line">    sigaddset(&amp;mask_chld,SIGCHLD);</span><br><span class="line">    #fill所有SIG信号给mask_all</span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line">    strcpy(buf,cmdline);</span><br><span class="line"></span><br><span class="line">    //empty command</span><br><span class="line">    if(argv[0]==NULL)&#123;</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!builtin_cmd(argv))&#123;</span><br><span class="line">		//如果不是内部函数，首先要把SIGCHLD信号阻塞住，以防出现竞争条件。</span><br><span class="line">		//子进程要解决信号阻塞，并执行相关的函数</span><br><span class="line">        //if the below code are outside of the buildin_cmd function,</span><br><span class="line">        //then these locks won&apos;t be realeased when executing inner commands</span><br><span class="line">        //block the SIGCHLD in order to prevent child process ends between father process</span><br><span class="line">		//先要阻塞SIGCHLD信号</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_chld,&amp;mask_prev);</span><br><span class="line">        //codes below won&apos;t be interrupt by signal SIGCHLD</span><br><span class="line"></span><br><span class="line">        //running a child process</span><br><span class="line">        //</span><br><span class="line">        if((pid=fork())==0)&#123;</span><br><span class="line">         //由于子进程会继承block的特性，所以子进程要记得unblock。</span><br><span class="line">            sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);//unblock the order</span><br><span class="line">            //change the process &apos;s group, not the same as tsh&apos;s group</span><br><span class="line">            setpgid(0,0);</span><br><span class="line">            if(execve(argv[0],argv,environ)&lt;0)&#123;</span><br><span class="line">                printf(&quot;%s: Command not found\n&quot;,argv[0]);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            //if execve cannot process then child process will execute main process</span><br><span class="line">            exit(0);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //blcok all signal</span><br><span class="line">        //为我阻挡一切！！就算天塌下来也要先addjob不然顺序乱就gg</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,NULL);</span><br><span class="line">        //foreGround</span><br><span class="line">        if(!bg)&#123;</span><br><span class="line">            addjob(jobs,pid,FG,cmdline);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            addjob(jobs,pid,BG,cmdline);</span><br><span class="line">        &#125;</span><br><span class="line">        //block sigchld again</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_chld,NULL);</span><br><span class="line"></span><br><span class="line">        //father process wait until front process stops</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        //父进程要判断子进程是前台进程还是后台进程，如果是前台进程，则调用waitpid来等待前台进程，如果是后台，把新添加进程利用addjob添加到工作组中。</span><br><span class="line">        if(!bg)&#123;</span><br><span class="line">            //Block until process pid is no longer the foreground process</span><br><span class="line">            waitfg(pid);</span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            sigprocmask(SIG_BLOCK,&amp;mask_all,NULL);</span><br><span class="line">            struct job_t * currbgmask = getjobpid(jobs,pid);</span><br><span class="line">            printf(&quot;[%d] (%d) %s&quot;,currbgmask-&gt;jid,currbgmask-&gt;pid,currbgmask-&gt;cmdline);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //unblock all signals</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="builtin-command"><a href="#builtin-command" class="headerlink" title="builtin_command"></a>builtin_command</h3><p>注意访问全局变量jobs的时候要阻塞全部信号就是了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">int builtin_cmd(char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    sigset_t mask_all,mask_prev;</span><br><span class="line"></span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line"></span><br><span class="line">    if(!strcmp(argv[0],&quot;quit&quot;))&#123;</span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!strcmp(argv[0],&quot;&amp;&quot;))&#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!strcmp(argv[0],&quot;jobs&quot;))&#123;</span><br><span class="line">        //when visit a global variance,you need to block all signals</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;mask_prev);</span><br><span class="line">        listjobs(jobs);</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!strcmp(argv[0],&quot;bg&quot;)||!strcmp(argv[0],&quot;fg&quot;))&#123;</span><br><span class="line">        do_bgfg(argv);</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;     /* not a builtin command */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="waitfg"><a href="#waitfg" class="headerlink" title="waitfg"></a>waitfg</h3><p>只要进程号一直是前台程序，就一直sleep等待</p>
+<p>但奇怪的是，这个版本的waitfg函数运行有错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line"> * waitfg - Block until process pid is no longer the foreground process</span><br><span class="line"> */</span><br><span class="line"> </span><br><span class="line">void waitfg(pid_t pid)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    //fgpid return the pid of the front process id</span><br><span class="line">    </span><br><span class="line">    while((pid==fgpid(jobs)))&#123;</span><br><span class="line">        sleep(0);</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以下版本：<br>是书中545中介绍的一种显式接收信号的方法</p>
+<p>只要信号处理函数回收了前台进程，它就会将fg_stop_or_exit(注意用volatile关键字声明) 置1，这样我们的waitfg函数就会退出，接着读取用户的下一个输入.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * waitfg - Block until process pid is no longer the foreground process</span><br><span class="line"> */</span><br><span class="line">void waitfg(pid_t pid)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    sigset_t mask;</span><br><span class="line">    sigemptyset(&amp;mask);</span><br><span class="line">    fg_stop_or_exit = 0;</span><br><span class="line">   </span><br><span class="line">    ////只有发出这个信号的子进程是前台进程才设置fg_stop_or_exit标志。</span><br><span class="line">    while(!fg_stop_or_exit)&#123;</span><br><span class="line">        sigsuspend(&amp;mask);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="sigint-handler-amp-sigtstp-handler"><a href="#sigint-handler-amp-sigtstp-handler" class="headerlink" title="sigint_handler &amp; sigtstp_handler"></a>sigint_handler &amp; sigtstp_handler</h3><p>思路：</p>
+<p>1.获取前台进程（fgpid），判断当前是否有前台进程，如果没有则直接返回，有则进行步骤2</p>
+<p>2.使用kill函数，发送SIGINT/SIGTSTP信号给前台进程组</p>
+<h6 id="kill函数使用"><a href="#kill函数使用" class="headerlink" title="kill函数使用"></a>kill函数使用</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int kill(pid_t pid,int sig);</span><br><span class="line"></span><br><span class="line">//如果pid大于0，那么kill函数发送信号号码sig给进程pid，如果pid==0，那么kill发送信号sig给调用进程所在进程组中的每个进程，包括调用进程自己。如果pid&lt;0，则发送sig给进程组|pid|中的每个进程。</span><br></pre></td></tr></table></figure>
+<h4 id="代码如下"><a href="#代码如下" class="headerlink" title="代码如下"></a>代码如下</h4><p>1.访问jobs的时候要阻塞所有信号</p>
+<p>2.kill的pid是负的，说明发送信号对象是进程组，是所有前台程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * sigint_handler - The kernel sends a SIGINT to the shell whenver the</span><br><span class="line"> *    user types ctrl-c at the keyboard.  Catch it and send it along</span><br><span class="line"> *    to the foreground job.</span><br><span class="line"> */</span><br><span class="line">void sigint_handler(int sig)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    int olderrno = errno;</span><br><span class="line">    sigset_t mask_all,prev_all;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line">    //execute global function, so block all signals</span><br><span class="line">    sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;prev_all);</span><br><span class="line">    pid=fgpid(jobs);</span><br><span class="line">    sigprocmask(SIG_SETMASK,&amp;prev_all,NULL);</span><br><span class="line"></span><br><span class="line">    //only process the front process</span><br><span class="line">    //pid==0 means background process?</span><br><span class="line"></span><br><span class="line">    if(pid!=0)&#123;</span><br><span class="line">        kill(-pid,SIGINT);</span><br><span class="line">        //printf(&quot;Job [%d] (%d) terminated by signal %d\n&quot;,pid2jid(pid),pid,sig);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    errno = olderrno;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="代码如下-1"><a href="#代码如下-1" class="headerlink" title="代码如下"></a>代码如下</h4><p>1.注意如果进程已经停止，就不要再把它设置为停止了否则会出错。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * sigtstp_handler - The kernel sends a SIGTSTP to the shell whenever</span><br><span class="line"> *     the user types ctrl-z at the keyboard. Catch it and suspend the</span><br><span class="line"> *     foreground job by sending it a SIGTSTP.</span><br><span class="line"> */</span><br><span class="line">void sigtstp_handler(int sig)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    pid_t pid;</span><br><span class="line">    pid=fgpid(jobs);</span><br><span class="line"></span><br><span class="line">    if(pid!=0)&#123;</span><br><span class="line">        struct job_t *job = getjobpid(jobs,pid);</span><br><span class="line">        if(job-&gt;state==ST)</span><br><span class="line">            return;</span><br><span class="line">        else</span><br><span class="line">            kill(-pid,SIGTSTP);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="sigchld-handler"><a href="#sigchld-handler" class="headerlink" title="sigchld_handler"></a>sigchld_handler</h3><p>status表示中止进程或者停止进程的原因，WNOHANG|WUNTRACED作用是判断当前进程中是否存在已经停止或者终止的进程，如果存在则返回pid，不存在立即返回</p>
+<p>WIFSTOPPED(status):表示如果进程是因为停止的信号而停止，那么返回true</p>
+<p>WIFSIGNALED(status):表示进程是因为捕获的信号而中止，返回true</p>
+<p>WIFEXITED(status): 表示进程通过调用exit()或者return正常结束，则返回true。</p>
+<p>参考：<a href="https://www.cnblogs.com/sky-heaven/p/8074273.html" target="_blank" rel="noopener">https://www.cnblogs.com/sky-heaven/p/8074273.html</a></p>
+<p><img src="/home/alex/图片/2018-69.png" alt="filename already exists, rnamed"></p>
+<h4 id="代码如下："><a href="#代码如下：" class="headerlink" title="代码如下："></a>代码如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * sigchld_handler - The kernel sends a SIGCHLD to the shell whenever</span><br><span class="line"> *     a child job terminates (becomes a zombie), or stops because it</span><br><span class="line"> *     received a SIGSTOP or SIGTSTP signal. The handler reaps all</span><br><span class="line"> *     available zombie children, but doesn&apos;t wait for any other</span><br><span class="line"> *     currently running children to terminate.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">void sigchld_handler(int sig)</span><br><span class="line">&#123;</span><br><span class="line">    int olderrno = errno;</span><br><span class="line">    sigset_t mask_all,prev_all;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    struct job_t *gc_job;</span><br><span class="line">    int status;</span><br><span class="line"></span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line"></span><br><span class="line">    //尽可能回收子进程，使用WNOHANG,使得如果当前进程都没有停止的时候直接返回，</span><br><span class="line">    //而不是挂起该回收进程，这样可能会阻碍无法两个短时间结束的后台进程</span><br><span class="line"></span><br><span class="line">    while((pid = waitpid(-1,&amp;status,WNOHANG|WUNTRACED))&gt;0)&#123;</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;prev_all);</span><br><span class="line">        gc_job = getjobpid(jobs,pid);</span><br><span class="line">        //说明当前引起停止的确实是前台进程</span><br><span class="line">        if(pid==fgpid(jobs))&#123;</span><br><span class="line">            fg_stop_or_exit=1;</span><br><span class="line">        &#125;</span><br><span class="line">        //子进程正常结束，返回一个非0值</span><br><span class="line">        if(WIFEXITED(status))&#123;</span><br><span class="line">            deletejob(jobs,pid);</span><br><span class="line">        &#125;</span><br><span class="line">        //子进程被暂停，只有暂停不用deletejobs</span><br><span class="line">        else if(WIFSTOPPED(status))&#123;</span><br><span class="line">            //子进程停止引起waitpid函数返回,再判断该进程是否是前台进程</span><br><span class="line">            gc_job-&gt;state = ST;</span><br><span class="line">            printf(&quot;Job [%d] (%d) stopped by signal %d\n&quot;, gc_job-&gt;jid, gc_job-&gt;pid, WSTOPSIG(status));</span><br><span class="line">        &#125;</span><br><span class="line">        //因捕获信号而终止</span><br><span class="line">        else if (WIFSIGNALED(status))&#123;</span><br><span class="line">            //子进程终止引起的返回，判断是否是前台进程</span><br><span class="line">            //并且判断该信号是否是未捕获的的信号</span><br><span class="line">            printf(&quot;Job [%d] (%d) terminated by signal %d\n&quot;, gc_job-&gt;jid, gc_job-&gt;pid, WTERMSIG(status));</span><br><span class="line">            deletejob(jobs,pid);</span><br><span class="line">        &#125;</span><br><span class="line">        fflush(stdout);</span><br><span class="line">        //unblock all signals</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;prev_all,NULL);</span><br><span class="line">    &#125;</span><br><span class="line">    errno = olderrno;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="do-fgbg"><a href="#do-fgbg" class="headerlink" title="do_fgbg"></a>do_fgbg</h3><p>1.输入时%num 代表jobsid，num代表进程id</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * do_bgfg - Execute the builtin bg and fg commands</span><br><span class="line"> */</span><br><span class="line">void do_bgfg(char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    //parameters</span><br><span class="line">    char *para = argv[1];</span><br><span class="line">    </span><br><span class="line">    //lack parameters</span><br><span class="line">    if(para==NULL)&#123;</span><br><span class="line">        printf(&quot;%s command requires PID or %%jobid argument\n&quot;,argv[0]);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //full dirname</span><br><span class="line">    char *cmd = argv[0];</span><br><span class="line"></span><br><span class="line">    struct job_t*curr_job;</span><br><span class="line">    sigset_t mask_all,mask_prev;</span><br><span class="line">    int curr_jid;</span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line"></span><br><span class="line">    //first character of the paramaters</span><br><span class="line">    //linux command: fg %n bring process n from background to frontground</span><br><span class="line">    if(para[0]==&apos;%&apos;)&#123;</span><br><span class="line">  </span><br><span class="line">        // the argument is a job id</span><br><span class="line">        curr_jid = atoi(&amp;(para[1]));</span><br><span class="line">        //mistake process2</span><br><span class="line">        curr_job = getjobjid(jobs,curr_jid);</span><br><span class="line">        if(curr_job==NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;%%%d: No such job\n&quot;,curr_jid);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    else&#123;</span><br><span class="line">    	// the argument is a process id</span><br><span class="line">        curr_jid = atoi(para);</span><br><span class="line">        if(curr_jid==0)&#123;</span><br><span class="line">            printf(&quot;%s: argument must be a PID or %%jobid\n&quot;,cmd);</span><br><span class="line">            fflush(stdout);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        //block all signals when visit global vairance</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;mask_prev);</span><br><span class="line">        curr_jid = pid2jid(curr_jid);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //block all signals when visit global vairance</span><br><span class="line">    sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;mask_prev);</span><br><span class="line">    curr_job = getjobjid(jobs,curr_jid);</span><br><span class="line"></span><br><span class="line">    if(curr_job==NULL)&#123;</span><br><span class="line">        printf(&quot;(%s): No such process\n&quot;,para);</span><br><span class="line">        fflush(stdout);</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //bg</span><br><span class="line">    if(!strcmp(cmd,&quot;bg&quot;))&#123;</span><br><span class="line">        switch(curr_job-&gt;state)&#123;</span><br><span class="line">            case ST:</span><br><span class="line">                //change from stop to bg ST-&gt;BG</span><br><span class="line">                //meanwhile send signal to child process</span><br><span class="line">                curr_job-&gt;state =BG;</span><br><span class="line">                kill(-(curr_job-&gt;pid),SIGCONT);</span><br><span class="line">                printf(&quot;[%d] (%d) %s&quot;,curr_job-&gt;jid,curr_job-&gt;pid,curr_job-&gt;cmdline);</span><br><span class="line">                break;</span><br><span class="line">            case BG:</span><br><span class="line">                break;</span><br><span class="line">            case UNDEF:</span><br><span class="line">            case FG:</span><br><span class="line">                unix_error(&quot;bg or undef error&quot;);</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//要用waitfg指令，等待前台作业结束后再退出    </span><br><span class="line">    else&#123;</span><br><span class="line">        switch(curr_job-&gt;state)&#123;</span><br><span class="line">            //如果作业本身是STOP的话，要记得发送信号（SIGCONT，让其继续运行）</span><br><span class="line">            case ST:</span><br><span class="line">                //change from stop to bg ST-&gt;BG</span><br><span class="line">                //meanwhile send signal to child process</span><br><span class="line">                curr_job-&gt;state =FG;</span><br><span class="line">                //发射信号给前台进程组，所有前台进程都会受到信号</span><br><span class="line">                kill(-(curr_job-&gt;pid),SIGCONT);</span><br><span class="line">                //if change to fg,then you need to wait until it dies</span><br><span class="line">                waitfg(curr_job-&gt;pid);</span><br><span class="line">                break;</span><br><span class="line">            case BG:</span><br><span class="line">                curr_job-&gt;state =FG;</span><br><span class="line">                waitfg(curr_job-&gt;pid);</span><br><span class="line">                break;</span><br><span class="line">            case UNDEF:</span><br><span class="line">            case FG:</span><br><span class="line">                unix_error(&quot;bg or undef error&quot;);</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>当我们在真正的shell（例如bash）中执行tsh时，tsh本身也是被放在前台进程组中的，它的子进程也会在前台进程组中，例如下图所示：</p>
+<p><img src="/home/alex/图片/jinchengzu.png" alt="upload succsful"></p>
+<h3 id="引用："><a href="#引用：" class="headerlink" title="引用："></a>引用：</h3><p>1.<a href="https://www.cnblogs.com/liqiuhao/p/8120617.html" target="_blank" rel="noopener">https://www.cnblogs.com/liqiuhao/p/8120617.html</a></p>
+<p>2.<a href="https://blog.csdn.net/xiaolian_hust/article/details/80087376" target="_blank" rel="noopener">https://blog.csdn.net/xiaolian_hust/article/details/80087376</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/07/程序的机器级表示与执行/" rel="next" title="CSAPP-异常控制流">
+                <i class="fa fa-chevron-left"></i> CSAPP-异常控制流
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#eval函数"><span class="nav-number">1.</span> <span class="nav-text">eval函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#setpgid-函数"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">setpgid 函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体实现"><span class="nav-number">1.1.</span> <span class="nav-text">具体实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#builtin-command"><span class="nav-number">2.</span> <span class="nav-text">builtin_command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#waitfg"><span class="nav-number">3.</span> <span class="nav-text">waitfg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigint-handler-amp-sigtstp-handler"><span class="nav-number">4.</span> <span class="nav-text">sigint_handler &amp; sigtstp_handler</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#kill函数使用"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">kill函数使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码如下"><span class="nav-number">4.1.</span> <span class="nav-text">代码如下</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码如下-1"><span class="nav-number">4.2.</span> <span class="nav-text">代码如下</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigchld-handler"><span class="nav-number">5.</span> <span class="nav-text">sigchld_handler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码如下："><span class="nav-number">5.1.</span> <span class="nav-text">代码如下：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#do-fgbg"><span class="nav-number">6.</span> <span class="nav-text">do_fgbg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用："><span class="nav-number">8.</span> <span class="nav-text">引用：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
