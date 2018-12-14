@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2 区间就是页(page)，主存中存放页的区域成为页框 分页  逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容 14代">
+<meta name="description" content="虚拟内存为每个进程提供了一个大的，一致的和私有的地址空间。 1.把主存看成是一个存储在磁盘上的地址空间的高速缓存 2.为每个进程提供了一致的地址空间，简化了内存管理 3.保护每个进程的地址空间不被其他进程破坏 早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CSAPP-Virtural Memory">
 <meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/06/CSAPP-Virtural-Memory/index.html">
 <meta property="og:site_name" content="Alex Chiu">
-<meta property="og:description" content="早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2 区间就是页(page)，主存中存放页的区域成为页框 分页  逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容 14代">
+<meta property="og:description" content="虚拟内存为每个进程提供了一个大的，一致的和私有的地址空间。 1.把主存看成是一个存储在磁盘上的地址空间的高速缓存 2.为每个进程提供了一致的地址空间，简化了内存管理 3.保护每个进程的地址空间不被其他进程破坏 早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/page.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-26.png">
@@ -114,10 +114,26 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/fenduan.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-31.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ta.png">
-<meta property="og:updated_time" content="2018-12-07T07:13:55.616Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/mallocz.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-71.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/malloc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/gg.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/内存碎片.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/外部.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/per.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/implementation.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/how.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-72.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-73.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-74.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/alloc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/freeing.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/coalescing.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/VM.png">
+<meta property="og:updated_time" content="2018-12-13T08:01:45.180Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-Virtural Memory">
-<meta name="twitter:description" content="早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2 区间就是页(page)，主存中存放页的区域成为页框 分页  逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容 14代">
+<meta name="twitter:description" content="虚拟内存为每个进程提供了一个大的，一致的和私有的地址空间。 1.把主存看成是一个存储在磁盘上的地址空间的高速缓存 2.为每个进程提供了一致的地址空间，简化了内存管理 3.保护每个进程的地址空间不被其他进程破坏 早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就">
 <meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/page.png">
 
 
@@ -368,13 +384,17 @@
       
 
       
-        <h3 id="早期分页方式的概念"><a href="#早期分页方式的概念" class="headerlink" title="早期分页方式的概念"></a>早期分页方式的概念</h3><p>大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。</p>
+        <h3 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h3><p>为每个进程提供了一个大的，一致的和私有的地址空间。</p>
+<p>1.把主存看成是一个存储在磁盘上的地址空间的高速缓存</p>
+<p>2.为每个进程提供了一致的地址空间，简化了内存管理</p>
+<p>3.保护每个进程的地址空间不被其他进程破坏</p>
+<h3 id="早期分页方式的概念"><a href="#早期分页方式的概念" class="headerlink" title="早期分页方式的概念"></a>早期分页方式的概念</h3><p>大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。</p>
 <p><img src="/home/alex/图片/page.png" alt="upload successf"></p>
 <p>就是程序可能会有2^16byte长，但是物理容量只有4K</p>
 <p><img src="/home/alex/图片/2018-26.png" alt="filename alrady exists, renamed"></p>
 <p>这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2</p>
 <p><strong><em>区间就是页(page)，主存中存放页的区域成为页框</em></strong></p>
-<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><p><img src="/home/alex/图片/paging.png" alt="upload succesul"></p>
+<h4 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h4><p><img src="/home/alex/图片/paging.png" alt="upload succesul"></p>
 <p><img src="/home/alex/图片/dazi.png" alt="upad successful"></p>
 <p>逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容</p>
 <p>14代表页框号 </p>
@@ -429,7 +449,7 @@
 <p>最理想路径： VA-&gt;HIT1-&gt;HIT3-&gt;CPU 不用访问主存</p>
 <p>如果发生了TLB缺失（miss1），在主存中的的页表中寻找，如果找到了就是hit2，继续送到cache里面，否则就是miss 2 ，发生page fault</p>
 <p>如果送到cache，cache miss了，就发生miss 3，从主存那里找。</p>
-<h4 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h4><p><img src="/home/alex/图片/2018-30.png" alt="filename already exists, renaed"></p>
+<h5 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h5><p><img src="/home/alex/图片/2018-30.png" alt="filename already exists, renaed"></p>
 <p>最上面那一段属于页表，中间段属于TLB，下面那一段是cache</p>
 <p>大概过程：虚拟地址从TLB表中寻找，如果找不到就去页表找，然后映射为物理地址后，物理地址在cache中找，找不到就访问主存，从主存中找。</p>
 <p>虚拟地址分为20位的虚拟页号，12位的页内地址</p>
@@ -442,7 +462,7 @@
 <p>1.快表miss，去页表（在主存）中找，访存1次</p>
 <p>2.页表miss，只能从磁盘中寻找，访问磁盘一次</p>
 <p>3.cache miss，从主存当中寻找，访存第二次</p>
-<h3 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h3><p><img src="/home/alex/图片/lee.png" alt="upload succesul"></p>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img src="/home/alex/图片/lee.png" alt="upload succesul"></p>
 <p>页表项数： 虚拟地址大小 / 页大小</p>
 <p><img src="/home/alex/图片/phy.png" alt="upload succesl"></p>
 <p>虚拟地址中，高8位就是虚拟页号，低6位就是偏移量。</p>
@@ -465,10 +485,47 @@
 <p>在cache中找第5行，tag为001101的16位数据</p>
 <p>B0 = 36 B1 = 72</p>
 <p>所以要找的数据是7236(小端，高位数据在高位)</p>
-<h3 id="分段式虚拟存储器"><a href="#分段式虚拟存储器" class="headerlink" title="分段式虚拟存储器"></a>分段式虚拟存储器</h3><p>分段方式很好管理，但是占的空间多，储存空间管理不好管理。</p>
+<h4 id="分段式虚拟存储器"><a href="#分段式虚拟存储器" class="headerlink" title="分段式虚拟存储器"></a>分段式虚拟存储器</h4><p>分段方式很好管理，但是占的空间多，储存空间管理不好管理。</p>
 <p><img src="/home/alex/图片/fenduan.png" alt="oad successful"></p>
 <p><img src="/home/alex/图片/2018-31.png" alt="file already exists, renamed"></p>
-<h3 id="段页式存储器"><a href="#段页式存储器" class="headerlink" title="段页式存储器"></a>段页式存储器</h3><p><img src="/home/alex/图片/ta.png" alt="upload succful"></p>
+<h4 id="段页式存储器"><a href="#段页式存储器" class="headerlink" title="段页式存储器"></a>段页式存储器</h4><p><img src="/home/alex/图片/ta.png" alt="upload succful"></p>
+<h5 id="练习题9-5"><a href="#练习题9-5" class="headerlink" title="练习题9.5"></a>练习题9.5</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;sys/mman.h&gt;</span><br><span class="line">char *bufp</span><br><span class="line"></span><br><span class="line">//fd 为open函数返回的文件描述符</span><br><span class="line">void *mmap(void *start,size_t length,int prot,int flags,int fd,off_t offset)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//创建一个包含size字节的只读，私有，请求二进制0的虚拟内存区域，如果调用成功，bufp则为新区域的地址</span><br><span class="line">bufp = Mmap(NULL,size,PROT_READ,MAP_PRIVATE|MAP_ANON,0,0);</span><br></pre></td></tr></table></figure>
+<p>用以上函数，讲一个任意大小的磁盘文件复制到stdout，文件名作为一个命令行参数传递。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;csapp.h&gt;</span><br><span class="line"></span><br><span class="line">void mmapcopy(int fd,int size)&#123;</span><br><span class="line">    char *bufp;</span><br><span class="line">    bufp = Mmap(NULL,size,PROT_READ,MAP_PRIVATE,fd,0);</span><br><span class="line">    Write(1,bufp,size);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line">    if(argc!=2)&#123;</span><br><span class="line">        printf(&quot;usage: %s &lt;filename&gt;\n&quot;,argv[0]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int fd;</span><br><span class="line">    struct stat stat;</span><br><span class="line">    fd = Open(argv[0],O_RDONLY,0);</span><br><span class="line">    fstat(fd,&amp;stat);</span><br><span class="line">    mmapcopy(fd,stat.st_size);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>//文件描述符的用法<br>//<a href="https://blog.csdn.net/u012736748/article/details/74626145" target="_blank" rel="noopener">https://blog.csdn.net/u012736748/article/details/74626145</a></p>
+<p>文件描述符是一个索引，指向内核为每一个进程所维护的该进程打开文件的记录表。</p>
+<h4 id="删除虚拟地址"><a href="#删除虚拟地址" class="headerlink" title="删除虚拟地址"></a>删除虚拟地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int mummap（void *start,size_t length）;</span><br></pre></td></tr></table></figure>
+<h3 id="动态内存分配"><a href="#动态内存分配" class="headerlink" title="动态内存分配"></a>动态内存分配</h3><h4 id="usage-of-malloc-package"><a href="#usage-of-malloc-package" class="headerlink" title="usage of malloc package"></a>usage of malloc package</h4><p><img src="/home/alex/图片/mallocz.png" alt="upload scessful"></p>
+<p><img src="/home/alex/图片/2018-71.png" alt="fildy existsenamed"></p>
+<p>可以通过诸如malloc,new等方法让程序运行的时候得到虚拟内存。动态内存分配器会管理一个虚拟内存区域，叫做堆。</p>
+<p>分配器以块为单位来维护堆，可以进行分配或者释放。有两种类型：</p>
+<pre><code>1.显式分配器：应用分配并且回收空间（malloc &amp; free）
+2.隐式分配器，只负责分配，但是不负责回收（JAVA中的垃圾收集）
+</code></pre><p>过程如下：</p>
+<p><img src="/home/alex/图片/malloc.png" alt="upload "></p>
+<p><img src="/home/alex/图片/gg.png" alt="upload"></p>
+<h4 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h4><p>假设给定一个malloc和free的请求的序列目标是尽可能提高吞吐量和内存利用率。</p>
+<p>吞吐量： 单位时间内完成的请求数量。</p>
+<p>内存利用率：主要影响因素是内存碎片。</p>
+<h5 id="内部碎片"><a href="#内部碎片" class="headerlink" title="内部碎片"></a>内部碎片</h5><p><img src="/home/alex/图片/内存碎片.png" alt="upld successful"></p>
+<h5 id="外部碎片"><a href="#外部碎片" class="headerlink" title="外部碎片"></a>外部碎片</h5><p><img src="/home/alex/图片/外部.png" alt="upload ssful"></p>
+<h4 id="Peak-Memory-Utilization"><a href="#Peak-Memory-Utilization" class="headerlink" title="Peak Memory Utilization"></a>Peak Memory Utilization</h4><p><img src="/home/alex/图片/per.png" alt="upload susful"></p>
+<h4 id="implementation"><a href="#implementation" class="headerlink" title="implementation"></a>implementation</h4><h5 id="how-to-free"><a href="#how-to-free" class="headerlink" title="how to free"></a>how to free</h5><p><img src="/home/alex/图片/implementation.png" alt="upload successf"></p>
+<p>pointer 前面用一个word记录block size</p>
+<p>free的时候，访问指针前一个word就可以知道blocksize了</p>
+<h5 id="keeping-track-of-free-blocks"><a href="#keeping-track-of-free-blocks" class="headerlink" title="keeping track of free blocks"></a>keeping track of free blocks</h5><p><img src="/home/alex/图片/how.png" alt="uploadsuccessful"></p>
+<h5 id="implicit-free-lists"><a href="#implicit-free-lists" class="headerlink" title="implicit free lists"></a>implicit free lists</h5><p><img src="/home/alex/图片/2018-72.png" alt="filename alredy exists, renamed"></p>
+<p>因为每一个block是8-byte alignment的，因此最后3位必定都是0，所以可以利用最后一位来存储该块是否已经分配</p>
+<h5 id="example"><a href="#example" class="headerlink" title="example"></a>example</h5><p><img src="/home/alex/图片/2018-73.png" alt="filenamey exists, renamed"></p>
+<h5 id="Finding-a-free-block"><a href="#Finding-a-free-block" class="headerlink" title="Finding a free block"></a>Finding a free block</h5><p><img src="/home/alex/图片/2018-74.png" alt="filename already exists, renamd"></p>
+<p>这里的 <em>p &amp; -2 -&gt;  </em>p &amp; 1111111…110 即得到block的size ，i.e mask out the last bit</p>
+<h5 id="allocating-in-free-block"><a href="#allocating-in-free-block" class="headerlink" title="allocating in free block"></a>allocating in free block</h5><p><img src="/home/alex/图片/alloc.png" alt="upload succesul"></p>
+<h5 id="freeing-a-block"><a href="#freeing-a-block" class="headerlink" title="freeing a block"></a>freeing a block</h5><p><img src="/home/alex/图片/freeing.png" alt="upload cessful"></p>
+<h5 id="Coalescing"><a href="#Coalescing" class="headerlink" title="Coalescing"></a>Coalescing</h5><p><img src="/home/alex/图片/coalescing.png" alt="upload succsful"></p>
+<p>next pointer points to where 2 stores</p>
+<p>如果2开头的block是空的，那么 <em>p = </em>p +*next</p>
+<p>意思就是说4 = 4+2 = 6</p>
+<h5 id="Explicit-Free-Lists"><a href="#Explicit-Free-Lists" class="headerlink" title="Explicit Free Lists"></a>Explicit Free Lists</h5><p><img src="/home/alex/图片/VM.png" alt="upload succeful"></p>
 
       
     </div>
@@ -586,7 +643,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -641,7 +698,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#早期分页方式的概念"><span class="nav-number">1.</span> <span class="nav-text">早期分页方式的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页"><span class="nav-number">2.</span> <span class="nav-text">分页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟存储系统"><span class="nav-number">3.</span> <span class="nav-text">虚拟存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟存储技术的实质"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟存储技术的实质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主存–磁盘"><span class="nav-number">3.2.</span> <span class="nav-text">主存–磁盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页表"><span class="nav-number">3.3.</span> <span class="nav-text">页表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址转换为物理地址"><span class="nav-number">3.4.</span> <span class="nav-text">逻辑地址转换为物理地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常情况"><span class="nav-number">3.5.</span> <span class="nav-text">异常情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB（快表）"><span class="nav-number">3.6.</span> <span class="nav-text">TLB（快表）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示意图"><span class="nav-number">3.7.</span> <span class="nav-text">示意图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个例子"><span class="nav-number">4.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分段式虚拟存储器"><span class="nav-number">5.</span> <span class="nav-text">分段式虚拟存储器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#段页式存储器"><span class="nav-number">6.</span> <span class="nav-text">段页式存储器</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存"><span class="nav-number">1.</span> <span class="nav-text">虚拟内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#早期分页方式的概念"><span class="nav-number">2.</span> <span class="nav-text">早期分页方式的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分页"><span class="nav-number">2.1.</span> <span class="nav-text">分页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟存储系统"><span class="nav-number">3.</span> <span class="nav-text">虚拟存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟存储技术的实质"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟存储技术的实质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主存–磁盘"><span class="nav-number">3.2.</span> <span class="nav-text">主存–磁盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页表"><span class="nav-number">3.3.</span> <span class="nav-text">页表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址转换为物理地址"><span class="nav-number">3.4.</span> <span class="nav-text">逻辑地址转换为物理地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常情况"><span class="nav-number">3.5.</span> <span class="nav-text">异常情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB（快表）"><span class="nav-number">3.6.</span> <span class="nav-text">TLB（快表）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#示意图"><span class="nav-number">3.6.1.</span> <span class="nav-text">示意图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个例子"><span class="nav-number">3.7.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分段式虚拟存储器"><span class="nav-number">3.8.</span> <span class="nav-text">分段式虚拟存储器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#段页式存储器"><span class="nav-number">3.9.</span> <span class="nav-text">段页式存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#练习题9-5"><span class="nav-number">3.9.1.</span> <span class="nav-text">练习题9.5</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除虚拟地址"><span class="nav-number">3.10.</span> <span class="nav-text">删除虚拟地址</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态内存分配"><span class="nav-number">4.</span> <span class="nav-text">动态内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#usage-of-malloc-package"><span class="nav-number">4.1.</span> <span class="nav-text">usage of malloc package</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性能指标"><span class="nav-number">4.2.</span> <span class="nav-text">性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#内部碎片"><span class="nav-number">4.2.1.</span> <span class="nav-text">内部碎片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#外部碎片"><span class="nav-number">4.2.2.</span> <span class="nav-text">外部碎片</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Peak-Memory-Utilization"><span class="nav-number">4.3.</span> <span class="nav-text">Peak Memory Utilization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#implementation"><span class="nav-number">4.4.</span> <span class="nav-text">implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#how-to-free"><span class="nav-number">4.4.1.</span> <span class="nav-text">how to free</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#keeping-track-of-free-blocks"><span class="nav-number">4.4.2.</span> <span class="nav-text">keeping track of free blocks</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#implicit-free-lists"><span class="nav-number">4.4.3.</span> <span class="nav-text">implicit free lists</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#example"><span class="nav-number">4.4.4.</span> <span class="nav-text">example</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Finding-a-free-block"><span class="nav-number">4.4.5.</span> <span class="nav-text">Finding a free block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#allocating-in-free-block"><span class="nav-number">4.4.6.</span> <span class="nav-text">allocating in free block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#freeing-a-block"><span class="nav-number">4.4.7.</span> <span class="nav-text">freeing a block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Coalescing"><span class="nav-number">4.4.8.</span> <span class="nav-text">Coalescing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Explicit-Free-Lists"><span class="nav-number">4.4.9.</span> <span class="nav-text">Explicit Free Lists</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

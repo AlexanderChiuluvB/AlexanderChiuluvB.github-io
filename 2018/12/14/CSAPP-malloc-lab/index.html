@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="实现思路所用策略：Segregated lists + best fits + explicit free list  堆的结构：地址从上到下是从低到高  分离适配的原理： allocator 维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，被组织成某种类型的显式或者隐式链表，每个链表包含潜在的大小不同的块。 为了分配，要先确定请求的大小的类，并且对适当的空闲链表做首次适配，如果找到，">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-malloc lab">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-malloc-lab/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="实现思路所用策略：Segregated lists + best fits + explicit free list  堆的结构：地址从上到下是从低到高  分离适配的原理： allocator 维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，被组织成某种类型的显式或者隐式链表，每个链表包含潜在的大小不同的块。 为了分配，要先确定请求的大小的类，并且对适当的空闲链表做首次适配，如果找到，">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/disanwei.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/heap.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/fenlishipei.png">
+<meta property="og:updated_time" content="2018-12-14T08:26:05.605Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-malloc lab">
+<meta name="twitter:description" content="实现思路所用策略：Segregated lists + best fits + explicit free list  堆的结构：地址从上到下是从低到高  分离适配的原理： allocator 维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，被组织成某种类型的显式或者隐式链表，每个链表包含潜在的大小不同的块。 为了分配，要先确定请求的大小的类，并且对适当的空闲链表做首次适配，如果找到，">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/disanwei.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-malloc-lab/"/>
+
+
+
+
+
+  <title>CSAPP-malloc lab | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-malloc-lab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-malloc lab</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T14:43:00+08:00">
+                2018-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>所用策略：Segregated lists + best fits + explicit free list</p>
+<p><img src="/home/alex/图片/disanwei.png" alt="upload sucssful"></p>
+<p>堆的结构：<br>地址从上到下是从低到高<br><img src="/home/alex/图片/heap.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/fenlishipei.png" alt="upload ful"></p>
+<p>分离适配的原理：</p>
+<p>allocator 维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，被组织成某种类型的显式或者隐式链表，每个链表包含潜在的大小不同的块。</p>
+<p>为了分配，要先确定请求的大小的类，并且对适当的空闲链表做首次适配，如果找到，就分割，并把剩余部分查到空闲链表。如果找不到，就搜索下一个更大的类，如果还是没有，就向操作系统请求额外的堆内存，然后从这个堆内存中分配出一个块，并把剩余部分放在适当的大小类中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/* single word (4) or double word (8) alignment */</span><br><span class="line">#define ALIGNMENT 8</span><br><span class="line"></span><br><span class="line">/* rounds up to the nearest multiple of ALIGNMENT */</span><br><span class="line">#define ALIGN(size) (((size) + (ALIGNMENT-1)) &amp; ~0x7)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define WSIZE 4 //word and header/footer size</span><br><span class="line">#define DSIZE 8 //double word size (bytes)</span><br><span class="line"></span><br><span class="line">#define INITCHUNKSIZE (1&lt;&lt;6) //the size of extended heap </span><br><span class="line">#define CHUNKSIZE (1&lt;&lt;12) //extend heap </span><br><span class="line"></span><br><span class="line">#define MAX(x,y) ((x)&gt;(y))?(x):(y)</span><br><span class="line">#define MIN(x,y) ((x)&lt;(y))?(x):(y)</span><br><span class="line"></span><br><span class="line">#define PACK(size,alloc) ((size)|(alloc))</span><br><span class="line"></span><br><span class="line">//read and write a word at addr p</span><br><span class="line">#define GET(p) (*(unsigned int*)(p))</span><br><span class="line">#define PUT(p,val) (*(unsigned int*)(p) = (val))</span><br><span class="line"></span><br><span class="line">#define SET_PTR(p,ptr) (*(unsigned int*)(p) = (unsigned int)(ptr))</span><br><span class="line"></span><br><span class="line">#define GET_SIZE(p)  (GET(p)&amp;~0x7)</span><br><span class="line">#define GET_ALLOC(p)  (GET(p)&amp;0x1)</span><br><span class="line"></span><br><span class="line">//given block ptr bp,compute address of its header and footer</span><br><span class="line">#define HDRP(bp)  ((char*)(bp)-WSIZE)</span><br><span class="line">// (char*bp)+size -wsize= next&apos;s block&apos;s bp &apos;s position,-DSIZE,that means </span><br><span class="line">//  previous block&apos;s foot address</span><br><span class="line">#define FTRP(bp)  ((char*)(bp)+GET_SIZE(HDRP(bp))-DSIZE)</span><br><span class="line"></span><br><span class="line">#define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE((char *)(bp)-WSIZE))</span><br><span class="line">#define PREV_BLKP(bp) ((char *)(bp) - GET_SIZE((char *)(bp)-DSIZE))</span><br><span class="line"></span><br><span class="line">#define PRED_PTR(ptr) ((char*)(ptr))</span><br><span class="line">#define SUCC_PTR(ptr) ((char*)(ptr)+WSIZE)</span><br><span class="line"></span><br><span class="line">#define PRED(ptr) (*(char **)(ptr))</span><br><span class="line">#define SUCC(ptr) (*(char **)(SUCC_PTR(ptr)))</span><br><span class="line"></span><br><span class="line">#define SIZE_T_SIZE (ALIGN(sizeof(size_t)))</span><br><span class="line">#define LIST_SIZE 16</span><br></pre></td></tr></table></figure>
+<p>全局函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static void *extend_heap(size_t words);</span><br><span class="line">static void *coalesce(void *bp);</span><br><span class="line">static void *place(void *bp,size_t asize);</span><br><span class="line">static void insert(void *bp,size_t size);</span><br><span class="line">static void delete(void *bp);</span><br></pre></td></tr></table></figure></p>
+<p>初始化列表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line"> * mm_init - initialize the malloc package.</span><br><span class="line"> */</span><br><span class="line">int mm_init(void)</span><br><span class="line">&#123;</span><br><span class="line">    void *heap;</span><br><span class="line">    if((heap=mem_sbrk(4*WSIZE))==(void*)-1)</span><br><span class="line">        return -1;</span><br><span class="line">    </span><br><span class="line">    int idx;</span><br><span class="line">	</span><br><span class="line">    //initialize the list</span><br><span class="line">    for(idx=0;idx&lt;LIST_SIZE;idx++)&#123;</span><br><span class="line">        list[idx] = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    //alignment padding</span><br><span class="line">    //按照上图堆的结构来初始化</span><br><span class="line">    PUT(heap,0);</span><br><span class="line">    PUT(heap+(1*WSIZE),PACK(DSIZE,1));  //prologue header</span><br><span class="line">    PUT(heap+(2*WSIZE),PACK(DSIZE,1)); //prologue footer</span><br><span class="line">    PUT(heap+(3*WSIZE),PACK(0,1)); //Epilogue header</span><br><span class="line"></span><br><span class="line">    if(extend_heap(INITCHUNKSIZE)==NULL)</span><br><span class="line">        return -1;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">/* </span><br><span class="line"> * mm_malloc - Allocate a block by incrementing the brk pointer.</span><br><span class="line"> *     Always allocate a block whose size is a multiple of the alignment.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">void *mm_malloc(size_t size)</span><br><span class="line">&#123;</span><br><span class="line">    //ignore spurious requeses</span><br><span class="line">    if(size==0)</span><br><span class="line">        return NULL;</span><br><span class="line">    </span><br><span class="line">    if(size&lt;=DSIZE)</span><br><span class="line">        size = 2*DSIZE;</span><br><span class="line">    else</span><br><span class="line">        size = ALIGN(size+DSIZE);</span><br><span class="line"></span><br><span class="line">    int idx = 0;</span><br><span class="line">    size_t ssize = size;</span><br><span class="line">    void *ptr = NULL;</span><br><span class="line"></span><br><span class="line">    while(idx&lt;LIST_SIZE)&#123;</span><br><span class="line">		//链表类的大小分别是 1 1 2 4 8 16 32...</span><br><span class="line">        // 分别存储 &#123;0&#125;,&#123;1&#125;,&#123;2,3&#125;,&#123;4,5,6,7&#125;..</span><br><span class="line">        // 通过循环 ssize&gt;&gt;=1 与idx,找到该分配的</span><br><span class="line">        //字节大小所在的链表</span><br><span class="line">        //然后再内嵌一个循环，在这个链表中寻找大小适			//合的pointer</span><br><span class="line">        if((ssize&lt;=1)&amp;&amp;(list[idx]!=NULL))&#123;</span><br><span class="line">            ptr = list[idx];</span><br><span class="line">            while(ptr&amp;&amp;((size&gt;GET_SIZE(HDRP(ptr)))))&#123;</span><br><span class="line">                ptr = PRED(ptr);</span><br><span class="line">            &#125;</span><br><span class="line">            //如果找到了就break</span><br><span class="line">            if(ptr!=NULL)</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        ssize&gt;&gt;=1;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //如果找不到，向系统申请额外的堆内存</span><br><span class="line">    if(ptr==NULL)&#123;</span><br><span class="line">        int extendsize = MAX(size,CHUNKSIZE);</span><br><span class="line">        if((ptr=extend_heap(extendsize))==NULL)</span><br><span class="line">            return NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //在free块中allocate size大小的块</span><br><span class="line">    ptr = place(ptr,size);</span><br><span class="line"></span><br><span class="line">    return ptr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void mm_free(void *ptr)</span><br><span class="line">&#123;</span><br><span class="line">    size_t size = GET_SIZE(HDRP(ptr));</span><br><span class="line"></span><br><span class="line">	//把该块头脚末位都标注为0，说明这一块是free</span><br><span class="line">    PUT(HDRP(ptr), PACK(size, 0));</span><br><span class="line">    PUT(FTRP(ptr), PACK(size, 0));</span><br><span class="line"></span><br><span class="line">    /* 插入分离空闲链表 */</span><br><span class="line">    insert_node(ptr, size);</span><br><span class="line">    /* 合并 */</span><br><span class="line">    coalesce(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/12/CSAPP-SHELL-LAB/" rel="next" title="CSAPP-SHELL LAB">
+                <i class="fa fa-chevron-left"></i> CSAPP-SHELL LAB
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/14/CSAPP-UNIX-IO/" rel="prev" title="CSAPP-UNIX/IO">
+                CSAPP-UNIX/IO <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现思路"><span class="nav-number">1.</span> <span class="nav-text">实现思路</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

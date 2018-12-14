@@ -272,6 +272,482 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-Network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/14/CSAPP-Network/" itemprop="url">CSAPP-Network</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T20:19:00+08:00">
+                2018-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h3><p><img src="/home/alex/图片/socket.png" alt="upload sucsful"></p>
+<h4 id="socket-address-structures"><a href="#socket-address-structures" class="headerlink" title="socket address structures"></a>socket address structures</h4><p><img src="/home/alex/图片/sas.png" alt="upload suful"></p>
+<p><img src="/home/alex/图片/2018-82.png" alt="filename aly exists, renamed"></p>
+<p>发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。</p>
+<h3 id="socket-Interface"><a href="#socket-Interface" class="headerlink" title="socket Interface"></a>socket Interface</h3><p><img src="/home/alex/图片/socketInterface.png" alt="upload succesl"></p>
+<h4 id="socket-1"><a href="#socket-1" class="headerlink" title="socket"></a>socket</h4><p><img src="/home/alex/图片/socf.png" alt="upload cessful"></p>
+<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p>Bind is kernel call to designate which service this program will be hosting</p>
+<p>告诉内核将addr中的服务器套接字地址和套接字描述符sockfd联系起来，对于socket和connect，最好方法是用getaddrinfo来为bind提供参数</p>
+<p><img src="/home/alex/图片/2018-83.png" alt="filename alrey exists, renamed"></p>
+<h4 id="listen"><a href="#listen" class="headerlink" title="listen"></a>listen</h4><p>由于客户端是发起连接要求的主动实体，服务器是被动等待连接请求的，所以默认条件下，内核会认为socket函数创建的描述符对应于主动套接字，它存在于一个连接的客户端。服务器调用listen函数告诉内核，描述符是被服务器而不是客户端使用的。</p>
+<p>也就是说listen函数把sockfd从一个主动套接字转化为一个监听套接字，这个套接字可以接受来自客户端的连接请求。</p>
+<p><img src="/home/alex/图片/listen.png" alt="upload succeul"></p>
+<h4 id="accept"><a href="#accept" class="headerlink" title="accept"></a>accept</h4><p>等待来自客户端的连接请求到达listenfd，然后在addr中填写客户端的套接字地址，并且返回一个已连接描述符，这个描述符可以用来利用Unix I/O 函数与客户端通信。</p>
+<p><img src="/home/alex/图片/accept.png" alt="upload succeul"></p>
+<p><img src="/home/alex/图片/2018-84.png" alt="filename ady exists, renamed"></p>
+<h4 id="connect-client-side"><a href="#connect-client-side" class="headerlink" title="connect (client side)"></a>connect (client side)</h4><p>connect 函数试图与套接字地址为addr的服务器建立一个因特网链接，其中addrlen是sizeof（sockaddr_in）connect函数会阻塞，一直到连接成功或者发现错误。</p>
+<p><img src="/home/alex/图片/connect.png" alt="uploessful"></p>
+<h3 id="diff-of-connected-amp-listening-descriptors"><a href="#diff-of-connected-amp-listening-descriptors" class="headerlink" title="diff of connected &amp; listening descriptors"></a>diff of connected &amp; listening descriptors</h3><p><img src="/home/alex/图片/connected.png" alt="upload successful"></p>
+<h3 id="getaddrinfo"><a href="#getaddrinfo" class="headerlink" title="getaddrinfo"></a>getaddrinfo</h3><p><img src="/home/alex/图片/get.png" alt="upload succesl"></p>
+<h3 id="Host-and-service-connection"><a href="#Host-and-service-connection" class="headerlink" title="Host and service connection"></a>Host and service connection</h3><p><img src="/home/alex/图片/host.png" alt="uload successful"></p>
+<p>result 指向addrinfo结构的链表</p>
+<h3 id="getnameinfo"><a href="#getnameinfo" class="headerlink" title="getnameinfo"></a>getnameinfo</h3><p><img src="/home/alex/图片/info.png" alt="upload succesul"></p>
+<h3 id="LLR-by-getinfo"><a href="#LLR-by-getinfo" class="headerlink" title="LLR by getinfo"></a>LLR by getinfo</h3><p><img src="/home/alex/图片/adddd.png" alt="upload sussful"></p>
+<h4 id="addrinfo-struct（代码实现）"><a href="#addrinfo-struct（代码实现）" class="headerlink" title="addrinfo struct（代码实现）"></a>addrinfo struct（代码实现）</h4><p><img src="/home/alex/图片/daimashixian.png" alt="upload succel"></p>
+<p>以下函数是用来把域名转化为IP地址的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line"></span><br><span class="line">	struct addrinfo *p,*listp,hints;</span><br><span class="line">	char buf[MAXLINE];</span><br><span class="line">	int rc,flags;</span><br><span class="line"></span><br><span class="line">	if(argc!=2)&#123;</span><br><span class="line">		fprintf(stderr,&quot;usage: %s &lt;domain name&gt;\n&quot;,argv[0]);</span><br><span class="line">		exit(0);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//get a list of addinfo records</span><br><span class="line">	memset(&amp;hints,0,sizeof(struct addrinfo));</span><br><span class="line">	hints.ai_family = AF_INET;</span><br><span class="line">	hints.ai_socktype = SOCK_STREAM;</span><br><span class="line">	if((rc=getaddrinfo(argv[1],NULL,&amp;hints,&amp;listp))!=0)&#123;</span><br><span class="line">		fprintf(stderr,&quot;getaddrinfo error: %s\n&quot;,gai_strerror(rc));</span><br><span class="line">		exit(1);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	flags = NI_NUMERICHOST;</span><br><span class="line"></span><br><span class="line">	for(p=listp;p;p = p-&gt;ai_next)&#123;</span><br><span class="line">		Getnameinfo(p-&gt;ai_addr,p-&gt;ai_addrlen,buf,MAXLINE,NULL,0,flags);</span><br><span class="line">		printf(&quot;%s\n&quot;,buf);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Freeaddrinfo(listp);</span><br><span class="line"></span><br><span class="line">	exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-UNIX-IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/14/CSAPP-UNIX-IO/" itemprop="url">CSAPP-UNIX/IO</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T16:45:00+08:00">
+                2018-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Unix-I-O-Overview"><a href="#Unix-I-O-Overview" class="headerlink" title="Unix I/O Overview"></a>Unix I/O Overview</h3><p>1.A linux file is a sequence of m bytes</p>
+<p>  B0,B1..Bm-1</p>
+<p>2.all I/O devices and even the kernel are represented as files</p>
+<p>/dev/sda2 (/usr disk partition)<br>/dev/tty2 (terminal)</p>
+<p><img src="/home/alex/图片/2018-76.png" alt="filename aady exists, renamed"></p>
+<h3 id="File-Types"><a href="#File-Types" class="headerlink" title="File Types"></a>File Types</h3><p>1.regular file</p>
+<p>2.directory</p>
+<p>3.<strong>socket</strong> for communicating with a process on another machine</p>
+<h4 id="regular-files"><a href="#regular-files" class="headerlink" title="regular files"></a>regular files</h4><p>Kernel doesn’t know the difference between text files and regular files</p>
+<h3 id="pathname"><a href="#pathname" class="headerlink" title="pathname"></a>pathname</h3><h4 id="absolute-pathname"><a href="#absolute-pathname" class="headerlink" title="absolute pathname"></a>absolute pathname</h4><p>starts with ‘/‘ and denotes path from root</p>
+<p>/home/droh/a.c</p>
+<h4 id="relative-pathname"><a href="#relative-pathname" class="headerlink" title="relative pathname"></a>relative pathname</h4><p>../home/droh/a.c</p>
+<p><img src="/home/alex/图片/ics.png" alt="upload succsful"></p>
+<h3 id="open-amp-closing-file"><a href="#open-amp-closing-file" class="headerlink" title="open&amp;closing file"></a>open&amp;closing file</h3><p><img src="/home/alex/图片/open.png" alt="upload successul"></p>
+<p><img src="/home/alex/图片/1.png" alt="upload suessful"></p>
+<h3 id="Reading-Files"><a href="#Reading-Files" class="headerlink" title="Reading Files"></a>Reading Files</h3><p><img src="/home/alex/图片/rf.png" alt="upload succful"></p>
+<h3 id="Writing-Files"><a href="#Writing-Files" class="headerlink" title="Writing Files"></a>Writing Files</h3><p><img src="/home/alex/图片/2018-77.png" alt="filenameady exists, renamed"></p>
+<h3 id="Simple-Unix-I-O-example"><a href="#Simple-Unix-I-O-example" class="headerlink" title="Simple Unix I/O example"></a>Simple Unix I/O example</h3><h4 id="bad-case"><a href="#bad-case" class="headerlink" title="bad case"></a>bad case</h4><p>Each while loop, execute 2 operating system function,that means you have to go to the kernel,go through,context switch,do whatever you wants,then switch back. in a word,it is too <strong>expensive</strong>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;csapp.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char c;</span><br><span class="line"></span><br><span class="line">    while(Read(STDIN_FILENO, &amp;c, 1) != 0)</span><br><span class="line">        Write(STDOUT_FILENO, &amp;c, 1);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="short-counts"><a href="#short-counts" class="headerlink" title="short counts"></a>short counts</h3><p><img src="/home/alex/图片/2018-78.png" alt="filename y exists, renamed"></p>
+<h3 id="File-Metadata"><a href="#File-Metadata" class="headerlink" title="File Metadata"></a>File Metadata</h3><p><img src="/home/alex/图片/file metadata.png" alt="upload essful"></p>
+<h3 id="File-Sharing"><a href="#File-Sharing" class="headerlink" title="File Sharing"></a>File Sharing</h3><p><img src="/home/alex/图片/fileSharing.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/2018-79.png" alt="filename ady exists, renamed"></p>
+<h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p><img src="/home/alex/图片/output.png" alt="upload scessful"></p>
+<p><img src="/home/alex/图片/2018-80.png" alt="filename aldy exists, renamed"></p>
+<p>内核用三个相关的数据结构来表示打开的文件</p>
+<p>1.每个进程都有它独立的描述符表，它的表项是由进程打开的文件描述符来索引的，每个打开的描述符表项指向文件表一个表项。</p>
+<p>2.文件表。是所有进程共享的，保存当前文件位置，引用计数（当前指向该表项的描述符表项数），以及一个指向vnode表对应表项的指针</p>
+<p>3.vnode表，所有进程共享</p>
+<h3 id="I-O-Redirection"><a href="#I-O-Redirection" class="headerlink" title="I/O Redirection"></a>I/O Redirection</h3><p><img src="/home/alex/图片/ioredi.png" alt="upload cessful"></p>
+<h4 id="steps-1"><a href="#steps-1" class="headerlink" title="steps 1"></a>steps 1</h4><p><img src="/home/alex/图片/steps1.png" alt="upload sucessful"></p>
+<h4 id="steps-2"><a href="#steps-2" class="headerlink" title="steps 2"></a>steps 2</h4><p><img src="/home/alex/图片/samefile.png" alt="upload essful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">fd(5,0)</span><br></pre></td></tr></table></figure>
+<p>就是把重定向标准输入到描述符5</p>
+<h3 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h3><p><img src="/home/alex/图片/ggg.png" alt="upload succeful"></p>
+<p>fd3重定向到了fd2，所以他们指向同样的open file table项，c2是第一个字符a，而c3在此基础上读下一个字符，所以是b。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-malloc-lab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/14/CSAPP-malloc-lab/" itemprop="url">CSAPP-malloc lab</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T14:43:00+08:00">
+                2018-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>所用策略：Segregated lists + best fits + explicit free list</p>
+<p><img src="/home/alex/图片/disanwei.png" alt="upload sucssful"></p>
+<p>堆的结构：<br>地址从上到下是从低到高<br><img src="/home/alex/图片/heap.png" alt="upload successful"></p>
+<p><img src="/home/alex/图片/fenlishipei.png" alt="upload ful"></p>
+<p>分离适配的原理：</p>
+<p>allocator 维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，被组织成某种类型的显式或者隐式链表，每个链表包含潜在的大小不同的块。</p>
+<p>为了分配，要先确定请求的大小的类，并且对适当的空闲链表做首次适配，如果找到，就分割，并把剩余部分查到空闲链表。如果找不到，就搜索下一个更大的类，如果还是没有，就向操作系统请求额外的堆内存，然后从这个堆内存中分配出一个块，并把剩余部分放在适当的大小类中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/* single word (4) or double word (8) alignment */</span><br><span class="line">#define ALIGNMENT 8</span><br><span class="line"></span><br><span class="line">/* rounds up to the nearest multiple of ALIGNMENT */</span><br><span class="line">#define ALIGN(size) (((size) + (ALIGNMENT-1)) &amp; ~0x7)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define WSIZE 4 //word and header/footer size</span><br><span class="line">#define DSIZE 8 //double word size (bytes)</span><br><span class="line"></span><br><span class="line">#define INITCHUNKSIZE (1&lt;&lt;6) //the size of extended heap </span><br><span class="line">#define CHUNKSIZE (1&lt;&lt;12) //extend heap </span><br><span class="line"></span><br><span class="line">#define MAX(x,y) ((x)&gt;(y))?(x):(y)</span><br><span class="line">#define MIN(x,y) ((x)&lt;(y))?(x):(y)</span><br><span class="line"></span><br><span class="line">#define PACK(size,alloc) ((size)|(alloc))</span><br><span class="line"></span><br><span class="line">//read and write a word at addr p</span><br><span class="line">#define GET(p) (*(unsigned int*)(p))</span><br><span class="line">#define PUT(p,val) (*(unsigned int*)(p) = (val))</span><br><span class="line"></span><br><span class="line">#define SET_PTR(p,ptr) (*(unsigned int*)(p) = (unsigned int)(ptr))</span><br><span class="line"></span><br><span class="line">#define GET_SIZE(p)  (GET(p)&amp;~0x7)</span><br><span class="line">#define GET_ALLOC(p)  (GET(p)&amp;0x1)</span><br><span class="line"></span><br><span class="line">//given block ptr bp,compute address of its header and footer</span><br><span class="line">#define HDRP(bp)  ((char*)(bp)-WSIZE)</span><br><span class="line">// (char*bp)+size -wsize= next&apos;s block&apos;s bp &apos;s position,-DSIZE,that means </span><br><span class="line">//  previous block&apos;s foot address</span><br><span class="line">#define FTRP(bp)  ((char*)(bp)+GET_SIZE(HDRP(bp))-DSIZE)</span><br><span class="line"></span><br><span class="line">#define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE((char *)(bp)-WSIZE))</span><br><span class="line">#define PREV_BLKP(bp) ((char *)(bp) - GET_SIZE((char *)(bp)-DSIZE))</span><br><span class="line"></span><br><span class="line">#define PRED_PTR(ptr) ((char*)(ptr))</span><br><span class="line">#define SUCC_PTR(ptr) ((char*)(ptr)+WSIZE)</span><br><span class="line"></span><br><span class="line">#define PRED(ptr) (*(char **)(ptr))</span><br><span class="line">#define SUCC(ptr) (*(char **)(SUCC_PTR(ptr)))</span><br><span class="line"></span><br><span class="line">#define SIZE_T_SIZE (ALIGN(sizeof(size_t)))</span><br><span class="line">#define LIST_SIZE 16</span><br></pre></td></tr></table></figure>
+<p>全局函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static void *extend_heap(size_t words);</span><br><span class="line">static void *coalesce(void *bp);</span><br><span class="line">static void *place(void *bp,size_t asize);</span><br><span class="line">static void insert(void *bp,size_t size);</span><br><span class="line">static void delete(void *bp);</span><br></pre></td></tr></table></figure></p>
+<p>初始化列表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line"> * mm_init - initialize the malloc package.</span><br><span class="line"> */</span><br><span class="line">int mm_init(void)</span><br><span class="line">&#123;</span><br><span class="line">    void *heap;</span><br><span class="line">    if((heap=mem_sbrk(4*WSIZE))==(void*)-1)</span><br><span class="line">        return -1;</span><br><span class="line">    </span><br><span class="line">    int idx;</span><br><span class="line">	</span><br><span class="line">    //initialize the list</span><br><span class="line">    for(idx=0;idx&lt;LIST_SIZE;idx++)&#123;</span><br><span class="line">        list[idx] = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    //alignment padding</span><br><span class="line">    //按照上图堆的结构来初始化</span><br><span class="line">    PUT(heap,0);</span><br><span class="line">    PUT(heap+(1*WSIZE),PACK(DSIZE,1));  //prologue header</span><br><span class="line">    PUT(heap+(2*WSIZE),PACK(DSIZE,1)); //prologue footer</span><br><span class="line">    PUT(heap+(3*WSIZE),PACK(0,1)); //Epilogue header</span><br><span class="line"></span><br><span class="line">    if(extend_heap(INITCHUNKSIZE)==NULL)</span><br><span class="line">        return -1;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">/* </span><br><span class="line"> * mm_malloc - Allocate a block by incrementing the brk pointer.</span><br><span class="line"> *     Always allocate a block whose size is a multiple of the alignment.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">void *mm_malloc(size_t size)</span><br><span class="line">&#123;</span><br><span class="line">    //ignore spurious requeses</span><br><span class="line">    if(size==0)</span><br><span class="line">        return NULL;</span><br><span class="line">    </span><br><span class="line">    if(size&lt;=DSIZE)</span><br><span class="line">        size = 2*DSIZE;</span><br><span class="line">    else</span><br><span class="line">        size = ALIGN(size+DSIZE);</span><br><span class="line"></span><br><span class="line">    int idx = 0;</span><br><span class="line">    size_t ssize = size;</span><br><span class="line">    void *ptr = NULL;</span><br><span class="line"></span><br><span class="line">    while(idx&lt;LIST_SIZE)&#123;</span><br><span class="line">		//链表类的大小分别是 1 1 2 4 8 16 32...</span><br><span class="line">        // 分别存储 &#123;0&#125;,&#123;1&#125;,&#123;2,3&#125;,&#123;4,5,6,7&#125;..</span><br><span class="line">        // 通过循环 ssize&gt;&gt;=1 与idx,找到该分配的</span><br><span class="line">        //字节大小所在的链表</span><br><span class="line">        //然后再内嵌一个循环，在这个链表中寻找大小适			//合的pointer</span><br><span class="line">        if((ssize&lt;=1)&amp;&amp;(list[idx]!=NULL))&#123;</span><br><span class="line">            ptr = list[idx];</span><br><span class="line">            while(ptr&amp;&amp;((size&gt;GET_SIZE(HDRP(ptr)))))&#123;</span><br><span class="line">                ptr = PRED(ptr);</span><br><span class="line">            &#125;</span><br><span class="line">            //如果找到了就break</span><br><span class="line">            if(ptr!=NULL)</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        ssize&gt;&gt;=1;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //如果找不到，向系统申请额外的堆内存</span><br><span class="line">    if(ptr==NULL)&#123;</span><br><span class="line">        int extendsize = MAX(size,CHUNKSIZE);</span><br><span class="line">        if((ptr=extend_heap(extendsize))==NULL)</span><br><span class="line">            return NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //在free块中allocate size大小的块</span><br><span class="line">    ptr = place(ptr,size);</span><br><span class="line"></span><br><span class="line">    return ptr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void mm_free(void *ptr)</span><br><span class="line">&#123;</span><br><span class="line">    size_t size = GET_SIZE(HDRP(ptr));</span><br><span class="line"></span><br><span class="line">	//把该块头脚末位都标注为0，说明这一块是free</span><br><span class="line">    PUT(HDRP(ptr), PACK(size, 0));</span><br><span class="line">    PUT(FTRP(ptr), PACK(size, 0));</span><br><span class="line"></span><br><span class="line">    /* 插入分离空闲链表 */</span><br><span class="line">    insert_node(ptr, size);</span><br><span class="line">    /* 合并 */</span><br><span class="line">    coalesce(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/12/CSAPP-SHELL-LAB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -948,13 +1424,17 @@
       
         
           
-            <h3 id="早期分页方式的概念"><a href="#早期分页方式的概念" class="headerlink" title="早期分页方式的概念"></a>早期分页方式的概念</h3><p>大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。</p>
+            <h3 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h3><p>为每个进程提供了一个大的，一致的和私有的地址空间。</p>
+<p>1.把主存看成是一个存储在磁盘上的地址空间的高速缓存</p>
+<p>2.为每个进程提供了一致的地址空间，简化了内存管理</p>
+<p>3.保护每个进程的地址空间不被其他进程破坏</p>
+<h3 id="早期分页方式的概念"><a href="#早期分页方式的概念" class="headerlink" title="早期分页方式的概念"></a>早期分页方式的概念</h3><p>大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。</p>
 <p><img src="/home/alex/图片/page.png" alt="upload successf"></p>
 <p>就是程序可能会有2^16byte长，但是物理容量只有4K</p>
 <p><img src="/home/alex/图片/2018-26.png" alt="filename alrady exists, renamed"></p>
 <p>这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2</p>
 <p><strong><em>区间就是页(page)，主存中存放页的区域成为页框</em></strong></p>
-<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><p><img src="/home/alex/图片/paging.png" alt="upload succesul"></p>
+<h4 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h4><p><img src="/home/alex/图片/paging.png" alt="upload succesul"></p>
 <p><img src="/home/alex/图片/dazi.png" alt="upad successful"></p>
 <p>逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容</p>
 <p>14代表页框号 </p>
@@ -1009,7 +1489,7 @@
 <p>最理想路径： VA-&gt;HIT1-&gt;HIT3-&gt;CPU 不用访问主存</p>
 <p>如果发生了TLB缺失（miss1），在主存中的的页表中寻找，如果找到了就是hit2，继续送到cache里面，否则就是miss 2 ，发生page fault</p>
 <p>如果送到cache，cache miss了，就发生miss 3，从主存那里找。</p>
-<h4 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h4><p><img src="/home/alex/图片/2018-30.png" alt="filename already exists, renaed"></p>
+<h5 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h5><p><img src="/home/alex/图片/2018-30.png" alt="filename already exists, renaed"></p>
 <p>最上面那一段属于页表，中间段属于TLB，下面那一段是cache</p>
 <p>大概过程：虚拟地址从TLB表中寻找，如果找不到就去页表找，然后映射为物理地址后，物理地址在cache中找，找不到就访问主存，从主存中找。</p>
 <p>虚拟地址分为20位的虚拟页号，12位的页内地址</p>
@@ -1022,7 +1502,7 @@
 <p>1.快表miss，去页表（在主存）中找，访存1次</p>
 <p>2.页表miss，只能从磁盘中寻找，访问磁盘一次</p>
 <p>3.cache miss，从主存当中寻找，访存第二次</p>
-<h3 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h3><p><img src="/home/alex/图片/lee.png" alt="upload succesul"></p>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img src="/home/alex/图片/lee.png" alt="upload succesul"></p>
 <p>页表项数： 虚拟地址大小 / 页大小</p>
 <p><img src="/home/alex/图片/phy.png" alt="upload succesl"></p>
 <p>虚拟地址中，高8位就是虚拟页号，低6位就是偏移量。</p>
@@ -1045,10 +1525,47 @@
 <p>在cache中找第5行，tag为001101的16位数据</p>
 <p>B0 = 36 B1 = 72</p>
 <p>所以要找的数据是7236(小端，高位数据在高位)</p>
-<h3 id="分段式虚拟存储器"><a href="#分段式虚拟存储器" class="headerlink" title="分段式虚拟存储器"></a>分段式虚拟存储器</h3><p>分段方式很好管理，但是占的空间多，储存空间管理不好管理。</p>
+<h4 id="分段式虚拟存储器"><a href="#分段式虚拟存储器" class="headerlink" title="分段式虚拟存储器"></a>分段式虚拟存储器</h4><p>分段方式很好管理，但是占的空间多，储存空间管理不好管理。</p>
 <p><img src="/home/alex/图片/fenduan.png" alt="oad successful"></p>
 <p><img src="/home/alex/图片/2018-31.png" alt="file already exists, renamed"></p>
-<h3 id="段页式存储器"><a href="#段页式存储器" class="headerlink" title="段页式存储器"></a>段页式存储器</h3><p><img src="/home/alex/图片/ta.png" alt="upload succful"></p>
+<h4 id="段页式存储器"><a href="#段页式存储器" class="headerlink" title="段页式存储器"></a>段页式存储器</h4><p><img src="/home/alex/图片/ta.png" alt="upload succful"></p>
+<h5 id="练习题9-5"><a href="#练习题9-5" class="headerlink" title="练习题9.5"></a>练习题9.5</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;sys/mman.h&gt;</span><br><span class="line">char *bufp</span><br><span class="line"></span><br><span class="line">//fd 为open函数返回的文件描述符</span><br><span class="line">void *mmap(void *start,size_t length,int prot,int flags,int fd,off_t offset)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//创建一个包含size字节的只读，私有，请求二进制0的虚拟内存区域，如果调用成功，bufp则为新区域的地址</span><br><span class="line">bufp = Mmap(NULL,size,PROT_READ,MAP_PRIVATE|MAP_ANON,0,0);</span><br></pre></td></tr></table></figure>
+<p>用以上函数，讲一个任意大小的磁盘文件复制到stdout，文件名作为一个命令行参数传递。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;csapp.h&gt;</span><br><span class="line"></span><br><span class="line">void mmapcopy(int fd,int size)&#123;</span><br><span class="line">    char *bufp;</span><br><span class="line">    bufp = Mmap(NULL,size,PROT_READ,MAP_PRIVATE,fd,0);</span><br><span class="line">    Write(1,bufp,size);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line">    if(argc!=2)&#123;</span><br><span class="line">        printf(&quot;usage: %s &lt;filename&gt;\n&quot;,argv[0]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int fd;</span><br><span class="line">    struct stat stat;</span><br><span class="line">    fd = Open(argv[0],O_RDONLY,0);</span><br><span class="line">    fstat(fd,&amp;stat);</span><br><span class="line">    mmapcopy(fd,stat.st_size);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>//文件描述符的用法<br>//<a href="https://blog.csdn.net/u012736748/article/details/74626145" target="_blank" rel="noopener">https://blog.csdn.net/u012736748/article/details/74626145</a></p>
+<p>文件描述符是一个索引，指向内核为每一个进程所维护的该进程打开文件的记录表。</p>
+<h4 id="删除虚拟地址"><a href="#删除虚拟地址" class="headerlink" title="删除虚拟地址"></a>删除虚拟地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int mummap（void *start,size_t length）;</span><br></pre></td></tr></table></figure>
+<h3 id="动态内存分配"><a href="#动态内存分配" class="headerlink" title="动态内存分配"></a>动态内存分配</h3><h4 id="usage-of-malloc-package"><a href="#usage-of-malloc-package" class="headerlink" title="usage of malloc package"></a>usage of malloc package</h4><p><img src="/home/alex/图片/mallocz.png" alt="upload scessful"></p>
+<p><img src="/home/alex/图片/2018-71.png" alt="fildy existsenamed"></p>
+<p>可以通过诸如malloc,new等方法让程序运行的时候得到虚拟内存。动态内存分配器会管理一个虚拟内存区域，叫做堆。</p>
+<p>分配器以块为单位来维护堆，可以进行分配或者释放。有两种类型：</p>
+<pre><code>1.显式分配器：应用分配并且回收空间（malloc &amp; free）
+2.隐式分配器，只负责分配，但是不负责回收（JAVA中的垃圾收集）
+</code></pre><p>过程如下：</p>
+<p><img src="/home/alex/图片/malloc.png" alt="upload "></p>
+<p><img src="/home/alex/图片/gg.png" alt="upload"></p>
+<h4 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h4><p>假设给定一个malloc和free的请求的序列目标是尽可能提高吞吐量和内存利用率。</p>
+<p>吞吐量： 单位时间内完成的请求数量。</p>
+<p>内存利用率：主要影响因素是内存碎片。</p>
+<h5 id="内部碎片"><a href="#内部碎片" class="headerlink" title="内部碎片"></a>内部碎片</h5><p><img src="/home/alex/图片/内存碎片.png" alt="upld successful"></p>
+<h5 id="外部碎片"><a href="#外部碎片" class="headerlink" title="外部碎片"></a>外部碎片</h5><p><img src="/home/alex/图片/外部.png" alt="upload ssful"></p>
+<h4 id="Peak-Memory-Utilization"><a href="#Peak-Memory-Utilization" class="headerlink" title="Peak Memory Utilization"></a>Peak Memory Utilization</h4><p><img src="/home/alex/图片/per.png" alt="upload susful"></p>
+<h4 id="implementation"><a href="#implementation" class="headerlink" title="implementation"></a>implementation</h4><h5 id="how-to-free"><a href="#how-to-free" class="headerlink" title="how to free"></a>how to free</h5><p><img src="/home/alex/图片/implementation.png" alt="upload successf"></p>
+<p>pointer 前面用一个word记录block size</p>
+<p>free的时候，访问指针前一个word就可以知道blocksize了</p>
+<h5 id="keeping-track-of-free-blocks"><a href="#keeping-track-of-free-blocks" class="headerlink" title="keeping track of free blocks"></a>keeping track of free blocks</h5><p><img src="/home/alex/图片/how.png" alt="uploadsuccessful"></p>
+<h5 id="implicit-free-lists"><a href="#implicit-free-lists" class="headerlink" title="implicit free lists"></a>implicit free lists</h5><p><img src="/home/alex/图片/2018-72.png" alt="filename alredy exists, renamed"></p>
+<p>因为每一个block是8-byte alignment的，因此最后3位必定都是0，所以可以利用最后一位来存储该块是否已经分配</p>
+<h5 id="example"><a href="#example" class="headerlink" title="example"></a>example</h5><p><img src="/home/alex/图片/2018-73.png" alt="filenamey exists, renamed"></p>
+<h5 id="Finding-a-free-block"><a href="#Finding-a-free-block" class="headerlink" title="Finding a free block"></a>Finding a free block</h5><p><img src="/home/alex/图片/2018-74.png" alt="filename already exists, renamd"></p>
+<p>这里的 <em>p &amp; -2 -&gt;  </em>p &amp; 1111111…110 即得到block的size ，i.e mask out the last bit</p>
+<h5 id="allocating-in-free-block"><a href="#allocating-in-free-block" class="headerlink" title="allocating in free block"></a>allocating in free block</h5><p><img src="/home/alex/图片/alloc.png" alt="upload succesul"></p>
+<h5 id="freeing-a-block"><a href="#freeing-a-block" class="headerlink" title="freeing a block"></a>freeing a block</h5><p><img src="/home/alex/图片/freeing.png" alt="upload cessful"></p>
+<h5 id="Coalescing"><a href="#Coalescing" class="headerlink" title="Coalescing"></a>Coalescing</h5><p><img src="/home/alex/图片/coalescing.png" alt="upload succsful"></p>
+<p>next pointer points to where 2 stores</p>
+<p>如果2开头的block是空的，那么 <em>p = </em>p +*next</p>
+<p>意思就是说4 = 4+2 = 6</p>
+<h5 id="Explicit-Free-Lists"><a href="#Explicit-Free-Lists" class="headerlink" title="Explicit Free Lists"></a>Explicit Free Lists</h5><p><img src="/home/alex/图片/VM.png" alt="upload succeful"></p>
 
           
         
@@ -1656,587 +2173,6 @@ while(!q.empty()){
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/29/DS-Graph/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/29/DS-Graph/" itemprop="url">DS-Topo,Bipartite,max flow&min cut</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T10:38:37+08:00">
-                2018-10-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Topological-Sort"><a href="#Topological-Sort" class="headerlink" title="Topological Sort"></a>Topological Sort</h3><h4 id="ver1-DFS"><a href="#ver1-DFS" class="headerlink" title="ver1 DFS"></a>ver1 DFS</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">for each unvisited node u in V:</span><br><span class="line">	DFS(u)</span><br><span class="line">    for each neighbour h of u:</span><br><span class="line">    	if(!visited)</span><br><span class="line">        	DFS(h)</span><br><span class="line">    finish DFS(u) // push_back u to the list</span><br><span class="line">reverse the list!</span><br></pre></td></tr></table></figure>
-<p><img src="/home/alex/图片/topo.png" alt="upload successl"></p>
-<h4 id="ver2-BFS-Khan"><a href="#ver2-BFS-Khan" class="headerlink" title="ver2 BFS (Khan)"></a>ver2 BFS (Khan)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">push vertices with no incoming edges to the queue</span><br><span class="line">while(!q.empty):</span><br><span class="line">	u = q.top </span><br><span class="line">    q.pop</span><br><span class="line">    for each neighbor x of u</span><br><span class="line">    	delete u-&gt;x</span><br><span class="line">        if x has no incoming edges,then push x to the queu</span><br><span class="line">//done</span><br></pre></td></tr></table></figure>
-<h3 id="Bipartite"><a href="#Bipartite" class="headerlink" title="Bipartite"></a>Bipartite</h3><h4 id="definition"><a href="#definition" class="headerlink" title="definition"></a>definition</h4><p><img src="/home/alex/图片/def.png" alt="upload successfl"></p>
-<p>1.说白了就是图的所有点可以分为两个set，每个set之间互相没有边，只有set与set之间的点有边。</p>
-<p>2.应用于无向图。</p>
-<h4 id="Bipartite-checker"><a href="#Bipartite-checker" class="headerlink" title="Bipartite checker"></a>Bipartite checker</h4><h4 id="ver1-DFS-1"><a href="#ver1-DFS-1" class="headerlink" title="ver1 DFS"></a>ver1 DFS</h4><p>每个点的邻居与它不同色（就是不同一个set）</p>
-<p>每个点与它的邻居的邻居同色，它邻居的邻居与它在同一个set</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for each unvisited vertex in u:</span><br><span class="line">	dfs(u)</span><br><span class="line">    for each neighbor v in u:</span><br><span class="line">    	if(v is unvisited)</span><br><span class="line">        	assign u as different color</span><br><span class="line">        else if u and v has same color</span><br><span class="line">        	break!</span><br><span class="line">            it is not a bipartite</span><br></pre></td></tr></table></figure>
-<h4 id="ver2-BFS"><a href="#ver2-BFS" class="headerlink" title="ver2 BFS"></a>ver2 BFS</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">push vertexs with no incoming edged to queue</span><br><span class="line">while(!queue.empty())</span><br><span class="line">	u = queue.top</span><br><span class="line">    q.pop</span><br><span class="line">    for v in neighbor in u</span><br><span class="line">    	if(v.color==u.color)</span><br><span class="line">        	exit;//no bipartite</span><br><span class="line">        else if unvisited </span><br><span class="line">        	assign different color to v</span><br></pre></td></tr></table></figure>
-<h3 id="max-flow"><a href="#max-flow" class="headerlink" title="max flow"></a>max flow</h3><h4 id="intro-to-mincut-problem"><a href="#intro-to-mincut-problem" class="headerlink" title="intro to mincut problem"></a>intro to mincut problem</h4><p><img src="/home/alex/图片/2018-46.png" alt="filename already exists, renmed"></p>
-<h4 id="intro-to-maxflow-problem"><a href="#intro-to-maxflow-problem" class="headerlink" title="intro to maxflow problem"></a>intro to maxflow problem</h4><p><img src="/home/alex/图片/2018-47.png" alt="filename already exists, rename"></p>
-<h3 id="Ford-Fulkerson-Algorithm"><a href="#Ford-Fulkerson-Algorithm" class="headerlink" title="Ford-Fulkerson Algorithm"></a>Ford-Fulkerson Algorithm</h3><p>mincut 和 maxflow problem 实际上是等价的，解决了其中一个，另外一个就自然解决了。</p>
-<p><img src="/home/alex/图片/2018-49.png" alt="filename already exists, reamed"></p>
-<p>如上图，a为开始点。各边左数字为capacity，右边数字为flow</p>
-<p>a-&gt;b满了，a-&gt;b有一个cut</p>
-<p>a-&gt;c不满，即（flow&lt;capacity）</p>
-<p>c-&gt;e满了（flow==capacity）</p>
-<p>c-&gt;d满了（flow==capacity）</p>
-<p>设点a,c为集合P，其余所有点为集合P‘</p>
-<p>则capacity of P-&gt;P’ 就等于maximum flow </p>
-<p><img src="/home/alex/图片/2018-50.png" alt="filename already exists, renaed"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Start with 0 flow</span><br><span class="line">while there exists an augmenting path:</span><br><span class="line">	find an augmenting path</span><br><span class="line">    compute bottleneck capacity</span><br><span class="line">    increase flow on that path by bottleneck 	 capacity</span><br></pre></td></tr></table></figure>
-<h5 id="Augmenting-Path"><a href="#Augmenting-Path" class="headerlink" title="Augmenting Path:"></a>Augmenting Path:</h5><p>find an <strong><em>undirected</em></strong> path from s to t such that:</p>
-<pre><code>can increase flow on forward edges(not full.)
-can decrease flow on backward edge(not empty.)
-</code></pre><h5 id="termination"><a href="#termination" class="headerlink" title="termination"></a>termination</h5><p>all paths from s to t are blocked by either a:</p>
-<p>full forward edge</p>
-<p>empty backward edge</p>
-<h5 id="relationship-between-flow-and-cuts"><a href="#relationship-between-flow-and-cuts" class="headerlink" title="relationship between flow and cuts"></a>relationship between flow and cuts</h5><p><img src="/home/alex/图片/flow.png" alt="upload succesful"></p>
-<p><img src="/home/alex/图片/lizi.png" alt="upload succsful"></p>
-<h5 id="network-of-flow"><a href="#network-of-flow" class="headerlink" title="network of flow"></a>network of flow</h5><p><img src="/home/alex/图片/shenzong.png" alt="upload succeful"></p>
-<p><img src="/home/alex/图片/ziyou.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/path.png" alt="upload successf"></p>
-<p><img src="/home/alex/图片/pm.png" alt="upload succsful"></p>
-<p><img src="/home/alex/图片/max.png" alt="upload succeful"></p>
-<p>so how to find mincut from maxflow f?</p>
-<p>start from s,find the forward edge that is not full or backward edge that is not empty</p>
-<p><img src="/home/alex/图片/bengk.png" alt="upload succesl"></p>
-<h3 id="Ford-fulkerson算法"><a href="#Ford-fulkerson算法" class="headerlink" title="Ford-fulkerson算法"></a>Ford-fulkerson算法</h3><p>Ford-fulkerson算法就是： 不断在残留网络中找增广路，直到没有为止。</p>
-<p> Time complexity : O(C*E) ,C 是容量和</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Time complexity of the above algorithm is O(max_flow * E). We run a loop while there is an augmenting path. In worst case, we may add 1 unit flow in every iteration. Therefore the time complexity becomes O(max_flow * E).</span><br></pre></td></tr></table></figure>
-<h4 id="Dinic-算法"><a href="#Dinic-算法" class="headerlink" title="Dinic 算法"></a>Dinic 算法</h4><p>Dinic: 每次寻找最短的增广路until找不到，可证明最多能找V次。</p>
-<p>Time complexity : O（V^2E）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1) Initialize residual graph G as given graph.</span><br><span class="line">1) Do BFS of G to construct a level graph (or</span><br><span class="line">   assign levels to vertices) and also check if </span><br><span class="line">   more flow is possible.</span><br><span class="line">    a) If more flow is not possible, then return.</span><br><span class="line">    b) Send multiple flows in G using level graph </span><br><span class="line">       until blocking flow is reached. Here using </span><br><span class="line">       level graph means, in every flow,</span><br><span class="line">       levels of path nodes should be 0, 1, 2...</span><br><span class="line">       (in order) from s to t.</span><br></pre></td></tr></table></figure>
-<p>A flow is <strong><em>Blocking Flow</em></strong> if no more flow can be sent using level graph, i.e., no more s-t path exists such that path vertices have current levels 0, 1, 2… in order. </p>
-<h3 id="Dinic-code-Kattis-maximum-flow"><a href="#Dinic-code-Kattis-maximum-flow" class="headerlink" title="Dinic code-Kattis maximum flow"></a>Dinic code-Kattis maximum flow</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"> #include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdbool.h&gt;</span><br><span class="line">#include &lt;bits/stdc++.h&gt;</span><br><span class="line">#define M 50</span><br><span class="line">#define N 50</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">//https://www.geeksforgeeks.org/dinics-algorithm-maximum-flow/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct Edge &#123;</span><br><span class="line"></span><br><span class="line">    int to;</span><br><span class="line">    unsigned long rev;//store index of reverse edge in adjacency</span><br><span class="line">    int flow, cap;//cap is capacity</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class Dinic &#123;</span><br><span class="line">    using AdjacencyList=vector&lt; vector&lt;Edge&gt; &gt;;</span><br><span class="line"></span><br><span class="line">    bool bfs() &#123;</span><br><span class="line">        queue&lt;int&gt; q;</span><br><span class="line">        q.push(source);</span><br><span class="line">        fill(begin(levels), end(levels), -1);</span><br><span class="line">        levels[source] = 0;</span><br><span class="line">        while (!q.empty()) &#123;</span><br><span class="line">            const auto now = q.front(); q.pop();</span><br><span class="line">            for (const auto&amp; e : adjList[now]) &#123;</span><br><span class="line">                if (levels[e.to] == -1 &amp;&amp; e.flow &lt; e.cap) &#123;</span><br><span class="line">                    q.push(e.to);</span><br><span class="line">                    levels[e.to] = levels[now] + 1;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return levels[sink] != -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //a dfs based function to send flow after BFS</span><br><span class="line">//has figured out that there is a possible flow</span><br><span class="line">//and constructed levels.This function called multiple times for a</span><br><span class="line">//a single call of BFS</span><br><span class="line">//flow: current flow sent by parent function call</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int dfs(int v, int flow) &#123;</span><br><span class="line">        if (flow == 0) return 0;</span><br><span class="line">        if (v == sink) return flow;</span><br><span class="line">        for (int &amp; i = currentEdge[v]; i &lt; (int) adjList[v].size(); ++i) &#123;</span><br><span class="line">            Edge&amp; edge = adjList[v][i];</span><br><span class="line">            if (levels[v] + 1 == levels[edge.to]) &#123;</span><br><span class="line">                const auto minimalFlow = dfs(edge.to, min(flow, edge.cap - edge.flow));</span><br><span class="line">                if (minimalFlow &gt; 0) &#123;</span><br><span class="line">                    //add flow to current edge</span><br><span class="line">                    edge.flow += minimalFlow;</span><br><span class="line">                    //subtract flow from reverse edge</span><br><span class="line">                    adjList[edge.to][edge.rev].flow -= minimalFlow;</span><br><span class="line">                    return minimalFlow;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    vector&lt;int&gt; levels, currentEdge;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line"></span><br><span class="line">    int source, sink;</span><br><span class="line">    AdjacencyList adjList;</span><br><span class="line"></span><br><span class="line">    void AddEdge(int a, int b, int cap) &#123;</span><br><span class="line">        //ADJList动态变化，节省空间</span><br><span class="line">        if (max(a, b) &gt;= (int) adjList.size()) &#123;</span><br><span class="line">            adjList.resize(max(a, b) + 1);</span><br><span class="line">            levels.resize(max(a, b) + 1);</span><br><span class="line">            currentEdge.resize(max(a, b) + 1);</span><br><span class="line">        &#125;</span><br><span class="line">        const auto rev_a = adjList[b].size();</span><br><span class="line">        const auto rev_b = adjList[a].size();</span><br><span class="line">        adjList[a].push_back(&#123;b, rev_a, 0, cap&#125;);</span><br><span class="line">        adjList[b].push_back(&#123;a, rev_b, 0, 0&#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int MaxFlow(int s, int t) &#123;</span><br><span class="line">        source = s;</span><br><span class="line">        sink = t;</span><br><span class="line">        int flow = 0;</span><br><span class="line">        //augment the flow while there is path</span><br><span class="line">        //from source to sink</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            int m = bfs();</span><br><span class="line">            if (!m) break;</span><br><span class="line">            fill(begin(currentEdge), end(currentEdge), 0);</span><br><span class="line">            while (int pushed = dfs(source, INT_MAX)) &#123;</span><br><span class="line">                flow += pushed;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return flow;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int n,m,s,t;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;m&gt;&gt;s&gt;&gt;t;</span><br><span class="line">    Dinic d;</span><br><span class="line">    d.sink =s;</span><br><span class="line">    d.source = t;</span><br><span class="line">    vector&lt;vector&lt;int&gt;&gt;flow(n,vector&lt;int&gt;(n,0));</span><br><span class="line">    for(int i=0;i&lt;m;i++)&#123;</span><br><span class="line">        int u,v,c;</span><br><span class="line">        cin&gt;&gt;u&gt;&gt;v&gt;&gt;c;</span><br><span class="line">        //flow[u][v] = c;</span><br><span class="line">        d.AddEdge(u,v,c);</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;n&lt;&lt;&quot; &quot;&lt;&lt;d.MaxFlow(s,t)&lt;&lt;&quot; &quot;;</span><br><span class="line">    //SIZE is the number of edges used in the solution</span><br><span class="line">    //</span><br><span class="line">    int size = 0;</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;ans;</span><br><span class="line">    for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">        for(auto &amp;e:d.adjList[i])&#123;</span><br><span class="line">            if(e.flow&gt;0)</span><br><span class="line">            &#123;</span><br><span class="line">                size++;</span><br><span class="line">                ans.push_back(&#123;i,e.to,e.flow&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;size&lt;&lt;endl;</span><br><span class="line">    for(auto &amp;t:ans)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(t);</span><br><span class="line">        int to = get&lt;1&gt;(t);</span><br><span class="line">        int f = get&lt;2&gt;(t);</span><br><span class="line">        cout&lt;&lt;from&lt;&lt;&quot; &quot;&lt;&lt;to&lt;&lt;&quot; &quot;&lt;&lt;f&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/stack-and-heap-and-memory-leak/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/27/stack-and-heap-and-memory-leak/" itemprop="url">CSAPP-进程控制</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T23:40:00+08:00">
-                2018-10-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="获取进程ID"><a href="#获取进程ID" class="headerlink" title="获取进程ID"></a>获取进程ID</h3><p>每个进程都有一个唯一的正数进程ID，getpid函数返回调用进程的PID，getppid函数返回它的父进程的PID（创建调用进程的进程）</p>
-<h3 id="创建和终止进程"><a href="#创建和终止进程" class="headerlink" title="创建和终止进程"></a>创建和终止进程</h3><p>1.运行 </p>
-<p>2.停止</p>
-<p>3.终止</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	pid_t pid;</span><br><span class="line">    int x= 1;</span><br><span class="line">    </span><br><span class="line">    pid = Fork();</span><br><span class="line">    if(pid==0)&#123;</span><br><span class="line">		printf(&quot;child : x=%d\n&quot;,++x);    </span><br><span class="line">    	exit(0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	printf(&quot;parent: x=%d\n&quot;,--x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>要点：</p>
-<p>1.fork函数只调用一次，但是会返回两次，一次是在父进程中，另外一次是在子进程中。</p>
-<p>2.父进程总会返回子进程的PID，在子进程当中，fork总会返回0</p>
-<p>3.并发执行，内核能够一任意方式交替执行它们逻辑控制流中的指令<br>在x86上，先完成父进程，再完成子进程,这个顺序不同的系统会不同，画出进程图，所有拓扑排序序列都可以。</p>
-<p>4.相同但是独立的地址空间，每个进程都有相同的用户栈，相同的本地变量值，堆等“环境”，但却是独立的，就是说一个进程改变内部的环境不会影响另外一个进程</p>
-<p>5.共享文件共享文件</p>
-<p>结果如下<br><img src="/home/alex/图片/2018-65.png" alt="filename  exists, renamed"></p>
-<p>所以上面程序的分析：</p>
-<p>pid==0，即子进程</p>
-<p>那如果是以下程序呢？</p>
-<p><img src="/home/alex/图片/pro.png" alt="upload succful"></p>
-<p><img src="/home/alex/图片/2018-66.png" alt="filename ready exists, renamed"></p>
-<p>解析：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">先调用父进程，x=1，所以输出--x=0;</span><br><span class="line">然后调用子进程，子进程除了会执行if内的printf语句，同时还会执行if外的printf语句。</span><br></pre></td></tr></table></figure>
-<h3 id="回收子进程"><a href="#回收子进程" class="headerlink" title="回收子进程"></a>回收子进程</h3><p>当一个进程由于某种原因中止的时候，内核不会立刻把它从系统中清除，而是保存在一个已经终止的状态中，等待被父进程回收。</p>
-<p>所以一个终止了的但是还没有被回收的进程，成为僵死进程</p>
-<p>如果父进程终止了，内核会安排init进程成为它孤儿进程的养父，init进程的PID位1，是系统启动的时候由内核创建的，不会终止，是所有进程的祖先。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pid_t waitpid(pid_t pid,int *statsup,int options)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>pid参数用来判断等待集合的成员。</p>
-<p>如果pid&gt;0，那么等待集合就是一个单独的子进程，它的进程ID等于pid</p>
-<p>如果pid=-1，那么等待集合是由父进程的所有子进程组成的</p>
-<h4 id="wait函数"><a href="#wait函数" class="headerlink" title="wait函数"></a>wait函数</h4><p>wait函数是waitpid函数的简单版本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid_t wait(int *statusp); // = waitpid(-1,&amp;status,0);</span><br></pre></td></tr></table></figure>
-<h3 id="让进程休眠"><a href="#让进程休眠" class="headerlink" title="让进程休眠"></a>让进程休眠</h3><p>//返回要休眠的秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unsigned int sleep(unsigned int secs);</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int pause (void)</span><br><span class="line"></span><br><span class="line">让函数休眠，知道进程收到一个信号</span><br><span class="line">//always return -1</span><br></pre></td></tr></table></figure>
-<h3 id="加载并运行程序"><a href="#加载并运行程序" class="headerlink" title="加载并运行程序"></a>加载并运行程序</h3><p>execve函数在当前进程上下文当中加载并且运行一个新程序<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int execve(const char *filename,const char *argv[],const char *envp[])</span><br></pre></td></tr></table></figure></p>
-<p>execve函数加载并且运行可执行目标文件，且带参数列表argv和环境变量envp，只有当出现错误例如找不到filename的时候，execve才会返回到调用程序。</p>
-<p>execve函数调用一次，而且从不返回</p>
-<p>当execve加载了filename后，启动代码设置栈，并将控制传递给新程序的主函数。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char *argv,char **envp)</span><br></pre></td></tr></table></figure>
-<p>1.argc argv[]数组中非空指针的数量</p>
-<p>2.argv argb[]数组中的第一个条目</p>
-<p>3.envp 指向argv[]数组的第一个条目</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">char *getenv(const char *name) 函数</span><br><span class="line"></span><br><span class="line">搜索字符串 name==value,找到就返回一个指向其的指针，否则返回NULL；</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int setenv(const char *name,const char *newvalue,int overwrite)//当overwrite非0的时候，如果name不存在，那么setenv把“name=newvalue&quot;添加到数组当中</span><br><span class="line"></span><br><span class="line">unsetenv就是会删除它</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//查看函数的命令行参数和环境变量</span><br><span class="line"></span><br><span class="line">int main(int argc,char *argv[],char *envp[])</span><br><span class="line">  &#123;</span><br><span class="line">      int i;</span><br><span class="line">      printf(&quot;command-line arguments:\n&quot;);</span><br><span class="line">      for(i=0;argv[i]!=NULL;i++)&#123;</span><br><span class="line">  </span><br><span class="line">          printf(&quot;    argv[%2d]: %s\n&quot;,i,argv[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      printf(&quot;\n&quot;);</span><br><span class="line">      printf(&quot;environmental variables:\n&quot;);</span><br><span class="line">      for(i=0;envp[i]!=NULL;i++)&#123;</span><br><span class="line">  </span><br><span class="line">          printf(&quot;    envp[%2d]: %s\n&quot;,i,envp[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      exit(0);</span><br><span class="line">  </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="用户栈的组织结构"><a href="#用户栈的组织结构" class="headerlink" title="用户栈的组织结构"></a>用户栈的组织结构</h3><p>动态链接器变量下的envp,argv,与argc是libc_start_main的栈帧</p>
-<p><img src="/home/alex/图片/yonghu.png" alt="upload succful"></p>
-<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>def：一条通知进程系统发生了一个某种类型事件的小信息</p>
-<p>传送一个信号到目的进程由两个不同步骤组成：</p>
-<h4 id="发送信号"><a href="#发送信号" class="headerlink" title="发送信号"></a>发送信号</h4><h5 id="进程组："><a href="#进程组：" class="headerlink" title="进程组："></a>进程组：</h5><p>每个进程属于一个进程组</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid_t getpgrp(void); return id of id group</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int setpgid(pid_t pid,pit_t pgid);</span><br></pre></td></tr></table></figure>
-<h5 id="用-bin-kill发送信号"><a href="#用-bin-kill发送信号" class="headerlink" title="用/bin/kill发送信号"></a>用/bin/kill发送信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/bin/kill -9 15213</span><br><span class="line"></span><br><span class="line">/bin/kill -9 -15213 负的PID会导致信号被发送到进程组PID中的每个进程</span><br></pre></td></tr></table></figure>
-<h5 id="从键盘发射信号"><a href="#从键盘发射信号" class="headerlink" title="从键盘发射信号"></a>从键盘发射信号</h5><p>作业（job）用来表示为一条命令行求值而创建的进程，在任何时候，至多只有一个前台作业和0个或多个后台作业。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls | sort //会创建一个由两个进程组成的前台作业</span><br></pre></td></tr></table></figure>
-<h5 id="用kill发射信号"><a href="#用kill发射信号" class="headerlink" title="用kill发射信号"></a>用kill发射信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int kill (pid_t pid,int sig);</span><br><span class="line">成功则返回0，错误则返回-1</span><br><span class="line"></span><br><span class="line">如果pid大于0，则kill函数发送信号号码sig给进程pid，如果pid为0，则kill发送信号sig给调用进程所在进程组的每个进程，如果pid小于0，kill发送信号sig给进程组pig绝对值中的每个进程</span><br></pre></td></tr></table></figure>
-<h4 id="接收信号"><a href="#接收信号" class="headerlink" title="接收信号"></a>接收信号</h4><p>1.内核位每个进程在pending位向量维护着待处理信号的集合，而在blocked位向量维护着被阻塞的信号集合。所以任何时刻一种类型的信号只会被接收一次，在处理它的时候，会先把该类型的信号block，进程可以忽略信号，也可以捕捉这个信号，执行信号处理程序。</p>
-<p>2.当内核从一个异常处理程序返回的时候，准备吧控制传递给某个进程p的时候，会检查进程p违背阻塞的待处理信号集合。如果这个集合不为空，那么内核选择集合中的某个信号k（越小越好，因为linux里面编号越小，优先级越高），并且进入k的处理程序。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/* 改变blocked向量的值，若oldset!=null，会用来保存以前blocked向量的值 */ </span><br><span class="line"></span><br><span class="line">int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);</span><br><span class="line"></span><br><span class="line">/* 初始化set为空集 */ int sigemptyset(sigset_t *set); /* 初始化set全为1，每个信号都填入blocked向量 */ </span><br><span class="line"></span><br><span class="line">int sigfillset(sigset *set); </span><br><span class="line"></span><br><span class="line">/* 添加、删除signum到set */ </span><br><span class="line">int sigaddset(sigset_t *set, int signum); int sigdelset(sigset_t *set, int signum);</span><br><span class="line"></span><br><span class="line">/* set中对应signum是否置1 */ </span><br><span class="line"></span><br><span class="line">int sigismember(const sigset_t *set, int signum);</span><br><span class="line">--------------------- </span><br><span class="line"></span><br><span class="line">原文：https://blog.csdn.net/WMLWONDER/article/details/53728630</span><br></pre></td></tr></table></figure>
-<p>singal函数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sighandler_t signal(int signum,sighandler_t handler)</span><br></pre></td></tr></table></figure>
-<p>如果handler不是SIG_IGN或者SIG_DFL，handler 就是用户定义的函数的地址，这个函数叫做信号处理程序。这个过程叫<strong><em>设置信号处理程序</em></strong>，调用过程叫做捕获信号，执行信号处理过程叫做处理信号</p>
-<h5 id="阻塞和解除阻塞信号"><a href="#阻塞和解除阻塞信号" class="headerlink" title="阻塞和解除阻塞信号"></a>阻塞和解除阻塞信号</h5><p>隐式阻塞：例如信号s对应程序S，当在处理程序S的时候，如果发送进程一个信号s，那么直到S返回，s会一直是待处理而不被接收。</p>
-<p>显式阻塞：使用sigprocmask函数和其辅助函数，明确阻塞和解除阻塞选定的信号。</p>
-<h5 id="临时阻塞一个信号"><a href="#临时阻塞一个信号" class="headerlink" title="临时阻塞一个信号"></a>临时阻塞一个信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sigset_t mask,prev_mask;</span><br><span class="line">Sigemptyset(&amp;mask);</span><br><span class="line">Sigaddset(&amp;mask,SIGINT);</span><br><span class="line"></span><br><span class="line">//block sigint and save previous blocked set</span><br><span class="line"></span><br><span class="line">Sigprocmask(SIG_BLOCK，&amp;mask，&amp;prev_mask);</span><br><span class="line"></span><br><span class="line">	//Code region that will not be interrupt by SIGINT</span><br><span class="line">    </span><br><span class="line">Sigprocmask(SIG_SETMASK,&amp;prev_mask,NULL);</span><br></pre></td></tr></table></figure>
-<h5 id="非本地跳转"><a href="#非本地跳转" class="headerlink" title="非本地跳转"></a>非本地跳转</h5><p><img src="/home/alex/图片/2018-67.png" alt="filename aready exists, renamed"></p>
-<p>一些原则：</p>
-<p>1.注意保存与恢复errno</p>
-<p>2.当访问一个全局数据结构的时候，阻塞所有的信号</p>
-<p>3.用volatile声明全局变量，告诉编译器不要缓存这个变量，那么每次引用g的时候，都要从内存中读取g的数值。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/27/中断与异常的来源/" itemprop="url">CSAPP中断与异常</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T22:48:00+08:00">
-                2018-10-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
-                    <span itemprop="name">CSAPP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="adjustment-to-the-CPU"><a href="#adjustment-to-the-CPU" class="headerlink" title="adjustment to the CPU"></a>adjustment to the CPU</h5><p><img src="/home/alex/图片/cpu.png" alt="upload success"></p>
-<p><em>when the results computed by ALU shows that there is an error,<br>then add a signal path from ALU to PC UPDATE</em></p>
-<p><em>now PC update have 3 choice to update its value:</em></p>
-<p>1.PC+4</p>
-<p>2.JUMP instruction PC+offset*4</p>
-<p>3.when the error signal is valid PC -&gt; 0  ,which means it turns to address 0 ,execute few instructions from address 0 to rectify the mistakes or show there is an error.</p>
-<p>you can also record the PC value then error occurs, so next time you can jump back to the PC value and then continue the execution.</p>
-<h5 id="what-is-interruption-and-exception"><a href="#what-is-interruption-and-exception" class="headerlink" title="what is interruption and exception"></a>what is interruption and exception</h5><p><img src="/home/alex/图片/excep.png" alt="upload successl"></p>
-<h5 id="the-original-way-to-handle-exception-and-interruptoin"><a href="#the-original-way-to-handle-exception-and-interruptoin" class="headerlink" title="the original way to handle exception and interruptoin"></a>the original way to handle exception and interruptoin</h5><p><img src="/home/alex/图片/modify.png" alt="upload succel"></p>
-<h4 id="interrupt-vector"><a href="#interrupt-vector" class="headerlink" title="interrupt vector"></a>interrupt vector</h4><p>how intel 8086 divide its address space?</p>
-<p><img src="/home/alex/图片/mm.png" alt="upload success"></p>
-<p>中断向量用来存储address which process the interruption</p>
-<p><img src="/home/alex/图片/vector.png" alt="upload successf"></p>
-<p>IP 存放在指令指针寄存器<br>CS 存放在代码段寄存器</p>
-<p>IP，CS寄存器参见<a href="https://blog.csdn.net/qq_35212671/article/details/52752808" target="_blank" rel="noopener">https://blog.csdn.net/qq_35212671/article/details/52752808</a></p>
-<p>总的来说，CS:IP 两个寄存器指示了 CPU 当前将要读取的指令的地址。</p>
-<p>当要执行一个可执行文件的时候，shell程序会把CS：IP寄存器设置这个程序的初始地址,然后CPU从这个地址开始读取指令</p>
-<h5 id="逻辑地址生成物理地址"><a href="#逻辑地址生成物理地址" class="headerlink" title="逻辑地址生成物理地址"></a>逻辑地址生成物理地址</h5><p><img src="/home/alex/图片/img.png" alt="upload su"></p>
-<p><img src="/home/alex/图片/xuanzang.png" alt="upload success"></p>
-<p>中断向量表要在系统启动的时候进行初始化</p>
-<p>一个中断向量占4个字节，1共有1KB空间用来存放中断向量，因此一共有256个中断向量。</p>
-<p>CPU发现中断的时候，如果是1号，转向1号中断向量。由于中断向量的位置是固定的，CPU只需要通过硬件电路来访问中断向量，不需要通过软件。而且CS是段基值，IP是偏移量，根据段偏移计算方法：</p>
-<p>对应地址为43006H<br>因此转到存储器里面的40996H，执行处理1号中断的服务程序。</p>
-<p><em>注意终端服务程序存放顺序不固定</em></p>
-<h5 id="exercise"><a href="#exercise" class="headerlink" title="exercise"></a>exercise</h5><p><img src="/home/alex/图片/2018-12.png" alt="flename already exists, renamed"></p>
-<p>中断类型码就是中断向量序号，由于第0个中断向量是存放在地址0的，因此中断向量码与其存放地址的关系就是 地址 = 向量码×4</p>
-<p>10H 20H 对应IP寄存器  30H 40H 对应CS寄存器</p>
-<p>因此地址为 4030:2010H</p>
-<p><img src="/home/alex/图片/biaoxi.png" alt="upload succes"></p>
-<p>23 40 对应CS寄存器<br>78 90 对应IP寄存器</p>
-<p>因此字节单元对应的内容分别为</p>
-<p>23</p>
-<p>40</p>
-<p>78</p>
-<p>90</p>
-<p>(从上往下地址减少)</p>
-<h4 id="中断向量表的发展"><a href="#中断向量表的发展" class="headerlink" title="中断向量表的发展"></a>中断向量表的发展</h4><p><img src="/home/alex/图片/huigu.png" alt="upload su"></p>
-<p>1.回顾一下，实模式下，地址是有CS寄存器×4 + IP寄存器 来产生一个20位的地址来实现的</p>
-<p>2.但是现在EIP的寻址能力和32位地址线寻址范围是对应的，因此保护模式下寻址方式和实模式有所不同。</p>
-<h5 id="IA-32的存储器寻址"><a href="#IA-32的存储器寻址" class="headerlink" title="IA-32的存储器寻址"></a>IA-32的存储器寻址</h5><p>1.保护模式下，段基址不在CS中，而在内存中</p>
-<p><img src="/home/alex/图片/2018-13.png" alt="upload successful"></p>
-<p>为什么会有8192个描述符？</p>
-<p>因为CS寄存器寻址能力是16位，可以寻找2^16也就是64K个地址，也就是8192个描述符</p>
-<p>而这时候由于不知道起始地址，因此需要一个GDTR寄存器，来存储描述符0所在的地址。这是一个系统寄存器，在系统启动的时候就写好。</p>
-<p>#####总结流程：</p>
-<p>1.GDTR 结合 CS 寄存器，用来访问存储器中的描述符</p>
-<p>2.然后从描述符当中提取出4个保存着基地址的字节，把得到的基地址与EIP指针寄存器结合，得到所要访问的寄存器的地址</p>
-<h4 id="保护模式的中断操作"><a href="#保护模式的中断操作" class="headerlink" title="保护模式的中断操作"></a>保护模式的中断操作</h4><p>中断向量表</p>
-<p><img src="/home/alex/图片/zhongduan.png" alt="upload succe"></p>
-<p>这时候由于地址不是从0开始的，因此与上图类似，CPU需要一个IDTR来记录描述符0所在的地址。</p>
-<p>这时候CPU把 <strong>(中断类型号 * 8 + IDTR)</strong>，得到描述符的地址，然后从描述符中选取2个段选择符字节放到CS寄存器，字节0,1,6,7放到EIP寄存器，（理解为偏移量）。记住实模式下，段基址并不是在CS中，而是需要用CS到内存中寻找。</p>
-<p>所以当从中断向量取回CS与EIP后，要利用CS和GDTR结合，来寻找段基址，再把段基址与EIP结合，这样最后才能得到<strong>中断服务程序</strong>的入口地址</p>
-<p>与实模式下的不同:</p>
-<p><em>实模式下中断向量4个字节，其中低位的两个放到IP寄存器，高位的两个放到CS寄存器</em></p>
-<h4 id="中断处理过程"><a href="#中断处理过程" class="headerlink" title="中断处理过程"></a>中断处理过程</h4><p><img src="/home/alex/图片/zhongd.png" alt="upload successf"></p>
-<p><img src="/home/alex/图片/chenju.png" alt="upload succeful"></p>
-<p><img src="/home/alex/图片/googl.png" alt="upload"></p>
-<p><img src="/home/alex/图片/accu.png" alt="uploada"></p>
-<p><img src="/home/alex/图片/man.png" alt="upload"></p>
-<p><img src="/home/alex/图片/m.png" alt="upload succ"></p>
-<p><img src="/home/alex/图片/2018-14.png" alt="filename already exists, remed"></p>
-<p>根据上图： 发生中断的时候先压栈，保存好处理完中断后应该返回的地址的信息。</p>
-<p>Flags保存好标志，以免处理的时候会改变某些标志位。</p>
-<p>清楚IF-TF 起到关中断的作用？？？</p>
-<p>然后再从存储器找到中断向量，取到CS、IP之后就找到了终端服务程序的入口地址。</p>
-<p><img src="/home/alex/图片/shixi.png" alt="upload succul"></p>
-<p>总结：</p>
-<p><img src="/home/alex/图片/ZONGJIE.png" alt="upload succes"></p>
-<p>集中内部中断的类型：</p>
-<p><img src="/home/alex/图片/s.png" alt="upload succesl"></p>
-<p><img src="/home/alex/图片/juanzi.png" alt="upload succ"></p>
-<p>注意上述两种中断类型的时机是不同的哦。</p>
-<p>中断类型0 是在检测出异常的时候立即发生，而内部中断需要自己主动执行INTO指令才可以检测出来</p>
-<p><img src="/home/alex/图片/danbu.png" alt="upload successfl"></p>
-<p><img src="/home/alex/图片/shangji.png" alt="upload success"></p>
-<p>为什么INT n是两字节指令？ 因为 INT 指令操作码 首先占一个字节 ，然后n范围是0-255 需要8位来表示，所以用2个字节。</p>
-<p>那为啥INT 3用1个字节呢？</p>
-<p>因为x86地址最短的就是一个字节。如果INT 3 是两个字节或以上，可能会覆盖掉下面的指令的一些字节。</p>
-<p>例如：</p>
-<p>OFFSET      instruction 1, one byte</p>
-<p>OFFSET+1    instruction 2, one byte</p>
-<p>如果在inst1设置断点，则而且inst1内容是跳到inst2，则替换的时候INT 3会把inst2某些字节覆盖掉。那么就不能实现跳到inst2的指令了。</p>
-<p>OFFSET     INT3……………….</p>
-<p>OFFSET+1    ………………….</p>
-<p>详情参考 <a href="http://www.cs.columbia.edu/~junfeng/09sp-w4118/lectures/int3/int3.txt" target="_blank" rel="noopener">http://www.cs.columbia.edu/~junfeng/09sp-w4118/lectures/int3/int3.txt</a></p>
-<p><img src="/home/alex/图片/2018-15.png" alt="upload successful"></p>
-<p><img src="/home/alex/图片/duandian.png" alt="upload success"></p>
-<p><img src="/home/alex/图片/duandian2.png" alt="upload succe"></p>
-<p>INT 3对应的中断服务程序可以查看 AL寄存器的值 </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2291,7 +2227,7 @@ can decrease flow on backward edge(not empty.)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

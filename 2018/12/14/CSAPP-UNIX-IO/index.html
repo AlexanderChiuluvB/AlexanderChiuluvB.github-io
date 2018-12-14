@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Unix I/O Overview1.A linux file is a sequence of m bytes   B0,B1..Bm-1 2.all I/O devices and even the kernel are represented as files /dev/sda2 (/usr disk partition)/dev/tty2 (terminal)  File Types1.r">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-UNIX&#x2F;IO">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-UNIX-IO/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Unix I/O Overview1.A linux file is a sequence of m bytes   B0,B1..Bm-1 2.all I/O devices and even the kernel are represented as files /dev/sda2 (/usr disk partition)/dev/tty2 (terminal)  File Types1.r">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-76.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ics.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/open.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/1.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/rf.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-77.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-78.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/file%20metadata.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/fileSharing.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-79.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/output.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-80.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ioredi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/steps1.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/samefile.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ggg.png">
+<meta property="og:updated_time" content="2018-12-14T12:18:44.070Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-UNIX&#x2F;IO">
+<meta name="twitter:description" content="Unix I/O Overview1.A linux file is a sequence of m bytes   B0,B1..Bm-1 2.all I/O devices and even the kernel are represented as files /dev/sda2 (/usr disk partition)/dev/tty2 (terminal)  File Types1.r">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-76.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-UNIX-IO/"/>
+
+
+
+
+
+  <title>CSAPP-UNIX/IO | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-UNIX-IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-UNIX/IO</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T16:45:00+08:00">
+                2018-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Unix-I-O-Overview"><a href="#Unix-I-O-Overview" class="headerlink" title="Unix I/O Overview"></a>Unix I/O Overview</h3><p>1.A linux file is a sequence of m bytes</p>
+<p>  B0,B1..Bm-1</p>
+<p>2.all I/O devices and even the kernel are represented as files</p>
+<p>/dev/sda2 (/usr disk partition)<br>/dev/tty2 (terminal)</p>
+<p><img src="/home/alex/图片/2018-76.png" alt="filename aady exists, renamed"></p>
+<h3 id="File-Types"><a href="#File-Types" class="headerlink" title="File Types"></a>File Types</h3><p>1.regular file</p>
+<p>2.directory</p>
+<p>3.<strong>socket</strong> for communicating with a process on another machine</p>
+<h4 id="regular-files"><a href="#regular-files" class="headerlink" title="regular files"></a>regular files</h4><p>Kernel doesn’t know the difference between text files and regular files</p>
+<h3 id="pathname"><a href="#pathname" class="headerlink" title="pathname"></a>pathname</h3><h4 id="absolute-pathname"><a href="#absolute-pathname" class="headerlink" title="absolute pathname"></a>absolute pathname</h4><p>starts with ‘/‘ and denotes path from root</p>
+<p>/home/droh/a.c</p>
+<h4 id="relative-pathname"><a href="#relative-pathname" class="headerlink" title="relative pathname"></a>relative pathname</h4><p>../home/droh/a.c</p>
+<p><img src="/home/alex/图片/ics.png" alt="upload succsful"></p>
+<h3 id="open-amp-closing-file"><a href="#open-amp-closing-file" class="headerlink" title="open&amp;closing file"></a>open&amp;closing file</h3><p><img src="/home/alex/图片/open.png" alt="upload successul"></p>
+<p><img src="/home/alex/图片/1.png" alt="upload suessful"></p>
+<h3 id="Reading-Files"><a href="#Reading-Files" class="headerlink" title="Reading Files"></a>Reading Files</h3><p><img src="/home/alex/图片/rf.png" alt="upload succful"></p>
+<h3 id="Writing-Files"><a href="#Writing-Files" class="headerlink" title="Writing Files"></a>Writing Files</h3><p><img src="/home/alex/图片/2018-77.png" alt="filenameady exists, renamed"></p>
+<h3 id="Simple-Unix-I-O-example"><a href="#Simple-Unix-I-O-example" class="headerlink" title="Simple Unix I/O example"></a>Simple Unix I/O example</h3><h4 id="bad-case"><a href="#bad-case" class="headerlink" title="bad case"></a>bad case</h4><p>Each while loop, execute 2 operating system function,that means you have to go to the kernel,go through,context switch,do whatever you wants,then switch back. in a word,it is too <strong>expensive</strong>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;csapp.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char c;</span><br><span class="line"></span><br><span class="line">    while(Read(STDIN_FILENO, &amp;c, 1) != 0)</span><br><span class="line">        Write(STDOUT_FILENO, &amp;c, 1);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="short-counts"><a href="#short-counts" class="headerlink" title="short counts"></a>short counts</h3><p><img src="/home/alex/图片/2018-78.png" alt="filename y exists, renamed"></p>
+<h3 id="File-Metadata"><a href="#File-Metadata" class="headerlink" title="File Metadata"></a>File Metadata</h3><p><img src="/home/alex/图片/file metadata.png" alt="upload essful"></p>
+<h3 id="File-Sharing"><a href="#File-Sharing" class="headerlink" title="File Sharing"></a>File Sharing</h3><p><img src="/home/alex/图片/fileSharing.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/2018-79.png" alt="filename ady exists, renamed"></p>
+<h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p><img src="/home/alex/图片/output.png" alt="upload scessful"></p>
+<p><img src="/home/alex/图片/2018-80.png" alt="filename aldy exists, renamed"></p>
+<p>内核用三个相关的数据结构来表示打开的文件</p>
+<p>1.每个进程都有它独立的描述符表，它的表项是由进程打开的文件描述符来索引的，每个打开的描述符表项指向文件表一个表项。</p>
+<p>2.文件表。是所有进程共享的，保存当前文件位置，引用计数（当前指向该表项的描述符表项数），以及一个指向vnode表对应表项的指针</p>
+<p>3.vnode表，所有进程共享</p>
+<h3 id="I-O-Redirection"><a href="#I-O-Redirection" class="headerlink" title="I/O Redirection"></a>I/O Redirection</h3><p><img src="/home/alex/图片/ioredi.png" alt="upload cessful"></p>
+<h4 id="steps-1"><a href="#steps-1" class="headerlink" title="steps 1"></a>steps 1</h4><p><img src="/home/alex/图片/steps1.png" alt="upload sucessful"></p>
+<h4 id="steps-2"><a href="#steps-2" class="headerlink" title="steps 2"></a>steps 2</h4><p><img src="/home/alex/图片/samefile.png" alt="upload essful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">fd(5,0)</span><br></pre></td></tr></table></figure>
+<p>就是把重定向标准输入到描述符5</p>
+<h3 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h3><p><img src="/home/alex/图片/ggg.png" alt="upload succeful"></p>
+<p>fd3重定向到了fd2，所以他们指向同样的open file table项，c2是第一个字符a，而c3在此基础上读下一个字符，所以是b。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/14/CSAPP-malloc-lab/" rel="next" title="CSAPP-malloc lab">
+                <i class="fa fa-chevron-left"></i> CSAPP-malloc lab
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/14/CSAPP-Network/" rel="prev" title="CSAPP-Network">
+                CSAPP-Network <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unix-I-O-Overview"><span class="nav-number">1.</span> <span class="nav-text">Unix I/O Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-Types"><span class="nav-number">2.</span> <span class="nav-text">File Types</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#regular-files"><span class="nav-number">2.1.</span> <span class="nav-text">regular files</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pathname"><span class="nav-number">3.</span> <span class="nav-text">pathname</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#absolute-pathname"><span class="nav-number">3.1.</span> <span class="nav-text">absolute pathname</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#relative-pathname"><span class="nav-number">3.2.</span> <span class="nav-text">relative pathname</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#open-amp-closing-file"><span class="nav-number">4.</span> <span class="nav-text">open&amp;closing file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reading-Files"><span class="nav-number">5.</span> <span class="nav-text">Reading Files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Writing-Files"><span class="nav-number">6.</span> <span class="nav-text">Writing Files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Simple-Unix-I-O-example"><span class="nav-number">7.</span> <span class="nav-text">Simple Unix I/O example</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bad-case"><span class="nav-number">7.1.</span> <span class="nav-text">bad case</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#short-counts"><span class="nav-number">8.</span> <span class="nav-text">short counts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-Metadata"><span class="nav-number">9.</span> <span class="nav-text">File Metadata</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-Sharing"><span class="nav-number">10.</span> <span class="nav-text">File Sharing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fork"><span class="nav-number">11.</span> <span class="nav-text">fork</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-Redirection"><span class="nav-number">12.</span> <span class="nav-text">I/O Redirection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#steps-1"><span class="nav-number">12.1.</span> <span class="nav-text">steps 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#steps-2"><span class="nav-number">12.2.</span> <span class="nav-text">steps 2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些例子"><span class="nav-number">13.</span> <span class="nav-text">一些例子</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
