@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="socket socket address structures  发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。 socket Interface socket bindBind is kernel call to designate which service t">
+<meta name="description" content="socket socket address structures  发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。 socket Interface 1.开启服务器  （open_listenfd函数，做好接收请求的准备） socket bind listen acc">
 <meta name="keywords" content="CSAPP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CSAPP-Network">
 <meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-Network/index.html">
 <meta property="og:site_name" content="Alex Chiu">
-<meta property="og:description" content="socket socket address structures  发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。 socket Interface socket bindBind is kernel call to designate which service t">
+<meta property="og:description" content="socket socket address structures  发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。 socket Interface 1.开启服务器  （open_listenfd函数，做好接收请求的准备） socket bind listen acc">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/socket.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sas.png">
@@ -103,10 +103,11 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/info.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/adddd.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/daimashixian.png">
-<meta property="og:updated_time" content="2018-12-14T15:30:57.215Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cline.png">
+<meta property="og:updated_time" content="2018-12-15T12:38:40.823Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-Network">
-<meta name="twitter:description" content="socket socket address structures  发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。 socket Interface socket bindBind is kernel call to designate which service t">
+<meta name="twitter:description" content="socket socket address structures  发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。 socket Interface 1.开启服务器  （open_listenfd函数，做好接收请求的准备） socket bind listen acc">
 <meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/socket.png">
 
 
@@ -384,8 +385,30 @@
 <p><img src="/home/alex/图片/2018-82.png" alt="filename aly exists, renamed"></p>
 <p>发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。</p>
 <h3 id="socket-Interface"><a href="#socket-Interface" class="headerlink" title="socket Interface"></a>socket Interface</h3><p><img src="/home/alex/图片/socketInterface.png" alt="upload succesl"></p>
-<h4 id="socket-1"><a href="#socket-1" class="headerlink" title="socket"></a>socket</h4><p><img src="/home/alex/图片/socf.png" alt="upload cessful"></p>
-<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p>Bind is kernel call to designate which service this program will be hosting</p>
+<p>1.开启服务器</p>
+<ul>
+<li>（open_listenfd函数，做好接收请求的准备）</li>
+<li>socket</li>
+<li>bind</li>
+<li>listen</li>
+<li>accept</li>
+</ul>
+<p>2.开启客户端</p>
+<ul>
+<li>getaddrinfo</li>
+<li>socket</li>
+<li>connect</li>
+</ul>
+<ol start="3">
+<li>交换数据</li>
+</ol>
+<p>4.关闭客户端</p>
+<p>5.断开客户端</p>
+<h4 id="getaddrinfo："><a href="#getaddrinfo：" class="headerlink" title="getaddrinfo："></a>getaddrinfo：</h4><p>设置服务器的相关信息</p>
+<h4 id="socket-1"><a href="#socket-1" class="headerlink" title="socket"></a>socket</h4><p>创建socket descriptor ，也就是之后用来读写的file descriptor</p>
+<p><img src="/home/alex/图片/socf.png" alt="upload cessful"></p>
+<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p>请求kernel把socket address 和 socket descriptor绑定</p>
+<p>Bind is kernel call to designate which service this program will be hosting</p>
 <p>告诉内核将addr中的服务器套接字地址和套接字描述符sockfd联系起来，对于socket和connect，最好方法是用getaddrinfo来为bind提供参数</p>
 <p><img src="/home/alex/图片/2018-83.png" alt="filename alrey exists, renamed"></p>
 <h4 id="listen"><a href="#listen" class="headerlink" title="listen"></a>listen</h4><p>由于客户端是发起连接要求的主动实体，服务器是被动等待连接请求的，所以默认条件下，内核会认为socket函数创建的描述符对应于主动套接字，它存在于一个连接的客户端。服务器调用listen函数告诉内核，描述符是被服务器而不是客户端使用的。</p>
@@ -405,6 +428,13 @@
 <h4 id="addrinfo-struct（代码实现）"><a href="#addrinfo-struct（代码实现）" class="headerlink" title="addrinfo struct（代码实现）"></a>addrinfo struct（代码实现）</h4><p><img src="/home/alex/图片/daimashixian.png" alt="upload succel"></p>
 <p>以下函数是用来把域名转化为IP地址的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line"></span><br><span class="line">	struct addrinfo *p,*listp,hints;</span><br><span class="line">	char buf[MAXLINE];</span><br><span class="line">	int rc,flags;</span><br><span class="line"></span><br><span class="line">	if(argc!=2)&#123;</span><br><span class="line">		fprintf(stderr,&quot;usage: %s &lt;domain name&gt;\n&quot;,argv[0]);</span><br><span class="line">		exit(0);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//get a list of addinfo records</span><br><span class="line">	memset(&amp;hints,0,sizeof(struct addrinfo));</span><br><span class="line">	hints.ai_family = AF_INET;</span><br><span class="line">	hints.ai_socktype = SOCK_STREAM;</span><br><span class="line">	if((rc=getaddrinfo(argv[1],NULL,&amp;hints,&amp;listp))!=0)&#123;</span><br><span class="line">		fprintf(stderr,&quot;getaddrinfo error: %s\n&quot;,gai_strerror(rc));</span><br><span class="line">		exit(1);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	flags = NI_NUMERICHOST;</span><br><span class="line"></span><br><span class="line">	for(p=listp;p;p = p-&gt;ai_next)&#123;</span><br><span class="line">		Getnameinfo(p-&gt;ai_addr,p-&gt;ai_addrlen,buf,MAXLINE,NULL,0,flags);</span><br><span class="line">		printf(&quot;%s\n&quot;,buf);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Freeaddrinfo(listp);</span><br><span class="line"></span><br><span class="line">	exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h3><p><img src="/home/alex/图片/cline.png" alt="upload sssful"></p>
+<p>web server return content to clients,in 2 different ways:</p>
+<p>1.取磁盘文件，并把他的内容返回给客户端，磁盘文件称为静态内容，返回文件给客户端叫服务静态内容。</p>
+<p>2.运行一个可执行文件，把输出返回给客户端，运行的时候输出内容叫做动态内容，而运行程序并返回输出内容叫做服务动态内容。</p>
+<p>web服务器返回的内容都是和它管理的某个文件相关联的，这些文件中的每一个都有一个唯一的名字叫<strong><em>URL，通用资源定位符。</em></strong></p>
+<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><p>超文本传输协议</p>
+<h3 id="CGI"><a href="#CGI" class="headerlink" title="CGI"></a>CGI</h3><p>通用网关接口，用来处理服务器向客户端提供动态内容的问题</p>
 
       
     </div>
@@ -444,6 +474,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/15/SAPP-Synchronization/" rel="prev" title="CSAPP-Synchronization">
+                CSAPP-Synchronization <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -524,7 +558,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -579,7 +613,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket"><span class="nav-number">1.</span> <span class="nav-text">socket</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#socket-address-structures"><span class="nav-number">1.1.</span> <span class="nav-text">socket address structures</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket-Interface"><span class="nav-number">2.</span> <span class="nav-text">socket Interface</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#socket-1"><span class="nav-number">2.1.</span> <span class="nav-text">socket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bind"><span class="nav-number">2.2.</span> <span class="nav-text">bind</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#listen"><span class="nav-number">2.3.</span> <span class="nav-text">listen</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#accept"><span class="nav-number">2.4.</span> <span class="nav-text">accept</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#connect-client-side"><span class="nav-number">2.5.</span> <span class="nav-text">connect (client side)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#diff-of-connected-amp-listening-descriptors"><span class="nav-number">3.</span> <span class="nav-text">diff of connected &amp; listening descriptors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getaddrinfo"><span class="nav-number">4.</span> <span class="nav-text">getaddrinfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Host-and-service-connection"><span class="nav-number">5.</span> <span class="nav-text">Host and service connection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getnameinfo"><span class="nav-number">6.</span> <span class="nav-text">getnameinfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LLR-by-getinfo"><span class="nav-number">7.</span> <span class="nav-text">LLR by getinfo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#addrinfo-struct（代码实现）"><span class="nav-number">7.1.</span> <span class="nav-text">addrinfo struct（代码实现）</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket"><span class="nav-number">1.</span> <span class="nav-text">socket</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#socket-address-structures"><span class="nav-number">1.1.</span> <span class="nav-text">socket address structures</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket-Interface"><span class="nav-number">2.</span> <span class="nav-text">socket Interface</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#getaddrinfo："><span class="nav-number">2.1.</span> <span class="nav-text">getaddrinfo：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#socket-1"><span class="nav-number">2.2.</span> <span class="nav-text">socket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bind"><span class="nav-number">2.3.</span> <span class="nav-text">bind</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#listen"><span class="nav-number">2.4.</span> <span class="nav-text">listen</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#accept"><span class="nav-number">2.5.</span> <span class="nav-text">accept</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#connect-client-side"><span class="nav-number">2.6.</span> <span class="nav-text">connect (client side)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#diff-of-connected-amp-listening-descriptors"><span class="nav-number">3.</span> <span class="nav-text">diff of connected &amp; listening descriptors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getaddrinfo"><span class="nav-number">4.</span> <span class="nav-text">getaddrinfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Host-and-service-connection"><span class="nav-number">5.</span> <span class="nav-text">Host and service connection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getnameinfo"><span class="nav-number">6.</span> <span class="nav-text">getnameinfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LLR-by-getinfo"><span class="nav-number">7.</span> <span class="nav-text">LLR by getinfo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#addrinfo-struct（代码实现）"><span class="nav-number">7.1.</span> <span class="nav-text">addrinfo struct（代码实现）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web"><span class="nav-number">8.</span> <span class="nav-text">Web</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">9.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CGI"><span class="nav-number">10.</span> <span class="nav-text">CGI</span></a></li></ol></div>
             
 
           </div>

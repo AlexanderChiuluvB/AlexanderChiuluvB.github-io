@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Implementing a sequential web proxy先搞清listen socket 和 connected socket 的区别。  一个套接字对标记着一个客户端和服务器的链接。 客户端是发起连接请求的主动实体，而内核会认为socket函数创建的套接字是主动套接字，而服务器就是要调用listen函数告诉内核，该套接字是被服务器而不是客户端使用的，即listen函数将一个主动套接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-proxy lab">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/15/CSAPP-proxy-lab/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Implementing a sequential web proxy先搞清listen socket 和 connected socket 的区别。  一个套接字对标记着一个客户端和服务器的链接。 客户端是发起连接请求的主动实体，而内核会认为socket函数创建的套接字是主动套接字，而服务器就是要调用listen函数告诉内核，该套接字是被服务器而不是客户端使用的，即listen函数将一个主动套接">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/taojiezidui.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/实验过程.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-91.png">
+<meta property="og:updated_time" content="2018-12-16T07:29:33.913Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-proxy lab">
+<meta name="twitter:description" content="Implementing a sequential web proxy先搞清listen socket 和 connected socket 的区别。  一个套接字对标记着一个客户端和服务器的链接。 客户端是发起连接请求的主动实体，而内核会认为socket函数创建的套接字是主动套接字，而服务器就是要调用listen函数告诉内核，该套接字是被服务器而不是客户端使用的，即listen函数将一个主动套接">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/taojiezidui.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/15/CSAPP-proxy-lab/"/>
+
+
+
+
+
+  <title>CSAPP-proxy lab | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/15/CSAPP-proxy-lab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-proxy lab</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T21:43:43+08:00">
+                2018-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Implementing-a-sequential-web-proxy"><a href="#Implementing-a-sequential-web-proxy" class="headerlink" title="Implementing a sequential web proxy"></a>Implementing a sequential web proxy</h3><p>先搞清listen socket 和 connected socket 的区别。</p>
+<p><img src="/home/alex/图片/taojiezidui.png" alt="upload succful"></p>
+<p>一个套接字对标记着一个客户端和服务器的链接。</p>
+<p>客户端是发起连接请求的主动实体，而内核会认为socket函数创建的套接字是主动套接字，而服务器就是要调用listen函数告诉内核，该套接字是被服务器而不是客户端使用的，即listen函数将一个主动套接字转化为<strong><em>监听套接字</em></strong>。</p>
+<p>服务器通过accept函数等待来自客户端的连接请求到达监听套接字，并返回一个<strong><em>已连接套接字</em></strong>，这个connfd可以被用来与客户端进行通讯。</p>
+<p>实验过程如下：</p>
+<p><img src="/home/alex/图片/实验过程.png" alt="upload successful"></p>
+<h4 id="some-def"><a href="#some-def" class="headerlink" title="some def"></a>some def</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/* You won&apos;t lose style points for including this long line in your code */</span><br><span class="line">static const char *user_agent_hdr = &quot;User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.3) Gecko/20120305 Firefox/10.0.3\r\n&quot;;</span><br><span class="line">static const char *conn_hdr = &quot;Connection: close\r\n&quot;;</span><br><span class="line">static const char *prox_hdr = &quot;Proxy-Connection: close\r\n&quot;;</span><br><span class="line">static const char *hostFormat = &quot;Host: %s\r\n&quot;;</span><br><span class="line">static const char *requestHeaderFormat = &quot;GET %s HTTP/1.0\r\n&quot;;</span><br><span class="line">static const char *endof_hdr = &quot;\r\n&quot;;</span><br><span class="line">static const char *connection_key = &quot;Connection&quot;;</span><br><span class="line">static const char *user_agent_key= &quot;User-Agent&quot;;</span><br><span class="line">static const char *proxy_connection_key = &quot;Proxy-Connection&quot;;</span><br><span class="line">static const char *hostKey = &quot;Host&quot;;</span><br><span class="line"></span><br><span class="line">void doit(int fd);</span><br><span class="line">void parse_uri(char *uri,char *hostname,char *path,int *port);</span><br><span class="line">void buildHTTPHeader(char *http_header,char *hostname,char *path,int port,rio_t *client_rio);</span><br><span class="line">int connectEndServer(char *hostname,int port,char *httpHeader);</span><br><span class="line">void *thread(void *vargp);</span><br><span class="line">void initCache();</span><br><span class="line">int reader(int fd,char *uri);</span><br><span class="line">void writer(char *uri,char *buf);</span><br><span class="line">//reference: https://zhuanlan.zhihu.com/p/37902495</span><br><span class="line"></span><br><span class="line">typedef struct&#123;</span><br><span class="line">    char *buf;</span><br><span class="line">    char *uri;</span><br><span class="line">&#125;cacheLine;</span><br><span class="line"></span><br><span class="line">typedef struct&#123;</span><br><span class="line">    cacheLine* objects;</span><br><span class="line">    int count;</span><br><span class="line">&#125;Cache;</span><br><span class="line"></span><br><span class="line">Cache cache;</span><br><span class="line">int readCount;</span><br><span class="line">sem_t mutex,wmutex;</span><br><span class="line">//用于多线程编程中，防止两条线程同时对同一公共资源（比如全局变量）进行读写的机制</span><br></pre></td></tr></table></figure>
+<p>main 函数，参考课本的tiny服务器，注意的是这里pthread_create是传值而不是引用，是为了避免竞争。（传值是传一个独立的副本）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    int listenfd,connfd;</span><br><span class="line">    socklen_t clientlen;</span><br><span class="line">    char hostname[MAXLINE];</span><br><span class="line">    char port[MAXLINE];</span><br><span class="line">    struct sockaddr_storage clientaddr;</span><br><span class="line">    pthread_t tid;</span><br><span class="line">    if(argc!=2)&#123;</span><br><span class="line">        fprintf(stderr,&quot;usage %s &lt;port&gt;\n&quot;,argv[0]);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    initCache();</span><br><span class="line">    //ignore the SIGPIPE signal</span><br><span class="line">    signal(SIGPIPE, SIG_IGN);</span><br><span class="line">    //transfrom the fd to listenfd</span><br><span class="line">    listenfd = Open_listenfd(argv[1]);</span><br><span class="line">    while(1)&#123;</span><br><span class="line">        clientlen = sizeof(clientaddr);</span><br><span class="line">        connfd = Accept(listenfd,(SA*)&amp;clientaddr,&amp;clientlen);</span><br><span class="line">        //ip-&gt;host name</span><br><span class="line">        Getnameinfo((SA *)&amp;clientaddr,clientlen,hostname,MAXLINE,port,MAXLINE,0);</span><br><span class="line">        printf(&quot;Accepted connection from (%s %s)\n&quot;,hostname,port);</span><br><span class="line">        //pass value of connfd to create function to avoid competition</span><br><span class="line">        Pthread_create(&amp;tid,NULL,thread,(void*)connfd);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多线程并发"><a href="#多线程并发" class="headerlink" title="多线程并发"></a>多线程并发</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void *thread(void *vargp)&#123;</span><br><span class="line">    int connfd = (int)vargp;</span><br><span class="line">    //要把线程分离出去，让这个线程计数结束之后自己回收资源，避免内存泄露。</span><br><span class="line">    Pthread_detach(pthread_self());</span><br><span class="line">    doit(connfd);</span><br><span class="line">    Close(connfd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="doit"><a href="#doit" class="headerlink" title="doit"></a>doit</h3><p>函数逻辑：</p>
+<p>1.得到解析后的请求行和请求头</p>
+<p>2.然后去连接对应的服务器，发送请求</p>
+<p>3.建立连接后，返回信息会在描述符中，也就是endServerFd</p>
+<p>4.再把信息从endServerFd中读取出来，直接写进客户端对应的描述符fd就可以。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">//对客户端请求的HTTP header 进行处理，首先获得request header</span><br><span class="line">//eg: GET http://www.zhihu.com HTTP/1.1</span><br><span class="line">//然后对于请求URL进行分析，获取需要连接的服务器的hostname，port，</span><br><span class="line">//修改客户端的HTTP，让proxy充当客户端把信息转发给正确的服务器，然后接收服务器</span><br><span class="line">//的返回并转发给正确的客户端</span><br><span class="line">void doit(int connfd)&#123;</span><br><span class="line"></span><br><span class="line">    char buf[MAXLINE],uri[MAXLINE],method[MAXLINE],version[MAXLINE];</span><br><span class="line">    //parseRequest(fd,&amp;requestLine,headers,&amp;numHead);</span><br><span class="line">    char endServerHTTP [MAXLINE];</span><br><span class="line">    char hostname[MAXLINE],path[MAXLINE];</span><br><span class="line">    char objectBUF[MAX_OBJECT_SIZE];</span><br><span class="line">    int port,endServerFd;</span><br><span class="line"></span><br><span class="line">    rio_t rio,serverRio;</span><br><span class="line"></span><br><span class="line">    Rio_readinitb(&amp;rio,connfd);</span><br><span class="line">    Rio_readlineb(&amp;rio,buf,MAXLINE);</span><br><span class="line">    //read GET http://www.zhihu.com HTTP/1.1</span><br><span class="line">    //format read function</span><br><span class="line">    sscanf(buf,&quot;%s %s %s&quot;,method,uri,version);</span><br><span class="line">    </span><br><span class="line">    if(strcasecmp(method,&quot;GET&quot;))&#123;</span><br><span class="line">        printf(&quot;Proxy does not implement the method&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //parse the uri and save the hostname,path,port number to the argument</span><br><span class="line">    parse_uri(uri,hostname,path,&amp;port);</span><br><span class="line"></span><br><span class="line">    //build the http header which will send to the end server</span><br><span class="line">    buildHTTPHeader(endServerHTTP,hostname,path,port,&amp;rio);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    strcpy(uri,hostname);</span><br><span class="line">    strcpy(uri+strlen(uri),path);</span><br><span class="line">    if(reader(connfd,uri))&#123;</span><br><span class="line">        fprintf(stdout,&quot;%s from cache\n&quot;,uri);</span><br><span class="line">        fflush(stdout);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int totalSize = 0;</span><br><span class="line">    //connect to the end server;</span><br><span class="line">    endServerFd = connectEndServer(hostname,port);</span><br><span class="line">    if(endServerFd&lt;0)&#123;</span><br><span class="line">        printf(&quot;connection failed&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    Rio_readinitb(&amp;serverRio,endServerFd);</span><br><span class="line">    Rio_writen(endServerFd,endServerHTTP,strlen(endServerHTTP));</span><br><span class="line"></span><br><span class="line">    //receive message from end server and send to client</span><br><span class="line">    size_t n;</span><br><span class="line">    while((n=Rio_readlineb(&amp;serverRio,buf,MAXLINE)))&#123;</span><br><span class="line">        printf(&quot;proxy received %ld bytes,then send.\n&quot;,n);</span><br><span class="line">        Rio_writen(connfd,buf,n);</span><br><span class="line">        strcpy(objectBUF+totalSize,buf);</span><br><span class="line">        totalSize+=n;</span><br><span class="line">    &#125;</span><br><span class="line">   //each objectBUF save all info of the request</span><br><span class="line">    if(totalSize&lt;MAX_OBJECT_SIZE)</span><br><span class="line">        writer(uri,objectBUF);</span><br><span class="line">    Close(endServerFd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="build-HTTP-that-send-to-the-end-server"><a href="#build-HTTP-that-send-to-the-end-server" class="headerlink" title="build HTTP that send to the end server"></a>build HTTP that send to the end server</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">void buildHTTPHeader(char *http_header,char *hostname,char *path,int port,rio_t *client_rio)&#123;</span><br><span class="line"></span><br><span class="line">    char buf[MAXLINE],requestHeader[MAXLINE],otherHeader[MAXLINE],hostHeader[MAXLINE];</span><br><span class="line"></span><br><span class="line">    //request line</span><br><span class="line">    //static const char *requestHeaderFormat = &quot;GET %s HTTP/1.0\r\n&quot;;</span><br><span class="line">    //把path内容按照格式写入requestHeader</span><br><span class="line">    sprintf(requestHeader,requestHeaderFormat,path);</span><br><span class="line">    while(Rio_readlineb(client_rio,buf,MAXLINE)&gt;0)&#123;</span><br><span class="line"></span><br><span class="line">        if(!strcmp(buf,endof_hdr))&#123;</span><br><span class="line">            break; //EOF</span><br><span class="line">        &#125;</span><br><span class="line">        //Host</span><br><span class="line">        if(!strncasecmp(buf,hostKey,strlen(hostKey)))&#123;</span><br><span class="line">            strcpy(hostHeader,buf);</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(!strncasecmp(buf,connection_key,strlen(connection_key))&amp;&amp;!</span><br><span class="line">            strncasecmp(buf,proxy_connection_key,strlen(proxy_connection_key)),</span><br><span class="line">            !strncasecmp(buf,user_agent_key,strlen(user_agent_key)))&#123;</span><br><span class="line">            //把两个串连接起来</span><br><span class="line">            strcat(otherHeader,buf);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    if(strlen(hostHeader)==0)&#123;</span><br><span class="line">        sprintf(hostHeader,hostFormat,buf);</span><br><span class="line">    &#125;</span><br><span class="line">    //static const char *user_agent_hdr = &quot;User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.3) Gecko/20120305 Firefox/10.0.3\r\n&quot;;</span><br><span class="line">    //static const char *conn_hdr = &quot;Connection: close\r\n&quot;;</span><br><span class="line">    //static const char *prox_hdr = &quot;Proxy-Connection: close\r\n&quot;;</span><br><span class="line">    //static const char *endof_hdr = &quot;\r\n&quot;;</span><br><span class="line">    </span><br><span class="line">    //put all header to http_header</span><br><span class="line">    sprintf(http_header,&quot;%s%s%s%s%s%s%s&quot;,requestHeader,hostHeader,</span><br><span class="line">            conn_hdr,prox_hdr,user_agent_hdr,otherHeader,endof_hdr);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="parseuri"><a href="#parseuri" class="headerlink" title="parseuri"></a>parseuri</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">void parse_uri(char *uri,char *hostname,char *path,int *port)&#123;</span><br><span class="line"></span><br><span class="line">    //strstr(str1,str2) 函数用于判断字符串str2是否是str1的子串。</span><br><span class="line">    //如果是，则该函数返回str2在str1中首次出现的地址；否则，返回NULL。</span><br><span class="line"></span><br><span class="line">    *port = 80;</span><br><span class="line">    char *pos1 = strstr(uri,&quot;//&quot;);</span><br><span class="line"></span><br><span class="line">    if(pos1)&#123;</span><br><span class="line">        pos1 =  pos1+2;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        pos1 = uri;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    char *pos2 = strstr(pos1,&quot;:&quot;);</span><br><span class="line">    //case the uri has the port info</span><br><span class="line">    if(pos2)&#123;</span><br><span class="line"></span><br><span class="line">        //          userinfo     host        port</span><br><span class="line">        //          ┌─┴────┐ ┌────┴────────┐ ┌┴┐</span><br><span class="line">        //  https://john.doe@www.example.com:123/forum/questions/?tag=networking&amp;order=newest#top</span><br><span class="line">        //  └─┬─┘ └───────┬────────────────────┘└─┬─────────────┘└──┬───────────────────────┘└┬─┘</span><br><span class="line">        //  scheme     authority                 path              query                      fragment</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        //initalize the head of pos2 is \0 i.e clean the pos2</span><br><span class="line">        *pos2 = &apos;\0&apos;;</span><br><span class="line">        sscanf(pos1,&quot;%s&quot;,hostname);</span><br><span class="line">        sscanf(pos2+1,&quot;%d%s&quot;,port,path);</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        //</span><br><span class="line">        //telnet://192.0.2.16:80/xxx</span><br><span class="line">        //└──┬─┘ └──────┬──────┘│</span><br><span class="line">        //scheme    authority  path</span><br><span class="line">        // no port info</span><br><span class="line">        pos2 = strstr(pos1,&quot;/&quot;);</span><br><span class="line">        if(pos2)&#123;</span><br><span class="line">            sscanf(pos1,&quot;%s&quot;,hostname);</span><br><span class="line">            *pos2 = &apos;/&apos;;</span><br><span class="line">            sscanf(pos2,&quot;%s&quot;,path);</span><br><span class="line">        &#125;</span><br><span class="line">        //only hostname info</span><br><span class="line">        else&#123;</span><br><span class="line">            sscanf(pos1,&quot;%s&quot;,hostname);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="connect-end-server"><a href="#connect-end-server" class="headerlink" title="connect end server"></a>connect end server</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">inline int connectEndServer(char *hostname,int port)&#123;</span><br><span class="line"></span><br><span class="line">    char portStr[100];</span><br><span class="line">    sprintf(portStr,&quot;%d&quot;,port);</span><br><span class="line">    return Open_clientfd(hostname,portStr);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="cache"><a href="#cache" class="headerlink" title="cache"></a>cache</h3><p>采用读者-写者模型，可以让多个线程同时来读。</p>
+<p>没有实现LRU，只是简单地把1MiB内存分为十块，每次接受请求并解析之后，先去cache看看有没有对应的web object，如果有直接返回给客户端，没有再从服务端请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">int reader(int fd,char *uri)&#123;</span><br><span class="line"></span><br><span class="line">    //here uri = each server&apos;s hostname+path</span><br><span class="line">    int Found = 0;</span><br><span class="line">    P(&amp;mutex);</span><br><span class="line">    readCount++;</span><br><span class="line">    if(readCount==1)&#123;</span><br><span class="line">        P(&amp;wmutex);</span><br><span class="line">    &#125;</span><br><span class="line">    V(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    for(int i=0;i&lt;10;i++)&#123;</span><br><span class="line">        if(!strcmp(cache.objects[i].uri,uri))&#123;</span><br><span class="line">            Rio_writen(fd,cache.objects[i].buf,MAX_OBJECT_SIZE);</span><br><span class="line">            Found=1;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    P(&amp;mutex);</span><br><span class="line">    readCount--;</span><br><span class="line">    if(readCount==0)&#123;</span><br><span class="line">        V(&amp;wmutex);</span><br><span class="line">    &#125;</span><br><span class="line">    V(&amp;mutex);</span><br><span class="line">    return Found;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void writer(char *uri,char *buf)&#123;</span><br><span class="line"></span><br><span class="line">    P(&amp;wmutex);</span><br><span class="line">    strcpy(cache.objects[cache.count].uri,uri);</span><br><span class="line">    strcpy(cache.objects[cache.count].buf,buf);</span><br><span class="line">    ++cache.count;</span><br><span class="line">    V(&amp;wmutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//simple cache no use LRU,just split the memory to 10 block,</span><br><span class="line">//each time use a loop to find whether the uri of the request is in the block</span><br><span class="line">//在server和client之间加入代理的好处之一，就可以实现cache化。</span><br><span class="line">//因为，经常有很多对同一个资源多次请求的情况，如果每次都从服务端获取，那样服务器会很累。</span><br><span class="line">//如果可以在代理部分就实现一个cache，</span><br><span class="line">//将最近客户端请求过的数据给存储起来，那样就不需要每次都要从服务器请求了，进而提高服务器的效率。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void initCache()&#123;</span><br><span class="line"></span><br><span class="line">    sem_init(&amp;mutex,0,1);</span><br><span class="line">    sem_init(&amp;wmutex,0,1);</span><br><span class="line">    cache.objects = (cacheLine*)malloc(sizeof(cacheLine)*10);</span><br><span class="line">    cache.count=0;</span><br><span class="line">    readCount=0;</span><br><span class="line">    for(int i=0;i&lt;10;i++)&#123;</span><br><span class="line">        cache.objects[i].buf = malloc(sizeof(char)*MAXLINE);</span><br><span class="line">        cache.objects[i].uri = malloc(sizeof(char)*MAX_OBJECT_SIZE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h3><ul>
+<li><p>use ./free-port.sh to get a free port, like 4501</p>
+</li>
+<li><p>open a terminal, nc -l 4501</p>
+<ul>
+<li>this is to start netcat as a server listening on port you get</li>
+</ul>
+</li>
+<li><p>open a terminal </p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v --proxy http://localhost:23885/ http://localhost:4501/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>open a terminal </li>
+</ul>
+<p>./proxy 23885</p>
+<p><img src="/home/alex/图片/2018-91.png" alt="filename alady exists, renamed"></p>
+<p>netcat is listening on 4501,proxy is listening on 23885,here netcat serves as a server,print sth in the ‘nc -l’ window,then you can see the exact sth print on the ‘curl’ window</p>
+<h3 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h3><p><a href="https://blog.csdn.net/u012336567/article/details/52056089" target="_blank" rel="noopener">https://blog.csdn.net/u012336567/article/details/52056089</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/37902495" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/37902495</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/15/SAPP-Synchronization/" rel="next" title="CSAPP-Synchronization">
+                <i class="fa fa-chevron-left"></i> CSAPP-Synchronization
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementing-a-sequential-web-proxy"><span class="nav-number">1.</span> <span class="nav-text">Implementing a sequential web proxy</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#some-def"><span class="nav-number">1.1.</span> <span class="nav-text">some def</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程并发"><span class="nav-number">2.</span> <span class="nav-text">多线程并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#doit"><span class="nav-number">3.</span> <span class="nav-text">doit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#build-HTTP-that-send-to-the-end-server"><span class="nav-number">4.</span> <span class="nav-text">build HTTP that send to the end server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parseuri"><span class="nav-number">5.</span> <span class="nav-text">parseuri</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#connect-end-server"><span class="nav-number">6.</span> <span class="nav-text">connect end server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cache"><span class="nav-number">7.</span> <span class="nav-text">cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Test"><span class="nav-number">8.</span> <span class="nav-text">Test</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ref"><span class="nav-number">9.</span> <span class="nav-text">Ref</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

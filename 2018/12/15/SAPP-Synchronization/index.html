@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CSAPP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="现代操作系统提供三种构造并发程序的方法： 1.进程 2.I/O多路复用 3.线程 基于进程的并发编程1.内核自动管理多个逻辑流 2.每个进程有私有的地址空间（进程切换的时候要保存和载入数据） 12345678910111213141516171819202122232425void sigchld_handler(int sig)&amp;#123;    while (waitpid(-1, 0, WN">
+<meta name="keywords" content="CSAPP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-Synchronization">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/15/SAPP-Synchronization/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="现代操作系统提供三种构造并发程序的方法： 1.进程 2.I/O多路复用 3.线程 基于进程的并发编程1.内核自动管理多个逻辑流 2.每个进程有私有的地址空间（进程切换的时候要保存和载入数据） 12345678910111213141516171819202122232425void sigchld_handler(int sig)&amp;#123;    while (waitpid(-1, 0, WN">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jincheng.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/xiancheng.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/duoxianc.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/gainian.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/globaland.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/stat.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/example.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/shared.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/badeg.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-86.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zhengchang.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dang.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sss.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/xinhaol.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jiasuo.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-87.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/yuanli.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/duzhe.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/esa.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-88.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jiang.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/hanshu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/face.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-89.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sisuo.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-90.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/pindong.png">
+<meta property="og:updated_time" content="2018-12-15T12:16:50.513Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-Synchronization">
+<meta name="twitter:description" content="现代操作系统提供三种构造并发程序的方法： 1.进程 2.I/O多路复用 3.线程 基于进程的并发编程1.内核自动管理多个逻辑流 2.每个进程有私有的地址空间（进程切换的时候要保存和载入数据） 12345678910111213141516171819202122232425void sigchld_handler(int sig)&amp;#123;    while (waitpid(-1, 0, WN">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jincheng.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/15/SAPP-Synchronization/"/>
+
+
+
+
+
+  <title>CSAPP-Synchronization | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/15/SAPP-Synchronization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-Synchronization</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T13:50:00+08:00">
+                2018-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>现代操作系统提供三种构造并发程序的方法：</p>
+<p>1.进程</p>
+<p>2.I/O多路复用</p>
+<p>3.线程</p>
+<h3 id="基于进程的并发编程"><a href="#基于进程的并发编程" class="headerlink" title="基于进程的并发编程"></a>基于进程的并发编程</h3><p>1.内核自动管理多个逻辑流</p>
+<p>2.每个进程有私有的地址空间（进程切换的时候要保存和载入数据）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void sigchld_handler(int sig)&#123;</span><br><span class="line">    while (waitpid(-1, 0, WNOHANG) &gt; 0)</span><br><span class="line">        ;</span><br><span class="line">    return;</span><br><span class="line">    // Reap all zombie children</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc, char **argv) &#123;</span><br><span class="line">    int listenfd, connfd;</span><br><span class="line">    socklen_t clientlen;</span><br><span class="line">    struct sockaddr_storage clientaddr;</span><br><span class="line">    </span><br><span class="line">    Signal(SIGCHLD, sigchld_handler);</span><br><span class="line">    listenfd = Open_listenfd(argv[1]);</span><br><span class="line">    while (1) &#123;</span><br><span class="line">        clientlen = sizeof(struct sockaddr_storage);</span><br><span class="line">        connfd = Accept(listenfd, (SA *) &amp;clientaddr, &amp;clientlen);</span><br><span class="line">        if (Fork() == 0) &#123;</span><br><span class="line">            Close(listenfd); // Child closes its listening socket</span><br><span class="line">            echo(connfd); // Child services client</span><br><span class="line">            Close(connfd); // Child closes connection with client</span><br><span class="line">            exit(0); // Child exits</span><br><span class="line">        &#125;</span><br><span class="line">        Close(connfd); // Parent closes connected socket (important!)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>服务器在accept函数中等待连接请求，然后客户端通过调用connect函数发送连接请求，最后服务器在accept中返回connfd并且fork一个子进程来处理客户端链接，链接就建立在listenfd和connfd之间。</p>
+<ul>
+<li><p>每个客户端由独立的子进程处理，而且必须回收僵尸进程，避免内存泄漏</p>
+</li>
+<li><p>不同进程之间不共享数据</p>
+</li>
+<li><p>父进程和子进程都有listenfd和connfd，所以父进程中要关闭connfd，子进程要关闭listenfd</p>
+<ul>
+<li>内核会保存对每个socket的引用计数，(refcnt(connfd)=2)，所以父进程需要关闭connfd，这样在子进程结束后引用计数才会变为0</li>
+</ul>
+</li>
+</ul>
+<p>优点：只共享已打开的file table，无论是descriptor还是全局变量都不共享，不容易造成同步问题。</p>
+<p>缺点：带来额外的进程管理开销，进程间通信需要用IPC</p>
+<h3 id="基于事件-I-O-multiplexing"><a href="#基于事件-I-O-multiplexing" class="headerlink" title="基于事件 I/O multiplexing"></a>基于事件 I/O multiplexing</h3><p>1.由程序员手动控制多个逻辑流。</p>
+<p>2.所有逻辑流共享同一个地址空间</p>
+<h3 id="基于线程"><a href="#基于线程" class="headerlink" title="基于线程"></a>基于线程</h3><p>内核自动管理多个逻辑流</p>
+<p>每个线程共享地址空间</p>
+<p>属于基于进程和基于事件的混合体</p>
+<h3 id="传统观点下的进程"><a href="#传统观点下的进程" class="headerlink" title="传统观点下的进程"></a>传统观点下的进程</h3><p><img src="/home/alex/图片/jincheng.png" alt="upload sessful"></p>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><p>一个进程有多个线程，每个线程有自己的线程id，有自己的逻辑控制流，也有自己用来保存局部变量的栈（其他线程可以修改）。而且共享所有代码，数据和内核上下文。</p>
+<p><img src="/home/alex/图片/xiancheng.png" alt="upload sucssful"></p>
+<h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><p><img src="/home/alex/图片/duoxianc.png" alt="upload sussful"></p>
+<p>概念上的</p>
+<p><img src="/home/alex/图片/gainian.png" alt="upload sessful"></p>
+<p>实际上的</p>
+<p><img src="/home/alex/图片/globaland.png" alt="upload sucsful"></p>
+<p>不同线程之间的数据其实可以相互访问</p>
+<h3 id="Shared-variable"><a href="#Shared-variable" class="headerlink" title="Shared variable"></a>Shared variable</h3><p>a variable x is shared if and only if multiple threads reference some instance of x </p>
+<h4 id="global-amp-local-variable"><a href="#global-amp-local-variable" class="headerlink" title="global &amp; local variable"></a>global &amp; local variable</h4><p><img src="/home/alex/图片/stat.png" alt="upload sful"></p>
+<h4 id="example"><a href="#example" class="headerlink" title="example"></a>example</h4><p><img src="/home/alex/图片/example.png" alt="upload suessful"></p>
+<p>ptr是全局变量，shared by main thread and thread 1&amp;2</p>
+<p>i is only referenced by main, so not shared</p>
+<p>msgs is referenced by all 3 threads, so is is shared </p>
+<p>myid is only referenced by thread 1 &amp; 2 seperately</p>
+<p>static int cnt is referenced by both 1 &amp;2</p>
+<p>so if <strong><em>multiple threads reference the same x instance, the x is shared </em></strong></p>
+<p><img src="/home/alex/图片/shared.png" alt="upload succful"></p>
+<h3 id="bad-example"><a href="#bad-example" class="headerlink" title="bad example"></a>bad example</h3><p><img src="/home/alex/图片/badeg.png" alt="upload successful"></p>
+<p>看loop的汇编代码</p>
+<p><img src="/home/alex/图片/2018-86.png" alt="filename ady exists, renamed"></p>
+<p>正常结果</p>
+<p><img src="/home/alex/图片/zhengchang.png" alt="upload succful"></p>
+<p>下图是线程2提前Load了cnt，结果rdx2为0，正确结果是等到线程1store之后线程2再load</p>
+<p><img src="/home/alex/图片/dang.png" alt="upload succeful"></p>
+<h4 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h4><p>volatile的本意是“易变的” 因为访问寄存器要比访问内存单元快的多,所以编译器一般都会作减少存取内存的优化，但有可能会读脏数据。当要求使用volatile声明变量值的时候，系统总是重新从它所在的内存读取数据，即使它前面的指令刚刚从该处读取过数据。精确地说就是，遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问；如果不使用valatile，则编译器将对所声明的语句进行优化。（简洁的说就是：volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不要进行编译优化，以免出错）</p>
+<h3 id="再看信号量"><a href="#再看信号量" class="headerlink" title="再看信号量:"></a>再看信号量:</h3><p><img src="/home/alex/图片/sss.png" alt="upload sussful"></p>
+<p>信号量的提出，是为了解决<strong><em>同步不同执行线程问题</em></strong>的方法。</p>
+<p>什么是信号量？</p>
+<p>信号量<strong>s</strong>是一个具有非负值的全局变量。</p>
+<p>只能由两种特殊操作P，V来处理</p>
+<p>P，V原理如上图</p>
+<p><img src="/home/alex/图片/xinhaol.png" alt="uploadccessful"></p>
+<p>定义P和V，为了确保一个正在运行的程序绝不可能进入s是负值的状态，这个属性叫<strong><em>信号量不变性</em></strong></p>
+<h3 id="使用信号量实现互斥"><a href="#使用信号量实现互斥" class="headerlink" title="使用信号量实现互斥"></a>使用信号量实现互斥</h3><p><img src="/home/alex/图片/jiasuo.png" alt="upload cessful"></p>
+<p><img src="/home/alex/图片/2018-87.png" alt="filename alrey exists, renamed"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">volatile int cnt=0; </span><br><span class="line">sem_t mutex; //声明信号量mutex</span><br><span class="line"></span><br><span class="line">Sem_init(&amp;mutex,0,1);//主线程中初始化</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//在线程例程中对共享变量cnt的更新包围P和V操作，从而保护他们</span><br><span class="line">for(i=0;i&lt;niters;i++)&#123;</span><br><span class="line"></span><br><span class="line">    P(&amp;mutex);</span><br><span class="line">    cnt++;</span><br><span class="line">    V(&amp;mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用信号量来调度共享资源"><a href="#使用信号量来调度共享资源" class="headerlink" title="使用信号量来调度共享资源"></a>使用信号量来调度共享资源</h3><h4 id="生产者和消费者"><a href="#生产者和消费者" class="headerlink" title="生产者和消费者"></a>生产者和消费者</h4><p><img src="/home/alex/图片/yuanli.png" alt="upload cessful"></p>
+<h4 id="读者和写者问题"><a href="#读者和写者问题" class="headerlink" title="读者和写者问题"></a>读者和写者问题</h4><p><img src="/home/alex/图片/duzhe.png" alt="load successful"></p>
+<p><img src="/home/alex/图片/esa.png" alt="upload sucsful"></p>
+<p><img src="/home/alex/图片/2018-88.png" alt="filename exists, renamed"></p>
+<h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>一个函数如果被多个并发线程反复调用的时候，会一直产生正确的结果，否则就是线程不安全的。</p>
+<p>1.不保护共享变量的函数</p>
+<p>解决方案，利用P,V这样的同步操作来保护共享的变量</p>
+<p>2.保持跨越多个调用状态的函数</p>
+<p><img src="/home/alex/图片/jiang.png" alt="uoad successful"></p>
+<p>3.返回指向静态变量的指针的函数</p>
+<p><img src="/home/alex/图片/hanshu.png" alt="upload scessful"></p>
+<p>4.调用线程不安全函数的函数。</p>
+<p> 1.如果函数f调用线程不安全函数g。那么f可能不安全。<br> 2.如果g是第二类，那么f一定不安全，也没有办法去修正，只能改变g.<br> 3.如果g是第一，三类，可以用加锁-拷贝技术来解决。</p>
+<h3 id="竞争"><a href="#竞争" class="headerlink" title="竞争"></a>竞争</h3><p>当一个程序的正确性依赖于一个线程要在另一个线程到达y点之前到达它的控制流中的x点，就会发生竞争。</p>
+<p>1.通常，竞争发生的理由是因为程序员假定某种特殊的轨迹线穿过执行状态空间。</p>
+<p><img src="/home/alex/图片/face.png" alt="u successful"></p>
+<p><img src="/home/alex/图片/2018-89.png" alt="filename alry exists, renamed"></p>
+<p><img src="/home/alex/图片/sisuo.png" alt="upload successf"></p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p><img src="/home/alex/图片/2018-90.png" alt="filename ady exists, renamed"></p>
+<p><img src="/home/alex/图片/pindong.png" alt="uploaessful"></p>
+<h3 id="练习："><a href="#练习：" class="headerlink" title="练习："></a>练习：</h3><p>判断 myid会不会出现竞争</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// 版本一</span><br><span class="line">void *foo(void *vargp)</span><br><span class="line">&#123;</span><br><span class="line">    int myid;</span><br><span class="line">    myid = *((int *)vargp);</span><br><span class="line">    Free(vargp);</span><br><span class="line">    printf(&quot;Thread %d\n&quot;, myid);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    pthread_t tid[2];</span><br><span class="line">    int i, *ptr;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; 2; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ptr = Malloc(sizeof(int));</span><br><span class="line">        *ptr = i;</span><br><span class="line">        Pthread_create(&amp;tid[i], 0, foo, ptr);</span><br><span class="line">    &#125;</span><br><span class="line">    Pthread_join(tid[0], 0);</span><br><span class="line">    Pthread_join(tid[1], 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>循环中每次创建不同的指针，两个线程不是共享同一个变量。</p>
+<hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 版本二</span><br><span class="line">void *foo(void *vargp)</span><br><span class="line">&#123;</span><br><span class="line">    int myid;</span><br><span class="line">    myid = *((int *)vargp);</span><br><span class="line">    printf(&quot;Thread %d\n&quot;, myid);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    pthread_t tid[2];</span><br><span class="line">    int i;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; 2; i++)</span><br><span class="line">        Pthread_create(&amp;tid[i], NULL, foo, &amp;i);</span><br><span class="line">    Pthread_join(tid[0], NULL);</span><br><span class="line">    Pthread_join(tid[1], NULL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两个线程共享i变量，而i++和myid = <em>((int </em>)vargp)<br>会发生竞争，当然前提是传的是引用&amp;i，因为这样的话foo函数会改变i本身的值，若如果是传值i，则只会改变i的一个副本。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/14/CSAPP-Network/" rel="next" title="CSAPP-Network">
+                <i class="fa fa-chevron-left"></i> CSAPP-Network
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/15/CSAPP-proxy-lab/" rel="prev" title="CSAPP-proxy lab">
+                CSAPP-proxy lab <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于进程的并发编程"><span class="nav-number">1.</span> <span class="nav-text">基于进程的并发编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于事件-I-O-multiplexing"><span class="nav-number">2.</span> <span class="nav-text">基于事件 I/O multiplexing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于线程"><span class="nav-number">3.</span> <span class="nav-text">基于线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传统观点下的进程"><span class="nav-number">4.</span> <span class="nav-text">传统观点下的进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">5.</span> <span class="nav-text">线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程"><span class="nav-number">6.</span> <span class="nav-text">多线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shared-variable"><span class="nav-number">7.</span> <span class="nav-text">Shared variable</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#global-amp-local-variable"><span class="nav-number">7.1.</span> <span class="nav-text">global &amp; local variable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#example"><span class="nav-number">7.2.</span> <span class="nav-text">example</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bad-example"><span class="nav-number">8.</span> <span class="nav-text">bad example</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile"><span class="nav-number">8.1.</span> <span class="nav-text">volatile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#再看信号量"><span class="nav-number">9.</span> <span class="nav-text">再看信号量:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用信号量实现互斥"><span class="nav-number">10.</span> <span class="nav-text">使用信号量实现互斥</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">10.1.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用信号量来调度共享资源"><span class="nav-number">11.</span> <span class="nav-text">使用信号量来调度共享资源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生产者和消费者"><span class="nav-number">11.1.</span> <span class="nav-text">生产者和消费者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读者和写者问题"><span class="nav-number">11.2.</span> <span class="nav-text">读者和写者问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全"><span class="nav-number">12.</span> <span class="nav-text">线程安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#竞争"><span class="nav-number">13.</span> <span class="nav-text">竞争</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#死锁"><span class="nav-number">14.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#练习："><span class="nav-number">15.</span> <span class="nav-text">练习：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -272,6 +272,377 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/15/CSAPP-proxy-lab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/15/CSAPP-proxy-lab/" itemprop="url">CSAPP-proxy lab</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T21:43:43+08:00">
+                2018-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Implementing-a-sequential-web-proxy"><a href="#Implementing-a-sequential-web-proxy" class="headerlink" title="Implementing a sequential web proxy"></a>Implementing a sequential web proxy</h3><p>先搞清listen socket 和 connected socket 的区别。</p>
+<p><img src="/home/alex/图片/taojiezidui.png" alt="upload succful"></p>
+<p>一个套接字对标记着一个客户端和服务器的链接。</p>
+<p>客户端是发起连接请求的主动实体，而内核会认为socket函数创建的套接字是主动套接字，而服务器就是要调用listen函数告诉内核，该套接字是被服务器而不是客户端使用的，即listen函数将一个主动套接字转化为<strong><em>监听套接字</em></strong>。</p>
+<p>服务器通过accept函数等待来自客户端的连接请求到达监听套接字，并返回一个<strong><em>已连接套接字</em></strong>，这个connfd可以被用来与客户端进行通讯。</p>
+<p>实验过程如下：</p>
+<p><img src="/home/alex/图片/实验过程.png" alt="upload successful"></p>
+<h4 id="some-def"><a href="#some-def" class="headerlink" title="some def"></a>some def</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/* You won&apos;t lose style points for including this long line in your code */</span><br><span class="line">static const char *user_agent_hdr = &quot;User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.3) Gecko/20120305 Firefox/10.0.3\r\n&quot;;</span><br><span class="line">static const char *conn_hdr = &quot;Connection: close\r\n&quot;;</span><br><span class="line">static const char *prox_hdr = &quot;Proxy-Connection: close\r\n&quot;;</span><br><span class="line">static const char *hostFormat = &quot;Host: %s\r\n&quot;;</span><br><span class="line">static const char *requestHeaderFormat = &quot;GET %s HTTP/1.0\r\n&quot;;</span><br><span class="line">static const char *endof_hdr = &quot;\r\n&quot;;</span><br><span class="line">static const char *connection_key = &quot;Connection&quot;;</span><br><span class="line">static const char *user_agent_key= &quot;User-Agent&quot;;</span><br><span class="line">static const char *proxy_connection_key = &quot;Proxy-Connection&quot;;</span><br><span class="line">static const char *hostKey = &quot;Host&quot;;</span><br><span class="line"></span><br><span class="line">void doit(int fd);</span><br><span class="line">void parse_uri(char *uri,char *hostname,char *path,int *port);</span><br><span class="line">void buildHTTPHeader(char *http_header,char *hostname,char *path,int port,rio_t *client_rio);</span><br><span class="line">int connectEndServer(char *hostname,int port,char *httpHeader);</span><br><span class="line">void *thread(void *vargp);</span><br><span class="line">void initCache();</span><br><span class="line">int reader(int fd,char *uri);</span><br><span class="line">void writer(char *uri,char *buf);</span><br><span class="line">//reference: https://zhuanlan.zhihu.com/p/37902495</span><br><span class="line"></span><br><span class="line">typedef struct&#123;</span><br><span class="line">    char *buf;</span><br><span class="line">    char *uri;</span><br><span class="line">&#125;cacheLine;</span><br><span class="line"></span><br><span class="line">typedef struct&#123;</span><br><span class="line">    cacheLine* objects;</span><br><span class="line">    int count;</span><br><span class="line">&#125;Cache;</span><br><span class="line"></span><br><span class="line">Cache cache;</span><br><span class="line">int readCount;</span><br><span class="line">sem_t mutex,wmutex;</span><br><span class="line">//用于多线程编程中，防止两条线程同时对同一公共资源（比如全局变量）进行读写的机制</span><br></pre></td></tr></table></figure>
+<p>main 函数，参考课本的tiny服务器，注意的是这里pthread_create是传值而不是引用，是为了避免竞争。（传值是传一个独立的副本）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    int listenfd,connfd;</span><br><span class="line">    socklen_t clientlen;</span><br><span class="line">    char hostname[MAXLINE];</span><br><span class="line">    char port[MAXLINE];</span><br><span class="line">    struct sockaddr_storage clientaddr;</span><br><span class="line">    pthread_t tid;</span><br><span class="line">    if(argc!=2)&#123;</span><br><span class="line">        fprintf(stderr,&quot;usage %s &lt;port&gt;\n&quot;,argv[0]);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    initCache();</span><br><span class="line">    //ignore the SIGPIPE signal</span><br><span class="line">    signal(SIGPIPE, SIG_IGN);</span><br><span class="line">    //transfrom the fd to listenfd</span><br><span class="line">    listenfd = Open_listenfd(argv[1]);</span><br><span class="line">    while(1)&#123;</span><br><span class="line">        clientlen = sizeof(clientaddr);</span><br><span class="line">        connfd = Accept(listenfd,(SA*)&amp;clientaddr,&amp;clientlen);</span><br><span class="line">        //ip-&gt;host name</span><br><span class="line">        Getnameinfo((SA *)&amp;clientaddr,clientlen,hostname,MAXLINE,port,MAXLINE,0);</span><br><span class="line">        printf(&quot;Accepted connection from (%s %s)\n&quot;,hostname,port);</span><br><span class="line">        //pass value of connfd to create function to avoid competition</span><br><span class="line">        Pthread_create(&amp;tid,NULL,thread,(void*)connfd);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多线程并发"><a href="#多线程并发" class="headerlink" title="多线程并发"></a>多线程并发</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void *thread(void *vargp)&#123;</span><br><span class="line">    int connfd = (int)vargp;</span><br><span class="line">    //要把线程分离出去，让这个线程计数结束之后自己回收资源，避免内存泄露。</span><br><span class="line">    Pthread_detach(pthread_self());</span><br><span class="line">    doit(connfd);</span><br><span class="line">    Close(connfd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="doit"><a href="#doit" class="headerlink" title="doit"></a>doit</h3><p>函数逻辑：</p>
+<p>1.得到解析后的请求行和请求头</p>
+<p>2.然后去连接对应的服务器，发送请求</p>
+<p>3.建立连接后，返回信息会在描述符中，也就是endServerFd</p>
+<p>4.再把信息从endServerFd中读取出来，直接写进客户端对应的描述符fd就可以。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">//对客户端请求的HTTP header 进行处理，首先获得request header</span><br><span class="line">//eg: GET http://www.zhihu.com HTTP/1.1</span><br><span class="line">//然后对于请求URL进行分析，获取需要连接的服务器的hostname，port，</span><br><span class="line">//修改客户端的HTTP，让proxy充当客户端把信息转发给正确的服务器，然后接收服务器</span><br><span class="line">//的返回并转发给正确的客户端</span><br><span class="line">void doit(int connfd)&#123;</span><br><span class="line"></span><br><span class="line">    char buf[MAXLINE],uri[MAXLINE],method[MAXLINE],version[MAXLINE];</span><br><span class="line">    //parseRequest(fd,&amp;requestLine,headers,&amp;numHead);</span><br><span class="line">    char endServerHTTP [MAXLINE];</span><br><span class="line">    char hostname[MAXLINE],path[MAXLINE];</span><br><span class="line">    char objectBUF[MAX_OBJECT_SIZE];</span><br><span class="line">    int port,endServerFd;</span><br><span class="line"></span><br><span class="line">    rio_t rio,serverRio;</span><br><span class="line"></span><br><span class="line">    Rio_readinitb(&amp;rio,connfd);</span><br><span class="line">    Rio_readlineb(&amp;rio,buf,MAXLINE);</span><br><span class="line">    //read GET http://www.zhihu.com HTTP/1.1</span><br><span class="line">    //format read function</span><br><span class="line">    sscanf(buf,&quot;%s %s %s&quot;,method,uri,version);</span><br><span class="line">    </span><br><span class="line">    if(strcasecmp(method,&quot;GET&quot;))&#123;</span><br><span class="line">        printf(&quot;Proxy does not implement the method&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //parse the uri and save the hostname,path,port number to the argument</span><br><span class="line">    parse_uri(uri,hostname,path,&amp;port);</span><br><span class="line"></span><br><span class="line">    //build the http header which will send to the end server</span><br><span class="line">    buildHTTPHeader(endServerHTTP,hostname,path,port,&amp;rio);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    strcpy(uri,hostname);</span><br><span class="line">    strcpy(uri+strlen(uri),path);</span><br><span class="line">    if(reader(connfd,uri))&#123;</span><br><span class="line">        fprintf(stdout,&quot;%s from cache\n&quot;,uri);</span><br><span class="line">        fflush(stdout);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int totalSize = 0;</span><br><span class="line">    //connect to the end server;</span><br><span class="line">    endServerFd = connectEndServer(hostname,port);</span><br><span class="line">    if(endServerFd&lt;0)&#123;</span><br><span class="line">        printf(&quot;connection failed&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    Rio_readinitb(&amp;serverRio,endServerFd);</span><br><span class="line">    Rio_writen(endServerFd,endServerHTTP,strlen(endServerHTTP));</span><br><span class="line"></span><br><span class="line">    //receive message from end server and send to client</span><br><span class="line">    size_t n;</span><br><span class="line">    while((n=Rio_readlineb(&amp;serverRio,buf,MAXLINE)))&#123;</span><br><span class="line">        printf(&quot;proxy received %ld bytes,then send.\n&quot;,n);</span><br><span class="line">        Rio_writen(connfd,buf,n);</span><br><span class="line">        strcpy(objectBUF+totalSize,buf);</span><br><span class="line">        totalSize+=n;</span><br><span class="line">    &#125;</span><br><span class="line">   //each objectBUF save all info of the request</span><br><span class="line">    if(totalSize&lt;MAX_OBJECT_SIZE)</span><br><span class="line">        writer(uri,objectBUF);</span><br><span class="line">    Close(endServerFd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="build-HTTP-that-send-to-the-end-server"><a href="#build-HTTP-that-send-to-the-end-server" class="headerlink" title="build HTTP that send to the end server"></a>build HTTP that send to the end server</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">void buildHTTPHeader(char *http_header,char *hostname,char *path,int port,rio_t *client_rio)&#123;</span><br><span class="line"></span><br><span class="line">    char buf[MAXLINE],requestHeader[MAXLINE],otherHeader[MAXLINE],hostHeader[MAXLINE];</span><br><span class="line"></span><br><span class="line">    //request line</span><br><span class="line">    //static const char *requestHeaderFormat = &quot;GET %s HTTP/1.0\r\n&quot;;</span><br><span class="line">    //把path内容按照格式写入requestHeader</span><br><span class="line">    sprintf(requestHeader,requestHeaderFormat,path);</span><br><span class="line">    while(Rio_readlineb(client_rio,buf,MAXLINE)&gt;0)&#123;</span><br><span class="line"></span><br><span class="line">        if(!strcmp(buf,endof_hdr))&#123;</span><br><span class="line">            break; //EOF</span><br><span class="line">        &#125;</span><br><span class="line">        //Host</span><br><span class="line">        if(!strncasecmp(buf,hostKey,strlen(hostKey)))&#123;</span><br><span class="line">            strcpy(hostHeader,buf);</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(!strncasecmp(buf,connection_key,strlen(connection_key))&amp;&amp;!</span><br><span class="line">            strncasecmp(buf,proxy_connection_key,strlen(proxy_connection_key)),</span><br><span class="line">            !strncasecmp(buf,user_agent_key,strlen(user_agent_key)))&#123;</span><br><span class="line">            //把两个串连接起来</span><br><span class="line">            strcat(otherHeader,buf);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    if(strlen(hostHeader)==0)&#123;</span><br><span class="line">        sprintf(hostHeader,hostFormat,buf);</span><br><span class="line">    &#125;</span><br><span class="line">    //static const char *user_agent_hdr = &quot;User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.3) Gecko/20120305 Firefox/10.0.3\r\n&quot;;</span><br><span class="line">    //static const char *conn_hdr = &quot;Connection: close\r\n&quot;;</span><br><span class="line">    //static const char *prox_hdr = &quot;Proxy-Connection: close\r\n&quot;;</span><br><span class="line">    //static const char *endof_hdr = &quot;\r\n&quot;;</span><br><span class="line">    </span><br><span class="line">    //put all header to http_header</span><br><span class="line">    sprintf(http_header,&quot;%s%s%s%s%s%s%s&quot;,requestHeader,hostHeader,</span><br><span class="line">            conn_hdr,prox_hdr,user_agent_hdr,otherHeader,endof_hdr);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="parseuri"><a href="#parseuri" class="headerlink" title="parseuri"></a>parseuri</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">void parse_uri(char *uri,char *hostname,char *path,int *port)&#123;</span><br><span class="line"></span><br><span class="line">    //strstr(str1,str2) 函数用于判断字符串str2是否是str1的子串。</span><br><span class="line">    //如果是，则该函数返回str2在str1中首次出现的地址；否则，返回NULL。</span><br><span class="line"></span><br><span class="line">    *port = 80;</span><br><span class="line">    char *pos1 = strstr(uri,&quot;//&quot;);</span><br><span class="line"></span><br><span class="line">    if(pos1)&#123;</span><br><span class="line">        pos1 =  pos1+2;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        pos1 = uri;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    char *pos2 = strstr(pos1,&quot;:&quot;);</span><br><span class="line">    //case the uri has the port info</span><br><span class="line">    if(pos2)&#123;</span><br><span class="line"></span><br><span class="line">        //          userinfo     host        port</span><br><span class="line">        //          ┌─┴────┐ ┌────┴────────┐ ┌┴┐</span><br><span class="line">        //  https://john.doe@www.example.com:123/forum/questions/?tag=networking&amp;order=newest#top</span><br><span class="line">        //  └─┬─┘ └───────┬────────────────────┘└─┬─────────────┘└──┬───────────────────────┘└┬─┘</span><br><span class="line">        //  scheme     authority                 path              query                      fragment</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        //initalize the head of pos2 is \0 i.e clean the pos2</span><br><span class="line">        *pos2 = &apos;\0&apos;;</span><br><span class="line">        sscanf(pos1,&quot;%s&quot;,hostname);</span><br><span class="line">        sscanf(pos2+1,&quot;%d%s&quot;,port,path);</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        //</span><br><span class="line">        //telnet://192.0.2.16:80/xxx</span><br><span class="line">        //└──┬─┘ └──────┬──────┘│</span><br><span class="line">        //scheme    authority  path</span><br><span class="line">        // no port info</span><br><span class="line">        pos2 = strstr(pos1,&quot;/&quot;);</span><br><span class="line">        if(pos2)&#123;</span><br><span class="line">            sscanf(pos1,&quot;%s&quot;,hostname);</span><br><span class="line">            *pos2 = &apos;/&apos;;</span><br><span class="line">            sscanf(pos2,&quot;%s&quot;,path);</span><br><span class="line">        &#125;</span><br><span class="line">        //only hostname info</span><br><span class="line">        else&#123;</span><br><span class="line">            sscanf(pos1,&quot;%s&quot;,hostname);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="connect-end-server"><a href="#connect-end-server" class="headerlink" title="connect end server"></a>connect end server</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">inline int connectEndServer(char *hostname,int port)&#123;</span><br><span class="line"></span><br><span class="line">    char portStr[100];</span><br><span class="line">    sprintf(portStr,&quot;%d&quot;,port);</span><br><span class="line">    return Open_clientfd(hostname,portStr);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="cache"><a href="#cache" class="headerlink" title="cache"></a>cache</h3><p>采用读者-写者模型，可以让多个线程同时来读。</p>
+<p>没有实现LRU，只是简单地把1MiB内存分为十块，每次接受请求并解析之后，先去cache看看有没有对应的web object，如果有直接返回给客户端，没有再从服务端请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">int reader(int fd,char *uri)&#123;</span><br><span class="line"></span><br><span class="line">    //here uri = each server&apos;s hostname+path</span><br><span class="line">    int Found = 0;</span><br><span class="line">    P(&amp;mutex);</span><br><span class="line">    readCount++;</span><br><span class="line">    if(readCount==1)&#123;</span><br><span class="line">        P(&amp;wmutex);</span><br><span class="line">    &#125;</span><br><span class="line">    V(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    for(int i=0;i&lt;10;i++)&#123;</span><br><span class="line">        if(!strcmp(cache.objects[i].uri,uri))&#123;</span><br><span class="line">            Rio_writen(fd,cache.objects[i].buf,MAX_OBJECT_SIZE);</span><br><span class="line">            Found=1;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    P(&amp;mutex);</span><br><span class="line">    readCount--;</span><br><span class="line">    if(readCount==0)&#123;</span><br><span class="line">        V(&amp;wmutex);</span><br><span class="line">    &#125;</span><br><span class="line">    V(&amp;mutex);</span><br><span class="line">    return Found;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void writer(char *uri,char *buf)&#123;</span><br><span class="line"></span><br><span class="line">    P(&amp;wmutex);</span><br><span class="line">    strcpy(cache.objects[cache.count].uri,uri);</span><br><span class="line">    strcpy(cache.objects[cache.count].buf,buf);</span><br><span class="line">    ++cache.count;</span><br><span class="line">    V(&amp;wmutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//simple cache no use LRU,just split the memory to 10 block,</span><br><span class="line">//each time use a loop to find whether the uri of the request is in the block</span><br><span class="line">//在server和client之间加入代理的好处之一，就可以实现cache化。</span><br><span class="line">//因为，经常有很多对同一个资源多次请求的情况，如果每次都从服务端获取，那样服务器会很累。</span><br><span class="line">//如果可以在代理部分就实现一个cache，</span><br><span class="line">//将最近客户端请求过的数据给存储起来，那样就不需要每次都要从服务器请求了，进而提高服务器的效率。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void initCache()&#123;</span><br><span class="line"></span><br><span class="line">    sem_init(&amp;mutex,0,1);</span><br><span class="line">    sem_init(&amp;wmutex,0,1);</span><br><span class="line">    cache.objects = (cacheLine*)malloc(sizeof(cacheLine)*10);</span><br><span class="line">    cache.count=0;</span><br><span class="line">    readCount=0;</span><br><span class="line">    for(int i=0;i&lt;10;i++)&#123;</span><br><span class="line">        cache.objects[i].buf = malloc(sizeof(char)*MAXLINE);</span><br><span class="line">        cache.objects[i].uri = malloc(sizeof(char)*MAX_OBJECT_SIZE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h3><ul>
+<li><p>use ./free-port.sh to get a free port, like 4501</p>
+</li>
+<li><p>open a terminal, nc -l 4501</p>
+<ul>
+<li>this is to start netcat as a server listening on port you get</li>
+</ul>
+</li>
+<li><p>open a terminal </p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v --proxy http://localhost:23885/ http://localhost:4501/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>open a terminal </li>
+</ul>
+<p>./proxy 23885</p>
+<p><img src="/home/alex/图片/2018-91.png" alt="filename alady exists, renamed"></p>
+<p>netcat is listening on 4501,proxy is listening on 23885,here netcat serves as a server,print sth in the ‘nc -l’ window,then you can see the exact sth print on the ‘curl’ window</p>
+<h3 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h3><p><a href="https://blog.csdn.net/u012336567/article/details/52056089" target="_blank" rel="noopener">https://blog.csdn.net/u012336567/article/details/52056089</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/37902495" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/37902495</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/15/SAPP-Synchronization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/15/SAPP-Synchronization/" itemprop="url">CSAPP-Synchronization</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T13:50:00+08:00">
+                2018-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>现代操作系统提供三种构造并发程序的方法：</p>
+<p>1.进程</p>
+<p>2.I/O多路复用</p>
+<p>3.线程</p>
+<h3 id="基于进程的并发编程"><a href="#基于进程的并发编程" class="headerlink" title="基于进程的并发编程"></a>基于进程的并发编程</h3><p>1.内核自动管理多个逻辑流</p>
+<p>2.每个进程有私有的地址空间（进程切换的时候要保存和载入数据）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void sigchld_handler(int sig)&#123;</span><br><span class="line">    while (waitpid(-1, 0, WNOHANG) &gt; 0)</span><br><span class="line">        ;</span><br><span class="line">    return;</span><br><span class="line">    // Reap all zombie children</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc, char **argv) &#123;</span><br><span class="line">    int listenfd, connfd;</span><br><span class="line">    socklen_t clientlen;</span><br><span class="line">    struct sockaddr_storage clientaddr;</span><br><span class="line">    </span><br><span class="line">    Signal(SIGCHLD, sigchld_handler);</span><br><span class="line">    listenfd = Open_listenfd(argv[1]);</span><br><span class="line">    while (1) &#123;</span><br><span class="line">        clientlen = sizeof(struct sockaddr_storage);</span><br><span class="line">        connfd = Accept(listenfd, (SA *) &amp;clientaddr, &amp;clientlen);</span><br><span class="line">        if (Fork() == 0) &#123;</span><br><span class="line">            Close(listenfd); // Child closes its listening socket</span><br><span class="line">            echo(connfd); // Child services client</span><br><span class="line">            Close(connfd); // Child closes connection with client</span><br><span class="line">            exit(0); // Child exits</span><br><span class="line">        &#125;</span><br><span class="line">        Close(connfd); // Parent closes connected socket (important!)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>服务器在accept函数中等待连接请求，然后客户端通过调用connect函数发送连接请求，最后服务器在accept中返回connfd并且fork一个子进程来处理客户端链接，链接就建立在listenfd和connfd之间。</p>
+<ul>
+<li><p>每个客户端由独立的子进程处理，而且必须回收僵尸进程，避免内存泄漏</p>
+</li>
+<li><p>不同进程之间不共享数据</p>
+</li>
+<li><p>父进程和子进程都有listenfd和connfd，所以父进程中要关闭connfd，子进程要关闭listenfd</p>
+<ul>
+<li>内核会保存对每个socket的引用计数，(refcnt(connfd)=2)，所以父进程需要关闭connfd，这样在子进程结束后引用计数才会变为0</li>
+</ul>
+</li>
+</ul>
+<p>优点：只共享已打开的file table，无论是descriptor还是全局变量都不共享，不容易造成同步问题。</p>
+<p>缺点：带来额外的进程管理开销，进程间通信需要用IPC</p>
+<h3 id="基于事件-I-O-multiplexing"><a href="#基于事件-I-O-multiplexing" class="headerlink" title="基于事件 I/O multiplexing"></a>基于事件 I/O multiplexing</h3><p>1.由程序员手动控制多个逻辑流。</p>
+<p>2.所有逻辑流共享同一个地址空间</p>
+<h3 id="基于线程"><a href="#基于线程" class="headerlink" title="基于线程"></a>基于线程</h3><p>内核自动管理多个逻辑流</p>
+<p>每个线程共享地址空间</p>
+<p>属于基于进程和基于事件的混合体</p>
+<h3 id="传统观点下的进程"><a href="#传统观点下的进程" class="headerlink" title="传统观点下的进程"></a>传统观点下的进程</h3><p><img src="/home/alex/图片/jincheng.png" alt="upload sessful"></p>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><p>一个进程有多个线程，每个线程有自己的线程id，有自己的逻辑控制流，也有自己用来保存局部变量的栈（其他线程可以修改）。而且共享所有代码，数据和内核上下文。</p>
+<p><img src="/home/alex/图片/xiancheng.png" alt="upload sucssful"></p>
+<h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><p><img src="/home/alex/图片/duoxianc.png" alt="upload sussful"></p>
+<p>概念上的</p>
+<p><img src="/home/alex/图片/gainian.png" alt="upload sessful"></p>
+<p>实际上的</p>
+<p><img src="/home/alex/图片/globaland.png" alt="upload sucsful"></p>
+<p>不同线程之间的数据其实可以相互访问</p>
+<h3 id="Shared-variable"><a href="#Shared-variable" class="headerlink" title="Shared variable"></a>Shared variable</h3><p>a variable x is shared if and only if multiple threads reference some instance of x </p>
+<h4 id="global-amp-local-variable"><a href="#global-amp-local-variable" class="headerlink" title="global &amp; local variable"></a>global &amp; local variable</h4><p><img src="/home/alex/图片/stat.png" alt="upload sful"></p>
+<h4 id="example"><a href="#example" class="headerlink" title="example"></a>example</h4><p><img src="/home/alex/图片/example.png" alt="upload suessful"></p>
+<p>ptr是全局变量，shared by main thread and thread 1&amp;2</p>
+<p>i is only referenced by main, so not shared</p>
+<p>msgs is referenced by all 3 threads, so is is shared </p>
+<p>myid is only referenced by thread 1 &amp; 2 seperately</p>
+<p>static int cnt is referenced by both 1 &amp;2</p>
+<p>so if <strong><em>multiple threads reference the same x instance, the x is shared </em></strong></p>
+<p><img src="/home/alex/图片/shared.png" alt="upload succful"></p>
+<h3 id="bad-example"><a href="#bad-example" class="headerlink" title="bad example"></a>bad example</h3><p><img src="/home/alex/图片/badeg.png" alt="upload successful"></p>
+<p>看loop的汇编代码</p>
+<p><img src="/home/alex/图片/2018-86.png" alt="filename ady exists, renamed"></p>
+<p>正常结果</p>
+<p><img src="/home/alex/图片/zhengchang.png" alt="upload succful"></p>
+<p>下图是线程2提前Load了cnt，结果rdx2为0，正确结果是等到线程1store之后线程2再load</p>
+<p><img src="/home/alex/图片/dang.png" alt="upload succeful"></p>
+<h4 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h4><p>volatile的本意是“易变的” 因为访问寄存器要比访问内存单元快的多,所以编译器一般都会作减少存取内存的优化，但有可能会读脏数据。当要求使用volatile声明变量值的时候，系统总是重新从它所在的内存读取数据，即使它前面的指令刚刚从该处读取过数据。精确地说就是，遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问；如果不使用valatile，则编译器将对所声明的语句进行优化。（简洁的说就是：volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不要进行编译优化，以免出错）</p>
+<h3 id="再看信号量"><a href="#再看信号量" class="headerlink" title="再看信号量:"></a>再看信号量:</h3><p><img src="/home/alex/图片/sss.png" alt="upload sussful"></p>
+<p>信号量的提出，是为了解决<strong><em>同步不同执行线程问题</em></strong>的方法。</p>
+<p>什么是信号量？</p>
+<p>信号量<strong>s</strong>是一个具有非负值的全局变量。</p>
+<p>只能由两种特殊操作P，V来处理</p>
+<p>P，V原理如上图</p>
+<p><img src="/home/alex/图片/xinhaol.png" alt="uploadccessful"></p>
+<p>定义P和V，为了确保一个正在运行的程序绝不可能进入s是负值的状态，这个属性叫<strong><em>信号量不变性</em></strong></p>
+<h3 id="使用信号量实现互斥"><a href="#使用信号量实现互斥" class="headerlink" title="使用信号量实现互斥"></a>使用信号量实现互斥</h3><p><img src="/home/alex/图片/jiasuo.png" alt="upload cessful"></p>
+<p><img src="/home/alex/图片/2018-87.png" alt="filename alrey exists, renamed"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">volatile int cnt=0; </span><br><span class="line">sem_t mutex; //声明信号量mutex</span><br><span class="line"></span><br><span class="line">Sem_init(&amp;mutex,0,1);//主线程中初始化</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//在线程例程中对共享变量cnt的更新包围P和V操作，从而保护他们</span><br><span class="line">for(i=0;i&lt;niters;i++)&#123;</span><br><span class="line"></span><br><span class="line">    P(&amp;mutex);</span><br><span class="line">    cnt++;</span><br><span class="line">    V(&amp;mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用信号量来调度共享资源"><a href="#使用信号量来调度共享资源" class="headerlink" title="使用信号量来调度共享资源"></a>使用信号量来调度共享资源</h3><h4 id="生产者和消费者"><a href="#生产者和消费者" class="headerlink" title="生产者和消费者"></a>生产者和消费者</h4><p><img src="/home/alex/图片/yuanli.png" alt="upload cessful"></p>
+<h4 id="读者和写者问题"><a href="#读者和写者问题" class="headerlink" title="读者和写者问题"></a>读者和写者问题</h4><p><img src="/home/alex/图片/duzhe.png" alt="load successful"></p>
+<p><img src="/home/alex/图片/esa.png" alt="upload sucsful"></p>
+<p><img src="/home/alex/图片/2018-88.png" alt="filename exists, renamed"></p>
+<h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>一个函数如果被多个并发线程反复调用的时候，会一直产生正确的结果，否则就是线程不安全的。</p>
+<p>1.不保护共享变量的函数</p>
+<p>解决方案，利用P,V这样的同步操作来保护共享的变量</p>
+<p>2.保持跨越多个调用状态的函数</p>
+<p><img src="/home/alex/图片/jiang.png" alt="uoad successful"></p>
+<p>3.返回指向静态变量的指针的函数</p>
+<p><img src="/home/alex/图片/hanshu.png" alt="upload scessful"></p>
+<p>4.调用线程不安全函数的函数。</p>
+<p> 1.如果函数f调用线程不安全函数g。那么f可能不安全。<br> 2.如果g是第二类，那么f一定不安全，也没有办法去修正，只能改变g.<br> 3.如果g是第一，三类，可以用加锁-拷贝技术来解决。</p>
+<h3 id="竞争"><a href="#竞争" class="headerlink" title="竞争"></a>竞争</h3><p>当一个程序的正确性依赖于一个线程要在另一个线程到达y点之前到达它的控制流中的x点，就会发生竞争。</p>
+<p>1.通常，竞争发生的理由是因为程序员假定某种特殊的轨迹线穿过执行状态空间。</p>
+<p><img src="/home/alex/图片/face.png" alt="u successful"></p>
+<p><img src="/home/alex/图片/2018-89.png" alt="filename alry exists, renamed"></p>
+<p><img src="/home/alex/图片/sisuo.png" alt="upload successf"></p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p><img src="/home/alex/图片/2018-90.png" alt="filename ady exists, renamed"></p>
+<p><img src="/home/alex/图片/pindong.png" alt="uploaessful"></p>
+<h3 id="练习："><a href="#练习：" class="headerlink" title="练习："></a>练习：</h3><p>判断 myid会不会出现竞争</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// 版本一</span><br><span class="line">void *foo(void *vargp)</span><br><span class="line">&#123;</span><br><span class="line">    int myid;</span><br><span class="line">    myid = *((int *)vargp);</span><br><span class="line">    Free(vargp);</span><br><span class="line">    printf(&quot;Thread %d\n&quot;, myid);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    pthread_t tid[2];</span><br><span class="line">    int i, *ptr;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; 2; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ptr = Malloc(sizeof(int));</span><br><span class="line">        *ptr = i;</span><br><span class="line">        Pthread_create(&amp;tid[i], 0, foo, ptr);</span><br><span class="line">    &#125;</span><br><span class="line">    Pthread_join(tid[0], 0);</span><br><span class="line">    Pthread_join(tid[1], 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>循环中每次创建不同的指针，两个线程不是共享同一个变量。</p>
+<hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 版本二</span><br><span class="line">void *foo(void *vargp)</span><br><span class="line">&#123;</span><br><span class="line">    int myid;</span><br><span class="line">    myid = *((int *)vargp);</span><br><span class="line">    printf(&quot;Thread %d\n&quot;, myid);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    pthread_t tid[2];</span><br><span class="line">    int i;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; 2; i++)</span><br><span class="line">        Pthread_create(&amp;tid[i], NULL, foo, &amp;i);</span><br><span class="line">    Pthread_join(tid[0], NULL);</span><br><span class="line">    Pthread_join(tid[1], NULL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两个线程共享i变量，而i++和myid = <em>((int </em>)vargp)<br>会发生竞争，当然前提是传的是引用&amp;i，因为这样的话foo函数会改变i本身的值，若如果是传值i，则只会改变i的一个副本。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-Network/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -370,8 +741,30 @@
 <p><img src="/home/alex/图片/2018-82.png" alt="filename aly exists, renamed"></p>
 <p>发明套接字接口的时候，还没有void*,为了兼容，可以定义套接字函数要求一个指向通用sockaddr结构的指针，然后要求应用程序将与协议特定的结构的指针强制转换成这个通用的结构。</p>
 <h3 id="socket-Interface"><a href="#socket-Interface" class="headerlink" title="socket Interface"></a>socket Interface</h3><p><img src="/home/alex/图片/socketInterface.png" alt="upload succesl"></p>
-<h4 id="socket-1"><a href="#socket-1" class="headerlink" title="socket"></a>socket</h4><p><img src="/home/alex/图片/socf.png" alt="upload cessful"></p>
-<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p>Bind is kernel call to designate which service this program will be hosting</p>
+<p>1.开启服务器</p>
+<ul>
+<li>（open_listenfd函数，做好接收请求的准备）</li>
+<li>socket</li>
+<li>bind</li>
+<li>listen</li>
+<li>accept</li>
+</ul>
+<p>2.开启客户端</p>
+<ul>
+<li>getaddrinfo</li>
+<li>socket</li>
+<li>connect</li>
+</ul>
+<ol start="3">
+<li>交换数据</li>
+</ol>
+<p>4.关闭客户端</p>
+<p>5.断开客户端</p>
+<h4 id="getaddrinfo："><a href="#getaddrinfo：" class="headerlink" title="getaddrinfo："></a>getaddrinfo：</h4><p>设置服务器的相关信息</p>
+<h4 id="socket-1"><a href="#socket-1" class="headerlink" title="socket"></a>socket</h4><p>创建socket descriptor ，也就是之后用来读写的file descriptor</p>
+<p><img src="/home/alex/图片/socf.png" alt="upload cessful"></p>
+<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p>请求kernel把socket address 和 socket descriptor绑定</p>
+<p>Bind is kernel call to designate which service this program will be hosting</p>
 <p>告诉内核将addr中的服务器套接字地址和套接字描述符sockfd联系起来，对于socket和connect，最好方法是用getaddrinfo来为bind提供参数</p>
 <p><img src="/home/alex/图片/2018-83.png" alt="filename alrey exists, renamed"></p>
 <h4 id="listen"><a href="#listen" class="headerlink" title="listen"></a>listen</h4><p>由于客户端是发起连接要求的主动实体，服务器是被动等待连接请求的，所以默认条件下，内核会认为socket函数创建的描述符对应于主动套接字，它存在于一个连接的客户端。服务器调用listen函数告诉内核，描述符是被服务器而不是客户端使用的。</p>
@@ -391,6 +784,13 @@
 <h4 id="addrinfo-struct（代码实现）"><a href="#addrinfo-struct（代码实现）" class="headerlink" title="addrinfo struct（代码实现）"></a>addrinfo struct（代码实现）</h4><p><img src="/home/alex/图片/daimashixian.png" alt="upload succel"></p>
 <p>以下函数是用来把域名转化为IP地址的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line"></span><br><span class="line">	struct addrinfo *p,*listp,hints;</span><br><span class="line">	char buf[MAXLINE];</span><br><span class="line">	int rc,flags;</span><br><span class="line"></span><br><span class="line">	if(argc!=2)&#123;</span><br><span class="line">		fprintf(stderr,&quot;usage: %s &lt;domain name&gt;\n&quot;,argv[0]);</span><br><span class="line">		exit(0);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//get a list of addinfo records</span><br><span class="line">	memset(&amp;hints,0,sizeof(struct addrinfo));</span><br><span class="line">	hints.ai_family = AF_INET;</span><br><span class="line">	hints.ai_socktype = SOCK_STREAM;</span><br><span class="line">	if((rc=getaddrinfo(argv[1],NULL,&amp;hints,&amp;listp))!=0)&#123;</span><br><span class="line">		fprintf(stderr,&quot;getaddrinfo error: %s\n&quot;,gai_strerror(rc));</span><br><span class="line">		exit(1);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	flags = NI_NUMERICHOST;</span><br><span class="line"></span><br><span class="line">	for(p=listp;p;p = p-&gt;ai_next)&#123;</span><br><span class="line">		Getnameinfo(p-&gt;ai_addr,p-&gt;ai_addrlen,buf,MAXLINE,NULL,0,flags);</span><br><span class="line">		printf(&quot;%s\n&quot;,buf);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Freeaddrinfo(listp);</span><br><span class="line"></span><br><span class="line">	exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h3><p><img src="/home/alex/图片/cline.png" alt="upload sssful"></p>
+<p>web server return content to clients,in 2 different ways:</p>
+<p>1.取磁盘文件，并把他的内容返回给客户端，磁盘文件称为静态内容，返回文件给客户端叫服务静态内容。</p>
+<p>2.运行一个可执行文件，把输出返回给客户端，运行的时候输出内容叫做动态内容，而运行程序并返回输出内容叫做服务动态内容。</p>
+<p>web服务器返回的内容都是和它管理的某个文件相关联的，这些文件中的每一个都有一个唯一的名字叫<strong><em>URL，通用资源定位符。</em></strong></p>
+<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><p>超文本传输协议</p>
+<h3 id="CGI"><a href="#CGI" class="headerlink" title="CGI"></a>CGI</h3><p>通用网关接口，用来处理服务器向客户端提供动态内容的问题</p>
 
           
         
@@ -700,6 +1100,133 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line"> * mm_init - initialize the malloc package.</span><br><span class="line"> */</span><br><span class="line">int mm_init(void)</span><br><span class="line">&#123;</span><br><span class="line">    void *heap;</span><br><span class="line">    if((heap=mem_sbrk(4*WSIZE))==(void*)-1)</span><br><span class="line">        return -1;</span><br><span class="line">    </span><br><span class="line">    int idx;</span><br><span class="line">	</span><br><span class="line">    //initialize the list</span><br><span class="line">    for(idx=0;idx&lt;LIST_SIZE;idx++)&#123;</span><br><span class="line">        list[idx] = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    //alignment padding</span><br><span class="line">    //按照上图堆的结构来初始化</span><br><span class="line">    PUT(heap,0);</span><br><span class="line">    PUT(heap+(1*WSIZE),PACK(DSIZE,1));  //prologue header</span><br><span class="line">    PUT(heap+(2*WSIZE),PACK(DSIZE,1)); //prologue footer</span><br><span class="line">    PUT(heap+(3*WSIZE),PACK(0,1)); //Epilogue header</span><br><span class="line"></span><br><span class="line">    if(extend_heap(INITCHUNKSIZE)==NULL)</span><br><span class="line">        return -1;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">/* </span><br><span class="line"> * mm_malloc - Allocate a block by incrementing the brk pointer.</span><br><span class="line"> *     Always allocate a block whose size is a multiple of the alignment.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">void *mm_malloc(size_t size)</span><br><span class="line">&#123;</span><br><span class="line">    //ignore spurious requeses</span><br><span class="line">    if(size==0)</span><br><span class="line">        return NULL;</span><br><span class="line">    </span><br><span class="line">    if(size&lt;=DSIZE)</span><br><span class="line">        size = 2*DSIZE;</span><br><span class="line">    else</span><br><span class="line">        size = ALIGN(size+DSIZE);</span><br><span class="line"></span><br><span class="line">    int idx = 0;</span><br><span class="line">    size_t ssize = size;</span><br><span class="line">    void *ptr = NULL;</span><br><span class="line"></span><br><span class="line">    while(idx&lt;LIST_SIZE)&#123;</span><br><span class="line">		//链表类的大小分别是 1 1 2 4 8 16 32...</span><br><span class="line">        // 分别存储 &#123;0&#125;,&#123;1&#125;,&#123;2,3&#125;,&#123;4,5,6,7&#125;..</span><br><span class="line">        // 通过循环 ssize&gt;&gt;=1 与idx,找到该分配的</span><br><span class="line">        //字节大小所在的链表</span><br><span class="line">        //然后再内嵌一个循环，在这个链表中寻找大小适			//合的pointer</span><br><span class="line">        if((ssize&lt;=1)&amp;&amp;(list[idx]!=NULL))&#123;</span><br><span class="line">            ptr = list[idx];</span><br><span class="line">            while(ptr&amp;&amp;((size&gt;GET_SIZE(HDRP(ptr)))))&#123;</span><br><span class="line">                ptr = PRED(ptr);</span><br><span class="line">            &#125;</span><br><span class="line">            //如果找到了就break</span><br><span class="line">            if(ptr!=NULL)</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        ssize&gt;&gt;=1;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //如果找不到，向系统申请额外的堆内存</span><br><span class="line">    if(ptr==NULL)&#123;</span><br><span class="line">        int extendsize = MAX(size,CHUNKSIZE);</span><br><span class="line">        if((ptr=extend_heap(extendsize))==NULL)</span><br><span class="line">            return NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //在free块中allocate size大小的块</span><br><span class="line">    ptr = place(ptr,size);</span><br><span class="line"></span><br><span class="line">    return ptr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void mm_free(void *ptr)</span><br><span class="line">&#123;</span><br><span class="line">    size_t size = GET_SIZE(HDRP(ptr));</span><br><span class="line"></span><br><span class="line">	//把该块头脚末位都标注为0，说明这一块是free</span><br><span class="line">    PUT(HDRP(ptr), PACK(size, 0));</span><br><span class="line">    PUT(FTRP(ptr), PACK(size, 0));</span><br><span class="line"></span><br><span class="line">    /* 插入分离空闲链表 */</span><br><span class="line">    insert_node(ptr, size);</span><br><span class="line">    /* 合并 */</span><br><span class="line">    coalesce(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/13/并发与并行区别/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/13/并发与并行区别/" itemprop="url">并发与并行区别</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-13T17:15:32+08:00">
+                2018-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><a href="https://www.cnblogs.com/liqiuhao/p/8082246.html" target="_blank" rel="noopener">https://www.cnblogs.com/liqiuhao/p/8082246.html</a></p>
+<h3 id="逻辑控制流"><a href="#逻辑控制流" class="headerlink" title="逻辑控制流"></a>逻辑控制流</h3><p>程序加载到内存中执行，（这时变成进程），操作系统会通过虚拟内存机制，通过让它和其他进程分时段占用CPU，使其产生独占CPU的假象。在CPU执行一个进程的指令的时候，被执行的许多指令连接起来，就构成了逻辑控制流。</p>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>就是两个逻辑控制流交替进行</p>
+<p><img src="/home/alex/图片/bingfa.png" alt="upload succe"></p>
+<p>A与B，A与C并发</p>
+<p><strong><em>并发与CPU个数或者计算机个数无关</em></strong></p>
+<h3 id="并行"><a href="#并行" class="headerlink" title="并行"></a>并行</h3><p><strong><em>如果两个逻辑控制流同时（一个cpu时段内）在不同的cpu（多核）或者计算机上被执行，我们就称其为并行。</em></strong></p>
+<p><img src="/home/alex/图片/2018-75.png" alt="filename already existsmed"></p>
 
           
         
@@ -1601,578 +2128,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/06/Stack-Pointer-Frame-Pointer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/06/Stack-Pointer-Frame-Pointer/" itemprop="url">Stack Pointer/Frame Pointer</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-06T14:16:08+08:00">
-                2018-12-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Stack-Frame"><a href="#Stack-Frame" class="headerlink" title="Stack Frame"></a>Stack Frame</h3><p><img src="/home/alex/图片/2018-18.png" alt="fil"></p>
-<p>firstly, callee stack save the old caller ‘s stack ‘s ebp</p>
-<p>lastly, the argument build means the arguments for calling any other function </p>
-<p><img src="/home/alex/图片/2.png" alt="upload successfl"></p>
-<p>pushl $zip2,$zip1 把参数压进栈顶，然后call swap，会把caller的return address压入栈</p>
-<h3 id="whole-code"><a href="#whole-code" class="headerlink" title="whole code"></a>whole code</h3><p><img src="/home/alex/图片/whole.png" alt="upload succesful"></p>
-<h4 id="set-up-code"><a href="#set-up-code" class="headerlink" title="set up code"></a>set up code</h4><p><img src="/home/alex/图片/2018-19.png" alt="filename already exists, amed"></p>
-<p>一. push %ebp 把caller的 bast pointer 的数值压栈</p>
-<p>二.movl %esp,%ebp （把esp 移动到ebp，即设置ebp = esp，这一步是设置callee的base pointer）</p>
-<p>三.%ebx 是swap过程中可能会调用的参数</p>
-<p><a href="https://www.cnblogs.com/qq78292959/archive/2012/07/20/2600865.html" target="_blank" rel="noopener">https://www.cnblogs.com/qq78292959/archive/2012/07/20/2600865.html</a></p>
-<p>附上：EAX 是”累加器”(accumulator), 它是很多加法乘法指令的缺省寄存器。</p>
-<p>EBX 是”基地址”(base)寄存器, 在内存寻址时存放基地址。</p>
-<p>ECX 是计数器(counter), 是重复(REP)前缀指令和LOOP指令的内定计数器。</p>
-<p>EDX 则总是被用来放整数除法产生的余数。</p>
-<p>但是对于　%eax,%ecx,%edx　不能像ｅｂｘ一样，保存在callee中</p>
-<h4 id="body-code"><a href="#body-code" class="headerlink" title="body code"></a>body code</h4><p><img src="/home/alex/图片/ebp.png" alt="upload successfl"></p>
-<h4 id="finish-code"><a href="#finish-code" class="headerlink" title="finish code"></a>finish code</h4><p><img src="/home/alex/图片/sp.png" alt="upload sucu"></p>
-<ol>
-<li>%ebp-4 就是 old %ebx 的地址 ，把-4（%ebp）移到%ebx，相当于把原来的%ebx复原</li>
-</ol>
-<p>2.第二是 把 %ebp 移到 %esp，即现在%esp指向%ebp</p>
-<p>(第一第二条指令相当于 pop %ebx)<br><img src="/home/alex/图片/d.png" alt="upload successf"></p>
-<p>3.popl %ebp<br>本质上是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0(%esp),%ebp </span><br><span class="line">%esp +4</span><br></pre></td></tr></table></figure></p>
-<p>这个时候base pointer复原，变回caller stack　的数值</p>
-<p>４.ret 根据返回地址返回</p>
-<p>其中leave instruction<br>等价于<br>mov ％ebp,%esp</p>
-<p>popl %ebp</p>
-<h3 id="register-saving-convention"><a href="#register-saving-convention" class="headerlink" title="register saving convention"></a>register saving convention</h3><p><img src="/home/alex/图片/tong.png" alt="upload succesul"></p>
-<p>yoo当中，我们希望%edx不会因为调用了who函数之后发生改变，问题是，who调用过程中，%edx是可能发生改变的。</p>
-<p>因此我们要制定convention，在使用这些寄存器之前先保存他们！</p>
-<p><img src="/home/alex/图片/2018-20.png" alt="filename already exists, rnamed"></p>
-<p>分类如下<br><img src="/home/alex/图片/2018-21.png" alt="fileame already exists, renamed"></p>
-<p>%eax save the return address so it is caller saved register</p>
-<h4 id="example"><a href="#example" class="headerlink" title="example"></a>example</h4><p><img src="/home/alex/图片/2018-22.png" alt="filename already exis, renamed"></p>
-<p><img src="/home/alex/图片/you.png" alt="upload successf"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.pushl %ebp #save the caller&apos;s ebp</span><br><span class="line"></span><br><span class="line">2.movl %esp,%ebp  #set callee&apos;s ebp</span><br><span class="line"></span><br><span class="line">3.subl $16,%esp   # add 16 bytes, add temporary space</span><br><span class="line"></span><br><span class="line">4.movl 8(%ebp),%edx  # set edx = x</span><br><span class="line"></span><br><span class="line">5.movl $1,-4(%ebp)</span><br></pre></td></tr></table></figure>
-<p><img src="/home/alex/图片/2018-23.png" alt="filename already eists, renamed"></p>
-<p>两个pushl 相当于把 s_helper函数的两个参数传了进去</p>
-<p>&amp;val始终指向val，当函数结束的时候，返回的值就保存在了-4(%ebp)当中</p>
-<p><img src="/home/alex/图片/st.png" alt="upload sucessful"></p>
-<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>1.若调用函数有多个参数，stack从下到上，依次为第一个，第二个函数。</p>
-<p>2.函数调用的参数在stack的上方，就是在caller准备好参数后再调用callee,就是说argument 是caller saved 的</p>
-<p>3.函数结果返回在%eax</p>
-<p>4.local variable 是存放在 callee-saved registers那里</p>
-<h3 id="x86-64-conventions"><a href="#x86-64-conventions" class="headerlink" title="x86-64 conventions"></a>x86-64 conventions</h3><p>在x86 中，由于registers 的数目变多，因此可以把local variable 和argument存储在register当中，那样就可以减少对stack 的使用了</p>
-<p>下图是16个 8-byte gpr<br><img src="/home/alex/图片/2018-24.png" alt="filename exists, rena"></p>
-<p>黄色的是caller saved</p>
-<p>绿色的是 callee saved</p>
-<h4 id="specifications"><a href="#specifications" class="headerlink" title="specifications"></a>specifications</h4><p><img src="/home/alex/图片/dij.png" alt="up"></p>
-<p>1.用callq 而不用call，因为要返回一个64-bit address,also decrement 8而不是4（8 bytes）</p>
-<p>2.因为gpr实现了ebp / rbp 功能，因此不需要使用stack来更新 ，而且rsp能代替实现frame pointer 的功能</p>
-<p>3.由于gpr只有6个argument register，所以当函数参数少于六个的时候，不需要用到栈结构</p>
-<h3 id="example-1"><a href="#example-1" class="headerlink" title="example"></a>example</h3><p><img src="/home/alex/图片/y.png" alt="upload successfu"></p>
-<p>q - 8byte - 64bits</p>
-<p>l - 4byte - 32bits</p>
-<p>w - 2byte - 16bits</p>
-<p>b - 1byte - 8bits</p>
-<p><img src="/home/alex/图片/2018-25.png" alt="filename already exists, rena"></p>
-<h4 id="prepare-for-the-arguments"><a href="#prepare-for-the-arguments" class="headerlink" title="prepare for the arguments"></a>prepare for the arguments</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">movq $1,%rdi</span><br><span class="line">leaq 16(%rsp),%rsi</span><br><span class="line">movl $2,%rdx</span><br><span class="line">leaq 24(%rsp),%rcx</span><br><span class="line">movl $3,%r8</span><br><span class="line">leaq 28(%rsp),%r9</span><br><span class="line">movl $4,(%rsp)     #Arg 7</span><br><span class="line">leaq 31(%rsp),%rax</span><br><span class="line">movq %rax,8(%rsp)  #Arg 8</span><br></pre></td></tr></table></figure>
-<p><img src="/home/alex/图片/cltq.png" alt="upload succesul"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">movswl 28(%rsp),%eax # %eax = x3</span><br><span class="line"></span><br><span class="line">movsbl 31(%rsp),%edx # %edx = x4</span><br><span class="line"></span><br><span class="line">s 表示 signextend</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/CSAPP-MIPS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/14/CSAPP-MIPS/" itemprop="url">CSAPP-MIPS</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T21:00:00+08:00">
-                2018-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
-                    <span itemprop="name">CSAPP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="Registers-寄存器"><a href="#Registers-寄存器" class="headerlink" title="Registers 寄存器"></a>Registers 寄存器</h5><hr>
-<p>1.一共有32个general register</p>
-<p>2.有两种使用方法: 直接使用对应的编号或者是对应的寄存器名称</p>
-<table>
-<thead>
-<tr>
-<th>寄存器编号</th>
-<th>寄存器名称</th>
-<th>寄存器用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>zero</td>
-<td>return 0</td>
-</tr>
-<tr>
-<td>1</td>
-<td>$at</td>
-<td>汇编保留寄存器</td>
-</tr>
-<tr>
-<td>2-3</td>
-<td>$v0-$v1</td>
-<td>（value）存储表达式或者是函数的返回值</td>
-</tr>
-<tr>
-<td>4-7</td>
-<td>$a0-$a3</td>
-<td>(Argument) 存储子程序前四个参数，调用时不保存</td>
-</tr>
-<tr>
-<td>8-15</td>
-<td>$t0-$t7</td>
-<td>临时变量，调用时不保存，调用完成后要恢复</td>
-</tr>
-<tr>
-<td>16-23</td>
-<td>$s0-$s7</td>
-<td>函数调用的时候必须保存，调用完成后需要恢复</td>
-</tr>
-<tr>
-<td>24-25</td>
-<td>$t8-$t9</td>
-<td>属性和$t0-$t7一致</td>
-</tr>
-<tr>
-<td>26-27</td>
-<td>$k0-$k1</td>
-<td>（kernel）中断函数返回值</td>
-</tr>
-<tr>
-<td>28</td>
-<td>$gp</td>
-<td>global pointer 指向64K大小的静态数据块的中间地址</td>
-</tr>
-<tr>
-<td>29</td>
-<td>$sp</td>
-<td>stack pointer</td>
-</tr>
-<tr>
-<td>30</td>
-<td>$fp/$s8</td>
-<td>frame pointer</td>
-</tr>
-<tr>
-<td>31</td>
-<td>$ra</td>
-<td>return address</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h5 id="Program-Structure-程序结构"><a href="#Program-Structure-程序结构" class="headerlink" title="Program Structure 程序结构"></a>Program Structure 程序结构</h5><hr>
-<p>本质其实就只是数据声明+普通文本+程序编码（文件后缀为.s，或者.asm也行） 数据声明在代码段之后（其实在其之前也没啥问题，也更符合高级程序设计的习惯）<br>Data Declarations 数据声明</p>
-<pre><code>数据段以 .data为开始标志
-声明变量后，即在主存中分配空间。
-</code></pre><p>Code 代码</p>
-<pre><code>代码段以 .text为开始标志
-其实就是各项指令操作
-程序入口为main：标志
-程序结束标志（详见下文）
-</code></pre><h6 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">		.data  # 数据变量声明</span><br><span class="line">		</span><br><span class="line">        .text  #代码段</span><br><span class="line">        </span><br><span class="line">main:   主函数入口</span><br></pre></td></tr></table></figure>
-<hr>
-<h5 id="数据声明"><a href="#数据声明" class="headerlink" title="数据声明"></a>数据声明</h5><p>example</p>
-<p>var1:   &emsp;  .word 3     </p>
-<p>array:  &emsp;  .byte ‘a’,’b’  # 声明一个存储两个字符的数组array1，并赋值’a’,’b’</p>
-<p>array1:  &emsp;  .space 40    #为变量array2 分配40个未使用的连续空间</p>
-<hr>
-<h6 id="其他指令汇总"><a href="#其他指令汇总" class="headerlink" title="其他指令汇总"></a>其他指令汇总</h6><hr>
-<p><a href="https://blog.csdn.net/king523103/article/details/45967991" target="_blank" rel="noopener">MIPS入门</a></p>
-<h5 id="实战-冒泡排序"><a href="#实战-冒泡排序" class="headerlink" title="实战-冒泡排序"></a>实战-冒泡排序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">array: .space 1024</span><br><span class="line">input_msg: .asciiz &quot;Enter the number of integers:\n&quot;</span><br><span class="line">input_int_msg: .asciiz &quot;Enter integers to be sorted\n&quot;</span><br><span class="line">output_msg: .asciiz &quot;the sorted numbers are\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.globl main</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">	la $a0,input_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	 </span><br><span class="line">	li $v0,5  #接受用户输入的数组长度</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	la $t6,array #数组首地址</span><br><span class="line">	move $t7,$zero #循环变量i</span><br><span class="line">	move $t8,$zero #循环变量j</span><br><span class="line">	move $t9,$v0  #数组长度</span><br><span class="line"></span><br><span class="line">	addi $t3,$zero,1</span><br><span class="line">	beq $v0,$t3,special</span><br><span class="line">			</span><br><span class="line">input:</span><br><span class="line"></span><br><span class="line">	la $a0,input_int_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	li $v0,5  </span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	#for(int i=0;i&lt;num;i++)</span><br><span class="line">        #cin&gt;&gt;arr[i];</span><br><span class="line">        </span><br><span class="line">        move $t0,$t7 #$t0 is i</span><br><span class="line">        sll $t0,$t0,2 #i become byte offset</span><br><span class="line">        move $t1,$t6 #$t1 is &amp;array[0]</span><br><span class="line">        add $t1,$t1,$t0 #$t1 is &amp;array[i]</span><br><span class="line">        sw $v0,0($t1) #cin&gt;&gt;array[i]</span><br><span class="line">	</span><br><span class="line">	addi $t7,$t7,1</span><br><span class="line">	blt $t7,$t9,input #if ++i&lt;length</span><br><span class="line"> </span><br><span class="line">	move $t7,$zero</span><br><span class="line">	</span><br><span class="line">loop1:	# 每次外层循环比内层循环的循环变量设为0</span><br><span class="line">	move $t8,$zero</span><br><span class="line">loop2:</span><br><span class="line">	#read arr[j+1] and arr[j]</span><br><span class="line">	</span><br><span class="line">	move $t2,$t8 #t2 is j</span><br><span class="line">	sll $t2,$t2,2 #j=*4;</span><br><span class="line">	addu $t1,$t2,$t6 #&amp;arr[j]</span><br><span class="line">	lw $t4,0($t1)  #arr[j]</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	addi $t2,$t8,1 #j+1</span><br><span class="line">	sll $t2,$t2,2 #(j+1)*4</span><br><span class="line">	addu $t0,$t2,$t6 #&amp;arr[j+1]</span><br><span class="line">	lw   $t5,0($t0) #$t5 = arr[j+1]</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	bge $t5,$t4,skip #if arr[j+1]&gt;arr[j] skip</span><br><span class="line"></span><br><span class="line">	sw  $t5,0($t1)</span><br><span class="line">	sw  $t4,0($t0)</span><br><span class="line">	</span><br><span class="line">skip:</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	addi $t8,$t8,1 #j++</span><br><span class="line">	subi $t1,$t9,1 #t1 = num-1</span><br><span class="line">	sub  $t1,$t1,$t7 #t1 = num-1-i</span><br><span class="line">	blt  $t8,$t1,loop2 # if j&lt;num-i-1 t2=1</span><br><span class="line">	addi $t7,$t7,1 #i++</span><br><span class="line">	sub  $t3,$t9,1</span><br><span class="line">	blt  $t7,$t3,loop1  #if i&lt;num-1 then continue loop1</span><br><span class="line">	j output</span><br><span class="line">	</span><br><span class="line">special:</span><br><span class="line">	la $a0,input_int_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	li $v0,5  </span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	#for(int i=0;i&lt;num;i++)</span><br><span class="line">        #cin&gt;&gt;arr[i];</span><br><span class="line">        </span><br><span class="line">        move $t0,$t7 #$t0 is i</span><br><span class="line">        sll $t0,$t0,2 #i become byte offset</span><br><span class="line">        move $t1,$t6 #$t1 is &amp;array[0]</span><br><span class="line">        add $t1,$t1,$t0 #$t1 is &amp;array[i]</span><br><span class="line">        sw $v0,0($t1) #cin&gt;&gt;array[i]</span><br><span class="line">	</span><br><span class="line">output:</span><br><span class="line">	</span><br><span class="line">	la $a0,output_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	move $t7,$zero</span><br><span class="line">print:</span><br><span class="line">	</span><br><span class="line">	move $t0,$t7</span><br><span class="line">	</span><br><span class="line">	sll $t0,$t0,2</span><br><span class="line">	</span><br><span class="line">	add $t1,$t6,$t0</span><br><span class="line">	</span><br><span class="line">	lw $a0,0($t1) #argument a0</span><br><span class="line">	</span><br><span class="line">	li $v0,1</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	addi $t7,$t7,1</span><br><span class="line">	blt $t7,$t9,print</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/算法-Sliding-Window/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/14/算法-Sliding-Window/" itemprop="url">算法-(2018-11-14) Sliding Window&Dijkstra枚举</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T15:58:00+08:00">
-                2018-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="sliding-window-leetcode-239"><a href="#sliding-window-leetcode-239" class="headerlink" title="sliding window leetcode 239"></a>sliding window leetcode 239</h5><p><a href="https://leetcode.com/problems/sliding-window-maximum/description/" target="_blank" rel="noopener">https://leetcode.com/problems/sliding-window-maximum/description/</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">method 1: time complexity O(Nlog(k))</span><br><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">        </span><br><span class="line">        multiset&lt;int&gt;st;</span><br><span class="line">        vector&lt;int&gt;vec;</span><br><span class="line">        list&lt;int&gt; lst;</span><br><span class="line">        for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            if(i-k&gt;=0)&#123;</span><br><span class="line">                int top = lst.front();</span><br><span class="line">                lst.pop_front();</span><br><span class="line">                st.erase(st.find(top));</span><br><span class="line">            &#125;</span><br><span class="line">         </span><br><span class="line">            lst.push_back(nums[i]);</span><br><span class="line">            st.insert(nums[i]);</span><br><span class="line">              if(i-k&gt;=-1)&#123;</span><br><span class="line">                vec.push_back(*st.rbegin());</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return vec;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">method 2</span><br><span class="line"></span><br><span class="line">1. use a deque to store the index in the window , each window must fall in the range(i-k+1,i). so whenever an index smaller than i-k+1,pop_front() to discard the element; </span><br><span class="line"></span><br><span class="line">2. when insert a new element nums[i], compare it with the top of the queue , until q[front]&gt;nums[i] ,that is to say, q[front] is always the max element in the window</span><br><span class="line"></span><br><span class="line">  vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">       </span><br><span class="line">         deque&lt;int&gt;dq;</span><br><span class="line">         vector&lt;int&gt;res;</span><br><span class="line">         if(nums.empty())</span><br><span class="line">             return res;</span><br><span class="line">         for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            while(!dq.empty()&amp;&amp;dq.front()&lt;i-k+1)&#123;</span><br><span class="line">                dq.pop_front();</span><br><span class="line">            &#125;</span><br><span class="line">            //remove smaller elements in window</span><br><span class="line">            while(!dq.empty()&amp;&amp;nums[dq.back()]&lt;=nums[i])&#123;</span><br><span class="line">                dq.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">             dq.push_back(i);</span><br><span class="line">             if(i-k+1&gt;=0)&#123;</span><br><span class="line">                 res.push_back(nums[dq.front()]);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         return res;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这里sliding window就是移动窗口的时候，每次把最左边的值pop掉，然后不断比较最右边的值与新插入的值，保证新插入的值是最好的candidate，那么窗口最左边的值就会是最大值。</p>
-<p>Kattis</p>
-<p>#include <algorithm></algorithm></p>
-<p>#include <set></set></p>
-<p>#include <iostream></iostream></p>
-<p>#include <queue></queue></p>
-<p>#include <vector></vector></p>
-<p>#include <string></string></p>
-<p>#include <map></map></p>
-<p>using namespace std;</p>
-<p>struct edge{<br>    int from;<br>    int to;<br>    int weight;<br>};</p>
-<p>typedef pair&lt;int,int&gt; ip;</p>
-<p>#define INF 0x3f3f3f3f</p>
-<p>void dijkstra(vector&lt;vector<ip>&gt;&amp;adj,vector<int>&amp;dist,int source){</int></ip></p>
-<pre><code>priority_queue&lt;ip,vector&lt;ip&gt;,greater&lt;ip&gt;&gt; q;
-q.push({0,source});
-dist[source] = 0;
-while(!q.empty()){
-    auto top = q.top();
-    q.pop();
-    int u = top.second;
-    for(auto p:adj[u]){
-        int v = p.first;
-        int weight = p.second;
-        if(dist[v]==INF||dist[v]&gt;dist[u]+weight){
-            dist[v] = dist[u]+weight;
-            q.push(make_pair(dist[v],v));
-        }
-    }
-}
-</code></pre><p>}</p>
-<p><a href="https://open.kattis.com/problems/flowerytrails" target="_blank" rel="noopener">https://open.kattis.com/problems/flowerytrails</a></p>
-<p><strong><em>对于有多条最短路，并且求所有最短路的路径之和</em></strong></p>
-<p>1.分别对起始点和终点跑DIjkstra</p>
-<p>2.枚举每一条初始点与终点分别到这条边距离，分别为d1,d2，如果d1+d2+w==shortestPath,则ans+=w;</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int P,T;</span><br><span class="line">    cin&gt;&gt;P&gt;&gt;T;</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; adj(P);</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; parent(P);</span><br><span class="line">    vector&lt;int&gt;distStart(P,INF);</span><br><span class="line">    vector&lt;int&gt;distEnd(P,INF);</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;edgeVec;</span><br><span class="line"></span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from,to,w;</span><br><span class="line">        cin&gt;&gt;from&gt;&gt;to&gt;&gt;w;</span><br><span class="line">        edgeVec.push_back(make_tuple(from,to,w));</span><br><span class="line">        adj[from].push_back(make_pair(to,w));</span><br><span class="line">        adj[to].push_back(make_pair(from,w));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dijkstra(adj,distStart,0);</span><br><span class="line">    dijkstra(adj,distEnd,P-1);</span><br><span class="line"></span><br><span class="line">    int shortestPath = distStart[P-1];</span><br><span class="line">    int ans=0;</span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(edgeVec[i]);</span><br><span class="line">        int to = get&lt;1&gt;(edgeVec[i]);</span><br><span class="line">        int weight = get&lt;2&gt;(edgeVec[i]);</span><br><span class="line"></span><br><span class="line">        if(distStart[to]+distEnd[from]+weight==shortestPath||</span><br><span class="line">        distStart[from]+distEnd[to]+weight==shortestPath)&#123;</span><br><span class="line">            ans+=weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout&lt;&lt;ans*2;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2227,7 +2182,7 @@ while(!q.empty()){
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
