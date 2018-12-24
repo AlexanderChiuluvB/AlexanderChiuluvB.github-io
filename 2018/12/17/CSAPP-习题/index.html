@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="C。读写锁只能同时由多个读者或者一个写者拥有，而且读和写是排他的，两者不能共存。  页大小大概占10位，那么虚拟地址分为虚拟页号和虚拟页偏移量，那么后10位就是偏移量，剩下的位就是索引位，对应在页表中的索引，那么所以说他们的索引一样，物理位置的物理页号一样，而物理偏移量A总是小于B  *（x+2） = A[2];  b  d Size of a pointer should be 8 byte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-习题">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/17/CSAPP-习题/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="C。读写锁只能同时由多个读者或者一个写者拥有，而且读和写是排他的，两者不能共存。  页大小大概占10位，那么虚拟地址分为虚拟页号和虚拟页偏移量，那么后10位就是偏移量，剩下的位就是索引位，对应在页表中的索引，那么所以说他们的索引一样，物理位置的物理页号一样，而物理偏移量A总是小于B  *（x+2） = A[2];  b  d Size of a pointer should be 8 byte">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-93.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vpn.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/asd.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/100.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/11.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/waibu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-94.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/wulianjie.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/GAOCUOLE.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-95.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/8byte.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/block.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/4way.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/linux环境.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-96.png">
+<meta property="og:updated_time" content="2018-12-19T02:34:43.993Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-习题">
+<meta name="twitter:description" content="C。读写锁只能同时由多个读者或者一个写者拥有，而且读和写是排他的，两者不能共存。  页大小大概占10位，那么虚拟地址分为虚拟页号和虚拟页偏移量，那么后10位就是偏移量，剩下的位就是索引位，对应在页表中的索引，那么所以说他们的索引一样，物理位置的物理页号一样，而物理偏移量A总是小于B  *（x+2） = A[2];  b  d Size of a pointer should be 8 byte">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-93.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/17/CSAPP-习题/"/>
+
+
+
+
+
+  <title>CSAPP-习题 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/17/CSAPP-习题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-习题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-17T10:36:00+08:00">
+                2018-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/home/alex/图片/2018-93.png" alt="filename already exists, renmed"></p>
+<p>C。读写锁只能同时由多个读者或者一个写者拥有，而且读和写是排他的，两者不能共存。</p>
+<p><img src="/home/alex/图片/vpn.png" alt="uplo successful"></p>
+<p>页大小大概占10位，那么虚拟地址分为虚拟页号和虚拟页偏移量，那么后10位就是偏移量，剩下的位就是索引位，对应在页表中的索引，那么所以说他们的索引一样，物理位置的物理页号一样，而物理偏移量A总是小于B</p>
+<p><img src="/home/alex/图片/asd.png" alt="upload succesul"></p>
+<p>*（x+2） = A[2];</p>
+<p><img src="/home/alex/图片/100.png" alt="upload sussful"></p>
+<p>b</p>
+<p><img src="/home/alex/图片/11.png" alt="upload successl"></p>
+<p>d</p>
+<p>Size of a pointer should be 8 byte on any 64-bit C/C++ compiler, but not necessarily size of int.</p>
+<h3 id="静态持续变量"><a href="#静态持续变量" class="headerlink" title="静态持续变量"></a>静态持续变量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int a = 3;  //静态变量，外部链接性</span><br><span class="line">static int b = 4;  //静态变量，内部链接性</span><br><span class="line"> </span><br><span class="line">void fun()</span><br><span class="line">&#123;</span><br><span class="line">	static int c = 5;  //静态变量，无链接性</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>外部链接性： 多个文件共享</p>
+<p>内部链接性： 只有所属的文件可用</p>
+<p>无连接性： 只有该代码段内可用</p>
+<p>外部链接性的静态变量</p>
+<p><img src="/home/alex/图片/waibu.png" alt="upload successful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int a = 2;</span><br><span class="line"> </span><br><span class="line">void fun()</span><br><span class="line">&#123;</span><br><span class="line">	int a = 3;  //这是自动变量，会覆盖掉全局静态变量a</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="内部链接性的静态变量"><a href="#内部链接性的静态变量" class="headerlink" title="内部链接性的静态变量"></a>内部链接性的静态变量</h3><p><img src="/home/alex/图片/2018-94.png" alt="filename alrey exists, renamed"></p>
+<h3 id="无连接性的静态变量"><a href="#无连接性的静态变量" class="headerlink" title="无连接性的静态变量"></a>无连接性的静态变量</h3><p><img src="/home/alex/图片/wulianjie.png" alt="upload succsful"></p>
+<h3 id="CSAPP6-34-6-35"><a href="#CSAPP6-34-6-35" class="headerlink" title="CSAPP6.34/6.35"></a>CSAPP6.34/6.35</h3><p>cache共有两个block，分别位于两个set中，设他们为b1和b2。每个block可以放下4个int类型的变量，也就是数组中的一行。在这一题中，源数组和目的数组是相邻排列的。所以内存和cache的映射情况是这样的：</p>
+<p>b1 : src[0][] src[2][] dst[0][] dst[2][]</p>
+<p>b2 : src[1][] src[3][] dst[1][] dst[3][]</p>
+<p><img src="/home/alex/图片/GAOCUOLE.png" alt="upload succeful"></p>
+<p>这里搞错了，应该是dst数组全是m，src数组是左边的样子。</p>
+<p><img src="/home/alex/图片/2018-95.png" alt="filename already exists,named"></p>
+<p>a</p>
+<p><img src="/home/alex/图片/8byte.png" alt="upld successful"><br>An object that is “8 bytes aligned” is stored at a memory address that is a multiple of 8.</p>
+<p>so choose c</p>
+<h3 id="理解cache中的block，cache和line"><a href="#理解cache中的block，cache和line" class="headerlink" title="理解cache中的block，cache和line"></a>理解cache中的block，cache和line</h3><p><img src="/home/alex/图片/block.png" alt="upload succeful"></p>
+<p>line就是block</p>
+<p>directed mapped 就是一个set只有一个line</p>
+<p>2way就是一个set可以放2个line</p>
+<p>4way，就是一个set可以放4个line</p>
+<p>fully associated 就是只有一个set，所以不需要中间位的index，来作为line index</p>
+<h4 id="为什么要用中间位来做索引？"><a href="#为什么要用中间位来做索引？" class="headerlink" title="为什么要用中间位来做索引？"></a>为什么要用中间位来做索引？</h4><p>空间局部性。</p>
+<p><img src="/home/alex/图片/4way.png" alt="upload succeful"></p>
+<h4 id="fork函数到底复制了啥？"><a href="#fork函数到底复制了啥？" class="headerlink" title="fork函数到底复制了啥？"></a>fork函数到底复制了啥？</h4><p>“子进程是父进程的副本。例如，子进程获得父进程数据空间、堆和栈的副本。注意，这是子进程所拥有的副本。父进程和子进程并不共享这些存储空间部分。父进程和子进程共享正文段。”</p>
+<p><img src="/home/alex/图片/linux环境.png" alt="upload succeful"></p>
+<p><img src="/home/alex/图片/2018-96.png" alt="filename already exists, ramed"></p>
+<p>子进程得到的只是全局变量的副本，该题应该选b</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/15/CSAPP-proxy-lab/" rel="next" title="CSAPP-proxy lab">
+                <i class="fa fa-chevron-left"></i> CSAPP-proxy lab
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/18/僵尸进程和孤儿进程/" rel="prev" title="僵尸进程和孤儿进程">
+                僵尸进程和孤儿进程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态持续变量"><span class="nav-number">1.</span> <span class="nav-text">静态持续变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部链接性的静态变量"><span class="nav-number">2.</span> <span class="nav-text">内部链接性的静态变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接性的静态变量"><span class="nav-number">3.</span> <span class="nav-text">无连接性的静态变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSAPP6-34-6-35"><span class="nav-number">4.</span> <span class="nav-text">CSAPP6.34/6.35</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解cache中的block，cache和line"><span class="nav-number">5.</span> <span class="nav-text">理解cache中的block，cache和line</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么要用中间位来做索引？"><span class="nav-number">5.1.</span> <span class="nav-text">为什么要用中间位来做索引？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fork函数到底复制了啥？"><span class="nav-number">5.2.</span> <span class="nav-text">fork函数到底复制了啥？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

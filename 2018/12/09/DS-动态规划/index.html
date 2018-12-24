@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Leetcode 647 Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray). Example 1: Input: [1,3,5,4,7]Output: 3Explanation: The longest continuous inc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DS-动态规划">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/09/DS-动态规划/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Leetcode 647 Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray). Example 1: Input: [1,3,5,4,7]Output: 3Explanation: The longest continuous inc">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/LCS.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-51.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/TSP.png">
+<meta property="og:updated_time" content="2018-12-16T15:00:27.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DS-动态规划">
+<meta name="twitter:description" content="Leetcode 647 Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray). Example 1: Input: [1,3,5,4,7]Output: 3Explanation: The longest continuous inc">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/LCS.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/09/DS-动态规划/"/>
+
+
+
+
+
+  <title>DS-动态规划 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/09/DS-动态规划/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DS-动态规划</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-09T14:11:52+08:00">
+                2018-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Leetcode-647"><a href="#Leetcode-647" class="headerlink" title="Leetcode 647"></a>Leetcode 647</h3><p> Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray).</p>
+<p>Example 1:</p>
+<p>Input: [1,3,5,4,7]<br>Output: 3<br>Explanation: The longest continuous increasing subsequence is [1,3,5], its length is 3.<br>Even though [1,3,5,7] is also an increasing subsequence, it’s not a continuous one where 5 and 7 are separated by 4. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">int findLengthOfLCIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">       int n = nums.size();</span><br><span class="line">       int dp[n];</span><br><span class="line">       dp[0]=1;</span><br><span class="line">       int res = 1;</span><br><span class="line">       for(int i=1;i&lt;nums.size();i++)&#123;</span><br><span class="line">           if(nums[i-1]&lt;nums[i])&#123;</span><br><span class="line">               dp[i] = dp[i-1]+1;</span><br><span class="line">           &#125;</span><br><span class="line">           else&#123;</span><br><span class="line">               dp[i] = 1;</span><br><span class="line">           &#125;</span><br><span class="line">           res = max(dp[i],res);</span><br><span class="line">       &#125;</span><br><span class="line">       return res;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Leetcode-300"><a href="#Leetcode-300" class="headerlink" title="Leetcode 300"></a>Leetcode 300</h3><p>Given an unsorted array of integers, find the length of longest increasing subsequence.</p>
+<p>Example:</p>
+<p>Input: [10,9,2,5,3,7,101,18]<br>Output: 4<br>Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">int lengthOfLIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">    </span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">        int n = nums.size();</span><br><span class="line">        int dp[n];</span><br><span class="line">        for(int i=0;i&lt;n;i++)</span><br><span class="line">            dp[i]=1;</span><br><span class="line">        for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">            for(int j=0;j&lt;i;j++)&#123;</span><br><span class="line">                if(nums[j]&lt;nums[i])&#123;</span><br><span class="line">                    //仅当dp[j]+1&gt;dp[i]的时候才更新</span><br><span class="line">                    if(dp[j]+1&gt;dp[i])&#123;</span><br><span class="line">                        dp[i]=dp[j]+1;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        int res = 0;</span><br><span class="line">        for(int i=0;i&lt;n;i++)</span><br><span class="line">            res = max(res,dp[i]);</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>复杂度：O（n^2）</p>
+<p>解析：</p>
+<p><a href="https://www.youtube.com/watch?v=CE2b_-XfVDk" target="_blank" rel="noopener">https://www.youtube.com/watch?v=CE2b_-XfVDk</a></p>
+<p>以下是O(nlogn)作法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int lengthOfLIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">    </span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">        int n = nums.size();</span><br><span class="line">        int dp[n];</span><br><span class="line">        dp[0] = nums[0];</span><br><span class="line">        int len=1;</span><br><span class="line">        for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">            int left=0;</span><br><span class="line">            int right = len-1;</span><br><span class="line">            int mid;</span><br><span class="line">            if(dp[len-1]&lt;nums[i])&#123;</span><br><span class="line">                dp[len++]=nums[i];</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                while(left&lt;=right)&#123;</span><br><span class="line">                    mid = (left+right)/2;</span><br><span class="line">                    if(dp[mid]&lt;nums[i])&#123;</span><br><span class="line">                        left = mid+1;</span><br><span class="line">                    &#125;else&#123;</span><br><span class="line">                        right = mid-1;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[left] = nums[i];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return len;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>dp[i]表示长度为i的LIS序列的最后一个数字最小末尾</p>
+<p><a href="https://www.cnblogs.com/ziyi--caolu/p/3227121.html" target="_blank" rel="noopener">https://www.cnblogs.com/ziyi--caolu/p/3227121.html</a></p>
+<h3 id="leetcode-53"><a href="#leetcode-53" class="headerlink" title="leetcode 53"></a>leetcode 53</h3><p>Longest maximum subarray</p>
+<p>Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.</p>
+<p>Example:</p>
+<p>Input: [-2,1,-3,4,-1,2,1,-5,4],<br>Output: 6<br>Explanation: [4,-1,2,1] has the largest sum = 6.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int max_sum(vector&lt;int&gt;&amp;nums,int i)&#123;</span><br><span class="line">        if(i==0)</span><br><span class="line">            return nums[i];</span><br><span class="line">        int res = max(nums[i],nums[i]+max_sum(nums,i-1));</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int maxSubArray(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        </span><br><span class="line">        if(nums.empty())</span><br><span class="line">            return 0;</span><br><span class="line">        int res = nums[0];</span><br><span class="line">        for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            res = max(res,max_sum(nums,i));</span><br><span class="line">        &#125;</span><br><span class="line">        return res;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>方法二：</p>
+<p>转移方程： dp[i] = nums[i]+(dp[i-1]&gt;0?dp[i-1]:0);</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int maxSubArray(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">      if(nums.empty())</span><br><span class="line">          return 0;</span><br><span class="line">      int n = nums.size();</span><br><span class="line">      int dp[n];</span><br><span class="line">      dp[0] = nums[0];</span><br><span class="line">      int res = dp[0];</span><br><span class="line">      for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">          dp[i] = nums[i]+(dp[i-1]&gt;0?dp[i-1]:0);</span><br><span class="line">          res = max(res,dp[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      return res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>拓展</p>
+<p>给定K个整数的序列{ N1, N2, …, NK }，其任意连续子序列可表示为{ Ni, Ni+1, …,<br>Nj }，其中 1 &lt;= i &lt;= j &lt;= K。最大连续子序列是所有连续子序列中元素和最大的一个，<br>例如给定序列{ -2, 11, -4, 13, -5, -2 }，其最大连续子序列为{ 11, -4, 13 }，最大和<br>为20。<br>在今年的数据结构考卷中，要求编写程序得到最大和，现在增加一个要求，即还需要输出该<br>子序列的第一个和最后一个元素。</p>
+<p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=1231" target="_blank" rel="noopener">http://acm.hdu.edu.cn/showproblem.php?pid=1231</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line">#define INF 0x3f3f3f3f</span><br><span class="line">int A[30][30][30];</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int k;</span><br><span class="line"></span><br><span class="line">    while(true)&#123;</span><br><span class="line">        long long int dp[10001];</span><br><span class="line">        int arr[10001];</span><br><span class="line">        cin&gt;&gt;k;</span><br><span class="line">        if(k==0)</span><br><span class="line">            break;</span><br><span class="line">        int posFlag = 0;</span><br><span class="line">        for(int i=1;i&lt;=k;i++)&#123;</span><br><span class="line">            scanf(&quot;%d&quot;,&amp;arr[i]);</span><br><span class="line">            if(arr[i]&gt;=0)</span><br><span class="line">                posFlag=1;</span><br><span class="line">        &#125;</span><br><span class="line">        if(posFlag!=1)&#123;</span><br><span class="line">            cout&lt;&lt;0&lt;&lt;&quot; &quot;&lt;&lt;arr[1]&lt;&lt;&quot; &quot;&lt;&lt;arr[k]&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            double max = -INF;</span><br><span class="line">            dp[1]=arr[1];</span><br><span class="line">            int resulti=1;</span><br><span class="line">            for(int i=1;i&lt;=k;i++)&#123;</span><br><span class="line">                //or dp[i] = max(dp[i-1]+arr[i],arr[i])</span><br><span class="line">                dp[i] = arr[i]+(dp[i-1]&gt;0?dp[i-1]:0);</span><br><span class="line">                if(dp[i]&gt;max)&#123;</span><br><span class="line">                    max = dp[i];</span><br><span class="line">                    resulti = i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            double max2=0;</span><br><span class="line">            int start=1;</span><br><span class="line">            for(int i=resulti;i&gt;=1;i--)&#123;</span><br><span class="line">                max2+=arr[i];</span><br><span class="line">                if(max2==max)&#123;</span><br><span class="line">                    start = i;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            cout&lt;&lt;max&lt;&lt;&quot; &quot;&lt;&lt;arr[start]&lt;&lt;&quot; &quot;&lt;&lt;arr[resulti]&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关键是要找到子序列的第一个元素。</p>
+<p>当找到最后一个元素的索引时候，从索引处由后往前找，知道sum等于结果的max，记录下此时的索引i，于是便找到了第一个元素的索引i</p>
+<h3 id="Longest-common-subsequence"><a href="#Longest-common-subsequence" class="headerlink" title="Longest common subsequence"></a>Longest common subsequence</h3><p><img src="/home/alex/图片/LCS.png" alt="upload successul"></p>
+<p>转移方程 ： res = max(lcs(i-1,j),lcs(i,j-1),1+lcs(i-1,j-1))</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">string a=&quot;bananinn&quot;;</span><br><span class="line">string b = &quot;kaninan&quot;;</span><br><span class="line"></span><br><span class="line">int lcs(int i,int j)&#123;</span><br><span class="line">    if(i==-1||j==-1)</span><br><span class="line">        return 0;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int res=0;</span><br><span class="line">    res = max(res,lcs(i-1,j));</span><br><span class="line">    res = max(res,lcs(i,j-1));</span><br><span class="line"></span><br><span class="line">    if(a[i]==b[j])&#123;</span><br><span class="line">        res = max(res,1+lcs(i-1,j-1));</span><br><span class="line">    &#125;</span><br><span class="line">    return res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    int mem[1000][1000];</span><br><span class="line">    memset(mem,-1,sizeof(mem));</span><br><span class="line">    int ans = 0;</span><br><span class="line">    for(int i=0;i&lt;8;i++)&#123;</span><br><span class="line">        for(int j=0;j&lt;7;j++)&#123;</span><br><span class="line">            ans = max(ans,lcs(i,j));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;ans&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="DP模板"><a href="#DP模板" class="headerlink" title="DP模板"></a>DP模板</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Dynamic programming formulation</span><br><span class="line">map&lt;problem, value&gt; memory;</span><br><span class="line">	value dp(problem P) &#123;</span><br><span class="line">		if (is_base_case(P)) &#123;</span><br><span class="line">			return base_case_value(P);</span><br><span class="line">	&#125;</span><br><span class="line">		if (memory.find(P) != memory.end()) &#123;</span><br><span class="line">			return memory[P];</span><br><span class="line">	&#125;</span><br><span class="line">		value result = some value;</span><br><span class="line">		for (problem Q in subproblems(P)) &#123;</span><br><span class="line">			result = combine(result, dp(Q));	</span><br><span class="line">		&#125;</span><br><span class="line">		memory[P] = result;</span><br><span class="line">		return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Traveling-Salesman-problem"><a href="#Traveling-Salesman-problem" class="headerlink" title="Traveling Salesman problem"></a>Traveling Salesman problem</h3><p><img src="/home/alex/图片/2018-51.png" alt="filename already existsamed"></p>
+<p>TSP问题就是在一张有权图，从某个起点出发，然后go through each node exactly once and finally return to the beginning node,such that the weightSum is minimal</p>
+<h4 id="NP-HARD"><a href="#NP-HARD" class="headerlink" title="NP-HARD"></a>NP-HARD</h4><p>no solution with dominomial time complexity </p>
+<p><img src="/home/alex/图片/TSP.png" alt="upload succsful"></p>
+<p>子问题一共有 2^n*n 个，每个子问题用O(n)复杂度来解决</p>
+<p>T:(2^n*n^2)</p>
+<h3 id="0-1背包问题"><a href="#0-1背包问题" class="headerlink" title="0-1背包问题"></a>0-1背包问题</h3><p>状态转移方程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//f[i][j]表示i个物品，容量j背包的物品最大价值</span><br><span class="line">//若f[i][j] == f[i-1][j],说明不装第i个</span><br><span class="line">//否则装入第i个，同时容量-w,价值+v,w,v分别为第i个物品的重量和价值</span><br><span class="line"></span><br><span class="line">f[i][j] = max(f[i-1][j],f[i-1][j-w]+v);</span><br></pre></td></tr></table></figure></p>
+<h4 id="kattis-knapsack"><a href="#kattis-knapsack" class="headerlink" title="kattis - knapsack"></a>kattis - knapsack</h4><p>关键是如何打印出装入的物品的index</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line">    double capa;</span><br><span class="line">    int n;</span><br><span class="line">    while(cin&gt;&gt;capa&amp;&amp;cin&gt;&gt;n)&#123;</span><br><span class="line">        int capacity = floor(capa);</span><br><span class="line">        vector&lt;vector&lt;int&gt;&gt;f(n+1,vector&lt;int&gt;(capacity+1,0));</span><br><span class="line">        values.assign(n+1,0);</span><br><span class="line">        weights.assign(n+1,0);</span><br><span class="line">        for(int i=1;i&lt;=n;i++)&#123;</span><br><span class="line">            int v,w;</span><br><span class="line">            cin&gt;&gt;v&gt;&gt;w;</span><br><span class="line">            weights[i] = w;</span><br><span class="line">            values[i] = v;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for(int i=1;i&lt;=n;i++)&#123;</span><br><span class="line">            int v = values[i];</span><br><span class="line">            int w = weights[i];</span><br><span class="line">            for(int j=1;j&lt;=capacity;j++)&#123;</span><br><span class="line">                if(j&lt;w)&#123;</span><br><span class="line">                    f[i][j] = f[i-1][j];</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                f[i][j] = max(f[i-1][j],f[i-1][j-w]+v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //打印最终装入的物品的index！ 即寻找f[i][j]!=f[i-1][j]</span><br><span class="line">        vector&lt;int&gt;res;</span><br><span class="line">        int j = capacity;</span><br><span class="line">        for(int i=n;i&gt;=1;i--)&#123;</span><br><span class="line">            if(f[i][j]!=f[i-1][j])&#123;</span><br><span class="line">                res.push_back(i-1);</span><br><span class="line">                j-=weights[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;res.size()&lt;&lt;endl;</span><br><span class="line">        for(auto i:res)</span><br><span class="line">            cout&lt;&lt;i&lt;&lt;&quot; &quot;;</span><br><span class="line">        cout&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="http://poj.org/problem?id=1579" target="_blank" rel="noopener">http://poj.org/problem?id=1579</a></p>
+<h3 id="记忆化搜索"><a href="#记忆化搜索" class="headerlink" title="记忆化搜索"></a>记忆化搜索</h3><p>把递归结果存在表里，减少不必要的递归次数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">int A[30][30][30];</span><br><span class="line"></span><br><span class="line">int w(int a,int b,int c)&#123;</span><br><span class="line">    if(a&lt;=0||b&lt;=0||c&lt;=0)&#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    if(a&gt;20||b&gt;20||c&gt;20)&#123;</span><br><span class="line">        return w(20,20,20);</span><br><span class="line">    &#125;</span><br><span class="line">    if(A[a][b][c])  //if already in A no need to do recursion</span><br><span class="line">        return A[a][b][c];</span><br><span class="line">    if(a&lt;b&amp;&amp;b&lt;c)&#123;</span><br><span class="line">        A[a][b][c] =w(a,b,c-1)+w(a,b-1,c-1)-w(a,b-1,c); //A[a][b][c-1]+A[a][b-1][c-1]-A[a][b-1][c];</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">        A[a][b][c] = w(a-1,b,c)+w(a-1,b-1,c)+w(a-1,b,c-1)-w(a-1,b-1,c-1);//A[a-1][b][c]+A[a-1][b-1][c]+A[a-1][b][c-1]-A[a-1][b-1][c-1];</span><br><span class="line">    return A[a][b][c];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    memset(A,0,sizeof(A));</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        int a,b,c;</span><br><span class="line">        cin&gt;&gt;a&gt;&gt;b&gt;&gt;c;</span><br><span class="line">        if(a==-1&amp;&amp;b==-1&amp;&amp;c==-1)</span><br><span class="line">            break;</span><br><span class="line">        cout&lt;&lt;w(a,b,c)&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/07/程序的机器级表示与执行/" rel="next" title="CSAPP-异常控制流">
+                <i class="fa fa-chevron-left"></i> CSAPP-异常控制流
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/12/CSAPP-SHELL-LAB/" rel="prev" title="CSAPP-SHELL LAB">
+                CSAPP-SHELL LAB <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Leetcode-647"><span class="nav-number">1.</span> <span class="nav-text">Leetcode 647</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Leetcode-300"><span class="nav-number">2.</span> <span class="nav-text">Leetcode 300</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#leetcode-53"><span class="nav-number">3.</span> <span class="nav-text">leetcode 53</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Longest-common-subsequence"><span class="nav-number">4.</span> <span class="nav-text">Longest common subsequence</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DP模板"><span class="nav-number">5.</span> <span class="nav-text">DP模板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Traveling-Salesman-problem"><span class="nav-number">6.</span> <span class="nav-text">Traveling Salesman problem</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NP-HARD"><span class="nav-number">6.1.</span> <span class="nav-text">NP-HARD</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-1背包问题"><span class="nav-number">7.</span> <span class="nav-text">0-1背包问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#kattis-knapsack"><span class="nav-number">7.1.</span> <span class="nav-text">kattis - knapsack</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#记忆化搜索"><span class="nav-number">8.</span> <span class="nav-text">记忆化搜索</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

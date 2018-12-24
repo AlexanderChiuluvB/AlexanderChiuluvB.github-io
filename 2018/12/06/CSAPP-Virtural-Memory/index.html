@@ -130,7 +130,7 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/freeing.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/coalescing.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/VM.png">
-<meta property="og:updated_time" content="2018-12-13T08:01:45.180Z">
+<meta property="og:updated_time" content="2018-12-20T03:26:07.807Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-Virtural Memory">
 <meta name="twitter:description" content="虚拟内存为每个进程提供了一个大的，一致的和私有的地址空间。 1.把主存看成是一个存储在磁盘上的地址空间的高速缓存 2.为每个进程提供了一致的地址空间，简化了内存管理 3.保护每个进程的地址空间不被其他进程破坏 早期分页方式的概念大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。  就是程序可能会有2^16byte长，但是物理容量只有4K  这个区号意思就">
@@ -526,6 +526,12 @@
 <p>如果2开头的block是空的，那么 <em>p = </em>p +*next</p>
 <p>意思就是说4 = 4+2 = 6</p>
 <h5 id="Explicit-Free-Lists"><a href="#Explicit-Free-Lists" class="headerlink" title="Explicit Free Lists"></a>Explicit Free Lists</h5><p><img src="/home/alex/图片/VM.png" alt="upload succeful"></p>
+<h3 id="一些区别"><a href="#一些区别" class="headerlink" title="一些区别"></a>一些区别</h3><p>explicit empty list &amp; implicit empty list</p>
+<p>隐式的话，分配时间是块总数线性时间，而显式的话，是空闲块数量的线性时间，一般来说显式会比隐式更快。</p>
+<p>first fit &amp;&amp; next fit &amp;&amp; best fit</p>
+<p>首次适配：从头开始搜索空闲链表，选择第一个合适的空闲块。</p>
+<p>下一次适配：从上一次搜索结束的位置开始搜索。</p>
+<p>最佳适配：检索每一个空闲块，选择适合需求的最小空闲块。</p>
 
       
     </div>
@@ -643,7 +649,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -698,7 +704,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存"><span class="nav-number">1.</span> <span class="nav-text">虚拟内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#早期分页方式的概念"><span class="nav-number">2.</span> <span class="nav-text">早期分页方式的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分页"><span class="nav-number">2.1.</span> <span class="nav-text">分页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟存储系统"><span class="nav-number">3.</span> <span class="nav-text">虚拟存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟存储技术的实质"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟存储技术的实质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主存–磁盘"><span class="nav-number">3.2.</span> <span class="nav-text">主存–磁盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页表"><span class="nav-number">3.3.</span> <span class="nav-text">页表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址转换为物理地址"><span class="nav-number">3.4.</span> <span class="nav-text">逻辑地址转换为物理地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常情况"><span class="nav-number">3.5.</span> <span class="nav-text">异常情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB（快表）"><span class="nav-number">3.6.</span> <span class="nav-text">TLB（快表）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#示意图"><span class="nav-number">3.6.1.</span> <span class="nav-text">示意图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个例子"><span class="nav-number">3.7.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分段式虚拟存储器"><span class="nav-number">3.8.</span> <span class="nav-text">分段式虚拟存储器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#段页式存储器"><span class="nav-number">3.9.</span> <span class="nav-text">段页式存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#练习题9-5"><span class="nav-number">3.9.1.</span> <span class="nav-text">练习题9.5</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除虚拟地址"><span class="nav-number">3.10.</span> <span class="nav-text">删除虚拟地址</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态内存分配"><span class="nav-number">4.</span> <span class="nav-text">动态内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#usage-of-malloc-package"><span class="nav-number">4.1.</span> <span class="nav-text">usage of malloc package</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性能指标"><span class="nav-number">4.2.</span> <span class="nav-text">性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#内部碎片"><span class="nav-number">4.2.1.</span> <span class="nav-text">内部碎片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#外部碎片"><span class="nav-number">4.2.2.</span> <span class="nav-text">外部碎片</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Peak-Memory-Utilization"><span class="nav-number">4.3.</span> <span class="nav-text">Peak Memory Utilization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#implementation"><span class="nav-number">4.4.</span> <span class="nav-text">implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#how-to-free"><span class="nav-number">4.4.1.</span> <span class="nav-text">how to free</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#keeping-track-of-free-blocks"><span class="nav-number">4.4.2.</span> <span class="nav-text">keeping track of free blocks</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#implicit-free-lists"><span class="nav-number">4.4.3.</span> <span class="nav-text">implicit free lists</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#example"><span class="nav-number">4.4.4.</span> <span class="nav-text">example</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Finding-a-free-block"><span class="nav-number">4.4.5.</span> <span class="nav-text">Finding a free block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#allocating-in-free-block"><span class="nav-number">4.4.6.</span> <span class="nav-text">allocating in free block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#freeing-a-block"><span class="nav-number">4.4.7.</span> <span class="nav-text">freeing a block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Coalescing"><span class="nav-number">4.4.8.</span> <span class="nav-text">Coalescing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Explicit-Free-Lists"><span class="nav-number">4.4.9.</span> <span class="nav-text">Explicit Free Lists</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存"><span class="nav-number">1.</span> <span class="nav-text">虚拟内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#早期分页方式的概念"><span class="nav-number">2.</span> <span class="nav-text">早期分页方式的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分页"><span class="nav-number">2.1.</span> <span class="nav-text">分页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟存储系统"><span class="nav-number">3.</span> <span class="nav-text">虚拟存储系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟存储技术的实质"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟存储技术的实质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主存–磁盘"><span class="nav-number">3.2.</span> <span class="nav-text">主存–磁盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页表"><span class="nav-number">3.3.</span> <span class="nav-text">页表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑地址转换为物理地址"><span class="nav-number">3.4.</span> <span class="nav-text">逻辑地址转换为物理地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常情况"><span class="nav-number">3.5.</span> <span class="nav-text">异常情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB（快表）"><span class="nav-number">3.6.</span> <span class="nav-text">TLB（快表）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#示意图"><span class="nav-number">3.6.1.</span> <span class="nav-text">示意图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个例子"><span class="nav-number">3.7.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分段式虚拟存储器"><span class="nav-number">3.8.</span> <span class="nav-text">分段式虚拟存储器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#段页式存储器"><span class="nav-number">3.9.</span> <span class="nav-text">段页式存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#练习题9-5"><span class="nav-number">3.9.1.</span> <span class="nav-text">练习题9.5</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除虚拟地址"><span class="nav-number">3.10.</span> <span class="nav-text">删除虚拟地址</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态内存分配"><span class="nav-number">4.</span> <span class="nav-text">动态内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#usage-of-malloc-package"><span class="nav-number">4.1.</span> <span class="nav-text">usage of malloc package</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性能指标"><span class="nav-number">4.2.</span> <span class="nav-text">性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#内部碎片"><span class="nav-number">4.2.1.</span> <span class="nav-text">内部碎片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#外部碎片"><span class="nav-number">4.2.2.</span> <span class="nav-text">外部碎片</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Peak-Memory-Utilization"><span class="nav-number">4.3.</span> <span class="nav-text">Peak Memory Utilization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#implementation"><span class="nav-number">4.4.</span> <span class="nav-text">implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#how-to-free"><span class="nav-number">4.4.1.</span> <span class="nav-text">how to free</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#keeping-track-of-free-blocks"><span class="nav-number">4.4.2.</span> <span class="nav-text">keeping track of free blocks</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#implicit-free-lists"><span class="nav-number">4.4.3.</span> <span class="nav-text">implicit free lists</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#example"><span class="nav-number">4.4.4.</span> <span class="nav-text">example</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Finding-a-free-block"><span class="nav-number">4.4.5.</span> <span class="nav-text">Finding a free block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#allocating-in-free-block"><span class="nav-number">4.4.6.</span> <span class="nav-text">allocating in free block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#freeing-a-block"><span class="nav-number">4.4.7.</span> <span class="nav-text">freeing a block</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Coalescing"><span class="nav-number">4.4.8.</span> <span class="nav-text">Coalescing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Explicit-Free-Lists"><span class="nav-number">4.4.9.</span> <span class="nav-text">Explicit Free Lists</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些区别"><span class="nav-number">5.</span> <span class="nav-text">一些区别</span></a></li></ol></div>
             
 
           </div>
@@ -898,6 +904,28 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
 
   
 
