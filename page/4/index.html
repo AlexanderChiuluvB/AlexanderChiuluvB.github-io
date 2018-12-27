@@ -272,6 +272,168 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/09/CSAPP-重定位/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/09/CSAPP-重定位/" itemprop="url">CSAPP-重定位</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-09T23:56:00+08:00">
+                2018-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ICS/" itemprop="url" rel="index">
+                    <span itemprop="name">ICS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="共享库与动态链接概述"><a href="#共享库与动态链接概述" class="headerlink" title="共享库与动态链接概述"></a>共享库与动态链接概述</h2><p>使用静态库 .a文件有一些缺点</p>
+<p>1.静态库函数被包含在每个进程的代码段中，对于并发运行上百个进程的系统，会造成极大的主存资源浪费</p>
+<p>2.静态库函数会被和并在可执行目标中，磁盘上存放着数千个可执行文件，会造成磁盘空间的极大浪费</p>
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>Shared Libraries(共享库)</p>
+<p>Linux 称为 动态共享对象 (Dynamic Shared Objects,.so文件)</p>
+<p>Windows 中的.dll 文件</p>
+<p>原理就是： 包含目标模块的文件，每个模块包含有代码和数据，从程序中分离出来，磁盘和内存中只有一个备份，可以在装入或者运行的时候被动态加载与链接。</p>
+<p>举个例子，printf（）的代码不会包含在每个调用其的文件当中，所有进程共享调用这一份代码。</p>
+<h3 id="共享库优点："><a href="#共享库优点：" class="headerlink" title="共享库优点："></a>共享库优点：</h3><h5 id="第一次加载的时候进行：（load-time-linking）"><a href="#第一次加载的时候进行：（load-time-linking）" class="headerlink" title="第一次加载的时候进行：（load-time linking）"></a>第一次加载的时候进行：（load-time linking）</h5><p>在linux当中通常由动态链接器自动处理</p>
+<p>libc.so 通常按这种方式被动态链接</p>
+<h5 id="在开始运行后进行："><a href="#在开始运行后进行：" class="headerlink" title="在开始运行后进行："></a>在开始运行后进行：</h5><p>在linux中，调用dlopen()等接口实现</p>
+<p><img src="/home/alex/图片/dynamic.png" alt="image"></p>
+<p>生成的代码文件是放在内存当中</p>
+<h4 id="位置无关代码（PIC）"><a href="#位置无关代码（PIC）" class="headerlink" title="位置无关代码（PIC）"></a>位置无关代码（PIC）</h4><p><img src="/home/alex/图片/222.png" alt="image"></p>
+<p>要跳转的目标地址 = 当前PC（当前指令下一条指令地址）+ 立即数<br><img src="/home/alex/图片/33.png" alt="image"></p>
+<p>不需要重定位<br><img src="/home/alex/图片/yinyong.png" alt="image"></p>
+<p>第三种情况</p>
+<p><img src="/home/alex/图片/2018-2.png" alt="image"></p>
+<p>call 指令的功能是：<br>1.把下一条指令地址压栈</p>
+<p>2.jump到那条指令</p>
+<p>popl %ebx 的功能就是把该条指令的地址送到 %ebx寄存器当中</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1077,7 +1239,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

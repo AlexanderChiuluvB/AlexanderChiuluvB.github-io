@@ -272,6 +272,235 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/26/DL-wk2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/26/DL-wk2/" itemprop="url">DL C2wk1</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-26T13:57:43+08:00">
+                2018-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Train-dev-test-sets"><a href="#Train-dev-test-sets" class="headerlink" title="Train/dev/test sets"></a>Train/dev/test sets</h3><p>dev sets,also called hold-out sets, are used to decide the model’s performance.(give you an unbiased estimate of your model’s performance)</p>
+<h4 id="example"><a href="#example" class="headerlink" title="example:"></a>example:</h4><p>If you have 10,000,000 examples, how would you split the train/dev/test set?</p>
+<pre><code>98% train . 1% dev . 1% test
+</code></pre><p>The dev and test set should:</p>
+<pre><code>Come from the same distribution
+</code></pre><h3 id="Bias-and-Variance"><a href="#Bias-and-Variance" class="headerlink" title="Bias and Variance"></a>Bias and Variance</h3><p><img src="/home/alex/图片/biad.png" alt="upload succesul"></p>
+<p>underfitting -&gt; high bias</p>
+<p>overfitting -&gt; high variance</p>
+<h4 id="example-1"><a href="#example-1" class="headerlink" title="example"></a>example</h4><p><img src="/home/alex/图片/2018-105.png" alt="filename aady exists, renamed"></p>
+<p>1.如果train error =1%,dev set error = 11%</p>
+<p>则overfitting，说明是high variance</p>
+<p>2.如果 train error都很大的话，说明是high bias</p>
+<p>3.总的来说，如果dev set error 比train set error<br>大很多，可以说明是overfitting</p>
+<h4 id="high-bias-and-high-variance"><a href="#high-bias-and-high-variance" class="headerlink" title="high bias and high variance"></a>high bias and high variance</h4><p><img src="/home/alex/图片/high.png" alt="upload essful"></p>
+<p>部分数据过拟合，部分欠拟合</p>
+<h3 id="basic-recipe-for-ML"><a href="#basic-recipe-for-ML" class="headerlink" title="basic recipe for ML"></a>basic recipe for ML</h3><p>如果high bias咋办</p>
+<p>High bias （欠拟合）<br>(training data performance)</p>
+<ul>
+<li>1.bigger network</li>
+<li>2.optimized neural network architecture</li>
+<li>3.other optimizing techniques</li>
+</ul>
+<p>High Variance? （过拟合）<br>(dev data performance)</p>
+<ul>
+<li>1.more data</li>
+<li>2.regularization</li>
+</ul>
+<h3 id="Regularization"><a href="#Regularization" class="headerlink" title="Regularization"></a>Regularization</h3><p><img src="/home/alex/图片/2018-106.png" alt="filename alrea exists, renamed"></p>
+<p>在L1正则化中,w会是一个很sparse的向量，通常在实际应用中L2正则化会应用的更为广泛。</p>
+<p>λ 又叫正则化参数</p>
+<h4 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h4><p><img src="/home/alex/图片/2018-107.png" alt="filename alrea exists, renamed"></p>
+<h4 id="how-does-it-work"><a href="#how-does-it-work" class="headerlink" title="how does it work?"></a>how does it work?</h4><p>由上面推导我们可知，如果λ越大，那么w会越接近于0，那么以下图的激活函数为例，如果z很小的时候，tanh结果会接近于线性的，，神经网络每一层都将近似于一个线性神经元，那么就可以有效解决过拟合问题，往”欠拟合”或者刚好的方向。</p>
+<p><img src="/home/alex/图片/linear.png" alt="upload successful"></p>
+<h3 id="drop-out"><a href="#drop-out" class="headerlink" title="drop out"></a>drop out</h3><p>let’s say a nn with layer l = 3,keep_prob = 0.8</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d3= np.random.rand(a3.shape[0],a3.shape[1])&lt;keep_prob</span><br></pre></td></tr></table></figure>
+<p>80%的unit会被保留，20%会被drop out</p>
+<p>上面语句作用是d380%元素为1,20%元素为0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a3 = np.multiply(a3,d3)</span><br></pre></td></tr></table></figure>
+<p>然后再scale up</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a3/= keep_prob</span><br></pre></td></tr></table></figure>
+<h4 id="why-does-it-work"><a href="#why-does-it-work" class="headerlink" title="why does it work?"></a>why does it work?</h4><p><img src="/home/alex/图片/why.png" alt="upload succeful"></p>
+<p>1.在一些神经元很多的层，设置keep_probs低一点，可以有效减少过拟合，实际上是减弱regularization 的作用，在一些神经元很少的层，设置为1.0就好</p>
+<p>2.在CV领域，由于输入数据的维数通常很大，一般都需要drop out</p>
+<p>3.但是drop out会导致不能够通过画出cost function曲线来debug，解决方法是最开始先把所有keep_prob set to 1,then if no bug, turn on drop out</p>
+<h3 id="other-technique-of-reducing-overfitting"><a href="#other-technique-of-reducing-overfitting" class="headerlink" title="other technique of reducing overfitting"></a>other technique of reducing overfitting</h3><h4 id="early-stopping"><a href="#early-stopping" class="headerlink" title="early stopping"></a>early stopping</h4><p><img src="/home/alex/图片/2018-108.png" alt="filena already exists, renamed"></p>
+<p>防止dev set error增加，采取early stopping,最后会得到一个middle-size的||w||^2</p>
+<h4 id="data-augmentation"><a href="#data-augmentation" class="headerlink" title="data augmentation"></a>data augmentation</h4><p><img src="/home/alex/图片/2018-109.png" alt="filename alre exists, renamed"></p>
+<p>通过变换现有的数据集，来获得更多的数据集</p>
+<h3 id="normalizing-inputs"><a href="#normalizing-inputs" class="headerlink" title="normalizing inputs"></a>normalizing inputs</h3><p><img src="/home/alex/图片/2018-110.png" alt="filename alrea exists, renamed"></p>
+<p>by subtract the mean and scalling the variance</p>
+<p><img src="/home/alex/图片/2018-111.png" alt="filename exists, renamed"></p>
+<p>效果就是会加快optimizing 的速度</p>
+<h3 id="Vanishing-gradients"><a href="#Vanishing-gradients" class="headerlink" title="Vanishing gradients"></a>Vanishing gradients</h3><p>很深层的神经网络，权重相乘累积起来的话后果很严重</p>
+<p><img src="/home/alex/图片/2018-113.png" alt="filename already exists, renmed"></p>
+<p>参数初始化方法：</p>
+<p>这样可以使得w的值接近于1，不会导致梯度消失和梯度爆炸</p>
+<p><img src="/home/alex/图片/single.png" alt="upload cessful"></p>
+<p>其中的Xavior initialization</p>
+<p>可以用来保证输入输出数据的分布相近，加快收敛速度（方差与均值大概相同）</p>
+<p><a href="https://blog.csdn.net/shuzfan/article/details/51338178" target="_blank" rel="noopener">https://blog.csdn.net/shuzfan/article/details/51338178</a></p>
+<h3 id="gradient-checking"><a href="#gradient-checking" class="headerlink" title="gradient checking"></a>gradient checking</h3><p><img src="/home/alex/图片/gradient.png" alt="upload ccessful"></p>
+<h4 id="grad-check"><a href="#grad-check" class="headerlink" title="grad check"></a>grad check</h4><p><img src="/home/alex/图片/gradcheck.png" alt="upload essful"></p>
+<h4 id="notes"><a href="#notes" class="headerlink" title="notes"></a>notes</h4><p>1.no use in training ,only to debug</p>
+<p>2.if fails grad check,look at components to try to identify bug.</p>
+<p>3.remember regularization</p>
+<p>4.doesn’t work with dropout</p>
+<p>5.run at random initialization </p>
+<h3 id="initialization"><a href="#initialization" class="headerlink" title="initialization"></a>initialization</h3><h4 id="zero-initialization"><a href="#zero-initialization" class="headerlink" title="zero initialization"></a>zero initialization</h4><p>如果把W矩阵初始化为0的话，相当于在训练一个各层只有一个神经元的神经网络，因为每一层的每个神经元其实都在学习相同的参数。</p>
+<p>这时候神经网络只相当于一个线性分类器。</p>
+<p>但是bias可以设置处值为0</p>
+<h4 id="large-random-initialization"><a href="#large-random-initialization" class="headerlink" title="large random initialization"></a>large random initialization</h4><p>1.poor initialization can lead to vanishing/exploding gradients</p>
+<p>2.如果一开始w初值非常大，梯度下降所花时间会很长，（需要更多迭代次数）</p>
+<h4 id="He-random-initialization"><a href="#He-random-initialization" class="headerlink" title="He random initialization"></a>He random initialization</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">def initialize_parameters_he(layers_dims):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Arguments:</span><br><span class="line">    layer_dims -- python array (list) containing the size of each layer.</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    parameters -- python dictionary containing your parameters &quot;W1&quot;, &quot;b1&quot;, ..., &quot;WL&quot;, &quot;bL&quot;:</span><br><span class="line">                    W1 -- weight matrix of shape (layers_dims[1], layers_dims[0])</span><br><span class="line">                    b1 -- bias vector of shape (layers_dims[1], 1)</span><br><span class="line">                    ...</span><br><span class="line">                    WL -- weight matrix of shape (layers_dims[L], layers_dims[L-1])</span><br><span class="line">                    bL -- bias vector of shape (layers_dims[L], 1)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    np.random.seed(3)</span><br><span class="line">    parameters = &#123;&#125;</span><br><span class="line">    L = len(layers_dims) - 1 # integer representing the number of layers</span><br><span class="line">     </span><br><span class="line">    for l in range(1, L + 1):</span><br><span class="line">        ### START CODE HERE ### (≈ 2 lines of code)</span><br><span class="line">        parameters[&apos;W&apos; + str(l)] = np.random.randn(layers_dims[l], layers_dims[l-1]) * (np.sqrt(2. / layers_dims[l-1]))</span><br><span class="line">        parameters[&apos;b&apos; + str(l)] = np.zeros((layers_dims[l], 1))</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">    return parameters</span><br></pre></td></tr></table></figure>
+<h4 id="xavier-random-initialization"><a href="#xavier-random-initialization" class="headerlink" title="xavier random initialization"></a>xavier random initialization</h4><p>只是把 sqrt（2./layers_dims[l-1]） 换作sqrt（1./layers_dims[l-1]）</p>
+<h3 id="L2-Regularization"><a href="#L2-Regularization" class="headerlink" title="L2 Regularization"></a>L2 Regularization</h3><p><img src="/home/alex/图片/2018-114.png" alt="flename already exists, renamed"></p>
+<p>同时code如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">def compute_cost_with_regularization(A3, Y, parameters, lambd):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implement the cost function with L2 regularization. See formula (2) above.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    A3 -- post-activation, output of forward propagation, of shape (output size, number of examples)</span><br><span class="line">    Y -- &quot;true&quot; labels vector, of shape (output size, number of examples)</span><br><span class="line">    parameters -- python dictionary containing parameters of the model</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    cost - value of the regularized loss function (formula (2))</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    m = Y.shape[1]</span><br><span class="line">    W1 = parameters[&quot;W1&quot;]</span><br><span class="line">    W2 = parameters[&quot;W2&quot;]</span><br><span class="line">    W3 = parameters[&quot;W3&quot;]</span><br><span class="line">    </span><br><span class="line">    cross_entropy_cost = compute_cost(A3, Y) # This gives you the cross-entropy part of the cost</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    sumW1 = np.sum(np.square(W1))</span><br><span class="line">    sumW2 = np.sum(np.square(W2))</span><br><span class="line">    sumW3 = np.sum(np.square(W3))</span><br><span class="line">    L2_regularization_cost = (0.5/m*lambd)*(sumW1+sumW2+sumW3)</span><br><span class="line">    ### END CODER HERE ###</span><br><span class="line">    </span><br><span class="line">    cost = cross_entropy_cost + L2_regularization_cost</span><br><span class="line">    </span><br><span class="line">    return cost</span><br></pre></td></tr></table></figure>
+<p>同时引入正则化的话，在backword propa的时候，要加上正则项</p>
+<p><img src="/home/alex/图片/www.png" alt="upload sussful"></p>
+<p>code<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">def backward_propagation_with_regularization(X, Y, cache, lambd):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements the backward propagation of our baseline model to which we added an L2 regularization.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- input dataset, of shape (input size, number of examples)</span><br><span class="line">    Y -- &quot;true&quot; labels vector, of shape (output size, number of examples)</span><br><span class="line">    cache -- cache output from forward_propagation()</span><br><span class="line">    lambd -- regularization hyperparameter, scalar</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    gradients -- A dictionary with the gradients with respect to each parameter, activation and pre-activation variables</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    m = X.shape[1]</span><br><span class="line">    (Z1, A1, W1, b1, Z2, A2, W2, b2, Z3, A3, W3, b3) = cache</span><br><span class="line">    </span><br><span class="line">    dZ3 = A3 - Y</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    dW3 = 1./m * np.dot(dZ3, A2.T) + (lambd/m)*W3</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    db3 = 1./m * np.sum(dZ3, axis=1, keepdims = True)</span><br><span class="line">    </span><br><span class="line">    dA2 = np.dot(W3.T, dZ3)</span><br><span class="line">    dZ2 = np.multiply(dA2, np.int64(A2 &gt; 0))</span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    dW2 = 1./m * np.dot(dZ2, A1.T) + (lambd/m)*W2</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    db2 = 1./m * np.sum(dZ2, axis=1, keepdims = True)</span><br><span class="line">    </span><br><span class="line">    dA1 = np.dot(W2.T, dZ2)</span><br><span class="line">    dZ1 = np.multiply(dA1, np.int64(A1 &gt; 0))</span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    dW1 = 1./m * np.dot(dZ1, X.T) + (lambd/m)*W1</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    db1 = 1./m * np.sum(dZ1, axis=1, keepdims = True)</span><br><span class="line">    </span><br><span class="line">    gradients = &#123;&quot;dZ3&quot;: dZ3, &quot;dW3&quot;: dW3, &quot;db3&quot;: db3,&quot;dA2&quot;: dA2,</span><br><span class="line">                 &quot;dZ2&quot;: dZ2, &quot;dW2&quot;: dW2, &quot;db2&quot;: db2, &quot;dA1&quot;: dA1, </span><br><span class="line">                 &quot;dZ1&quot;: dZ1, &quot;dW1&quot;: dW1, &quot;db1&quot;: db1&#125;</span><br><span class="line">    </span><br><span class="line">    return gradients</span><br></pre></td></tr></table></figure></p>
+<p>lambd = 0.6</p>
+<p><img src="/home/alex/图片/2018-115.png" alt="filename al exists, renamed"></p>
+<p>lambd = 0.7</p>
+<p><img src="/home/alex/图片/0.8.png" alt="upload succsful"></p>
+<p>lambd = 0.8</p>
+<p><img src="/home/alex/图片/2018-116.png" alt="filename already exists,amed"></p>
+<p>λ增大，能够减少过拟合现象，但是training set error 也会随之减少</p>
+<h3 id="drop-out-1"><a href="#drop-out-1" class="headerlink" title="drop out"></a>drop out</h3><h4 id="what-is-inverted-dropout"><a href="#what-is-inverted-dropout" class="headerlink" title="what is inverted dropout?"></a>what is inverted dropout?</h4><p><img src="/home/alex/图片/dropout.png" alt="upload cessful"></p>
+<p><img src="/home/alex/图片/inve.png" alt="upload ful"></p>
+<h4 id="drop-out-2"><a href="#drop-out-2" class="headerlink" title="drop out"></a>drop out</h4><p><img src="/home/alex/图片/drop.png" alt="upload successul"></p>
+<p>1.创建一个np.array D1 which has the same size as A1（np.random.randn(A.shape[0],A.shape[1])）</p>
+<p>2.当A的元素&lt;D[keep_prob]的时候为1，大于的时候为0</p>
+<p>3.A = np.multiply(A,D)</p>
+<p>4.scale A,i.e. A/=keep_prob (inverted dropout)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">def forward_propagation_with_dropout(X, parameters, keep_prob=0.5):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements the forward propagation: LINEAR -&gt; RELU + DROPOUT -&gt; LINEAR -&gt; RELU + DROPOUT -&gt; LINEAR -&gt; SIGMOID.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- input dataset, of shape (2, number of examples)</span><br><span class="line">    parameters -- python dictionary containing your parameters &quot;W1&quot;, &quot;b1&quot;, &quot;W2&quot;, &quot;b2&quot;, &quot;W3&quot;, &quot;b3&quot;:</span><br><span class="line">                    W1 -- weight matrix of shape (20, 2)</span><br><span class="line">                    b1 -- bias vector of shape (20, 1)</span><br><span class="line">                    W2 -- weight matrix of shape (3, 20)</span><br><span class="line">                    b2 -- bias vector of shape (3, 1)</span><br><span class="line">                    W3 -- weight matrix of shape (1, 3)</span><br><span class="line">                    b3 -- bias vector of shape (1, 1)</span><br><span class="line">    keep_prob - probability of keeping a neuron active during drop-out, scalar</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    A3 -- last activation value, output of the forward propagation, of shape (1,1)</span><br><span class="line">    cache -- tuple, information stored for computing the backward propagation</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    np.random.seed(1)</span><br><span class="line">    </span><br><span class="line">    # retrieve parameters</span><br><span class="line">    W1 = parameters[&quot;W1&quot;]</span><br><span class="line">    b1 = parameters[&quot;b1&quot;]</span><br><span class="line">    W2 = parameters[&quot;W2&quot;]</span><br><span class="line">    b2 = parameters[&quot;b2&quot;]</span><br><span class="line">    W3 = parameters[&quot;W3&quot;]</span><br><span class="line">    b3 = parameters[&quot;b3&quot;]</span><br><span class="line">    </span><br><span class="line">    # LINEAR -&gt; RELU -&gt; LINEAR -&gt; RELU -&gt; LINEAR -&gt; SIGMOID</span><br><span class="line">    Z1 = np.dot(W1, X) + b1</span><br><span class="line">    A1 = relu(Z1)</span><br><span class="line">    ### START CODE HERE ### (approx. 4 lines)         # Steps 1-4 below correspond to the Steps 1-4 described above. </span><br><span class="line">    D1 = np.random.rand(A1.shape[0], A1.shape[1])     # Step 1: initialize matrix D1 = np.random.rand(..., ...)</span><br><span class="line">    D1 = D1 &lt; keep_prob                            # Step 2: convert entries of D1 to 0 or 1 (using keep_prob as the threshold)</span><br><span class="line">    A1 = A1 * D1                                      # Step 3: shut down some neurons of A1</span><br><span class="line">    A1 = A1 / keep_prob                               # Step 4: scale the value of neurons that haven&apos;t been shut down</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    Z2 = np.dot(W2, A1) + b2</span><br><span class="line">    A2 = relu(Z2)</span><br><span class="line">    ### START CODE HERE ### (approx. 4 lines)</span><br><span class="line">    D2 = np.random.rand(A2.shape[0], A2.shape[1])     # Step 1: initialize matrix D2 = np.random.rand(..., ...)</span><br><span class="line">    D2 = D2 &lt; keep_prob                           # Step 2: convert entries of D2 to 0 or 1 (using keep_prob as the threshold)                           </span><br><span class="line">    A2 = A2 * D2                                      # Step 3: shut down some neurons of A2</span><br><span class="line">    A2 = A2 / keep_prob                               # Step 4: scale the value of neurons that haven&apos;t been shut down</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    Z3 = np.dot(W3, A2) + b3</span><br><span class="line">    A3 = sigmoid(Z3)</span><br><span class="line">    </span><br><span class="line">    cache = (Z1, D1, A1, W1, b1, Z2, D2, A2, W2, b2, Z3, A3, W3, b3)</span><br><span class="line">    </span><br><span class="line">    return A3, cache</span><br></pre></td></tr></table></figure>
+<h4 id="drop-out-in-backward"><a href="#drop-out-in-backward" class="headerlink" title="drop out in backward"></a>drop out in backward</h4><p>just perform dA2*=D2 and scaling</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">def backward_propagation_with_dropout(X, Y, cache, keep_prob):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements the backward propagation of our baseline model to which we added dropout.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- input dataset, of shape (2, number of examples)</span><br><span class="line">    Y -- &quot;true&quot; labels vector, of shape (output size, number of examples)</span><br><span class="line">    cache -- cache output from forward_propagation_with_dropout()</span><br><span class="line">    keep_prob - probability of keeping a neuron active during drop-out, scalar</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    gradients -- A dictionary with the gradients with respect to each parameter, activation and pre-activation variables</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    m = X.shape[1]</span><br><span class="line">    (Z1, D1, A1, W1, b1, Z2, D2, A2, W2, b2, Z3, A3, W3, b3) = cache</span><br><span class="line">    </span><br><span class="line">    dZ3 = A3 - Y</span><br><span class="line">    dW3 = 1. / m * np.dot(dZ3, A2.T)</span><br><span class="line">    db3 = 1. / m * np.sum(dZ3, axis=1, keepdims=True)</span><br><span class="line">    dA2 = np.dot(W3.T, dZ3)</span><br><span class="line">    ### START CODE HERE ### (≈ 2 lines of code)</span><br><span class="line">    dA2 = dA2 * D2              # Step 1: Apply mask D2 to shut down the same neurons as during the forward propagation</span><br><span class="line">    dA2 = dA2 / keep_prob              # Step 2: Scale the value of neurons that haven&apos;t been shut down</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    dZ2 = np.multiply(dA2, np.int64(A2 &gt; 0))</span><br><span class="line">    dW2 = 1. / m * np.dot(dZ2, A1.T)</span><br><span class="line">    db2 = 1. / m * np.sum(dZ2, axis=1, keepdims=True)</span><br><span class="line">    </span><br><span class="line">    dA1 = np.dot(W2.T, dZ2)</span><br><span class="line">    ### START CODE HERE ### (≈ 2 lines of code)</span><br><span class="line">    dA1 = dA1 * D1              # Step 1: Apply mask D1 to shut down the same neurons as during the forward propagation</span><br><span class="line">    dA1 = dA1 / keep_prob              # Step 2: Scale the value of neurons that haven&apos;t been shut down</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    dZ1 = np.multiply(dA1, np.int64(A1 &gt; 0))</span><br><span class="line">    dW1 = 1. / m * np.dot(dZ1, X.T)</span><br><span class="line">    db1 = 1. / m * np.sum(dZ1, axis=1, keepdims=True)</span><br><span class="line">    </span><br><span class="line">    gradients = &#123;&quot;dZ3&quot;: dZ3, &quot;dW3&quot;: dW3, &quot;db3&quot;: db3,&quot;dA2&quot;: dA2,</span><br><span class="line">                 &quot;dZ2&quot;: dZ2, &quot;dW2&quot;: dW2, &quot;db2&quot;: db2, &quot;dA1&quot;: dA1, </span><br><span class="line">                 &quot;dZ1&quot;: dZ1, &quot;dW1&quot;: dW1, &quot;db1&quot;: db1&#125;</span><br><span class="line">    </span><br><span class="line">    return gradients</span><br></pre></td></tr></table></figure>
+<h3 id="gradient-checking-1"><a href="#gradient-checking-1" class="headerlink" title="gradient checking"></a>gradient checking</h3><p>以J = x*theta 为例</p>
+<p><img src="/home/alex/图片/theta.png" alt="upload succesul"></p>
+<p>implementation</p>
+<p><img src="/home/alex/图片/imple.png" alt="upload succeful"></p>
+<p>注意<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.linalg.norm 是求范数的函数，默认是求二范数</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">def gradient_check(x, theta, epsilon = 1e-7):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implement the backward propagation presented in Figure 1.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    x -- a real-valued input</span><br><span class="line">    theta -- our parameter, a real number as well</span><br><span class="line">    epsilon -- tiny shift to the input to compute approximated gradient with formula(1)</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    difference -- difference (2) between the approximated gradient and the backward propagation gradient</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Compute gradapprox using left side of formula (1). epsilon is small enough, you don&apos;t need to worry about the limit.</span><br><span class="line">    ### START CODE HERE ### (approx. 5 lines)</span><br><span class="line">    thetaPlus = theta+epsilon</span><br><span class="line">    thetaMinus = theta-epsilon</span><br><span class="line">    JPlus = forward_propagation(x,thetaPlus)</span><br><span class="line">    JMinus = forward_propagation(x,thetaMinus)</span><br><span class="line">    gradapprox = (JPlus-JMinus)/(2*epsilon)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Check if gradapprox is close enough to the output of backward_propagation()</span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    grad = backward_propagation(x, gradapprox)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    numerator = np.linalg.norm(grad-gradapprox)</span><br><span class="line">    demurator = np.linalg.norm(grad)+np.linalg.norm(gradapprox)</span><br><span class="line">    difference = numerator/demurator</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    if difference &lt; 1e-7:</span><br><span class="line">        print (&quot;The gradient is correct!&quot;)</span><br><span class="line">    else:</span><br><span class="line">        print (&quot;The gradient is wrong!&quot;)</span><br><span class="line">    </span><br><span class="line">    return difference</span><br></pre></td></tr></table></figure>
+<p>对于多维的情况</p>
+<p><img src="/home/alex/图片/dimension.png" alt="upload success"></p>
+<p>把所有params压缩到一个向量，然后一个for循环，计算每个参数的grad，gradapprox，并加入到一个向量当中，分别得到一个gradapprox与grad向量，再利用这两个向量求范数，求difference</p>
+<p><img src="/home/alex/图片/2018-117.png" alt="filename already exists, reamed"></p>
+<p>code<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def gradient_check_n(parameters, gradients, X, Y, epsilon=1e-7):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Checks if backward_propagation_n computes correctly the gradient of the cost output by forward_propagation_n</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    parameters -- python dictionary containing your parameters &quot;W1&quot;, &quot;b1&quot;, &quot;W2&quot;, &quot;b2&quot;, &quot;W3&quot;, &quot;b3&quot;:</span><br><span class="line">    grad -- output of backward_propagation_n, contains gradients of the cost with respect to the parameters. </span><br><span class="line">    x -- input datapoint, of shape (input size, 1)</span><br><span class="line">    y -- true &quot;label&quot;</span><br><span class="line">    epsilon -- tiny shift to the input to compute approximated gradient with formula(1)</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    difference -- difference (2) between the approximated gradient and the backward propagation gradient</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Set-up variables</span><br><span class="line">    parameters_values, _ = dictionary_to_vector(parameters)</span><br><span class="line">    grad = gradients_to_vector(gradients)</span><br><span class="line">    num_parameters = parameters_values.shape[0]</span><br><span class="line">    J_plus = np.zeros((num_parameters, 1))</span><br><span class="line">    J_minus = np.zeros((num_parameters, 1))</span><br><span class="line">    gradapprox = np.zeros((num_parameters, 1))</span><br><span class="line">    </span><br><span class="line">    # Compute gradapprox</span><br><span class="line">    for i in range(num_parameters):</span><br><span class="line">        </span><br><span class="line">        # Compute J_plus[i]. Inputs: &quot;parameters_values, epsilon&quot;. Output = &quot;J_plus[i]&quot;.</span><br><span class="line">        # &quot;_&quot; is used because the function you have to outputs two parameters but we only care about the first one</span><br><span class="line">        ### START CODE HERE ### (approx. 3 lines)</span><br><span class="line">        thetaplus =  np.copy(parameters_values)                                       # Step 1</span><br><span class="line">        thetaplus[i][0] = thetaplus[i][0] + epsilon                                   # Step 2</span><br><span class="line">        J_plus[i], _ =  forward_propagation_n(X, Y, vector_to_dictionary(thetaplus))  # Step 3</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">        # Compute J_minus[i]. Inputs: &quot;parameters_values, epsilon&quot;. Output = &quot;J_minus[i]&quot;.</span><br><span class="line">        ### START CODE HERE ### (approx. 3 lines)</span><br><span class="line">        thetaminus = np.copy(parameters_values)                                       # Step 1</span><br><span class="line">        thetaminus[i][0] = thetaminus[i][0] - epsilon                                 # Step 2        </span><br><span class="line">        J_minus[i], _ = forward_propagation_n(X, Y, vector_to_dictionary(thetaminus)) # Step 3</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">        # Compute gradapprox[i]</span><br><span class="line">        ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">        gradapprox[i] = (J_plus[i] - J_minus[i]) / (2 * epsilon)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Compare gradapprox to backward propagation gradients by computing difference.</span><br><span class="line">    ### START CODE HERE ### (approx. 1 line)</span><br><span class="line">    numerator = np.linalg.norm(grad - gradapprox)                                     # Step 1&apos;</span><br><span class="line">    denominator = np.linalg.norm(grad) + np.linalg.norm(gradapprox)                   # Step 2&apos;</span><br><span class="line">    difference = numerator / denominator                                              # Step 3&apos;</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">    if difference &gt; 1e-7:</span><br><span class="line">        print(&quot;\033[93m&quot; + &quot;There is a mistake in the backward propagation! difference = &quot; + str(difference) + &quot;\033[0m&quot;)</span><br><span class="line">    else:</span><br><span class="line">        print(&quot;\033[92m&quot; + &quot;Your backward propagation works perfectly fine! difference = &quot; + str(difference) + &quot;\033[0m&quot;)</span><br><span class="line">    </span><br><span class="line">    return difference</span><br></pre></td></tr></table></figure></p>
+<h3 id="concolusion"><a href="#concolusion" class="headerlink" title="concolusion"></a>concolusion</h3><p>1.L2正则化和drop out都可以帮你解决overfitting</p>
+<p>2.regularization 会使得weight变得非常小</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/24/CS230-深层神经网络图像分类/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1679,161 +1908,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-UNIX-IO/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/14/CSAPP-UNIX-IO/" itemprop="url">CSAPP-UNIX/IO</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T16:45:00+08:00">
-                2018-12-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Unix-I-O-Overview"><a href="#Unix-I-O-Overview" class="headerlink" title="Unix I/O Overview"></a>Unix I/O Overview</h3><p>1.A linux file is a sequence of m bytes</p>
-<p>  B0,B1..Bm-1</p>
-<p>2.all I/O devices and even the kernel are represented as files</p>
-<p>/dev/sda2 (/usr disk partition)<br>/dev/tty2 (terminal)</p>
-<p><img src="/home/alex/图片/2018-76.png" alt="filename aady exists, renamed"></p>
-<h3 id="File-Types"><a href="#File-Types" class="headerlink" title="File Types"></a>File Types</h3><p>1.regular file</p>
-<p>2.directory</p>
-<p>3.<strong>socket</strong> for communicating with a process on another machine</p>
-<h4 id="regular-files"><a href="#regular-files" class="headerlink" title="regular files"></a>regular files</h4><p>Kernel doesn’t know the difference between text files and regular files</p>
-<h3 id="pathname"><a href="#pathname" class="headerlink" title="pathname"></a>pathname</h3><h4 id="absolute-pathname"><a href="#absolute-pathname" class="headerlink" title="absolute pathname"></a>absolute pathname</h4><p>starts with ‘/‘ and denotes path from root</p>
-<p>/home/droh/a.c</p>
-<h4 id="relative-pathname"><a href="#relative-pathname" class="headerlink" title="relative pathname"></a>relative pathname</h4><p>../home/droh/a.c</p>
-<p><img src="/home/alex/图片/ics.png" alt="upload succsful"></p>
-<h3 id="open-amp-closing-file"><a href="#open-amp-closing-file" class="headerlink" title="open&amp;closing file"></a>open&amp;closing file</h3><p><img src="/home/alex/图片/open.png" alt="upload successul"></p>
-<p><img src="/home/alex/图片/1.png" alt="upload suessful"></p>
-<h3 id="Reading-Files"><a href="#Reading-Files" class="headerlink" title="Reading Files"></a>Reading Files</h3><p><img src="/home/alex/图片/rf.png" alt="upload succful"></p>
-<h3 id="Writing-Files"><a href="#Writing-Files" class="headerlink" title="Writing Files"></a>Writing Files</h3><p><img src="/home/alex/图片/2018-77.png" alt="filenameady exists, renamed"></p>
-<h3 id="Simple-Unix-I-O-example"><a href="#Simple-Unix-I-O-example" class="headerlink" title="Simple Unix I/O example"></a>Simple Unix I/O example</h3><h4 id="bad-case"><a href="#bad-case" class="headerlink" title="bad case"></a>bad case</h4><p>Each while loop, execute 2 operating system function,that means you have to go to the kernel,go through,context switch,do whatever you wants,then switch back. in a word,it is too <strong>expensive</strong>.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;csapp.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char c;</span><br><span class="line"></span><br><span class="line">    while(Read(STDIN_FILENO, &amp;c, 1) != 0)</span><br><span class="line">        Write(STDOUT_FILENO, &amp;c, 1);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="short-counts"><a href="#short-counts" class="headerlink" title="short counts"></a>short counts</h3><p><img src="/home/alex/图片/2018-78.png" alt="filename y exists, renamed"></p>
-<h3 id="File-Metadata"><a href="#File-Metadata" class="headerlink" title="File Metadata"></a>File Metadata</h3><p><img src="/home/alex/图片/file metadata.png" alt="upload essful"></p>
-<h3 id="File-Sharing"><a href="#File-Sharing" class="headerlink" title="File Sharing"></a>File Sharing</h3><p><img src="/home/alex/图片/fileSharing.png" alt="upload succesul"></p>
-<p><img src="/home/alex/图片/2018-79.png" alt="filename ady exists, renamed"></p>
-<h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p><img src="/home/alex/图片/output.png" alt="upload scessful"></p>
-<p><img src="/home/alex/图片/2018-80.png" alt="filename aldy exists, renamed"></p>
-<p>内核用三个相关的数据结构来表示打开的文件</p>
-<p>1.每个进程都有它独立的描述符表，它的表项是由进程打开的文件描述符来索引的，每个打开的描述符表项指向文件表一个表项。</p>
-<p>2.文件表。是所有进程共享的，保存当前文件位置，引用计数（当前指向该表项的描述符表项数），以及一个指向vnode表对应表项的指针</p>
-<p>3.vnode表，所有进程共享</p>
-<h3 id="I-O-Redirection"><a href="#I-O-Redirection" class="headerlink" title="I/O Redirection"></a>I/O Redirection</h3><p><img src="/home/alex/图片/ioredi.png" alt="upload cessful"></p>
-<h4 id="steps-1"><a href="#steps-1" class="headerlink" title="steps 1"></a>steps 1</h4><p><img src="/home/alex/图片/steps1.png" alt="upload sucessful"></p>
-<h4 id="steps-2"><a href="#steps-2" class="headerlink" title="steps 2"></a>steps 2</h4><p><img src="/home/alex/图片/samefile.png" alt="upload essful"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">fd(5,0)</span><br></pre></td></tr></table></figure>
-<p>就是把重定向标准输入到描述符5</p>
-<h3 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h3><p><img src="/home/alex/图片/ggg.png" alt="upload succeful"></p>
-<p>fd3重定向到了fd2，所以他们指向同样的open file table项，c2是第一个字符a，而c3在此基础上读下一个字符，所以是b。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1888,7 +1962,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

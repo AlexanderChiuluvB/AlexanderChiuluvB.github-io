@@ -272,6 +272,161 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-UNIX-IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/14/CSAPP-UNIX-IO/" itemprop="url">CSAPP-UNIX/IO</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T16:45:00+08:00">
+                2018-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Unix-I-O-Overview"><a href="#Unix-I-O-Overview" class="headerlink" title="Unix I/O Overview"></a>Unix I/O Overview</h3><p>1.A linux file is a sequence of m bytes</p>
+<p>  B0,B1..Bm-1</p>
+<p>2.all I/O devices and even the kernel are represented as files</p>
+<p>/dev/sda2 (/usr disk partition)<br>/dev/tty2 (terminal)</p>
+<p><img src="/home/alex/图片/2018-76.png" alt="filename aady exists, renamed"></p>
+<h3 id="File-Types"><a href="#File-Types" class="headerlink" title="File Types"></a>File Types</h3><p>1.regular file</p>
+<p>2.directory</p>
+<p>3.<strong>socket</strong> for communicating with a process on another machine</p>
+<h4 id="regular-files"><a href="#regular-files" class="headerlink" title="regular files"></a>regular files</h4><p>Kernel doesn’t know the difference between text files and regular files</p>
+<h3 id="pathname"><a href="#pathname" class="headerlink" title="pathname"></a>pathname</h3><h4 id="absolute-pathname"><a href="#absolute-pathname" class="headerlink" title="absolute pathname"></a>absolute pathname</h4><p>starts with ‘/‘ and denotes path from root</p>
+<p>/home/droh/a.c</p>
+<h4 id="relative-pathname"><a href="#relative-pathname" class="headerlink" title="relative pathname"></a>relative pathname</h4><p>../home/droh/a.c</p>
+<p><img src="/home/alex/图片/ics.png" alt="upload succsful"></p>
+<h3 id="open-amp-closing-file"><a href="#open-amp-closing-file" class="headerlink" title="open&amp;closing file"></a>open&amp;closing file</h3><p><img src="/home/alex/图片/open.png" alt="upload successul"></p>
+<p><img src="/home/alex/图片/1.png" alt="upload suessful"></p>
+<h3 id="Reading-Files"><a href="#Reading-Files" class="headerlink" title="Reading Files"></a>Reading Files</h3><p><img src="/home/alex/图片/rf.png" alt="upload succful"></p>
+<h3 id="Writing-Files"><a href="#Writing-Files" class="headerlink" title="Writing Files"></a>Writing Files</h3><p><img src="/home/alex/图片/2018-77.png" alt="filenameady exists, renamed"></p>
+<h3 id="Simple-Unix-I-O-example"><a href="#Simple-Unix-I-O-example" class="headerlink" title="Simple Unix I/O example"></a>Simple Unix I/O example</h3><h4 id="bad-case"><a href="#bad-case" class="headerlink" title="bad case"></a>bad case</h4><p>Each while loop, execute 2 operating system function,that means you have to go to the kernel,go through,context switch,do whatever you wants,then switch back. in a word,it is too <strong>expensive</strong>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;csapp.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char c;</span><br><span class="line"></span><br><span class="line">    while(Read(STDIN_FILENO, &amp;c, 1) != 0)</span><br><span class="line">        Write(STDOUT_FILENO, &amp;c, 1);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="short-counts"><a href="#short-counts" class="headerlink" title="short counts"></a>short counts</h3><p><img src="/home/alex/图片/2018-78.png" alt="filename y exists, renamed"></p>
+<h3 id="File-Metadata"><a href="#File-Metadata" class="headerlink" title="File Metadata"></a>File Metadata</h3><p><img src="/home/alex/图片/file metadata.png" alt="upload essful"></p>
+<h3 id="File-Sharing"><a href="#File-Sharing" class="headerlink" title="File Sharing"></a>File Sharing</h3><p><img src="/home/alex/图片/fileSharing.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/2018-79.png" alt="filename ady exists, renamed"></p>
+<h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p><img src="/home/alex/图片/output.png" alt="upload scessful"></p>
+<p><img src="/home/alex/图片/2018-80.png" alt="filename aldy exists, renamed"></p>
+<p>内核用三个相关的数据结构来表示打开的文件</p>
+<p>1.每个进程都有它独立的描述符表，它的表项是由进程打开的文件描述符来索引的，每个打开的描述符表项指向文件表一个表项。</p>
+<p>2.文件表。是所有进程共享的，保存当前文件位置，引用计数（当前指向该表项的描述符表项数），以及一个指向vnode表对应表项的指针</p>
+<p>3.vnode表，所有进程共享</p>
+<h3 id="I-O-Redirection"><a href="#I-O-Redirection" class="headerlink" title="I/O Redirection"></a>I/O Redirection</h3><p><img src="/home/alex/图片/ioredi.png" alt="upload cessful"></p>
+<h4 id="steps-1"><a href="#steps-1" class="headerlink" title="steps 1"></a>steps 1</h4><p><img src="/home/alex/图片/steps1.png" alt="upload sucessful"></p>
+<h4 id="steps-2"><a href="#steps-2" class="headerlink" title="steps 2"></a>steps 2</h4><p><img src="/home/alex/图片/samefile.png" alt="upload essful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">fd(5,0)</span><br></pre></td></tr></table></figure>
+<p>就是把重定向标准输入到描述符5</p>
+<h3 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h3><p><img src="/home/alex/图片/ggg.png" alt="upload succeful"></p>
+<p>fd3重定向到了fd2，所以他们指向同样的open file table项，c2是第一个字符a，而c3在此基础上读下一个字符，所以是b。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-malloc-lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -793,6 +948,7 @@
 <p>Example 1:</p>
 <p>Input: [1,3,5,4,7]<br>Output: 3<br>Explanation: The longest continuous increasing subsequence is [1,3,5], its length is 3.<br>Even though [1,3,5,7] is also an increasing subsequence, it’s not a continuous one where 5 and 7 are separated by 4. </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">int findLengthOfLCIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">       int n = nums.size();</span><br><span class="line">       int dp[n];</span><br><span class="line">       dp[0]=1;</span><br><span class="line">       int res = 1;</span><br><span class="line">       for(int i=1;i&lt;nums.size();i++)&#123;</span><br><span class="line">           if(nums[i-1]&lt;nums[i])&#123;</span><br><span class="line">               dp[i] = dp[i-1]+1;</span><br><span class="line">           &#125;</span><br><span class="line">           else&#123;</span><br><span class="line">               dp[i] = 1;</span><br><span class="line">           &#125;</span><br><span class="line">           res = max(dp[i],res);</span><br><span class="line">       &#125;</span><br><span class="line">       return res;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="printLIS-路径"><a href="#printLIS-路径" class="headerlink" title="printLIS 路径"></a>printLIS 路径</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">//M saves the index</span><br><span class="line">int M[MAX+1];</span><br><span class="line">int pre[MAX+1];</span><br><span class="line">int pathIndex[MAX+1];</span><br><span class="line"></span><br><span class="line">vector&lt;int&gt;vec;</span><br><span class="line"></span><br><span class="line">void print(int pos)&#123;</span><br><span class="line">    if(pos==-1)return;</span><br><span class="line">    print(pre[pos]);</span><br><span class="line">    cout&lt;&lt;&quot; &quot;&lt;&lt;vec[pos];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    ios::sync_with_stdio(false);</span><br><span class="line">    cin.tie(NULL); cout.tie(NULL);</span><br><span class="line"></span><br><span class="line">    int N;</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        cin&gt;&gt;N;</span><br><span class="line">        if(N==0)</span><br><span class="line">            break;</span><br><span class="line">        vec.assign(N,0);</span><br><span class="line">        for(int i=0;i&lt;N;i++)&#123;</span><br><span class="line">            cin&gt;&gt;vec[i];</span><br><span class="line">        &#125;</span><br><span class="line">        int L = 0;</span><br><span class="line">        for(int i=0;i&lt;N;i++)&#123;</span><br><span class="line">            int lo = 1;</span><br><span class="line">            int Hi = L;</span><br><span class="line">            //find the largest mid &lt;=L such that vec[M[mid]]&lt;vec[i]</span><br><span class="line">            while(lo&lt;=Hi)&#123;</span><br><span class="line">                int mid = ceil((lo+Hi)/2.0);</span><br><span class="line">                if(vec[M[mid]]&lt;vec[i])&#123;</span><br><span class="line">                    lo=mid+1;</span><br><span class="line">                &#125;else&#123;</span><br><span class="line">                    Hi = mid-1;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //newL is 1 greater than the longest prefix of vec[i]</span><br><span class="line">            int newL = lo;</span><br><span class="line">            //vec[i]的前驱节点是newL-1子串的最后一个索引</span><br><span class="line">            pre[i] = M[newL-1];</span><br><span class="line">			//NEWL新子串的最后一个索引就是i</span><br><span class="line">            M[newL] = i;</span><br><span class="line"></span><br><span class="line">            if(newL&gt;L)</span><br><span class="line">                L = newL;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        int k = M[L];</span><br><span class="line">        for(int i=L-1;i&gt;=0;i--)&#123;</span><br><span class="line">            pathIndex[i] = k;</span><br><span class="line">            k = pre[k];</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;L&lt;&lt;&quot; &quot;;</span><br><span class="line">        for(int i=0;i&lt;=L-1;i++)&#123;</span><br><span class="line">            cout&lt;&lt;vec[pathIndex[i]]&lt;&lt;&quot; &quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;endl;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="Leetcode-300"><a href="#Leetcode-300" class="headerlink" title="Leetcode 300"></a>Leetcode 300</h3><p>Given an unsorted array of integers, find the length of longest increasing subsequence.</p>
 <p>Example:</p>
 <p>Input: [10,9,2,5,3,7,101,18]<br>Output: 4<br>Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4. </p>
@@ -834,6 +990,15 @@
 <p><a href="http://poj.org/problem?id=1579" target="_blank" rel="noopener">http://poj.org/problem?id=1579</a></p>
 <h3 id="记忆化搜索"><a href="#记忆化搜索" class="headerlink" title="记忆化搜索"></a>记忆化搜索</h3><p>把递归结果存在表里，减少不必要的递归次数</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">int A[30][30][30];</span><br><span class="line"></span><br><span class="line">int w(int a,int b,int c)&#123;</span><br><span class="line">    if(a&lt;=0||b&lt;=0||c&lt;=0)&#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    if(a&gt;20||b&gt;20||c&gt;20)&#123;</span><br><span class="line">        return w(20,20,20);</span><br><span class="line">    &#125;</span><br><span class="line">    if(A[a][b][c])  //if already in A no need to do recursion</span><br><span class="line">        return A[a][b][c];</span><br><span class="line">    if(a&lt;b&amp;&amp;b&lt;c)&#123;</span><br><span class="line">        A[a][b][c] =w(a,b,c-1)+w(a,b-1,c-1)-w(a,b-1,c); //A[a][b][c-1]+A[a][b-1][c-1]-A[a][b-1][c];</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">        A[a][b][c] = w(a-1,b,c)+w(a-1,b-1,c)+w(a-1,b,c-1)-w(a-1,b-1,c-1);//A[a-1][b][c]+A[a-1][b-1][c]+A[a-1][b][c-1]-A[a-1][b-1][c-1];</span><br><span class="line">    return A[a][b][c];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    memset(A,0,sizeof(A));</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        int a,b,c;</span><br><span class="line">        cin&gt;&gt;a&gt;&gt;b&gt;&gt;c;</span><br><span class="line">        if(a==-1&amp;&amp;b==-1&amp;&amp;c==-1)</span><br><span class="line">            break;</span><br><span class="line">        cout&lt;&lt;w(a,b,c)&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="dfs-solve-TSP"><a href="#dfs-solve-TSP" class="headerlink" title="dfs solve TSP"></a>dfs solve TSP</h3><p><a href="https://open.kattis.com/problems/beepers" target="_blank" rel="noopener">https://open.kattis.com/problems/beepers</a></p>
+<p>dfs解TSP问题</p>
+<p>基本思路是从出发点开始，尝试从出发点到其他所有点的可能性，然后回溯。</p>
+<p>dfs的大概思路就是当n&lt;num的时候，尝试到不同的点，回溯，当n==num的时候，比较现在的路径长度是否小于最短路径。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">int shortest,num;</span><br><span class="line">int startx,starty;</span><br><span class="line">struct node&#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">&#125;;</span><br><span class="line">vector&lt;node&gt;vec;</span><br><span class="line">int visited[MAX];</span><br><span class="line"></span><br><span class="line">int dis(int x1,int y1,int x2,int y2)&#123;</span><br><span class="line">    return abs(x1-x2)+abs(y1-y2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void DFS(int cur,int len,int n)&#123;</span><br><span class="line"></span><br><span class="line">    if(n==num)&#123;</span><br><span class="line">        int t = dis(vec[cur].x,vec[cur].y,startx,starty);</span><br><span class="line">        if(len+t&lt;shortest)&#123;</span><br><span class="line">            shortest = len+t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;else if(len&lt;shortest)&#123;</span><br><span class="line">        int i;</span><br><span class="line">        for(i=0;i&lt;num;i++)&#123;</span><br><span class="line">            if(visited[i]==0)&#123;</span><br><span class="line">                visited[i] = 1;</span><br><span class="line">                DFS(i,len+dis(vec[cur].x,vec[cur].y,vec[i].x,vec[i].y),n+1);</span><br><span class="line">                visited[i] = 0;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    ios::sync_with_stdio(false);</span><br><span class="line">    cin.tie(NULL); cout.tie(NULL);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int sc;</span><br><span class="line">    int row,col;</span><br><span class="line">    cin&gt;&gt;sc;</span><br><span class="line">    while(sc--)&#123;</span><br><span class="line">        cin&gt;&gt;row&gt;&gt;col;</span><br><span class="line">        cin&gt;&gt;startx&gt;&gt;starty;</span><br><span class="line">        cin&gt;&gt;num;</span><br><span class="line">        vec.clear();</span><br><span class="line">        for(int i=0;i&lt;num;i++)&#123;</span><br><span class="line">            int xx,yy;</span><br><span class="line">            cin&gt;&gt;xx&gt;&gt;yy;</span><br><span class="line">            vec.push_back(&#123;xx,yy&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        shortest = INF;</span><br><span class="line">        memset(visited,0,sizeof(visited));</span><br><span class="line"></span><br><span class="line">        for(int i=0;i&lt;num;i++)&#123;</span><br><span class="line">            int tempL = dis(vec[i].x,vec[i].y,startx,starty);</span><br><span class="line">            visited[i] = 1;</span><br><span class="line">            DFS(i,tempL,1);</span><br><span class="line">            visited[i] = 0;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;shortest&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="leetcode-931"><a href="#leetcode-931" class="headerlink" title="leetcode 931"></a>leetcode 931</h3><p>minimum falling path sum</p>
+<p><img src="/home/alex/图片/minimum.png" alt="upload scessful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int minFallingPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; A) &#123;</span><br><span class="line">    int res = INT_MAX;</span><br><span class="line">    int row = A.size();</span><br><span class="line">    int col = A[0].size();</span><br><span class="line">    int dp[row][col+2];</span><br><span class="line">   </span><br><span class="line">    for(int i=1;i&lt;row;i++)&#123;</span><br><span class="line">        for(int j=0;j&lt;col;j++)&#123;</span><br><span class="line">            if(j==0)&#123;</span><br><span class="line">                A[i][j] = A[i][j]+min(A[i-1][j],A[i-1][j+1]);</span><br><span class="line">            &#125;</span><br><span class="line">            else if(j==col-1)&#123;</span><br><span class="line">                A[i][j] = A[i][j]+min(A[i-1][j],A[i-1][j-1]);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">               A[i][j] = A[i][j]+min(A[i-1][j],min(A[i-1][j-1],A[i-1][j+1]));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for(int i=0;i&lt;col;i++)&#123;</span><br><span class="line">        res = min(res,A[row-1][i]);</span><br><span class="line">    &#125;</span><br><span class="line">    return res;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>复杂度 n^2</p>
 
           
         
@@ -1992,162 +2157,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/算法-Sliding-Window/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/14/算法-Sliding-Window/" itemprop="url">算法-(2018-11-14) Sliding Window&Dijkstra枚举</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T15:58:00+08:00">
-                2018-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="sliding-window-leetcode-239"><a href="#sliding-window-leetcode-239" class="headerlink" title="sliding window leetcode 239"></a>sliding window leetcode 239</h5><p><a href="https://leetcode.com/problems/sliding-window-maximum/description/" target="_blank" rel="noopener">https://leetcode.com/problems/sliding-window-maximum/description/</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">method 1: time complexity O(Nlog(k))</span><br><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">        </span><br><span class="line">        multiset&lt;int&gt;st;</span><br><span class="line">        vector&lt;int&gt;vec;</span><br><span class="line">        list&lt;int&gt; lst;</span><br><span class="line">        for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            if(i-k&gt;=0)&#123;</span><br><span class="line">                int top = lst.front();</span><br><span class="line">                lst.pop_front();</span><br><span class="line">                st.erase(st.find(top));</span><br><span class="line">            &#125;</span><br><span class="line">         </span><br><span class="line">            lst.push_back(nums[i]);</span><br><span class="line">            st.insert(nums[i]);</span><br><span class="line">              if(i-k&gt;=-1)&#123;</span><br><span class="line">                vec.push_back(*st.rbegin());</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return vec;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">method 2</span><br><span class="line"></span><br><span class="line">1. use a deque to store the index in the window , each window must fall in the range(i-k+1,i). so whenever an index smaller than i-k+1,pop_front() to discard the element; </span><br><span class="line"></span><br><span class="line">2. when insert a new element nums[i], compare it with the top of the queue , until q[front]&gt;nums[i] ,that is to say, q[front] is always the max element in the window</span><br><span class="line"></span><br><span class="line">  vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">       </span><br><span class="line">         deque&lt;int&gt;dq;</span><br><span class="line">         vector&lt;int&gt;res;</span><br><span class="line">         if(nums.empty())</span><br><span class="line">             return res;</span><br><span class="line">         for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            while(!dq.empty()&amp;&amp;dq.front()&lt;i-k+1)&#123;</span><br><span class="line">                dq.pop_front();</span><br><span class="line">            &#125;</span><br><span class="line">            //remove smaller elements in window</span><br><span class="line">            while(!dq.empty()&amp;&amp;nums[dq.back()]&lt;=nums[i])&#123;</span><br><span class="line">                dq.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">             dq.push_back(i);</span><br><span class="line">             if(i-k+1&gt;=0)&#123;</span><br><span class="line">                 res.push_back(nums[dq.front()]);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         return res;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这里sliding window就是移动窗口的时候，每次把最左边的值pop掉，然后不断比较最右边的值与新插入的值，保证新插入的值是最好的candidate，那么窗口最左边的值就会是最大值。</p>
-<p>Kattis</p>
-<p>#include <algorithm></algorithm></p>
-<p>#include <set></set></p>
-<p>#include <iostream></iostream></p>
-<p>#include <queue></queue></p>
-<p>#include <vector></vector></p>
-<p>#include <string></string></p>
-<p>#include <map></map></p>
-<p>using namespace std;</p>
-<p>struct edge{<br>    int from;<br>    int to;<br>    int weight;<br>};</p>
-<p>typedef pair&lt;int,int&gt; ip;</p>
-<p>#define INF 0x3f3f3f3f</p>
-<p>void dijkstra(vector&lt;vector<ip>&gt;&amp;adj,vector<int>&amp;dist,int source){</int></ip></p>
-<pre><code>priority_queue&lt;ip,vector&lt;ip&gt;,greater&lt;ip&gt;&gt; q;
-q.push({0,source});
-dist[source] = 0;
-while(!q.empty()){
-    auto top = q.top();
-    q.pop();
-    int u = top.second;
-    for(auto p:adj[u]){
-        int v = p.first;
-        int weight = p.second;
-        if(dist[v]==INF||dist[v]&gt;dist[u]+weight){
-            dist[v] = dist[u]+weight;
-            q.push(make_pair(dist[v],v));
-        }
-    }
-}
-</code></pre><p>}</p>
-<p><a href="https://open.kattis.com/problems/flowerytrails" target="_blank" rel="noopener">https://open.kattis.com/problems/flowerytrails</a></p>
-<p><strong><em>对于有多条最短路，并且求所有最短路的路径之和</em></strong></p>
-<p>1.分别对起始点和终点跑DIjkstra</p>
-<p>2.枚举每一条初始点与终点分别到这条边距离，分别为d1,d2，如果d1+d2+w==shortestPath,则ans+=w;</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int P,T;</span><br><span class="line">    cin&gt;&gt;P&gt;&gt;T;</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; adj(P);</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; parent(P);</span><br><span class="line">    vector&lt;int&gt;distStart(P,INF);</span><br><span class="line">    vector&lt;int&gt;distEnd(P,INF);</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;edgeVec;</span><br><span class="line"></span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from,to,w;</span><br><span class="line">        cin&gt;&gt;from&gt;&gt;to&gt;&gt;w;</span><br><span class="line">        edgeVec.push_back(make_tuple(from,to,w));</span><br><span class="line">        adj[from].push_back(make_pair(to,w));</span><br><span class="line">        adj[to].push_back(make_pair(from,w));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dijkstra(adj,distStart,0);</span><br><span class="line">    dijkstra(adj,distEnd,P-1);</span><br><span class="line"></span><br><span class="line">    int shortestPath = distStart[P-1];</span><br><span class="line">    int ans=0;</span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(edgeVec[i]);</span><br><span class="line">        int to = get&lt;1&gt;(edgeVec[i]);</span><br><span class="line">        int weight = get&lt;2&gt;(edgeVec[i]);</span><br><span class="line"></span><br><span class="line">        if(distStart[to]+distEnd[from]+weight==shortestPath||</span><br><span class="line">        distStart[from]+distEnd[to]+weight==shortestPath)&#123;</span><br><span class="line">            ans+=weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout&lt;&lt;ans*2;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2202,7 +2211,7 @@ while(!q.empty()){
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
