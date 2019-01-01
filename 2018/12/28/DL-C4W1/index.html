@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为什么要卷积？for big size picture, the input scale would be very large. eg. an 10001000 size picture,after flattening its features , you can get a vector as (31000*1000,1) = (3million ,1)  如果hidden　layer只有1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL-C4W1">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/28/DL-C4W1/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="为什么要卷积？for big size picture, the input scale would be very large. eg. an 10001000 size picture,after flattening its features , you can get a vector as (31000*1000,1) = (3million ,1)  如果hidden　layer只有1">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/large.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/边缘检测.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/vertical.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/dark.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-130.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-131.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/stride.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/立体卷积.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-132.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/nminus.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/nextsee.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/danceng.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/az.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-134.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-135.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-136.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/调参.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/池化.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/总结.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cnn.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-137.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-138.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-139.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/slice.png">
+<meta property="og:updated_time" content="2018-12-29T11:57:21.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DL-C4W1">
+<meta name="twitter:description" content="为什么要卷积？for big size picture, the input scale would be very large. eg. an 10001000 size picture,after flattening its features , you can get a vector as (31000*1000,1) = (3million ,1)  如果hidden　layer只有1">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/large.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/28/DL-C4W1/"/>
+
+
+
+
+
+  <title>DL-C4W1 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/28/DL-C4W1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DL-C4W1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-28T16:04:51+08:00">
+                2018-12-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="为什么要卷积？"><a href="#为什么要卷积？" class="headerlink" title="为什么要卷积？"></a>为什么要卷积？</h3><p>for big size picture, the input scale would be very large. eg. an 1000<em>1000 size picture,<br>after flattening its features , you can get a vector as (3</em>1000*1000,1) = (3million ,1)</p>
+<p><img src="/home/alex/图片/large.png" alt="upload ssful"></p>
+<p>如果hidden　layer只有1000层，那么W1 的输入大小是(1000,3m)</p>
+<p>因为z(1000,1) = W1(1000,3M)*X(3M,1)+b </p>
+<h3 id="边缘检测"><a href="#边缘检测" class="headerlink" title="边缘检测"></a>边缘检测</h3><p><img src="/home/alex/图片/边缘检测.png" alt="uad successful"></p>
+<p>用一个3<em>3大小的卷积核对一张6</em>6大小的图片进行卷积运算，最终得到一个4x4的图片</p>
+<p>python:conv_forward </p>
+<p>tf.nn.conv2d</p>
+<h4 id="边缘检测原理"><a href="#边缘检测原理" class="headerlink" title="边缘检测原理"></a>边缘检测原理</h4><p>用垂直边缘filter，可以明显吧边缘和非边缘区区分出来。</p>
+<p><img src="/home/alex/图片/vertical.png" alt="upload sucssful"></p>
+<h4 id="多种边缘检测"><a href="#多种边缘检测" class="headerlink" title="多种边缘检测"></a>多种边缘检测</h4><p><img src="/home/alex/图片/dark.png" alt="upload succful"></p>
+<p><strong><em>我们可以直接把filter中的数字直接看作是需要学习的参数</em></strong></p>
+<p>在nn中通过反向传播算法，学习到相应于目标结果的filter，然后把其应用在整个图片上，输出其提取到的所有有用的特征。</p>
+<h3 id="padding"><a href="#padding" class="headerlink" title="padding"></a>padding</h3><p>从上面注意到每次卷积操作，图片会缩小。</p>
+<p><img src="/home/alex/图片/2018-130.png" alt="filename alrea exists, renamed"></p>
+<p>所以我们要在卷积之前，为图片加padding，包围角落和边缘的像素，使得通过filter的卷积运算后，图片大小不变，也不会丢失角落。</p>
+<p><img src="/home/alex/图片/2018-131.png" alt="filename y exists, renamed"></p>
+<h3 id="valid-Some-卷积"><a href="#valid-Some-卷积" class="headerlink" title="valid/Some 卷积"></a>valid/Some 卷积</h3><p>Valid: no padding </p>
+<p>nxn –&gt;(n-f+1)x(n-f+1)</p>
+<p>Same: padding</p>
+<p>输出和输入图片的大小相同</p>
+<p>p = (f-1)/2，在CV中，一般来说padding的值位奇数</p>
+<p>N+2P-F+1 = N ,SO p = (F-1)/2</p>
+<h3 id="卷积步长（stride）"><a href="#卷积步长（stride）" class="headerlink" title="卷积步长（stride）"></a>卷积步长（stride）</h3><p>stride=1,表示每次卷积运算以一个步长进行移动。</p>
+<p><img src="/home/alex/图片/stride.png" alt="upload ful"></p>
+<h3 id="立体卷积"><a href="#立体卷积" class="headerlink" title="立体卷积"></a>立体卷积</h3><p><img src="/home/alex/图片/立体卷积.png" alt="upd successful"></p>
+<p><img src="/home/alex/图片/2018-132.png" alt="filename alrea exists, renamed"></p>
+<p>第一行表示只检测红色通道的垂直边缘</p>
+<p>第二行表示检测所有通道垂直边缘</p>
+<p>卷积核第三个维度大小等于图片通道大小</p>
+<h3 id="多卷积"><a href="#多卷积" class="headerlink" title="多卷积"></a>多卷积</h3><p><img src="/home/alex/图片/nminus.png" alt="upcessful"></p>
+<p>上图意思是把检测垂直和水平边缘的两个图片叠成两层。</p>
+<p><img src="/home/alex/图片/nextsee.png" alt="upload ful"></p>
+<h3 id="单层卷积网络"><a href="#单层卷积网络" class="headerlink" title="单层卷积网络"></a>单层卷积网络</h3><p><img src="/home/alex/图片/danceng.png" alt="upload cessful"></p>
+<p>与普通神经网络单层前向传播类似，卷机神经网络也是先由权重和bias做线性运算，然后得到结果在输入到一个激活函数中。</p>
+<p><img src="/home/alex/图片/az.png" alt="upload succsful"></p>
+<p>对应上图a[0]表示图片层（n<em>n</em>3）</p>
+<p>w[1]对应卷积核（f<em>f</em>3）</p>
+<p>a[1] 对应下一层（4x4x2）</p>
+<h4 id="单层卷积参数个数"><a href="#单层卷积参数个数" class="headerlink" title="单层卷积参数个数"></a>单层卷积参数个数</h4><p><img src="/home/alex/图片/2018-134.png" alt="filename alreay exists, renamed"></p>
+<p>不受图片大小影响</p>
+<h3 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h3><p><img src="/home/alex/图片/2018-135.png" alt="filename alread exists, renamed"></p>
+<p>f[l] 卷积核大小</p>
+<p>卷积核第三个维度大小等于输入图片通道数</p>
+<p>而权重就是卷积核大小×卷积核个数，卷积核个数就是输出层的通道数目</p>
+<p>激活值大小就是下一层输出层的大小： nH X nW X nC</p>
+<h4 id="简单卷积网络"><a href="#简单卷积网络" class="headerlink" title="简单卷积网络"></a>简单卷积网络</h4><p><img src="/home/alex/图片/2018-136.png" alt="filename y exists, renamed"></p>
+<p>最后得到的7x7x40，一共1960个参数，就是最后输入激活函数的所有参数</p>
+<h3 id="池化层"><a href="#池化层" class="headerlink" title="池化层"></a>池化层</h3><p>最大池化(max pooling)</p>
+<p>把前一层得到的特征图进行池化减小，仅由当前小区域内的最大值来代表最终池化后的值。</p>
+<p><img src="/home/alex/图片/调参.png" alt="uploaduccessful"></p>
+<p>平均池化</p>
+<p><img src="/home/alex/图片/池化.png" alt="upload suessful"></p>
+<p>池化只需要设置好超参数，没有要学习的参数</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>CNN的最大特点在于卷积的权值共享结构，可以大幅减少神经网络参数量，防止过拟合的同时又降低了神经网络模型的复杂度。</p>
+<p>CNN通过卷积的方式实现局部链接，得到图片的参数量只跟卷积核的大小有关，一个卷积核对应一个图片特征，每一个卷积核滤波得到的图像就是一类特征的映射。</p>
+<p>也就是说训练的权值数量只与卷积核大小与数量有关，但注意的是隐含层节点数量没有下降，隐含节点的数量只与卷积的步长有关，如果步长为1，那么隐含节点数量与输入图像像素数量一致。如果步长为5，那么每5x5个像素才需要一个隐含节点。</p>
+<p>再总结，CNN的要点就是</p>
+<p>1.局部连接 </p>
+<p>2.权值共享</p>
+<p>3.池化层的降采样</p>
+<p>其中1与2降低了参数量，训练复杂度下降并减轻过拟合。</p>
+<p>同时权值共享赋予了卷积网络对平移的容忍性。</p>
+<p><img src="/home/alex/图片/总结.png" alt="upload successl"></p>
+<p>随着nn层数增加，提取的特征图片大小将会减小，但是同时间通道数量会增加</p>
+<p>为什么使用CNN？</p>
+<p>1.参数少<br><img src="/home/alex/图片/cnn.png" alt="upload succeul"></p>
+<p>2.参数共享&amp;链接的稀疏性</p>
+<p>参数共享指一个卷积核可以有多个不同的卷积核，而每一个卷积核对应一个滤波后映射出的新图像，同一个新图像的每一个像素都来自完全相同的卷积核。</p>
+<p><img src="/home/alex/图片/2018-137.png" alt="filename already exists, renad"></p>
+<h3 id="implementation"><a href="#implementation" class="headerlink" title="implementation"></a>implementation</h3><h4 id="zero-padding"><a href="#zero-padding" class="headerlink" title="zero padding"></a>zero padding</h4><p><img src="/home/alex/图片/2018-138.png" alt="filename alreay exists, renamed"></p>
+<h5 id="benefits"><a href="#benefits" class="headerlink" title="benefits"></a>benefits</h5><p><img src="/home/alex/图片/2018-139.png" alt="finame already exists, renamed"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def zero_pad(X, pad):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Pad with zeros all images of the dataset X. The padding is applied to the height and width of an image, </span><br><span class="line">    as illustrated in Figure 1.</span><br><span class="line">    </span><br><span class="line">    Argument:</span><br><span class="line">    X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images</span><br><span class="line">    pad -- integer, amount of padding around each image on vertical and horizontal dimensions</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    X_pad -- padded image of shape (m, n_H + 2*pad, n_W + 2*pad, n_C)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    X_pad = np.pad(X, ((0, 0), (pad, pad), (pad, pad), (0, 0)), &apos;constant&apos;, constant_values=0)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return X_pad</span><br></pre></td></tr></table></figure>
+<h4 id="forward-convolution"><a href="#forward-convolution" class="headerlink" title="forward convolution"></a>forward convolution</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">def conv_single_step(a_slice_prev, W, b):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Apply one filter defined by parameters W on a single slice (a_slice_prev) of the output activation </span><br><span class="line">    of the previous layer.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    a_slice_prev -- slice of input data of shape (f, f, n_C_prev)</span><br><span class="line">    W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)</span><br><span class="line">    b -- Bias parameters contained in a window - matrix of shape (1, 1, 1)</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    Z -- a scalar value, result of convolving the sliding window (W, b) on a slice x of the input data</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    ### START CODE HERE ### (≈ 2 lines of code)</span><br><span class="line">    # Element-wise product between a_slice and W. Add bias.</span><br><span class="line">    s = np.multiply(a_slice_prev, W) + b</span><br><span class="line">    # Sum over all entries of the volume s</span><br><span class="line">    Z = np.sum(s)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">    return Z</span><br></pre></td></tr></table></figure>
+<h4 id="define-a-slice"><a href="#define-a-slice" class="headerlink" title="define a slice"></a>define a slice</h4><p><img src="/home/alex/图片/slice.png" alt="upload succeful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">def conv_forward(A_prev, W, b, hparameters):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements the forward propagation for a convolution function</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)</span><br><span class="line">    W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)</span><br><span class="line">    b -- Biases, numpy array of shape (1, 1, 1, n_C)</span><br><span class="line">    hparameters -- python dictionary containing &quot;stride&quot; and &quot;pad&quot;</span><br><span class="line">        </span><br><span class="line">    Returns:</span><br><span class="line">    Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)</span><br><span class="line">    cache -- cache of values needed for the conv_backward() function</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    # Retrieve dimensions from A_prev&apos;s shape (≈1 line)  </span><br><span class="line">    (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape</span><br><span class="line">    </span><br><span class="line">    # Retrieve dimensions from W&apos;s shape (≈1 line)</span><br><span class="line">    (f, f, n_C_prev, n_C) = W.shape</span><br><span class="line"></span><br><span class="line">    # Retrieve information from &quot;hparameters&quot; (≈2 lines)</span><br><span class="line">    stride = hparameters[&apos;stride&apos;]</span><br><span class="line">    pad = hparameters[&apos;pad&apos;]</span><br><span class="line">    </span><br><span class="line">    # Compute the dimensions of the CONV output volume using the formula given above. Hint: use int() to floor. (≈2 lines)</span><br><span class="line">    n_H = int((n_H_prev - f + 2 * pad) / stride) + 1</span><br><span class="line">    n_W = int((n_W_prev - f + 2 * pad) / stride) + 1</span><br><span class="line">    </span><br><span class="line">    # Initialize the output volume Z with zeros. (≈1 line)</span><br><span class="line">    Z = np.zeros((m, n_H, n_W, n_C))</span><br><span class="line">    </span><br><span class="line">    # Create A_prev_pad by padding A_prev</span><br><span class="line">    A_prev_pad = zero_pad(A_prev, pad)</span><br><span class="line">    </span><br><span class="line">    for i in range(m):                                 # loop over the batch of training examples</span><br><span class="line">        a_prev_pad = A_prev_pad[i]                     # Select ith training example&apos;s padded activation</span><br><span class="line">        for h in range(n_H):                           # loop over vertical axis of the output volume</span><br><span class="line">            for w in range(n_W):                       # loop over horizontal axis of the output volume</span><br><span class="line">                for c in range(n_C):                   # loop over channels (= #filters) of the output volume</span><br><span class="line">                    # Find the corners of the current &quot;slice&quot; (≈4 lines)</span><br><span class="line">                    vert_start = h * stride</span><br><span class="line">                    vert_end = vert_start + f</span><br><span class="line">                    horiz_start = w * stride</span><br><span class="line">                    horiz_end = horiz_start + f</span><br><span class="line">                    # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). (≈1 line)</span><br><span class="line">                    a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]</span><br><span class="line">                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. (≈1 line)</span><br><span class="line">                    Z[i, h, w, c] = conv_single_step(a_slice_prev, W[...,c], b[...,c])</span><br><span class="line">                                        </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">    # Making sure your output shape is correct</span><br><span class="line">    assert(Z.shape == (m, n_H, n_W, n_C))</span><br><span class="line">    </span><br><span class="line">    # Save information in &quot;cache&quot; for the backprop</span><br><span class="line">    cache = (A_prev, W, b, hparameters)</span><br><span class="line">    </span><br><span class="line">    return Z, cache</span><br></pre></td></tr></table></figure>
+<h3 id="对应的notebook"><a href="#对应的notebook" class="headerlink" title="对应的notebook"></a>对应的notebook</h3><p><a href="https://github.com/AlexanderChiuluvB/deep-learning-coursera/blob/master/Convolutional%20Neural%20Networks/Convolution%20model%20-%20Step%20by%20Step%20-%20v1.ipynb" target="_blank" rel="noopener">https://github.com/AlexanderChiuluvB/deep-learning-coursera/blob/master/Convolutional%20Neural%20Networks/Convolution%20model%20-%20Step%20by%20Step%20-%20v1.ipynb</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/27/DL-C2W3/" rel="next" title="DL-C2W3">
+                <i class="fa fa-chevron-left"></i> DL-C2W3
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/28/Ubuntu-耳机-无线网驱动/" rel="prev" title="Ubuntu 耳机/无线网驱动">
+                Ubuntu 耳机/无线网驱动 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要卷积？"><span class="nav-number">1.</span> <span class="nav-text">为什么要卷积？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘检测"><span class="nav-number">2.</span> <span class="nav-text">边缘检测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#边缘检测原理"><span class="nav-number">2.1.</span> <span class="nav-text">边缘检测原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多种边缘检测"><span class="nav-number">2.2.</span> <span class="nav-text">多种边缘检测</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#padding"><span class="nav-number">3.</span> <span class="nav-text">padding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#valid-Some-卷积"><span class="nav-number">4.</span> <span class="nav-text">valid/Some 卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卷积步长（stride）"><span class="nav-number">5.</span> <span class="nav-text">卷积步长（stride）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#立体卷积"><span class="nav-number">6.</span> <span class="nav-text">立体卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多卷积"><span class="nav-number">7.</span> <span class="nav-text">多卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单层卷积网络"><span class="nav-number">8.</span> <span class="nav-text">单层卷积网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单层卷积参数个数"><span class="nav-number">8.1.</span> <span class="nav-text">单层卷积参数个数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标记"><span class="nav-number">9.</span> <span class="nav-text">标记</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简单卷积网络"><span class="nav-number">9.1.</span> <span class="nav-text">简单卷积网络</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#池化层"><span class="nav-number">10.</span> <span class="nav-text">池化层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">11.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implementation"><span class="nav-number">12.</span> <span class="nav-text">implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#zero-padding"><span class="nav-number">12.1.</span> <span class="nav-text">zero padding</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#benefits"><span class="nav-number">12.1.1.</span> <span class="nav-text">benefits</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forward-convolution"><span class="nav-number">12.2.</span> <span class="nav-text">forward convolution</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#define-a-slice"><span class="nav-number">12.3.</span> <span class="nav-text">define a slice</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对应的notebook"><span class="nav-number">13.</span> <span class="nav-text">对应的notebook</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

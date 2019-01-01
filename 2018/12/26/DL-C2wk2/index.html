@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Adam," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="mini batch gradient descentmini-batch size if mini-batch size = m （m=sample size）  (X^[i],Y^[i]) = (X,Y) 收敛速度会很快（步长很大） end up with batch gradient descent,which has to process the whole training set be">
+<meta name="keywords" content="Adam">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL C2wk2">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/12/26/DL-C2wk2/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="mini batch gradient descentmini-batch size if mini-batch size = m （m=sample size）  (X^[i],Y^[i]) = (X,Y) 收敛速度会很快（步长很大） end up with batch gradient descent,which has to process the whole training set be">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-120.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sto.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/update.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/partition.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/learning%20rate%20decay.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/suppose.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/qita.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/miniBatch.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/par.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-121.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-122.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zhanlang.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/adam.png">
+<meta property="og:updated_time" content="2018-12-27T10:24:36.976Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DL C2wk2">
+<meta name="twitter:description" content="mini batch gradient descentmini-batch size if mini-batch size = m （m=sample size）  (X^[i],Y^[i]) = (X,Y) 收敛速度会很快（步长很大） end up with batch gradient descent,which has to process the whole training set be">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-120.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/12/26/DL-C2wk2/"/>
+
+
+
+
+
+  <title>DL C2wk2 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/26/DL-C2wk2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DL C2wk2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-26T20:20:00+08:00">
+                2018-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DL/" itemprop="url" rel="index">
+                    <span itemprop="name">DL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="mini-batch-gradient-descent"><a href="#mini-batch-gradient-descent" class="headerlink" title="mini batch gradient descent"></a>mini batch gradient descent</h3><h4 id="mini-batch-size"><a href="#mini-batch-size" class="headerlink" title="mini-batch size"></a>mini-batch size</h4><ul>
+<li>if mini-batch size = m （m=sample size）</li>
+</ul>
+<p>(X^[i],Y^[i]) = (X,Y)</p>
+<p>收敛速度会很快（步长很大）</p>
+<p>end up with batch gradient descent,which has to process the whole training set before making progress</p>
+<ul>
+<li>mini-batch size = 1 又叫做stocastic gradient descent</li>
+</ul>
+<p>收敛步长会很小，很有可能会不收敛，而且vectorization会很慢</p>
+<p>lose the benefits of vectorization</p>
+<p>如下图</p>
+<p><img src="/home/alex/图片/2018-120.png" alt="filename alrea exists, renamed"></p>
+<p>紫色表示batch size=1的收敛，而蓝色表示batch size=m的收敛。</p>
+<h4 id="how-to-choose-mini-batch-size"><a href="#how-to-choose-mini-batch-size" class="headerlink" title="how to choose mini-batch size?"></a>how to choose mini-batch size?</h4><p>1.通常用 64,128,256,512大小(power of two)</p>
+<p><img src="/home/alex/图片/sto.png" alt="upload sucsful"></p>
+<p><img src="/home/alex/图片/update.png" alt="upload sessful"></p>
+<p><img src="/home/alex/图片/partition.png" alt="upload ssful"></p>
+<h3 id="learning-rate-decay"><a href="#learning-rate-decay" class="headerlink" title="learning rate decay"></a>learning rate decay</h3><p><img src="/home/alex/图片/learning rate decay.png" alt="upload essful"></p>
+<p>当梯度下降的时候，由于学习率是固定的，因此可能会在最低点附近徘徊而最终不能收敛。</p>
+<h4 id="implementation"><a href="#implementation" class="headerlink" title="implementation"></a>implementation</h4><p><img src="/home/alex/图片/suppose.png" alt="upload essful"></p>
+<p>alpha = 1/（1+decay_rate x epoch_num） *alpha</p>
+<p>其他方法也可：</p>
+<p><img src="/home/alex/图片/qita.png" alt="upload succeful"></p>
+<h3 id="mini-Batch-gradient-descent"><a href="#mini-Batch-gradient-descent" class="headerlink" title="mini-Batch gradient descent"></a>mini-Batch gradient descent</h3><h4 id="shuffle"><a href="#shuffle" class="headerlink" title="shuffle"></a>shuffle</h4><p><img src="/home/alex/图片/miniBatch.png" alt="upload sful"></p>
+<h4 id="parition"><a href="#parition" class="headerlink" title="parition"></a>parition</h4><p><img src="/home/alex/图片/par.png" alt="load successful"></p>
+<h4 id="code"><a href="#code" class="headerlink" title="code"></a>code</h4><p>注意最后一个batch_size有可能和前面的size不同，因为样本总数可能不等于batch_size的倍数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def random_mini_batches(X, Y, mini_batch_size = 64, seed = 0):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Creates a list of random minibatches from (X, Y)</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- input data, of shape (input size, number of examples)</span><br><span class="line">    Y -- true &quot;label&quot; vector (1 for blue dot / 0 for red dot), of shape (1, number of examples)</span><br><span class="line">    mini_batch_size -- size of the mini-batches, integer</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    mini_batches -- list of synchronous (mini_batch_X, mini_batch_Y)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    np.random.seed(seed)            # To make your &quot;random&quot; minibatches the same as ours</span><br><span class="line">    m = X.shape[1]                  # number of training examples</span><br><span class="line">    mini_batches = []</span><br><span class="line">        </span><br><span class="line">    # Step 1: Shuffle (X, Y)</span><br><span class="line">    permutation = list(np.random.permutation(m))</span><br><span class="line">    shuffled_X = X[:, permutation]</span><br><span class="line">    shuffled_Y = Y[:, permutation].reshape((1,m))</span><br><span class="line"></span><br><span class="line">    # Step 2: Partition (shuffled_X, shuffled_Y). Minus the end case.</span><br><span class="line">    num_complete_minibatches = math.floor(m/mini_batch_size) # number of mini batches of size mini_batch_size in your partitionning</span><br><span class="line">    for k in range(0, num_complete_minibatches):</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        mini_batch_X = shuffled_X[:,mini_batch_size*(k):mini_batch_size*(k+1)]</span><br><span class="line">        mini_batch_Y = shuffled_Y[:,mini_batch_size*(k):mini_batch_size*(k+1)]</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        mini_batch = (mini_batch_X, mini_batch_Y)</span><br><span class="line">        mini_batches.append(mini_batch)</span><br><span class="line">    </span><br><span class="line">    # Handling the end case (last mini-batch &lt; mini_batch_size)</span><br><span class="line">    if m % mini_batch_size != 0:</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        mini_batch_X = shuffled_X[:,mini_batch_size*(num_complete_minibatches):]</span><br><span class="line">        mini_batch_Y = shuffled_Y[:,mini_batch_size*(num_complete_minibatches):]</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        mini_batch = (mini_batch_X, mini_batch_Y)</span><br><span class="line">        mini_batches.append(mini_batch)</span><br><span class="line">    </span><br><span class="line">    return mini_batches</span><br></pre></td></tr></table></figure>
+<h3 id="momentum"><a href="#momentum" class="headerlink" title="momentum"></a>momentum</h3><p><img src="/home/alex/图片/2018-121.png" alt="filename already exists, named"></p>
+<p>蓝色是gradient的方向，而红色是实际velocity的方向，我们让gradient影响velocty下降的方向</p>
+<h4 id="code-1"><a href="#code-1" class="headerlink" title="code"></a>code</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def initialize_velocity(parameters):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Initializes the velocity as a python dictionary with:</span><br><span class="line">                - keys: &quot;dW1&quot;, &quot;db1&quot;, ..., &quot;dWL&quot;, &quot;dbL&quot; </span><br><span class="line">                - values: numpy arrays of zeros of the same shape as the corresponding gradients/parameters.</span><br><span class="line">    Arguments:</span><br><span class="line">    parameters -- python dictionary containing your parameters.</span><br><span class="line">                    parameters[&apos;W&apos; + str(l)] = Wl</span><br><span class="line">                    parameters[&apos;b&apos; + str(l)] = bl</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    v -- python dictionary containing the current velocity.</span><br><span class="line">                    v[&apos;dW&apos; + str(l)] = velocity of dWl</span><br><span class="line">                    v[&apos;db&apos; + str(l)] = velocity of dbl</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    L = len(parameters) // 2 # number of layers in the neural networks</span><br><span class="line">    v = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    # Initialize velocity</span><br><span class="line">    for l in range(L):</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        v[&quot;dW&quot; + str(l+1)] = np.zeros(parameters[&apos;W&apos;+str(l+1)].shape)</span><br><span class="line">        v[&quot;db&quot; + str(l+1)] = np.zeros(parameters[&apos;b&apos;+str(l+1)].shape)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">    return v</span><br></pre></td></tr></table></figure>
+<h4 id="update-parameters"><a href="#update-parameters" class="headerlink" title="update parameters"></a>update parameters</h4><p><img src="/home/alex/图片/2018-122.png" alt="filename already exists, remed"></p>
+<p><img src="/home/alex/图片/zhanlang.png" alt="upload succesul"></p>
+<h3 id="Adam-optimization"><a href="#Adam-optimization" class="headerlink" title="Adam optimization"></a>Adam optimization</h3><p><img src="/home/alex/图片/adam.png" alt="upload succeul"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">def initialize_adam(parameters) :</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Initializes v and s as two python dictionaries with:</span><br><span class="line">                - keys: &quot;dW1&quot;, &quot;db1&quot;, ..., &quot;dWL&quot;, &quot;dbL&quot; </span><br><span class="line">                - values: numpy arrays of zeros of the same shape as the corresponding gradients/parameters.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    parameters -- python dictionary containing your parameters.</span><br><span class="line">                    parameters[&quot;W&quot; + str(l)] = Wl</span><br><span class="line">                    parameters[&quot;b&quot; + str(l)] = bl</span><br><span class="line">    </span><br><span class="line">    Returns: </span><br><span class="line">    v -- python dictionary that will contain the exponentially weighted average of the gradient.</span><br><span class="line">                    v[&quot;dW&quot; + str(l)] = ...</span><br><span class="line">                    v[&quot;db&quot; + str(l)] = ...</span><br><span class="line">    s -- python dictionary that will contain the exponentially weighted average of the squared gradient.</span><br><span class="line">                    s[&quot;dW&quot; + str(l)] = ...</span><br><span class="line">                    s[&quot;db&quot; + str(l)] = ...</span><br><span class="line"></span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    L = len(parameters) // 2 # number of layers in the neural networks</span><br><span class="line">    v = &#123;&#125;</span><br><span class="line">    s = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    # Initialize v, s. Input: &quot;parameters&quot;. Outputs: &quot;v, s&quot;.</span><br><span class="line">    for l in range(L):</span><br><span class="line">    ### START CODE HERE ### (approx. 4 lines)</span><br><span class="line">        v[&quot;dW&quot; + str(l+1)] = np.zeros_like(parameters[&apos;W&apos;+str(l+1)]) #(numpy array of zeros with the same shape as parameters[&quot;W&quot; + str(l+1)])</span><br><span class="line">        v[&quot;db&quot; + str(l+1)] = np.zeros_like(parameters[&apos;b&apos;+str(l+1)]) #(numpy array of zeros with the same shape as parameters[&quot;b&quot; + str(l+1)])</span><br><span class="line">        s[&quot;dW&quot; + str(l+1)] = np.zeros_like(parameters[&apos;W&apos;+str(l+1)]) #(numpy array of zeros with the same shape as parameters[&quot;W&quot; + str(l+1)])</span><br><span class="line">        s[&quot;db&quot; + str(l+1)] = np.zeros_like(parameters[&apos;b&apos;+str(l+1)]) #(numpy array of zeros with the same shape as parameters[&quot;b&quot; + str(l+1)])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return v, s</span><br></pre></td></tr></table></figure>
+<h4 id="update-parameters-1"><a href="#update-parameters-1" class="headerlink" title="update parameters"></a>update parameters</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">def update_parameters_with_adam(parameters, grads, v, s, t, learning_rate=0.01,</span><br><span class="line">                                beta1=0.9, beta2=0.999, epsilon=1e-8):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Update parameters using Adam</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    parameters -- python dictionary containing your parameters:</span><br><span class="line">                    parameters[&apos;W&apos; + str(l)] = Wl</span><br><span class="line">                    parameters[&apos;b&apos; + str(l)] = bl</span><br><span class="line">    grads -- python dictionary containing your gradients for each parameters:</span><br><span class="line">                    grads[&apos;dW&apos; + str(l)] = dWl</span><br><span class="line">                    grads[&apos;db&apos; + str(l)] = dbl</span><br><span class="line">    v -- Adam variable, moving average of the first gradient, python dictionary</span><br><span class="line">    s -- Adam variable, moving average of the squared gradient, python dictionary</span><br><span class="line">    learning_rate -- the learning rate, scalar.</span><br><span class="line">    beta1 -- Exponential decay hyperparameter for the first moment estimates </span><br><span class="line">    beta2 -- Exponential decay hyperparameter for the second moment estimates </span><br><span class="line">    epsilon -- hyperparameter preventing division by zero in Adam updates</span><br><span class="line"></span><br><span class="line">    Returns:</span><br><span class="line">    parameters -- python dictionary containing your updated parameters </span><br><span class="line">    v -- Adam variable, moving average of the first gradient, python dictionary</span><br><span class="line">    s -- Adam variable, moving average of the squared gradient, python dictionary</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    L = len(parameters) // 2                 # number of layers in the neural networks</span><br><span class="line">    v_corrected = &#123;&#125;                         # Initializing first moment estimate, python dictionary</span><br><span class="line">    s_corrected = &#123;&#125;                         # Initializing second moment estimate, python dictionary</span><br><span class="line">    </span><br><span class="line">    # Perform Adam update on all parameters</span><br><span class="line">    for l in range(L):</span><br><span class="line">        # Moving average of the gradients. Inputs: &quot;v, grads, beta1&quot;. Output: &quot;v&quot;.</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        v[&apos;dW&apos;+str(l+1)] = beta1*v[&apos;dW&apos;+str(l+1)]+(1-beta1)*grads[&apos;dW&apos;+str(l+1)]</span><br><span class="line">        v[&apos;db&apos;+str(l+1)] = beta1*v[&apos;db&apos;+str(l+1)]+(1-beta1)*grads[&apos;db&apos;+str(l+1)]</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">        # Compute bias-corrected first moment estimate. Inputs: &quot;v, beta1, t&quot;. Output: &quot;v_corrected&quot;.</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        v_corrected[&apos;dW&apos;+str(l+1)] = v[&apos;dW&apos;+str(l+1)]/(1-np.power(beta1,t))</span><br><span class="line">        v_corrected[&apos;db&apos;+str(l+1)] = v[&apos;db&apos;+str(l+1)]/(1-np.power(beta1,t))</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">        # Moving average of the squared gradients. Inputs: &quot;s, grads, beta2&quot;. Output: &quot;s&quot;.</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        s[&apos;dW&apos;+str(l+1)] = beta2*s[&apos;dW&apos;+str(l+1)]+(1-beta2)*np.power(grads[&apos;dW&apos;+str(l+1)],2)</span><br><span class="line">        s[&apos;db&apos;+str(l+1)] = beta2*s[&apos;db&apos;+str(l+1)]+(1-beta2)*np.power(grads[&apos;db&apos;+str(l+1)],2)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">        # Compute bias-corrected second raw moment estimate. Inputs: &quot;s, beta2, t&quot;. Output: &quot;s_corrected&quot;.</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        s_corrected[&apos;dW&apos;+str(l+1)] = s[&apos;dW&apos;+str(l+1)]/(1-np.power(beta2,t))</span><br><span class="line">        s_corrected[&apos;db&apos;+str(l+1)] = s[&apos;db&apos;+str(l+1)]/(1-np.power(beta2,t))</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">        # Update parameters. Inputs: &quot;parameters, learning_rate, v_corrected, s_corrected, epsilon&quot;. Output: &quot;parameters&quot;.</span><br><span class="line">        ### START CODE HERE ### (approx. 2 lines)</span><br><span class="line">        parameters[&apos;W&apos;+str(l+1)] -= learning_rate * v_corrected[&apos;dW&apos;+str(l+1)] /(epsilon+np.sqrt(s_corrected[&apos;dW&apos;+str(l+1)]))</span><br><span class="line">        parameters[&apos;b&apos;+str(l+1)] -= learning_rate * v_corrected[&apos;db&apos;+str(l+1)] /(epsilon+np.sqrt(s_corrected[&apos;db&apos;+str(l+1)]))</span><br><span class="line">        </span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">    return parameters, v, s</span><br></pre></td></tr></table></figure>
+<h3 id="usage"><a href="#usage" class="headerlink" title="usage"></a>usage</h3><p>注意每次epoch的时候，分为多个batch学习参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">def model(X, Y, layers_dims, optimizer, learning_rate=0.0007, mini_batch_size=64, beta=0.9,</span><br><span class="line">          beta1=0.9, beta2=0.999, epsilon=1e-8, num_epochs=10000, print_cost=True):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    3-layer neural network model which can be run in different optimizer modes.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- input data, of shape (2, number of examples)</span><br><span class="line">    Y -- true &quot;label&quot; vector (1 for blue dot / 0 for red dot), of shape (1, number of examples)</span><br><span class="line">    layers_dims -- python list, containing the size of each layer</span><br><span class="line">    learning_rate -- the learning rate, scalar.</span><br><span class="line">    mini_batch_size -- the size of a mini batch</span><br><span class="line">    beta -- Momentum hyperparameter</span><br><span class="line">    beta1 -- Exponential decay hyperparameter for the past gradients estimates </span><br><span class="line">    beta2 -- Exponential decay hyperparameter for the past squared gradients estimates </span><br><span class="line">    epsilon -- hyperparameter preventing division by zero in Adam updates</span><br><span class="line">    num_epochs -- number of epochs</span><br><span class="line">    print_cost -- True to print the cost every 1000 epochs</span><br><span class="line"></span><br><span class="line">    Returns:</span><br><span class="line">    parameters -- python dictionary containing your updated parameters </span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    L = len(layers_dims)             # number of layers in the neural networks</span><br><span class="line">    costs = []                       # to keep track of the cost</span><br><span class="line">    t = 0                            # initializing the counter required for Adam update</span><br><span class="line">    seed = 10                        # For grading purposes, so that your &quot;random&quot; minibatches are the same as ours</span><br><span class="line">    </span><br><span class="line">    # Initialize parameters</span><br><span class="line">    parameters = initialize_parameters(layers_dims)</span><br><span class="line"></span><br><span class="line">    # Initialize the optimizer</span><br><span class="line">    if optimizer == &quot;gd&quot;:</span><br><span class="line">        pass # no initialization required for gradient descent</span><br><span class="line">    elif optimizer == &quot;momentum&quot;:</span><br><span class="line">        v = initialize_velocity(parameters)</span><br><span class="line">    elif optimizer == &quot;adam&quot;:</span><br><span class="line">        v, s = initialize_adam(parameters)</span><br><span class="line">    </span><br><span class="line">    # Optimization loop</span><br><span class="line">    for i in range(num_epochs):</span><br><span class="line">        </span><br><span class="line">        # Define the random minibatches. We increment the seed to reshuffle differently the dataset after each epoch</span><br><span class="line">        seed = seed + 1</span><br><span class="line">        minibatches = random_mini_batches(X, Y, mini_batch_size, seed)</span><br><span class="line"></span><br><span class="line">        for minibatch in minibatches:</span><br><span class="line"></span><br><span class="line">            # Select a minibatch</span><br><span class="line">            (minibatch_X, minibatch_Y) = minibatch</span><br><span class="line"></span><br><span class="line">            # Forward propagation</span><br><span class="line">            a3, caches = forward_propagation(minibatch_X, parameters)</span><br><span class="line"></span><br><span class="line">            # Compute cost</span><br><span class="line">            cost = compute_cost(a3, minibatch_Y)</span><br><span class="line"></span><br><span class="line">            # Backward propagation</span><br><span class="line">            grads = backward_propagation(minibatch_X, minibatch_Y, caches)</span><br><span class="line"></span><br><span class="line">            # Update parameters</span><br><span class="line">            if optimizer == &quot;gd&quot;:</span><br><span class="line">                parameters = update_parameters_with_gd(parameters, grads, learning_rate)</span><br><span class="line">            elif optimizer == &quot;momentum&quot;:</span><br><span class="line">                parameters, v = update_parameters_with_momentum(parameters, grads, v, beta, learning_rate)</span><br><span class="line">            elif optimizer == &quot;adam&quot;:</span><br><span class="line">                t = t + 1 # Adam counter</span><br><span class="line">                parameters, v, s = update_parameters_with_adam(parameters, grads, v, s,</span><br><span class="line">                                                               t, learning_rate, beta1, beta2,  epsilon)</span><br><span class="line">        </span><br><span class="line">        # Print the cost every 1000 epoch</span><br><span class="line">        if print_cost and i % 1000 == 0:</span><br><span class="line">            print(&quot;Cost after epoch %i: %f&quot; % (i, cost))</span><br><span class="line">        if print_cost and i % 100 == 0:</span><br><span class="line">            costs.append(cost)</span><br><span class="line">                </span><br><span class="line">    # plot the cost</span><br><span class="line">    plt.plot(costs)</span><br><span class="line">    plt.ylabel(&apos;cost&apos;)</span><br><span class="line">    plt.xlabel(&apos;epochs (per 100)&apos;)</span><br><span class="line">    plt.title(&quot;Learning rate = &quot; + str(learning_rate))</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">    return parameters</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Adam/" rel="tag"># Adam</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/26/DL-wk2/" rel="next" title="DL C2wk1">
+                <i class="fa fa-chevron-left"></i> DL C2wk1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/26/JAVA并发编程（一）/" rel="prev" title="JAVA并发编程（一）">
+                JAVA并发编程（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#mini-batch-gradient-descent"><span class="nav-number">1.</span> <span class="nav-text">mini batch gradient descent</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mini-batch-size"><span class="nav-number">1.1.</span> <span class="nav-text">mini-batch size</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#how-to-choose-mini-batch-size"><span class="nav-number">1.2.</span> <span class="nav-text">how to choose mini-batch size?</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">2.</span> <span class="nav-text">learning rate decay</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#implementation"><span class="nav-number">2.1.</span> <span class="nav-text">implementation</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mini-Batch-gradient-descent"><span class="nav-number">3.</span> <span class="nav-text">mini-Batch gradient descent</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shuffle"><span class="nav-number">3.1.</span> <span class="nav-text">shuffle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#parition"><span class="nav-number">3.2.</span> <span class="nav-text">parition</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#code"><span class="nav-number">3.3.</span> <span class="nav-text">code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#momentum"><span class="nav-number">4.</span> <span class="nav-text">momentum</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#code-1"><span class="nav-number">4.1.</span> <span class="nav-text">code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#update-parameters"><span class="nav-number">4.2.</span> <span class="nav-text">update parameters</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adam-optimization"><span class="nav-number">5.</span> <span class="nav-text">Adam optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#update-parameters-1"><span class="nav-number">5.1.</span> <span class="nav-text">update parameters</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usage"><span class="nav-number">6.</span> <span class="nav-text">usage</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
