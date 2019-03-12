@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Seq2Seq 模型翻译 先建立一个编码网络，是一个RNN的结构，RNN的单元可以使GRU也可以是LSTM，每次向该神经网络输入一个法语单词，将输入序列接收完毕之后，RNN会输出一个向量来代表这个输入序列。 接着建立一个解码网络，如上图二所示，以编码网络的输出作为解码网络的输入。之后它可以被训练为每次输出一个翻译后的单词，一直到它输出序列的结尾或者句子结尾标记。而且每次生成一个标记，都会传递到下一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL-C5W3">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/02/13/DL-C5W3/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Seq2Seq 模型翻译 先建立一个编码网络，是一个RNN的结构，RNN的单元可以使GRU也可以是LSTM，每次向该神经网络输入一个法语单词，将输入序列接收完毕之后，RNN会输出一个向量来代表这个输入序列。 接着建立一个解码网络，如上图二所示，以编码网络的输出作为解码网络的输入。之后它可以被训练为每次输出一个翻译后的单词，一直到它输出序列的结尾或者句子结尾标记。而且每次生成一个标记，都会传递到下一">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-220.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/image%20captioning.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-221.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-222.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/句子.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-223.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/for.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-224.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-225.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-226.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-227.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-228.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-229.png">
+<meta property="og:updated_time" content="2019-02-14T08:54:29.431Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DL-C5W3">
+<meta name="twitter:description" content="Seq2Seq 模型翻译 先建立一个编码网络，是一个RNN的结构，RNN的单元可以使GRU也可以是LSTM，每次向该神经网络输入一个法语单词，将输入序列接收完毕之后，RNN会输出一个向量来代表这个输入序列。 接着建立一个解码网络，如上图二所示，以编码网络的输出作为解码网络的输入。之后它可以被训练为每次输出一个翻译后的单词，一直到它输出序列的结尾或者句子结尾标记。而且每次生成一个标记，都会传递到下一">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-220.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/02/13/DL-C5W3/"/>
+
+
+
+
+
+  <title>DL-C5W3 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/02/13/DL-C5W3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DL-C5W3</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-13T16:51:13+08:00">
+                2019-02-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Seq2Seq-模型"><a href="#Seq2Seq-模型" class="headerlink" title="Seq2Seq 模型"></a>Seq2Seq 模型</h3><h4 id="翻译"><a href="#翻译" class="headerlink" title="翻译"></a>翻译</h4><p><img src="/home/alex/图片/2018-220.png" alt="filenamalready exists, renamed"></p>
+<p>先建立一个编码网络，是一个RNN的结构，RNN的单元可以使GRU也可以是LSTM，每次向该神经网络输入一个法语单词，将输入序列接收完毕之后，RNN会输出一个向量来代表这个输入序列。</p>
+<p>接着建立一个解码网络，如上图二所示，以编码网络的输出作为解码网络的输入。之后它可以被训练为每次输出一个翻译后的单词，一直到它输出序列的结尾或者句子结尾标记。而且每次生成一个标记，都会传递到下一个单元中进行预测。</p>
+<h4 id="图像描述"><a href="#图像描述" class="headerlink" title="图像描述"></a>图像描述</h4><p><img src="/home/alex/图片/image captioning.png" alt="upload succeful"></p>
+<p>先把图片输入到卷积神经网络中，如一个预训练的AlexNet结构，然后让其学习图片的编码，如果是图片分类任务，最后得到的一个特征向量输出到一个softmax层，而这里把softmax层替换为一个RNN，RNN要做的就是生成图像的描述，每次生成一个单词。</p>
+<h3 id="选择最有可能的句子"><a href="#选择最有可能的句子" class="headerlink" title="选择最有可能的句子"></a>选择最有可能的句子</h3><h4 id="机器翻译（条件语言模型）"><a href="#机器翻译（条件语言模型）" class="headerlink" title="机器翻译（条件语言模型）"></a>机器翻译（条件语言模型）</h4><p><img src="/home/alex/图片/2018-221.png" alt="filename alrady exists, renamed"></p>
+<p>绿色表示encoder网络，紫色表示decoder网络，对于生成语言模型来说，encoder网络是以零向量开始，对于机器翻译模型来说，encoder网络会计算出一系列向量来表示输入的句子，有了这个输入句子，decoder网络就可以从这个句子开始，而不是从零向量开始，所以叫<em>条件语言模型</em></p>
+<p><img src="/home/alex/图片/2018-222.png" alt="filename already exists, rnamed"></p>
+<p>x这里是法语句子，当进行机器翻译的时候，要找到一个英语句子y，使得条件概率最大化。通常使用<em>束搜索</em>方法。</p>
+<p>我们W1生成的语言模型是在一个句子当中随机生成单词，但是例如下面句子：</p>
+<p><img src="/home/alex/图片/句子.png" alt="successful"></p>
+<p>随机生成的语言模型挑选了JANE IS 之后，由于going在英语中更加常见，因此很有可能采取下面那一句实际上并不太好的翻译。</p>
+<h3 id="Beam-search"><a href="#Beam-search" class="headerlink" title="Beam search"></a>Beam search</h3><p><img src="/home/alex/图片/2018-223.png" alt="filename alady exists, renamed"></p>
+<p>列出一个10000词的词汇表，为了简化问题，忽略大小写，把所有单词都以小写列出来，首先利用编码部分评估第一个单词的概率值，贪婪算法只会挑出最可能的一个单词，而beam search有一个参数B，例如设为3，那么就会考虑三个不同的单词。</p>
+<p>所以第一步就是输入法语句子到编码网络，然后会解码这个网络，softmax层会输出10000个概率值，取前三个存起来。</p>
+<p>第二步，假设已经选出了in,jane,september。作为第一个单词红最有可能的选择，算法接下来会针对每一个单词考虑第二个单词是什么。</p>
+<p><img src="/home/alex/图片/for.png" alt="upload ccessful"></p>
+<p>把第一个单词输出作为下一个单元的输入，表示考虑第一个单词的情况下预测第二个单词。在第二步中我们更关心的事要找到最可能的第一个和第二个单词对，写成条件概率，就是上面的7式，等于第一个单词出现的概率乘以考虑第一个单词的情况下第二个单词的概率。</p>
+<p><img src="/home/alex/图片/2018-224.png" alt="filename alrey exists, renamed"></p>
+<p>当选中了第一个单词的3个候选的时候，每个候选单词有10000个选择，所以一共有3x10000=30000中可能结果，按照第一和第二个词的概率，选出前三个，把这30000个可能性又变成了3个。</p>
+<p>如果找到了第一个和第二个单词对最有可能的三个选择分别是in September,jane is 和jane visits，那么就去掉了september作为第一个单词的可能。</p>
+<h3 id="改进集束搜索"><a href="#改进集束搜索" class="headerlink" title="改进集束搜索"></a>改进集束搜索</h3><p><img src="/home/alex/图片/2018-225.png" alt="filename already xists, renamed"></p>
+<p>但概率都小于1，很多个小于1的数相乘，会得到很小很小的数字，会造成数值下溢。因此可以加上log，最大化这个log求和的概率值。</p>
+<p><img src="/home/alex/图片/2018-226.png" alt="filename aeady exists, renamed"></p>
+<p>对于目标函数可以做一些改变，如果要预测一个很长的句子，那么每个单词都要乘以一个很小的数字，最后得到一个更小的概率值，所以这个目标函数有一个缺点，就是会不自然地倾向于更短的翻译结果。</p>
+<p>我们可以不再最大化这个目标函数，而是把它归一化通过除以翻译结果的单词数量。这时候这个目标函数也叫作归一化的对数似然函数，也就是取每个单词的概率对数值的平均，这样很明显地减少了对输出长的结果的惩罚，</p>
+<p>同时我们也可以对这个单词数量加上一个指数α，这是一个超参数，如果α=0，则不进行归一化，如果α为1，相当于用完全长度来归一化。</p>
+<p>总结一下如何运行这个算法：</p>
+<p><img src="/home/alex/图片/2018-227.png" alt="filename alreaexists, renamed"></p>
+<h3 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h3><p>模型有两个部分，一个神经网络模型（seq-to-seq），我们称为RNN模型，实际上是个编码器和解码器。另一部分是束搜索算法，以某个集束宽度B运行。</p>
+<p>如果翻译错误的话，究竟是模型的那个部分出了错呢？</p>
+<p><img src="/home/alex/图片/2018-228.png" alt="filename eady exists, renamed"></p>
+<p>假设y*是理想结果，而与y^是机器给出的结果，如果是情况一的话，RNN模型输出的结果是</p>
+<p><img src="/home/alex/图片/2018-229.png" alt="filename aleady exists, renamed"></p>
+<p>但是束搜索却选择了y^，明明y*的得分更高，因此是束搜索算法出了错。</p>
+<p>第二种情况则是RNN模型出了错，它评分大小比较给错了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/10/DL-C5W2/" rel="next" title="DL-C5W2">
+                <i class="fa fa-chevron-left"></i> DL-C5W2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/15/Nodejs-1/" rel="prev" title="webstorm中Express项目的创建">
+                webstorm中Express项目的创建 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Seq2Seq-模型"><span class="nav-number">1.</span> <span class="nav-text">Seq2Seq 模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#翻译"><span class="nav-number">1.1.</span> <span class="nav-text">翻译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图像描述"><span class="nav-number">1.2.</span> <span class="nav-text">图像描述</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择最有可能的句子"><span class="nav-number">2.</span> <span class="nav-text">选择最有可能的句子</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#机器翻译（条件语言模型）"><span class="nav-number">2.1.</span> <span class="nav-text">机器翻译（条件语言模型）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Beam-search"><span class="nav-number">3.</span> <span class="nav-text">Beam search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#改进集束搜索"><span class="nav-number">4.</span> <span class="nav-text">改进集束搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#误差分析"><span class="nav-number">5.</span> <span class="nav-text">误差分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

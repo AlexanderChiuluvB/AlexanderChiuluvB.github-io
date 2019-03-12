@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="RNN循环神经网络是从左向右扫描数据,同时每个时间步的参数也是共享的,所以下页幻灯片中我们会详细讲述它的一套参数,我们用W ax 来表示管理着从x  到隐藏层的连接的一系列参数,每个时间步使用的都是相同的参数W ax 。而激活值也就是水平联系是由参数W aa 决定的,同时每一个时间步都使用相同的参数W aa ,同样的输出结果由W ya 决定。下图详细讲述这些参数是如何起作用。  意思是说当预测y^">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL-C5W1">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/01/03/DL-C5W1/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="RNN循环神经网络是从左向右扫描数据,同时每个时间步的参数也是共享的,所以下页幻灯片中我们会详细讲述它的一套参数,我们用W ax 来表示管理着从x  到隐藏层的连接的一系列参数,每个时间步使用的都是相同的参数W ax 。而激活值也就是水平联系是由参数W aa 决定的,同时每一个时间步都使用相同的参数W aa ,同样的输出结果由W ya 决定。下图详细讲述这些参数是如何起作用。  意思是说当预测y^">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/letitgo.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/thisone.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/notation.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-169.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-170.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/fanxiangchuanbo.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/求导.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-171.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/RNN%20model.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-172.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-173.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-174.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-175.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/GRU.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/kmt.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-177.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/LSTM.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-178.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/jiuming.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/qiupiandao.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-179.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-180.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-181.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-182.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-183.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-184.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ssssz.png">
+<meta property="og:updated_time" content="2019-01-11T05:26:55.084Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DL-C5W1">
+<meta name="twitter:description" content="RNN循环神经网络是从左向右扫描数据,同时每个时间步的参数也是共享的,所以下页幻灯片中我们会详细讲述它的一套参数,我们用W ax 来表示管理着从x  到隐藏层的连接的一系列参数,每个时间步使用的都是相同的参数W ax 。而激活值也就是水平联系是由参数W aa 决定的,同时每一个时间步都使用相同的参数W aa ,同样的输出结果由W ya 决定。下图详细讲述这些参数是如何起作用。  意思是说当预测y^">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/letitgo.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/01/03/DL-C5W1/"/>
+
+
+
+
+
+  <title>DL-C5W1 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/01/03/DL-C5W1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DL-C5W1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-03T14:47:59+08:00">
+                2019-01-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="RNN"><a href="#RNN" class="headerlink" title="RNN"></a>RNN</h3><p>循环神经网络是从左向右扫描数据,同时每个时间步的参数也是共享的,所以下页幻灯<br>片中我们会详细讲述它的一套参数,我们用W ax 来表示管理着从x <1> 到隐藏层的连接的一系列参数,每个时间步使用的都是相同的参数W ax 。而激活值也就是水平联系是由参数W aa 决<br>定的,同时每一个时间步都使用相同的参数W aa ,同样的输出结果由W ya 决定。下图详细讲述<br>这些参数是如何起作用。</1></p>
+<p><img src="/home/alex/图片/letitgo.png" alt="upad successful"></p>
+<p>意思是说当预测y^[3]的时候不仅仅需要输入的x^[3]信息，还需要输入的x^[1],x^[2]信息。</p>
+<h4 id="forward-propagation"><a href="#forward-propagation" class="headerlink" title="forward propagation"></a>forward propagation</h4><p><img src="/home/alex/图片/thisone.png" alt="upload sful"></p>
+<h4 id="simplification-notation"><a href="#simplification-notation" class="headerlink" title="simplification notation"></a>simplification notation</h4><p><img src="/home/alex/图片/notation.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/2018-169.png" alt="filename already existsenamed"></p>
+<p><img src="/home/alex/图片/2018-170.png" alt="filename already exists, enamed"></p>
+<h4 id="backward-propagation"><a href="#backward-propagation" class="headerlink" title="backward propagation"></a>backward propagation</h4><p><img src="/home/alex/图片/fanxiangchuanbo.png" alt="upload succeul"></p>
+<p>求导示意图：</p>
+<p><img src="/home/alex/图片/求导.png" alt="upload succesul"></p>
+<h4 id="RNN种类"><a href="#RNN种类" class="headerlink" title="RNN种类"></a>RNN种类</h4><p><img src="/home/alex/图片/2018-171.png" alt="filename lready exists, renamed"></p>
+<ol>
+<li><p>1 to 1 </p>
+</li>
+<li><p>1 to many 音乐生成、序列生成</p>
+</li>
+<li><p>many to 1 情感判断</p>
+</li>
+<li><p>many to many 如 name entity recognition</p>
+</li>
+<li><p>many to many 如 翻译，例如输入的x是中文，输出的y是英文</p>
+</li>
+</ol>
+<h3 id="训练一个语言模型"><a href="#训练一个语言模型" class="headerlink" title="训练一个语言模型"></a>训练一个语言模型</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><p>建立一个字典，把输入句子每个单词转化为对应的one-hot向量。</p>
+<p>有时候要在句子末尾添加一个EOS标记，表示句子的结束。未知的词用UNK来代替。</p>
+<h4 id="2"><a href="#2" class="headerlink" title="2."></a>2.</h4><p><img src="/home/alex/图片/RNN model.png" alt="uplo successful"></p>
+<p>建立RNN模型，x^[1]会被设为一个0向量，在之前的a^[0]也会被设为一个0向量，于是a^[1]要做的是通过softmax进行一些预测来计算第一个词可能会是什么，结果就是y^[1]，这一步就是通过一个softmax层来预测字典中任意单词会是第一个词的概率，输出是softmax的计算结果，结果个数就是字典的词的个数。</p>
+<p><img src="/home/alex/图片/2018-172.png" alt="filename already exists, renamed"></p>
+<p>然后预测第二个词：是在考虑预测了第一个词的基础上预测到第二个词的概率。</p>
+<p>如此类推，这是一个全概率公式。</p>
+<p>把这三个概率相乘，含义就是最后得到这个含3个词的整个句子的概率。</p>
+<h3 id="对新序列采样"><a href="#对新序列采样" class="headerlink" title="对新序列采样"></a>对新序列采样</h3><p>训练了一个序列模型之后，想要了解这个模型学到了什么，一种非正式方法就是进行一次新序列采样。</p>
+<p><img src="/home/alex/图片/2018-173.png" alt="fileme already exists, renamed"></p>
+<p>就是如何从RNN语言模型中生成一个随机选择的句子：</p>
+<p>第一步要做的就是对你想要模型生成的第一个词进行采样,于是你输入x <1> = 0,<br>a <0> = 0,现在你的第一个时间步得到的是所有可能的输出是经过 softmax 层后得到的概率,<br>然后根据这个 softmax 的分布进行随机采样。Softmax 分布给你的信息就是第一个词 a 的概<br>率是多少,第一个词是 aaron 的概率是多少,第一个词是 zulu 的概率是多少,还有第一个词<br>是 UNK(未知标识)的概率是多少,这个标识可能代表句子的结尾,然后对这个向量使用例<br>如 numpy 命令, np.random.choice (上图编号 3 所示),来根据向量中这些概率的分布<br>进行采样,这样就能对第一个词进行采样了。</0></1></p>
+<p>然后再到下一个时间步,无论你得到什么样的用 one-hot 码表示的选择结果,都把它传<br>递到下一个时间步,然后对第三个词进行采样。不管得到什么都把它传递下去,一直这样直<br>到最后一个时间步。</p>
+<p>这就得到了一个随机生成的句子。</p>
+<h3 id="基于字符的语言生成模型"><a href="#基于字符的语言生成模型" class="headerlink" title="基于字符的语言生成模型"></a>基于字符的语言生成模型</h3><p>对于英文来说，字典仅包含26个英文字母大小写，标点符号等等。</p>
+<p>优点：不必担心出现未知的的标识。</p>
+<p>缺点：不能像基于词汇的模型，可以捕捉长范围上下文的关系，而且计算成本会很高。</p>
+<h3 id="RNN的问题"><a href="#RNN的问题" class="headerlink" title="RNN的问题"></a>RNN的问题</h3><p>1.因为梯度消失，不擅长处理长期依赖的问题。</p>
+<p><img src="/home/alex/图片/2018-174.png" alt="filename lready exists, renamed"></p>
+<p>对于 RNN,首先从左到右前向传播,然后反向传播。但是反向传播会很困难,因为同样的梯度消失的问题,后面层的输出误差很难影响前面层的计算，实际上很难让一个神经网络能够意识到他要记住看到的是单数名词还是复数名词。</p>
+<p>2.对于梯度爆炸问题则比较好解决。</p>
+<p>一个方法是 gradient clipping,意思是观察你的梯度向量，如果它大于某个阈值，则缩放梯度向量，保证他不会太大。</p>
+<h3 id="GRU-（gated-recurrent-unit）"><a href="#GRU-（gated-recurrent-unit）" class="headerlink" title="GRU （gated recurrent unit）"></a>GRU （gated recurrent unit）</h3><p>门控循环单元</p>
+<p><img src="/home/alex/图片/2018-175.png" alt="fename already exists, renamed"></p>
+<p>GRU 单元将会有个新的变量称为c,代表细胞(cell),即记忆细胞(下图编号 1 所示)。记忆细胞<br>的作用是提供了记忆的能力,比如说一只猫是单数还是复数,所以当它看到之后的句子的时<br>候,它仍能够判断句子的主语是单数还是复数。于是在时间t处,有记忆细胞c <t> ,然后我<br>们看的是,GRU 实际上输出了激活值a <t> ,c <t> = a <t> (下图编号 2 所示)。于是我们想<br>要使用不同的符号c和a来表示记忆细胞的值和输出的激活值,即使它们是一样的。我现在使<br>用这个标记是因为当我们等会说到 LSTMs 的时候,这两个会是不同的值,但是现在对于 GRU,c <t> 的值等于a <t> 的激活值。</t></t></t></t></t></t></p>
+<p>所以这些等式表示了 GRU 单元的计算,在每个时间步,我们将用一个候选值重写记忆<br>细胞,即c̃ <t> 的值,所以它就是个候选值,替代了c <t> 的值。然后我们用 tanh 激活函数来<br>计算, c̃ <t> = tanh(W c [c &lt;t−1&gt; , x <t> ] + b c ),所以c̃ <t> 的值就是个替代值,代替表示c <t> 的值<br>(下图编号 3 所示)。</t></t></t></t></t></t></p>
+<p><img src="/home/alex/图片/GRU.png" alt="uplsuccessful"></p>
+<p>所以我们接下来要给 GRU 用的式子就是c <t> = Γ u ∗ c̃ <t> + (1 − Γ u ) ∗ c &lt;t−1&gt; (上图编号<br>1 所示)。你应该注意到了,如果这个更新值Γ u = 1,也就是说把这个新值,即c <t> 设为候<br>选值(Γ u = 1时简化上式,c <t> = c̃ <t> )。将门值设为 1(上图编号 2 所示),然后往前再<br>更新这个值。对于所有在这中间的值,你应该把门的值设为 0,即Γ u = 0,意思就是说不更<br>新它,就用旧的值。因为如果Γ u = 0,则c <t> = c &lt;t−1&gt; ,c <t> 等于旧的值。</t></t></t></t></t></t></t></p>
+<h4 id="完整的GRU单元"><a href="#完整的GRU单元" class="headerlink" title="完整的GRU单元"></a>完整的GRU单元</h4><p><img src="/home/alex/图片/kmt.png" alt="uplo successful"></p>
+<p>  总结：</p>
+<p>  GRU是用于解决RNN深层网络中梯度弥散问题的一种结构，引入gamma门参数用来决定该时间步的激活层是来自于上一层（保留记忆）还是新计算的结果（不保留记忆）</p>
+<p><img src="/home/alex/图片/2018-177.png" alt="filename already exists,enamed"></p>
+<h3 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h3><p>回顾GRU<br><img src="/home/alex/图片/LSTM.png" alt="upload l"></p>
+<p><img src="/home/alex/图片/2018-178.png" alt="filename already exists,enamed"></p>
+<p>我们像以前那样有一个更新门Γ u 和表示更新的参数W u ,Γ u = σ(W u [a &lt;t−1&gt; , x <t> ] + b u )(上图编号 5 所示)。一个 LSTM 的新特性是不只有一个更新门控制,这里的这两项(上图编号 6,7 所示),我们将用不同的项来代替它们,要用别的项来取代Γ u 和1 − Γ u ,这里(上图编号 6 所示)我们用Γ u 。</t></p>
+<p>然后这里(上图编号 7 所示)用<em>遗忘门</em>(the forget gate),我们叫它Γ f ,所以这个Γ f =<br>σ(W f [a &lt;t−1&gt; , x <t> ] + b f )(上图编号 8 所示);</t></p>
+<p>然后我们有一个新的输出门,Γ o = σ(W o [a &lt;t−1&gt; , x <t> ]+&gt; b o )(上图编号 9 所示);</t></p>
+<p>于是记忆细胞的更新值c <t> = Γ u ∗ c̃ <t> + Γ f ∗ c &lt;t−1&gt; (上图编号 10 所示);<br>所以这给了记忆细胞选择权去维持旧的值c &lt;t−1&gt; 或者就加上新的值c̃ <t> ,所以这里用了<br>单独的更新门Γ u 和遗忘门Γ f ,然后这个表示更新门(Γ u = σ(W u [a &lt;t−1&gt; , x <t> ] + b u )上图编号 5 所示);</t></t></t></t></p>
+<p>遗忘门(Γ f = σ(W f [a &lt;t−1&gt; , x <t> ] + b f )上图编号 8 所示)和输出门(上图编号 9 所示)。</t></p>
+<p>最后a <t> = c <t> 的式子会变成a <t> = Γ o ∗ c <t> 。</t></t></t></t></p>
+<h4 id="peephole-connection"><a href="#peephole-connection" class="headerlink" title="peephole connection"></a>peephole connection</h4><p>门值不仅取决于a &lt;t−1&gt; 和x <t> ,有时候也可以偷窥一下c &lt;t−1&gt; 的值(上图编号 13 所示),<br>这叫做“窥视孔连接”(peephole connection)。虽然不是个好听的名字,但是你想,“偷窥孔<br>连接”其实意思就是门值不仅取决于a &lt;t−1&gt; 和x <t> ,也取决于上一个记忆细胞的值(c &lt;t−1&gt; ),<br>然后“偷窥孔连接”就可以结合这三个门(Γ u 、Γ f 、Γ o )来计算了</t></t></p>
+<p><img src="/home/alex/图片/jiuming.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/qiupiandao.png" alt="uploaduccessful"></p>
+<p>详情可见 <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener">http://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
+<h4 id="forward-propagate"><a href="#forward-propagate" class="headerlink" title="forward propagate"></a>forward propagate</h4><p><img src="/home/alex/图片/2018-179.png" alt="filename already ists, renamed"></p>
+<p><img src="/home/alex/图片/2018-180.png" alt="filename aready exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-181.png" alt="filename aleady exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-182.png" alt="filename aeady exists, renamed"></p>
+<p>这里的i_t就是update gate,f_t就是forget gate</p>
+<h3 id="BRNN"><a href="#BRNN" class="headerlink" title="BRNN"></a>BRNN</h3><p><img src="/home/alex/图片/2018-183.png" alt="filenamready exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-184.png" alt="filename already exists,enamed"></p>
+<h3 id="Deep-RNN"><a href="#Deep-RNN" class="headerlink" title="Deep RNN"></a>Deep RNN</h3><p><img src="/home/alex/图片/ssssz.png" alt="upload succsful"></p>
+<p>不再用原来的a <0> 表示 0 时刻的激活值了,而是用a [1]<0> 来表示第一层<br>(上图编号 4 所示),所以我们现在用a [l]<t> 来表示第 l 层的激活值,这个<t>表示第t个时<br>间点,这样就可以表示。第一层第一个时间点的激活值a [1]<1> ,这(a [1]<2> )就是第一层第<br>二个时间点的激活值,a [1]<3> 和a [1]<4> 。然后我们把这些(上图编号 4 方框内所示的部分)<br>堆叠在上面,这就是一个有三个隐层的新的网络。<br>我们看个具体的例子,看看这个值(a [2]<3> ,上图编号 5 所示)是怎么算的。激活值<br>a [2]<3> 有两个输入,一个是从下面过来的输入(上图编号 6 所示),还有一个是从左边过来<br>[2]<br>[2]<br>的输入(上图编号 7 所示),a [2]<3> = g(W a [a [2]<2> , a [1]<3> ] + b a ),这就是这个激活值的计算方法。参数W a 和b a 在这一层的计算里都一样,相对应地第一层也有自己的参数W a[1]<br>和b a 。</3></2></3></3></3></4></3></2></1></t></t></0></0></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/01/DL-C4W4/" rel="next" title="DL-C4W4">
+                <i class="fa fa-chevron-left"></i> DL-C4W4
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/11/DL-C5w1HW1/" rel="prev" title="DL-C5w1HW1">
+                DL-C5w1HW1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#RNN"><span class="nav-number">1.</span> <span class="nav-text">RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#forward-propagation"><span class="nav-number">1.1.</span> <span class="nav-text">forward propagation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#simplification-notation"><span class="nav-number">1.2.</span> <span class="nav-text">simplification notation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#backward-propagation"><span class="nav-number">1.3.</span> <span class="nav-text">backward propagation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RNN种类"><span class="nav-number">1.4.</span> <span class="nav-text">RNN种类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练一个语言模型"><span class="nav-number">2.</span> <span class="nav-text">训练一个语言模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1"><span class="nav-number">2.1.</span> <span class="nav-text">1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2"><span class="nav-number">2.2.</span> <span class="nav-text">2.</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对新序列采样"><span class="nav-number">3.</span> <span class="nav-text">对新序列采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于字符的语言生成模型"><span class="nav-number">4.</span> <span class="nav-text">基于字符的语言生成模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RNN的问题"><span class="nav-number">5.</span> <span class="nav-text">RNN的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRU-（gated-recurrent-unit）"><span class="nav-number">6.</span> <span class="nav-text">GRU （gated recurrent unit）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#完整的GRU单元"><span class="nav-number">6.1.</span> <span class="nav-text">完整的GRU单元</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LSTM"><span class="nav-number">7.</span> <span class="nav-text">LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#peephole-connection"><span class="nav-number">7.1.</span> <span class="nav-text">peephole connection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forward-propagate"><span class="nav-number">7.2.</span> <span class="nav-text">forward propagate</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BRNN"><span class="nav-number">8.</span> <span class="nav-text">BRNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deep-RNN"><span class="nav-number">9.</span> <span class="nav-text">Deep RNN</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="进程通信进行通信实际上是进程，本书关注运行在不同端系统上的进程通信，他们通过跨越计算机网络交换报文而相互通信。 客户和服务器进程在每队通信进程中，我们会将这两个进程之一标记为客户，另一个标记为服务器。  发起通信的进程被标记为客户，会话开始时候等待联系的进程是服务器。  进程与计算机网络之间的借口进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。  当一个进程想向位于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网-应用层">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/03/02/计网-应用层/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="进程通信进行通信实际上是进程，本书关注运行在不同端系统上的进程通信，他们通过跨越计算机网络交换报文而相互通信。 客户和服务器进程在每队通信进程中，我们会将这两个进程之一标记为客户，另一个标记为服务器。  发起通信的进程被标记为客户，会话开始时候等待联系的进程是服务器。  进程与计算机网络之间的借口进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。  当一个进程想向位于">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-234.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-235.png">
+<meta property="og:updated_time" content="2019-03-09T03:59:32.930Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计网-应用层">
+<meta name="twitter:description" content="进程通信进行通信实际上是进程，本书关注运行在不同端系统上的进程通信，他们通过跨越计算机网络交换报文而相互通信。 客户和服务器进程在每队通信进程中，我们会将这两个进程之一标记为客户，另一个标记为服务器。  发起通信的进程被标记为客户，会话开始时候等待联系的进程是服务器。  进程与计算机网络之间的借口进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。  当一个进程想向位于">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-234.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/03/02/计网-应用层/"/>
+
+
+
+
+
+  <title>计网-应用层 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/03/02/计网-应用层/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计网-应用层</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-02T10:32:24+08:00">
+                2019-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h3><p>进行通信实际上是<em>进程</em>，本书关注运行在不同端系统上的进程通信，他们通过跨越计算机网络交换报文而相互通信。</p>
+<h4 id="客户和服务器进程"><a href="#客户和服务器进程" class="headerlink" title="客户和服务器进程"></a>客户和服务器进程</h4><p>在每队通信进程中，我们会将这两个进程之一标记为客户，另一个标记为服务器。</p>
+<ul>
+<li>发起通信的进程被标记为客户，会话开始时候等待联系的进程是服务器。</li>
+</ul>
+<h4 id="进程与计算机网络之间的借口"><a href="#进程与计算机网络之间的借口" class="headerlink" title="进程与计算机网络之间的借口"></a>进程与计算机网络之间的借口</h4><p>进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。</p>
+<ul>
+<li>当一个进程想向位于另外一台主机上的另外一个进程发送报文的时候，它会把报文推出该门(socket)，该发送进程假定该门到另外一侧之间有运输的基础设施。一旦该报文抵达目的主机，他会通过接收进程的套接字传递，然后接收进程对该报文进行处理。</li>
+</ul>
+<p>套接字实际上是网络和应用程序之间的可编程接口，</p>
+<h4 id="进程寻址"><a href="#进程寻址" class="headerlink" title="进程寻址"></a>进程寻址</h4><p>接收进程需要一个地址。为了标志该接收进程，需要定义两种信息：1.主机的地址。2.定义在目的主机中的接收进程的标识符。</p>
+<p>主机由IP地址标识，是一个32bit的量。同时发送进程还要指定接收进程（接收socket），port number就用于这个目的。</p>
+<h4 id="运输服务"><a href="#运输服务" class="headerlink" title="运输服务"></a>运输服务</h4><p><em>运输层协议</em>负责使该报文进入接收进程的套接字。</p>
+<p>一个运输层协议能够为调用它的应用程序提供：</p>
+<ul>
+<li>可靠的数据运输</li>
+<li>吞吐量</li>
+<li>定时和安全性</li>
+</ul>
+<h3 id="Internet-提供的运输服务"><a href="#Internet-提供的运输服务" class="headerlink" title="Internet 提供的运输服务"></a>Internet 提供的运输服务</h3><h4 id="TCP服务"><a href="#TCP服务" class="headerlink" title="TCP服务"></a>TCP服务</h4><ul>
+<li>面向连接的服务</li>
+</ul>
+<p>TCP 让客户和服务器互相交换运输层控制信息，这个所谓握手过程提示客户和服务器，使他们为大量分组的到来做好准备。握手之后，一个TCP链接就在两个进程的套接字之间建立。</p>
+<ul>
+<li>可靠的数据传送服务</li>
+</ul>
+<p>应用程序一端将字节流传进套接字的时候，能够依靠TCP将相同的字节流交付给接收方的套接字。而没有字节的丢失和冗余。</p>
+<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><p>超文本传输协议由两个程序实现，一个客户程序和一个服务器程序。客户程序和服务器程序运行在不同的端系统中，通过交换HTTP报文进行会话，HTTP定义了这些报文的结构以及客户和服务器进行报文交换的方式。</p>
+<h3 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h3><p>每个URL地址由两个部分组成。存放对象的服务器主机名和对象的路径名。<br><a href="https://github.com/Hananel-Hazan/bindsnet" target="_blank" rel="noopener">https://github.com/Hananel-Hazan/bindsnet</a></p>
+<p>github.com 就是主机名 后面的是路径名</p>
+<p>web 浏览器实现了HTTP的客户端，所以在web环境中交替使用浏览器和客户两个术语。</p>
+<p>web服务器实现了HTTP的服务器端，它用于存储web对象。</p>
+<p>HTTP定义了web客户向web服务器请求web页面的方式，以及服务器向客户传送web页面的方式。HTTP使用TCP作为其支撑运输协议，HTTP客户首先发起一个与服务器的TCP连接，一旦链接建立，浏览器和服务器进程就可以通过套接字接口访问TCP。</p>
+<p>同时TCP也是一个无状态协议：服务器向客户发送被请求的文件，但是不存储任何关于该客户的状态信息。</p>
+<h3 id="非持续链接"><a href="#非持续链接" class="headerlink" title="非持续链接"></a>非持续链接</h3><p>每个请求和响应对是经过一个单独的TCP连接发送的。</p>
+<h3 id="持续链接"><a href="#持续链接" class="headerlink" title="持续链接"></a>持续链接</h3><p>所有的请求及其响应都经过相同的TCP连接发送</p>
+<h3 id="TCP的三次握手"><a href="#TCP的三次握手" class="headerlink" title="TCP的三次握手"></a>TCP的三次握手</h3><p>我们给出往返时间的定义。即一个短分组从客户到服务器然后再返回客户所花费的时间。</p>
+<p>当浏览器在它和web服务器发起一个TCP链接。</p>
+<p>第一次握手：客户向服务器发送一个TCP报文段。</p>
+<p>第二次握手：然后服务器用一个小TCP报文段做出确认和响应。</p>
+<p>第三次握手：客户的确认阶段，向该TCP链接发送一个HTTP请求报文，一旦报文到达服务器，服务器就在该TCP链接上发送HTML文件。该HTTP请求/响应用去了另外一个RTT。</p>
+<p>因此总响应时间是两个RTT加上服务器传输HTML文件的时间。</p>
+<h3 id="用户与服务器的交互：cookie"><a href="#用户与服务器的交互：cookie" class="headerlink" title="用户与服务器的交互：cookie"></a>用户与服务器的交互：cookie</h3><p>cookie用于标识一个用户。用户首次访问一个站点的时候，可能需要提供一个用户标识，在后继会话中，浏览器向服务器提供一个cookie首部，从而向该服务器标识了用户。</p>
+<h3 id="Web缓存（proxy-cache）"><a href="#Web缓存（proxy-cache）" class="headerlink" title="Web缓存（proxy cache）"></a>Web缓存（proxy cache）</h3><p>也叫代理服务器，能够代表初始web服务器来满足HTTP请求的网络实体。web缓存器有自己的磁盘存储空间，并在存储空间中保存最近请求过的对象的副本。</p>
+<p>用户的所有HTTP请求首先会指向web缓存器，例如要访问<a href="http://www.someschool.edu/campus.gif，会发生如下情况：" target="_blank" rel="noopener">http://www.someschool.edu/campus.gif，会发生如下情况：</a></p>
+<ul>
+<li><p>浏览器建立一个到web服务器的TCP链接，并向Web缓存器的对象发送一个HTTP请求</p>
+</li>
+<li><p>web缓存器进行检查，查看本地是否存储了该对象副本，如果有，web缓存器就向客户浏览器用HTTP响应报文返回该对象。</p>
+</li>
+<li><p>如果web缓存器没有对象，就打开一个与该对象的初始服务器的TCP链接，web缓存器则在这个缓存器到服务器的TCP链接上发送一个对该对象的HTTP请求。在收到该请求后，初始服务器向该web缓存器发送具有该对象的HTTP响应。</p>
+</li>
+<li><p>当web缓存器接收到该对象的时候，会在本地存储空间存储一个副本，并且向客户的浏览器用HTTP响应报文发送该副本。</p>
+</li>
+</ul>
+<p>当它接收浏览器的请求并发挥响应的时候，他是服务器，当他向初始服务器发出请求并接收响应的时候，他是一个客户。</p>
+<h3 id="条件GET方法"><a href="#条件GET方法" class="headerlink" title="条件GET方法"></a>条件GET方法</h3><p>用来保证缓存器所存储的对象是最新的。</p>
+<p>如果请求报文使用get方法而且请求报文中包含一个“If modifies since”首部行，那么HTTP请求报文就是一个条件GET请求报文。</p>
+<h3 id="DNS：因特网的目录服务"><a href="#DNS：因特网的目录服务" class="headerlink" title="DNS：因特网的目录服务"></a>DNS：因特网的目录服务</h3><p>主机的标识方法：可以用主机名(hostname）或者(IP address)</p>
+<p>而（DOMAIN NAME SYSTEM）就是用来进行主机名到IP地址转换的目录服务。</p>
+<h4 id="DNS-是什么"><a href="#DNS-是什么" class="headerlink" title="DNS 是什么"></a>DNS 是什么</h4><ul>
+<li>DNS 是一个有分层的DNS服务器实现的分布式数据库.</li>
+<li>也可以理解为一个使得主机能查询分布式数据库的应用层协议。</li>
+<li>DNS 服务器通常是运行在BIND软件的UNIX机器。DNS协议运行在UDP之上，使用53号端口。</li>
+</ul>
+<h4 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h4><ul>
+<li><p>同一台用户主机上运行着DNS应用的客户端</p>
+</li>
+<li><p>浏览器从URL中抽取主机名，并把这台主机名传给DNS应用的客户端。</p>
+</li>
+<li><p>DNS客户向DNS服务器发送一个包含主机名的请求</p>
+</li>
+<li><p>DNS客户最终收到一份回答报文，含有对应于该主机名的IP地址</p>
+</li>
+<li><p>浏览器接收到来自DNS的该IP地址，能够向位于该IP地</p>
+</li>
+</ul>
+<h4 id="DNS-功能"><a href="#DNS-功能" class="headerlink" title="DNS 功能"></a>DNS 功能</h4><p>1.进行主机名到IP地址的转换。</p>
+<p>2.主机别名（host aliasing）</p>
+<p>为复杂主机名的主机提供简单的别名</p>
+<p>3.邮件服务器别名。应用程序因此可以调用DNS，对提供邮件服务器别名进行解析，以获得该主机的规范主机名以及IP地址。</p>
+<p>4.负载分配。</p>
+<p>例如繁忙的站点会分布在多台机器上，每台服务器均运行在不同的端系统上，每个都有不同的IP地址，因此客户发出DNS请求的时候，服务器用IP地址的整个集合来进行响应。</p>
+<h4 id="分布式，层次的数据库"><a href="#分布式，层次的数据库" class="headerlink" title="分布式，层次的数据库"></a>分布式，层次的数据库</h4><p>例子: 一个客户要决定<a href="http://www.amazon.com" target="_blank" rel="noopener">www.amazon.com</a> 的IP地址，先和根服务器之一联系，它将返回顶级域名com的TLD服务器的IP地址。该客户与这些TLD服务器之一联系，服务器将返回权威服务器的IP地址。</p>
+<ul>
+<li><p>根DNS服务器<br>全球有13个，用于返回TLD服务器的IP地址</p>
+</li>
+<li><p>顶级域（DNS）服务器（TLD）</p>
+</li>
+</ul>
+<p>负责顶级域名如 com、org、net、edu 和 gov，以及所有国家的顶级域名如 uk、fr 等。TLD 服务器返回权威服务器的 IP 地址</p>
+<ul>
+<li>权威DNS服务器</li>
+</ul>
+<p>管理属于同一机构同一域名但是的不同IP地址的不同主机。</p>
+<ul>
+<li>本地DNS服务器<br>起着代理的作用。每个Internet service provider (ISP)都有一台本地的DNS服务器，本地DNS服务器起着代理的作用，本地主机把DNS请求发向本地DNS服务器，本地DNS服务器把该请求转发到DNS服务器层次结构当中。</li>
+</ul>
+<p><img src="/home/alex/图片/2018-234.png" alt="filename alreadyexists, renamed"></p>
+<h4 id="DNS的解析流程"><a href="#DNS的解析流程" class="headerlink" title="DNS的解析流程"></a>DNS的解析流程</h4><p>浏览器访问域名的前置步骤：</p>
+<p>1.先检查缓存中是否有该域名对应的解析过的IP地址，命中则解析过程结束，否则进行步骤2<br>2.检查操作系统缓存中是否有域名对应的DNS解析结果，命中则解析过程结束。</p>
+<h4 id="DNS在服务器之间的解析步骤"><a href="#DNS在服务器之间的解析步骤" class="headerlink" title="DNS在服务器之间的解析步骤"></a>DNS在服务器之间的解析步骤</h4><p>下图例子假设主机 cs.ustc.edu 想知道主机 cs.csu.edu 的 IP 地址，假设 USTC 大学的本地 DNS 服务器为 dns.ustc.edu，同时假设 CSU 大学的权威 DNS 服务器为 dns.csu.edu。</p>
+<p>1.主机向本地DNS服务器dns.ustc.edu发送请求报文，报文中含有被转换的主机名cs.csu.edu</p>
+<p>2.本地DNS服务器把查询报文转发给根DNS服务器，根服务器注意到edu<br>前缀，于是把负责edu的TLD的IP地址列表返回给本地DNS服务器</p>
+<p>3.本地DNS服务器再次向TLD服务器之一发送DNS请求报文，TLD服务器注意到csu.edu的前缀，于是把权威服务器dns.csu.edu的IP地址返回给DNS服务器</p>
+<p>4.本地DNS服务器向权威服务器dns.csu.edu 发送请求报文，权威服务器用cs.csu.edu的IP地址进行响应。</p>
+<p>5.最后本地DNS服务器把查询得到的IP地址返回给主机cs.ustc.edu</p>
+<h4 id="DNS缓存"><a href="#DNS缓存" class="headerlink" title="DNS缓存"></a>DNS缓存</h4><p>本地DNS服务器在完成一次查询之后会把得到的主机名到IP地址的映射缓存到本地，加快DNS的解析速度。解析大多是在本地服务器完成的</p>
+<h4 id="DNS记录"><a href="#DNS记录" class="headerlink" title="DNS记录"></a>DNS记录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(Name,Value,Type,TTL)</span><br></pre></td></tr></table></figure>
+<p>1.Type=A,则Name是主机名，Value是主机对应的Ip地址</p>
+<p>2.Type=NS，Name是域名，比如csu.edu，Value是知道如何获得域中主机IP地址的权威DNS服务器的主机名。</p>
+<p>3.TYpe=CNAME，VALUE是别名为Name的主机对应的规范主机名</p>
+<p>如果服务器不是用于某主机名的权威服务器，那么该服务器将包含一条类型 NS 记录，该记录对应于包含主机名的域；它还将包括一条类型 A 记录，该记录提供了在 NS 记录的 Value 字段中的 DNS 服务器的 IP 地址。举例来说，假设一台 edu TLD 服务器不是主机 gaia.cs.umass.edu 的权威 DNS 服务器，则该服务器将包含一条包括主机 cs.umass.edu 的域记录，如（umass.edu，dns.umass.edu，NS）；该 edu TLD 服务器还将包含一条类型 A 记录，如（dns.umass.edu，128.119.40.111，A），该记录将名字 dns.umass.edu 映射为一个 IP 地址。</p>
+<p><strong>注册一个全新的域名最少要向对应的 TLD 注入 A 型与 NS 型两种记录。</strong></p>
+<h4 id="DNS-报文"><a href="#DNS-报文" class="headerlink" title="DNS 报文"></a>DNS 报文</h4><p><img src="/home/alex/图片/2018-235.png" alt="filename alredy exists, renamed"></p>
+<blockquote>
+</blockquote>
+<pre><code>DNS 报文格式前 12 个字节是首部区域，其中有几个字段。第一个字段（标识符）是一个 16 比特的数，用于标识该查询。这个标识符会被复制到对查询的回答报文中，以便让客户用它来匹配发送的请求和接收到的回答。标志字段中含有若干标志。1 比特的“查询/回答”标志位指出报文是查询报文（0）还是回答报文（1）。当某 DNS 服务器是所请求名字的权威 DNS 服务器时，1 比特的“权威的”标志位被置在回答报文中。如果客户（主机或者DNS 服务器）在该 DNS 服务器没有某记录时希望它执行递归查询，将设置 1 比特的“希望递归”标志位。如果该 DNS 服务器支持递归查询，在它的回答报文中会对 1 比特的“递归可用”标志位置位。在该首部中，还有 4 个有关数量的字段，这些字段指出了在首部后的 4 类数据区域出现的数量。
+问题区域包含着正在进行的查询信息。该区域包括：①名字字段，指出正在被查询的主机名字；②类型字段，它指出有关该名字的正被询问的问题类型，例如主机地址是与一个名字相关联（类型 A）还是与某个名字的邮件服务器相关联（类型 MX）。
+在来自 DNS 服务器的回答中，回答区域包含了对最初请求的名字的资源记录。前面讲过每个资源记录中有 Type（如 A、NS、CNAME 和 MX）字段、Value 字段和 TTL 字段。在回答报文的回答区域中可以包含多条 RR，因此一个主机名能够有多个 IP 地址（例如，就像本节前面讨论的冗余 Web 服务器）。
+权威区域包含了其他权威服务器的记录。
+附加区域包含了其他有帮助的记录。例如，对于一个 MX 请求的回答报文的回答区域包含了一条资源记录，该记录提供了邮件服务器的规范主机名。该附加区域包含一个类型 A 记录，该记录提供了用于该邮件服务器的规范主机名的 IP 地址。
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/15/Nodejs-1/" rel="next" title="webstorm中Express项目的创建">
+                <i class="fa fa-chevron-left"></i> webstorm中Express项目的创建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/12/计网-运输层/" rel="prev" title="计网-运输层">
+                计网-运输层 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程通信"><span class="nav-number">1.</span> <span class="nav-text">进程通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户和服务器进程"><span class="nav-number">1.1.</span> <span class="nav-text">客户和服务器进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程与计算机网络之间的借口"><span class="nav-number">1.2.</span> <span class="nav-text">进程与计算机网络之间的借口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程寻址"><span class="nav-number">1.3.</span> <span class="nav-text">进程寻址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运输服务"><span class="nav-number">1.4.</span> <span class="nav-text">运输服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Internet-提供的运输服务"><span class="nav-number">2.</span> <span class="nav-text">Internet 提供的运输服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP服务"><span class="nav-number">2.1.</span> <span class="nav-text">TCP服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">3.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web"><span class="nav-number">4.</span> <span class="nav-text">Web</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非持续链接"><span class="nav-number">5.</span> <span class="nav-text">非持续链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持续链接"><span class="nav-number">6.</span> <span class="nav-text">持续链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP的三次握手"><span class="nav-number">7.</span> <span class="nav-text">TCP的三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户与服务器的交互：cookie"><span class="nav-number">8.</span> <span class="nav-text">用户与服务器的交互：cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web缓存（proxy-cache）"><span class="nav-number">9.</span> <span class="nav-text">Web缓存（proxy cache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件GET方法"><span class="nav-number">10.</span> <span class="nav-text">条件GET方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS：因特网的目录服务"><span class="nav-number">11.</span> <span class="nav-text">DNS：因特网的目录服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-是什么"><span class="nav-number">11.1.</span> <span class="nav-text">DNS 是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#工作流程"><span class="nav-number">11.2.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-功能"><span class="nav-number">11.3.</span> <span class="nav-text">DNS 功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式，层次的数据库"><span class="nav-number">11.4.</span> <span class="nav-text">分布式，层次的数据库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS的解析流程"><span class="nav-number">11.5.</span> <span class="nav-text">DNS的解析流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS在服务器之间的解析步骤"><span class="nav-number">11.6.</span> <span class="nav-text">DNS在服务器之间的解析步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS缓存"><span class="nav-number">11.7.</span> <span class="nav-text">DNS缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS记录"><span class="nav-number">11.8.</span> <span class="nav-text">DNS记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-报文"><span class="nav-number">11.9.</span> <span class="nav-text">DNS 报文</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="词汇表征one-hot encoding比如如果man在词典里是第 5391 个,那么就可以表示成一个向量,只在第 5391 处为 1(上图编号 2 所示),我们用O 5391 代表这个量,这里的O代表 one-hot。接下来,如果 woman 是编号 9853(上图编号 3 所示),那么就可以用O 9853 来表示,这个向量只在 9853 处为 1 缺点 孤立了单词，使得算法对相关词的泛化能力不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL-C5W2">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/02/10/DL-C5W2/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="词汇表征one-hot encoding比如如果man在词典里是第 5391 个,那么就可以表示成一个向量,只在第 5391 处为 1(上图编号 2 所示),我们用O 5391 代表这个量,这里的O代表 one-hot。接下来,如果 woman 是编号 9853(上图编号 3 所示),那么就可以用O 9853 来表示,这个向量只在 9853 处为 1 缺点 孤立了单词，使得算法对相关词的泛化能力不">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-199.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/leibi.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-200.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-201.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-202.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/so.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-203.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-204.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-205.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/xxx.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-206.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-207.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-208.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/shit.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-209.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-210.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-212.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-213.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-214.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/many.png">
+<meta property="og:updated_time" content="2019-02-12T09:46:08.753Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DL-C5W2">
+<meta name="twitter:description" content="词汇表征one-hot encoding比如如果man在词典里是第 5391 个,那么就可以表示成一个向量,只在第 5391 处为 1(上图编号 2 所示),我们用O 5391 代表这个量,这里的O代表 one-hot。接下来,如果 woman 是编号 9853(上图编号 3 所示),那么就可以用O 9853 来表示,这个向量只在 9853 处为 1 缺点 孤立了单词，使得算法对相关词的泛化能力不">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-199.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/02/10/DL-C5W2/"/>
+
+
+
+
+
+  <title>DL-C5W2 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/02/10/DL-C5W2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DL-C5W2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-10T13:32:24+08:00">
+                2019-02-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="词汇表征"><a href="#词汇表征" class="headerlink" title="词汇表征"></a>词汇表征</h3><h4 id="one-hot-encoding"><a href="#one-hot-encoding" class="headerlink" title="one-hot encoding"></a>one-hot encoding</h4><p>比如如果man在词典里是第 5391 个,那么就可以表示成一个向量,只在第 5391 处为 1(上图<br>编号 2 所示),我们用O 5391 代表这个量,这里的O代表 one-hot。接下来,如果 woman 是编<br>号 9853(上图编号 3 所示),那么就可以用O 9853 来表示,这个向量只在 9853 处为 1</p>
+<p><em>缺点 孤立了单词，使得算法对相关词的泛化能力不强</em></p>
+<p><img src="/home/alex/图片/2018-199.png" alt="filename already exists, named"></p>
+<h4 id="word-embedding"><a href="#word-embedding" class="headerlink" title="word embedding"></a>word embedding</h4><p>例如要把单词表征为一个三百维的向量，每一维数值大小表示这个单词与对应类别的联系程度，如上图，man与woman与gender联系比较大，因此数值接近于1，而与royal联系比较小，因此数值趋近于0.</p>
+<p><img src="/home/alex/图片/leibi.png" alt="upload sccessful"></p>
+<p>你能做的就是找到单词 w 来<br>使得,e man − e woman ≈ e king − e w 这个等式成立,你需要的就是找到单词 w 来最大化e w 与<br>e king − e man + e woman 的相似度,即</p>
+<p><img src="/home/alex/图片/2018-200.png" alt="filename already existsrenamed"></p>
+<p>而计算相似度，通常使用余弦相似度。</p>
+<p><img src="/home/alex/图片/2018-201.png" alt="filename alre exists, renamed"></p>
+<h4 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h4><p><img src="/home/alex/图片/2018-202.png" alt="filename alreadyexists, renamed"></p>
+<p>假如要把单词压缩成一个300维的嵌入向量，然后一共有10000个单词，那么可以随机初始化一个300x10000的矩阵。每一列代表一个单词的嵌入向量，那么把这个随机的矩阵与一个one-hot向量相乘就得到了这个单词的嵌入向量。</p>
+<p><img src="/home/alex/图片/so.png" alt="upload succsful"></p>
+<p>然后把如果你要预测 </p>
+<p>“I want a glass of orange ___.”,<br>的下一个词</p>
+<p><img src="/home/alex/图片/2018-203.png" alt="filename already exists, named"></p>
+<p>把这个句子所有单词转换为嵌入向量后，全部放到一个隐藏层中（上图3），然后再通过一个分类的softmax层，预测出对应单词。</p>
+<p>在这里这个隐藏层是一个1800维的向量（6x300）,有自己的参数。</p>
+<p>如果你的目标是建立一个语言模型，那么一般选取目标词之前的几个词作为上下文。</p>
+<p>但如果你的目标不是学习语言模型本身，也可以选择其他上下文。</p>
+<p><img src="/home/alex/图片/2018-204.png" alt="filee already exists, renamed"></p>
+<p>例如要预测一个句子中间的单词，可以用前面和后面各4个单词作为上下文。</p>
+<p>或者你想用一个更简单的上下文,也许只提供目标词的前一个词。</p>
+<h4 id="word2Vec"><a href="#word2Vec" class="headerlink" title="word2Vec"></a>word2Vec</h4><p>假设在训练集中给定了一个这样的句子:“I want a glass of orange juice to go along with<br>my cereal.”,在 Skip-Gram 模型中,我们要做的是抽取上下文和目标词配对,来构造一个监<br>督学习问题。</p>
+<p>我们要随机选一个单词作为上下文词，比如选orange，然后要随机在一定词距内选择另外一个词，作为目标词，通过这种方法来学到一个好的词嵌入模型。</p>
+<h3 id="Word2Vec-Model"><a href="#Word2Vec-Model" class="headerlink" title="Word2Vec Model"></a>Word2Vec Model</h3><p>有两个模型，一个是skip-gram，另外一个是Word2Vec模型。</p>
+<p><img src="/home/alex/图片/2018-205.png" alt="filename alrey exists, renamed"></p>
+<p><img src="/home/alex/图片/xxx.png" alt="successful"></p>
+<p>但是这种方法对于词汇量很大的词汇表来说运算速度会变得非常非常的慢。</p>
+<p>解决方法：</p>
+<p><em>分级softmax分类器</em></p>
+<p><img src="/home/alex/图片/2018-206.png" alt="filename already exists, renamed"></p>
+<p>意思就是<br>说不是一下子就确定到底是属于 10,000 类中的哪一类。想象如果你有一个分类器(上图编<br>号 1 所示),它告诉你目标词是在词汇表的前 5000 个中还是在词汇表的后 5000 个词中,假<br>如这个二分类器告诉你这个词在前 5000 个词中(上图编号 2 所示),然后第二个分类器会<br>告诉你这个词在词汇表的前 2500 个词中,或者在词汇表的第二组 2500 个词中,诸如此类</p>
+<p>常用的词会在树的顶部，不常用的词会在树的更加深的地方。</p>
+<p>而且实际上上下文词的概率p(c)的分布并不是单纯的在训练集语料库上均匀且随机的采样得到的,而是采用了<br>不同的分级来平衡更常见的词和不那么常见的词</p>
+<h4 id="Cbow-与-skip-gram"><a href="#Cbow-与-skip-gram" class="headerlink" title="Cbow 与 skip-gram"></a>Cbow 与 skip-gram</h4><p>CBOW是从原始语句推测目标字词，对于小型数据库比较合适。而skip-gram正好相反，是从目标字词测出原始语句，在大型语料中表现更好。</p>
+<h3 id="Negative-Sampling"><a href="#Negative-Sampling" class="headerlink" title="Negative Sampling"></a>Negative Sampling</h3><p>上面介绍的skip-gram模型实际上是构造一个监督学习的任务，把上下文映射到了目标词上面，让你学到一个实用的词嵌入，缺点在于softmax计算起来很慢。</p>
+<p>在这个算法中要做的是构造一个新的监督学习问题，给定一对单词比如orange和juice，去预测这是否是一对上下文词-目标词（context-target）</p>
+<p><img src="/home/alex/图片/2018-207.png" alt="filename already exists, named"></p>
+<p><img src="/home/alex/图片/2018-208.png" alt="filename already exists, renamed"></p>
+<p>然后接下来构造一个监督学习问题，其中学习算法输入x，输入这对词，编号7，要去预测目标的标签，编号8，即预测输出y，因此问题就是给定一对词像orange和juice，判断这两个词究竟是分别在文本和字典中随机选取得到的，还是通过对靠近两个词采样获得的，这个算法就是要分辨这两种不同的采样方式。</p>
+<p>*选取K：</p>
+<p>K次就是确定了上下文词后，在字典中抽取K次随机的词</p>
+<p>如何选取K？如果是小数据集，5-20比较好，如果数据集很大，K2-5比较好。</p>
+<h4 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h4><p><img src="/home/alex/图片/shit.png" alt="upload successfl"></p>
+<p>学习从x映射到y的监督学习模型，这个(上图编号 2 所示)将是新的输入x,这个(上图编号 3 所示)将是你要预测的值y。</p>
+<p>为了定义模型，将记号c表示上下文词，记号t表示可能的目标词，再用y表示0和1，表示是否是一对上下文-目标词，要做的就是定义一个逻辑回归模型，给定输入的c,t对的条件下，y=1的概率，即:</p>
+<p><img src="/home/alex/图片/2018-209.png" alt="filename alrdy exists, renamed"></p>
+<p>这个模型基于逻辑回归模型，不同的是我们把一个sigmoid函数作用于θ_t^Te_c,θ_t表示目标词对应的参数向量，而e_c对应上下文词的嵌入向量，如果有K个样本，可以把它看做1/K的正负样本比例，即每一个正样本你都有K个对应的负样本来训练一个类似逻辑回归的模型。</p>
+<p>然后把它看成一个神经网络，如果输入词是orange，即词6257，你要做的事输入one-hot向量，再传递给E，通过两者相乘获得嵌入向量e6257，就得到了10000个可能的逻辑回归分类问题。其中一个将会是用来判断目标词是否是juice的分类器，但并不是每次迭代都训练全部10000个，只训练其中的（K+1）个，这样会减少计算成本，只需要更新K+1个逻辑单元。</p>
+<p>说白了负采样就是有一个正样本词orange和juice，然后你会特意去生成一系列负样本，因此叫负采样。每次迭代你选择K个不同的随机的负样本词去训练你的算法。</p>
+<p>该怎样选取负样本？</p>
+<p>如果均匀且随机抽取负样本，这对于英文单词的分布非常没有代表性，而如果根据其在语料中的经验频率进行采样，会导致在like,the,of,and等词汇上有很高的频率。</p>
+<p><img src="/home/alex/图片/2018-210.png" alt="filename already exts, renamed"></p>
+<h3 id="Glove-词向量"><a href="#Glove-词向量" class="headerlink" title="Glove 词向量"></a>Glove 词向量</h3><p><img src="/home/alex/图片/2018-212.png" alt="filen already exists, renamed"></p>
+<p>我们曾通过挑选语料库中位置相近的两个词，列举出词对，glove算法就是使其关系明确化。<br>假定Xij是单词i在单词j上下文中出现的次数，你也可以遍历你的训练集，然后数出单词i在不同单词j上下文中出现的个数。如果定义上下文和目标词为任意两个位置相近的单词，假设是左右各10个词的距离，那么Xij就是一个能够获取单词i和单词j出现位置相近时候频率的计数器。</p>
+<p>glove就是把他们的差距作最小化处理。</p>
+<p><img src="/home/alex/图片/2018-213.png" alt="filename already ests, renamed"></p>
+<p>f(Xij)是一个加权项，如果Xij为0的话，f(Xij)也为0，防止出现log0的情况！</p>
+<p>另一个作用是有的词在英语里出现十分频繁，比如this,is,of,a等等，这叫做停用词。但也有些不常用的词，比如durion，想把它考虑在内但是又不像那些常用词那样频繁，因此加权因子f(Xij)就可以是一个函数，即使是像durion这样不常用的词也能给予大量有意义的运算。</p>
+<h3 id="情感分类"><a href="#情感分类" class="headerlink" title="情感分类"></a>情感分类</h3><p><img src="/home/alex/图片/2018-214.png" alt="filename lready exists, renamed"></p>
+<h4 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h4><p>把这个句子里的所有单词对应的嵌入向量求和或者取平均，得到一个平均值计算单元（上图编号3），把这个特征向量送入softmax分类器，然后输出y。</p>
+<p>但是这种方法没有考虑词序，例如Completely lacking in good taste,good service and good ambiance.</p>
+<p>good出现了很多次，分类器会有可能认为这是一个很好的评论，实际这是一个差评。</p>
+<h4 id="方法二：RNN"><a href="#方法二：RNN" class="headerlink" title="方法二：RNN"></a>方法二：RNN</h4><p><img src="/home/alex/图片/many.png" alt="upload succesful"></p>
+<p>用一个多对一的RNN，考虑词的顺序效果。</p>
+<p>由于你的词嵌入是在一个更大的数据集里训练的，这样的效果会更好，更好的泛化一些没有见过的新单词。</p>
+<h3 id="词嵌入除偏"><a href="#词嵌入除偏" class="headerlink" title="词嵌入除偏"></a>词嵌入除偏</h3><p><a href="https://github.com/rohit12sharma/Operations-on-word-vectors/blob/master/Operations%2Bon%2Bword%2Bvectors%2B-%2Bv2.ipynb" target="_blank" rel="noopener">https://github.com/rohit12sharma/Operations-on-word-vectors/blob/master/Operations%2Bon%2Bword%2Bvectors%2B-%2Bv2.ipynb</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/11/DL-C5w1HW1/" rel="next" title="DL-C5w1HW1">
+                <i class="fa fa-chevron-left"></i> DL-C5w1HW1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/13/DL-C5W3/" rel="prev" title="DL-C5W3">
+                DL-C5W3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#词汇表征"><span class="nav-number">1.</span> <span class="nav-text">词汇表征</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#one-hot-encoding"><span class="nav-number">1.1.</span> <span class="nav-text">one-hot encoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#word-embedding"><span class="nav-number">1.2.</span> <span class="nav-text">word embedding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#语言模型"><span class="nav-number">1.3.</span> <span class="nav-text">语言模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#word2Vec"><span class="nav-number">1.4.</span> <span class="nav-text">word2Vec</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Word2Vec-Model"><span class="nav-number">2.</span> <span class="nav-text">Word2Vec Model</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cbow-与-skip-gram"><span class="nav-number">2.1.</span> <span class="nav-text">Cbow 与 skip-gram</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Negative-Sampling"><span class="nav-number">3.</span> <span class="nav-text">Negative Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Model"><span class="nav-number">3.1.</span> <span class="nav-text">Model</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Glove-词向量"><span class="nav-number">4.</span> <span class="nav-text">Glove 词向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#情感分类"><span class="nav-number">5.</span> <span class="nav-text">情感分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法一"><span class="nav-number">5.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法二：RNN"><span class="nav-number">5.2.</span> <span class="nav-text">方法二：RNN</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#词嵌入除偏"><span class="nav-number">6.</span> <span class="nav-text">词嵌入除偏</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -272,6 +272,1451 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/07/程序的机器级表示与执行/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/07/程序的机器级表示与执行/" itemprop="url">CSAPP-异常控制流</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-07T19:30:00+08:00">
+                2018-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>CPU所执行的指令的地址序列称为CPU的控制流，通过下述两种方式得到的控制流为正常控制流。</p>
+<p>1.按顺序取下一条指令执行。</p>
+<p>2.通过CALL/RET/Jcc/JMP等指令跳转到转移目标地址处执行</p>
+<h3 id="异常控制流"><a href="#异常控制流" class="headerlink" title="异常控制流"></a>异常控制流</h3><p><img src="/home/alex/图片/ctrlc.png" alt="upload sucessful"></p>
+<p>硬件层面有两种情况：</p>
+<p>1.执行指令的硬件发现指令有异常。eg:除0</p>
+<p>2.外部中断 ctrl+c</p>
+<p>异常控制流形成原因（1.2硬件层面）</p>
+<p>1.内部异常：缺页，越权，越级，整除0，溢出等，都是CPU可以发现的。</p>
+<p>2.外部中断（Ctrl-C，打印缺纸，DMA结束等）由外界请求信号通知CPU</p>
+<p>3.进程的上下文切换（发生在操作系统层）</p>
+<p>4.一个进程直接发送信号给另外一个进程（发生在应用软件层）</p>
+<h3 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h3><p><img src="/home/alex/图片/程序和进程.png" alt="uplod successful"></p>
+<p><img src="/home/alex/图片/PROCESS.png" alt="upload sucessful"></p>
+<p><img src="/home/alex/图片/XITONG.png" alt="pload successful"></p>
+<p>vm_area_struct  是一个线性链表</p>
+<h4 id="引入进程的好处"><a href="#引入进程的好处" class="headerlink" title="引入进程的好处"></a>引入进程的好处</h4><p><img src="/home/alex/图片/2018-42.png" alt="ilename already exists, renamed"></p>
+<p>独立的逻辑控制流意味着进程不会感觉到其他进程的存在，使得其不容易受其他进程打乱</p>
+<h4 id="逻辑控制流"><a href="#逻辑控制流" class="headerlink" title="逻辑控制流"></a>逻辑控制流</h4><p><img src="/home/alex/图片/2018-43.png" alt="filename eady exists, renamed"></p>
+<p> 进程p1，A12，打断一次</p>
+<p> 进程p2，A24，打断一次</p>
+<h4 id="进程与上下文切换"><a href="#进程与上下文切换" class="headerlink" title="进程与上下文切换"></a>进程与上下文切换</h4><p>什么叫进程的上下文？<br><img src="/home/alex/图片/chuliqi.png" alt="upload sucessful"></p>
+<p><img src="/home/alex/图片/js.png" alt="upload succeul"></p>
+<p><strong><em>用户级上下文地址空间和系统级上下文地址空间一起构成了一个进程的整个存储器映像</em></strong></p>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>以下内容引用<br><a href="https://wdxtub.com/2016/04/16/thin-csapp-5/" target="_blank" rel="noopener">https://wdxtub.com/2016/04/16/thin-csapp-5/</a></p>
+<p>进程才是程序（指令和数据）的真正运行实例。之所以重要，是因为进程给每个应用提供了两个非常关键的抽象：一是逻辑控制流，二是私有地址空间。逻辑控制流通过称为上下文切换(context switching)的内核机制让每个程序都感觉自己在独占处理器。私有地址空间则是通过称为虚拟内存(virtual memory)的机制让每个程序都感觉自己在独占内存。这样的抽象使得具体的进程不需要操心处理器和内存的相关适宜，也保证了在不同情况下运行同样的程序能得到相同的结果。</p>
+<p><img src="/home/alex/图片/2018-68.png" alt="filename already exists, ramed"></p>
+<p>左边是单进程的模型，内存中保存着进程所需的各种信息，因为该进程独占 CPU，所以并不需要保存寄存器值。而在右边的单核多进程模型中，虚线部分可以认为是当前正在执行的进程，因为我们可能会切换到其他进程，所以内存中需要另一块区域来保存当前的寄存器值，以便下次执行的时候进行恢复（也就是所谓的上下文切换）。整个过程中，CPU 交替执行不同的进程，虚拟内存系统会负责管理地址空间，而没有执行的进程的寄存器值会被保存在内存中。切换到另一个进程的时候，会载入已保存的对应于将要执行的进程的寄存器值。</p>
+<p>我们所讲的“双核”</p>
+<p><img src="/home/alex/图片/double.png" alt="upload success"></p>
+<p><img src="/home/alex/图片/进程.png" alt="upload successfu"></p>
+<p>上下文切换是指把运行内核代码的环境调出来，然后把用户代码的环境（PC，寄存器等）保存起来</p>
+<h4 id="进程地址空间"><a href="#进程地址空间" class="headerlink" title="进程地址空间"></a>进程地址空间</h4><p>虚拟地址空间由内核空间和用户空间两部分组成。用户空间（32位）都从0x08048000组成。<br><img src="/home/alex/图片/、、.png" alt="upload successfl"></p>
+<h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p>在遇到错误的时候，Linux 系统级函数通常会返回 -1 并且设置 errno 这个全局变量来表示错误的原因。使用的时候记住两个规则：</p>
+<p>1.对于每个系统调用都应该检查返回值<br>2.当然有一些系统调用的返回值为 void，在这里就不适用</p>
+<p>fork函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">void unix_error(char *msg) /* Unix-style error */</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;%s: %s\n&quot;, msg, strerror(errno));</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pid_t Fork(void)</span><br><span class="line">&#123;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    if ((pid = fork()) &lt; 0)</span><br><span class="line">        unix_error(&quot;Fork error&quot;);</span><br><span class="line">    return pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="获取进程信息"><a href="#获取进程信息" class="headerlink" title="获取进程信息"></a>获取进程信息</h4><p>我们可以用下面两个函数获取进程的相关信息：</p>
+<p>1.pid_t getpid(void) - 返回当前进程的 PID<br>2.pid_t getppid(void) - 返回当前进程的父进程的 PID</p>
+<p>我们可以认为，进程有三个主要状态：</p>
+<p>1.运行 Running<br>        正在被执行、正在等待执行或者最终将会被执行<br>2.停止 Stopped<br>        执行被挂起，在进一步通知前不会计划执行<br>3.终止 Terminated<br>        进程被永久停止</p>
+<h3 id="用户态和内核态"><a href="#用户态和内核态" class="headerlink" title="用户态和内核态"></a>用户态和内核态</h3><p><img src="/home/alex/图片/2018-44.png" alt="filename alredy exists, renamed"></p>
+<h3 id="程序的加载和运行"><a href="#程序的加载和运行" class="headerlink" title="程序的加载和运行"></a>程序的加载和运行</h3><p><img src="/home/alex/图片/taipei.png" alt="upload succesful"></p>
+<p><img src="/home/alex/图片/jiazai.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/2018-45.png" alt="filename alrdy exists, renamed"></p>
+<p><img src="/home/alex/图片/ke.png" alt="upload succesul"></p>
+<p>entry point 是可执行目标文件ELF头 的entry point</p>
+<p>所以程序的加载和运行就是一个进程切换到另外一个进程，中间要进行上下文切换。切换新进程的时候先要创建一个进程（fork），然后exec，然后运行main</p>
+<p><img src="/home/alex/图片/fork.png" alt="upload successful"></p>
+<p>第一个参数先压栈，最后一个参数最后压栈，注意上图，argv是一个指针，指向一个数组，即图中argv【0】处，每一个元素又本身是一个指针，指向一个字符串，envp也是一个指针数组，每一个元素指向一个环境变量。</p>
+<p>然后如果main函数调用了其它函数，就会又长出一个栈帧，这就是程序加载与运行的过程。</p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>可以用kill函数发射信号</p>
+<p>子进程陷入无限循环，则父进程发射KILL信号，终结子进程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void forkandkill()</span><br><span class="line">&#123;</span><br><span class="line">    pid_t pid[N];</span><br><span class="line">    int i;</span><br><span class="line">    int child_status;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">        if ((pid[i] = fork()) == 0)</span><br><span class="line">            while(1) ;  // 死循环</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;Killing process %d\n&quot;, pid[i]);</span><br><span class="line">        kill(pid[i], SIGINT);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for (i = 0; i &lt; N; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        pid_t wpid = wait(&amp;child_status);</span><br><span class="line">        if (WIFEXITED(child_status))</span><br><span class="line"> printf(&quot;Child %d terminated with exit status  %d\n&quot;,wpid,WEXITSTATUS(child_status));</span><br><span class="line">        else</span><br><span class="line">            printf(&quot;Child %d terminated abnormally\n&quot;, wpid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="接收信号"><a href="#接收信号" class="headerlink" title="接收信号"></a>接收信号</h4><p>所有上下文切换都是通过调用某个异常处理器（exception handler）完成的，内核会计算对易于某个进程p的pnb值：pnb=pending&amp;~blocked</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">void unix_error(char *msg) /* Unix-style error */</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;%s: %s\n&quot;, msg, strerror(errno));</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void sigint_handler(int sig) // SIGINT 处理器</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;想通过 ctrl+c 来关闭我？\n&quot;);</span><br><span class="line">    sleep(2);</span><br><span class="line">    fflush(stdout);</span><br><span class="line">    sleep(1);</span><br><span class="line">    printf(&quot;OK. :-)\n&quot;);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    // 设定 SIGINT 处理器</span><br><span class="line">    if (signal(SIGINT, sigint_handler) == SIG_ERR)</span><br><span class="line">        unix_error(&quot;signal error&quot;);</span><br><span class="line">        </span><br><span class="line">    // 等待接收信号</span><br><span class="line">    pause();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/maye.png" alt="upload succeful"></p>
+<p>信号处理器的工作流程可以认为是和当前用户进程“并发”的同一个伪进程。</p>
+<h4 id="并行与并发的区别"><a href="#并行与并发的区别" class="headerlink" title="并行与并发的区别"></a>并行与并发的区别</h4><p>并行：多个CPU同时执行程序</p>
+<p>并发(concurrent)：即使只有一个CPU，但操作系统能够把程序的执行单位细化，然后分开执行。是一种伪并行执行</p>
+<h4 id="阻塞信号"><a href="#阻塞信号" class="headerlink" title="阻塞信号"></a>阻塞信号</h4><p>内核会阻塞与当前在处理的信号同类型的其他正在等待的信号，也就是说一个SIGINT信号处理是不能被另外一个SIGINT信号中断的。</p>
+<p>如果要显示阻塞，需要用sigprocmask函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sigset_t mask, prev_mask;</span><br><span class="line">Sigemptyset(&amp;mask); // 创建空集</span><br><span class="line">Sigaddset(&amp;mask, SIGINT); // 把 SIGINT 信号加入屏蔽列表中</span><br><span class="line">// 阻塞对应信号，并保存之前的集合作为备份</span><br><span class="line">Sigprocmask(SIG_BLOCK, &amp;mask, &amp;prev_mask);</span><br><span class="line">...</span><br><span class="line">... // 这部分代码不会被 SIGINT 中断</span><br><span class="line">...</span><br><span class="line">// 取消阻塞信号，恢复原来的状态</span><br><span class="line">Sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL);</span><br></pre></td></tr></table></figure>
+<p>并行访问可能会导致数据毁坏问题，以下是一些编写程序的规则。</p>
+<pre><code>规则 1：信号处理器越简单越好
+    例如：设置一个全局的标记，并返回
+规则 2：信号处理器中只调用异步且信号安全(async-signal-safe)的函数
+    诸如 printf, sprintf, malloc 和 exit 都是不安全的！
+规则 3：在进入和退出的时候保存和恢复 errno
+    这样信号处理器就不会覆盖原有的 errno 值
+规则 4：临时阻塞所有的信号以保证对于共享数据结构的访问
+    防止可能出现的数据损坏
+规则 5：用 volatile 关键字声明全局变量
+    这样编译器就不会把它们保存在寄存器中，保证一致性
+规则 6：用 volatile sig_atomic_t 来声明全局标识符(flag)
+    这样可以防止出现访问异常
+</code></pre><p>异步信号安全：指的是如下两类函数：</p>
+<p>1.所有的变量都保存在栈帧当中<br>2.不会被信号中断的函数</p>
+<h3 id="非本地跳转-Non-local-jump"><a href="#非本地跳转-Non-local-jump" class="headerlink" title="非本地跳转 Non local jump"></a>非本地跳转 Non local jump</h3><p>从一个函数跳转到另一个函数中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setjmp 保存当前程序的堆栈上下文环境(stack context)，注意，这个保存的堆栈上下文环境仅在调用 setjmp 的函数内有效，如果调用 setjmp 的函数返回了，这个保存的堆栈上下文环境就失效了。调用 setjmp 的直接返回值为 0。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">longjmp 将会恢复由 setjmp 保存的程序堆栈上下文，即程序从调用 setjmp 处重新开始执行，不过此时的 setjmp 的返回值将是由 longjmp 指定的值。注意longjmp 不能指定0为返回值，即使指定了 0，longjmp 也会使 setjmp 返回 1。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">jmp_buf env;</span><br><span class="line">P1()</span><br><span class="line">&#123;</span><br><span class="line">    if (setjmp(env))</span><br><span class="line">    &#123;</span><br><span class="line">        // 跳转到这里</span><br><span class="line">    &#125; else </span><br><span class="line">    &#123;</span><br><span class="line">        P2();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">P2()</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    P2();</span><br><span class="line">    ...</span><br><span class="line">    P3();</span><br><span class="line">&#125;</span><br><span class="line">P3()</span><br><span class="line">&#123;</span><br><span class="line">    longjmp(env, 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/kundao.png" alt="uploadccessful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">jmp_buf env;</span><br><span class="line">P1()</span><br><span class="line">&#123;</span><br><span class="line">    P2(); P3();</span><br><span class="line">&#125;</span><br><span class="line">P2()</span><br><span class="line">&#123;</span><br><span class="line">    if (setjmp(env))</span><br><span class="line">    &#123;</span><br><span class="line">        // 跳转到这里</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">P3()</span><br><span class="line">&#123;</span><br><span class="line">    longjmp(env, 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为P2在跳转的时候，已经在P3前返回了，内存已经清理了其对应的栈帧，所以P3的longjmp不能实现期望的操作。</p>
+<h4 id="CSAPP-家庭作业"><a href="#CSAPP-家庭作业" class="headerlink" title="CSAPP 家庭作业"></a>CSAPP 家庭作业</h4><p>waitpid函数的作用：</p>
+<p>当指定等待的子进程以及停止运行或者结束了，waitpid函数会立即返回，如果子进程还没有停止运行或者结束，调用waitpid的父进程会被祖塞，暂停运行</p>
+<p>8.18<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void end()&#123;</span><br><span class="line">  </span><br><span class="line">      printf(&quot;2&quot;);fflush(stdout);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  int main()</span><br><span class="line">  &#123;</span><br><span class="line">     if(fork()==0)</span><br><span class="line">        atexit(end);</span><br><span class="line">     if(fork()==0)&#123;</span><br><span class="line">        printf(&quot;0&quot;);fflush(stdout);</span><br><span class="line">      &#125;</span><br><span class="line">     else&#123;</span><br><span class="line">        printf(&quot;1&quot;);fflush(stdout);</span><br><span class="line">     &#125;</span><br><span class="line">      exit(0);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>第一个子进程的atexit函数把end函数添加到函数列表中，那么这个子进程生成的两个子进程的堆栈中也会有end函数，但是另外父进程则独立，不受影响，即使wxit也不会有反应。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/07/IA-32-linux中的地址转换/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/07/IA-32-linux中的地址转换/" itemprop="url">CSAPP-IA-32/linux中的地址转换</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-07T15:28:00+08:00">
+                2018-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="/home/alex/图片/2018-32.png" alt="filename alrady exists, renamed"></p>
+<p><img src="/home/alex/图片/IA32.png" alt="upload succeful"></p>
+<p>1.逻辑地址-》线性地址是 分段<br>2.线性地址-》内存地址是 分页</p>
+<p>这里的8是偏移量A<br>%ebp是基址寄存器B，%esp是变址寄存器I，4是比例因子S</p>
+<h3 id="分段过程"><a href="#分段过程" class="headerlink" title="分段过程"></a>分段过程</h3><p>线性地址的计算</p>
+<p><img src="/home/alex/图片/duanxuanze.png" alt="upload sucsful"></p>
+<p>段选择符是在上图的段寄存器里面的</p>
+<p><img src="/home/alex/图片/dizhizhuanhuan.png" alt="upload success"></p>
+<p>段选择符就相当于index位，分段方式中有一个”段表“（在主存），段表记录了段的长度，段开始的地方，存取权限等。</p>
+<p>线性地址 = 段基址+有效地址</p>
+<p>有效地址 = 基址寄存器+变址寄存器×比例因子</p>
+<p>有效地址实际上是一个段内的偏移量，首地址+段内偏移量 = 线性地址。</p>
+<p><img src="/home/alex/图片/duan.png" alt="upload succesful"></p>
+<p>得到的线性地址再通过分页，通过页表转换为主存地址</p>
+<h3 id="段寄存器的含义"><a href="#段寄存器的含义" class="headerlink" title="段寄存器的含义"></a>段寄存器的含义</h3><p><img src="/home/alex/图片/2018-33.png" alt="filename already exists, rend"></p>
+<p>RPL： 最后两位表示管理状态（request privilege level）</p>
+<p><img src="/home/alex/图片/2018-35.png" alt="filename alreadmed"></p>
+<h3 id="段描述符和段描述符表"><a href="#段描述符和段描述符表" class="headerlink" title="段描述符和段描述符表"></a>段描述符和段描述符表</h3><p><img src="/home/alex/图片/2018-36.png" alt="filename already exists, renamed"></p>
+<p>什么叫任务状态段？</p>
+<p>这里的任务指的是进程，就是进程执行到某个阶段的时候，CS.SS.EIP，ESP，GPR内容等信息（代码算段，堆栈段，指令指针，栈指针，通用寄存器内容等）</p>
+<p>中断门描述符记录了处理中断等异常处理的程序的首地址</p>
+<p><img src="/home/alex/图片/logical.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/2018-37.png" alt="filename already enamed"></p>
+<p>为了减少从主存中找段描述符，使用cache</p>
+<p><img src="/home/alex/图片/cc.png" alt="upload succsful"></p>
+<p><img src="/home/alex/图片/2018-38.png" alt="upload suessful"></p>
+<p>TSS描述符在进行进程切换的时候，TR里面的内容也要进行切换。</p>
+<p>所有表的起始地址是放在GDR，而所有异常中断程序的首地址放在IDT，IDT的首地址也放在IDTR里面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GDT和IDT只有一个，GDTR 和 IDTR指向各自起始的地方，根据TR取GDT中的TSS描述符的时候，GDTR给出首地址</span><br></pre></td></tr></table></figure>
+<h4 id="Linux的全局段描述符表"><a href="#Linux的全局段描述符表" class="headerlink" title="Linux的全局段描述符表"></a>Linux的全局段描述符表</h4><p><img src="/home/alex/图片/GDT.png" alt="upload sucssful"></p>
+<p>最后两位是RPL,都为0表示其在第0环，位于内核</p>
+<p>倒数第三位表示这个描述符在GDT中，剩下的位便是索引号，<br>TSS索引是0x0010,即全局描述符表的第16项，LDT索引是0x0011，是第17项</p>
+<p>因此在上上图中，操作系统会分别把0x80与0x88放在TR与LDTR中</p>
+<h4 id="逻辑地址向线性地址转换"><a href="#逻辑地址向线性地址转换" class="headerlink" title="逻辑地址向线性地址转换"></a>逻辑地址向线性地址转换</h4><p><img src="/home/alex/图片/GDTR.png" alt="upload succesful"></p>
+<p>逻辑地址（48位）=》 线性地址（32位）</p>
+<p>16位的段选择符，根据TI选择去GDT还是去LDT，其中GDT，LDT的首地址分别存储在GDTR和LDTR里面，（不可见寄存器）</p>
+<p><strong><em>段描述符 = 首地址+8×段选择符的索引</em></strong></p>
+<p>所以得到的段基地址加上段偏移量，就得到32位线性地址</p>
+<p>段描述符只有在第一次进行访问，访问过后就放在了cache里面，所以之后求线性地址，只需要在cache里面取基地址然后相加就行</p>
+<p><img src="/home/alex/图片/risc.png" alt="upoad successful"></p>
+<p>1.就是初始化时候上述4个段描述符放在GDT中<br>2.每个段都被初始化在0-4GB的线性地址空间中</p>
+<p><img src="/home/alex/图片/ldtgdt.png" alt="uploauccessful"></p>
+<p><img src="/home/alex/图片/2018-39.png" alt="filename already exists, reamed"></p>
+<p>有效地址（偏移量） = 基址寄存器+变址寄存器×比例因子</p>
+<p><img src="/home/alex/图片/2018-40.png" alt="filename alreay exists, renamed"></p>
+<p>所以<strong><em>线性地址就等于EA = 有效地址 </em></strong></p>
+<p>线性地址 = 基地址+有效地址</p>
+<p>所谓EA其实只是一个segment内的一个段内偏移量</p>
+<p><img src="/home/alex/图片/logic.png" alt="upload succeul"></p>
+<p>指令的线性地址 = 代码段基地址+有效地址，而linux编译器默认了代码段基地址位0，因此指令的线性地址就等于有效地址就等于段的偏移量。</p>
+<p>而数据的线性地址 = 数据段基地址+EA =0+ R[ECX]+R[EDX]*4</p>
+<p>0X8048A00+(400)的16进制，注意进制的转换</p>
+<h3 id="分页过程（线性地址-》物理地址）"><a href="#分页过程（线性地址-》物理地址）" class="headerlink" title="分页过程（线性地址-》物理地址）"></a>分页过程（线性地址-》物理地址）</h3><p>如果页大小为4KB，每个页表项占4B则理论上一个页表大小：</p>
+<p>项个数：2^32/2^12 = 2^20 ，因此每个页表大小位4MB</p>
+<p>比页还要大，因此采用多级页表方式来存储</p>
+<p>—————————————————————————————————————————</p>
+<p><img src="/home/alex/图片/2018-41.png" alt="filename already exists, red"></p>
+<p>IA-32采用二级页表方式来存储</p>
+<p><img src="/home/alex/图片/yedizhi.png" alt="upload sucssful"></p>
+<p>每个页表起始位置按4KB对齐意思就是每个页表起始的20位都是相同的，只有后面的12位（4KB）不同</p>
+<p><img src="/home/alex/图片/mmu.png" alt="upload"></p>
+<p><img src="/home/alex/图片/imge.png" alt="upload succeul"></p>
+<p>MMU 完成从逻辑地址到线性地址的过程</p>
+<h3 id="CPL-RPL-DPL区别与联系"><a href="#CPL-RPL-DPL区别与联系" class="headerlink" title="CPL,RPL,DPL区别与联系"></a>CPL,RPL,DPL区别与联系</h3><p>1.CPL是当前进程的权限级别(Current Privilege Level)，是当前正在执行的代码所在的段的特权级，存在于cs寄存器的低两位。
+　　</p>
+<p>2.RPL说明的是进程对段访问的请求权限(Request Privilege Level)，是对于段选择子而言的，每个段选择子有自己的RPL，它说明的是进程对段访问的请求权限，有点像函数参数。而且RPL对每个段来说不是固定的，两次访问同一段时的RPL可以不同。RPL可能会削弱CPL的作用，例如当前CPL=0的进程要访问一个数据段，它把段选择符中的RPL设为3，这样虽然它对该段仍然只有特权为3的访问权限。
+　　　　</p>
+<p>3.DPL存储在段描述符中，规定访问该段的权限级别(Descriptor Privilege Level)，每个段的DPL固定。<br>当进程访问一个段时，需要进程特权级检查，一般要求DPL &gt;= max {CPL, RPL}</p>
+<p>下面打一个比方，中国官员分为6级国家主席1、总理2、省长3、市长4、县长5、乡长6，假设我是当前进程，级别总理（CPL=2）,我去聊城市(DPL=4)考察(呵呵),我用省长的级别(RPL=3 这样也能吓死他们:-))去访问,可以吧，如果我用县长的级别，人家就不理咱了(你看看电视上的微服私访，呵呵)，明白了吧！为什么采用RPL，是考虑到安全的问题，就好像你明明对一个文件用有写权限，为什么用只读打开它呢，还不是为了安全！</p>
+<p>ref：<a href="https://blog.csdn.net/better0332/article/details/3416749" target="_blank" rel="noopener">https://blog.csdn.net/better0332/article/details/3416749</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/06/CSAPP-Virtural-Memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/06/CSAPP-Virtural-Memory/" itemprop="url">CSAPP-Virtural Memory</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-06T20:12:21+08:00">
+                2018-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h3><p>为每个进程提供了一个大的，一致的和私有的地址空间。</p>
+<p>1.把主存看成是一个存储在磁盘上的地址空间的高速缓存</p>
+<p>2.为每个进程提供了一致的地址空间，简化了内存管理</p>
+<p>3.保护每个进程的地址空间不被其他进程破坏</p>
+<h3 id="早期分页方式的概念"><a href="#早期分页方式的概念" class="headerlink" title="早期分页方式的概念"></a>早期分页方式的概念</h3><p>大白话：程序是在逻辑空间上写的，而是在物理空间上运行，所以要解决逻辑空间与物理空间之间的映射。</p>
+<p><img src="/home/alex/图片/page.png" alt="upload successf"></p>
+<p>就是程序可能会有2^16byte长，但是物理容量只有4K</p>
+<p><img src="/home/alex/图片/2018-26.png" alt="filename alrady exists, renamed"></p>
+<p>这个区号意思就是说，地址空间0-4095对应page 1，4096-8192对应page2</p>
+<p><strong><em>区间就是页(page)，主存中存放页的区域成为页框</em></strong></p>
+<h4 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h4><p><img src="/home/alex/图片/paging.png" alt="upload succesul"></p>
+<p><img src="/home/alex/图片/dazi.png" alt="upad successful"></p>
+<p>逻辑地址 1：30  1作为地址空间索引号（页号），30作为内容</p>
+<p>14代表页框号 </p>
+<p>所以页表就是用来映射页号和物理地址中的页框号</p>
+<p><img src="/home/alex/图片/durian.png" alt="upload successl"></p>
+<p>页框之间内容可以离散，页框内部内容连续</p>
+<h3 id="虚拟存储系统"><a href="#虚拟存储系统" class="headerlink" title="虚拟存储系统"></a>虚拟存储系统</h3><p>大白话：程序可能很长，但是主存容量有限，于是把活跃的程序段放到主存中运行，然后自动进行切换</p>
+<p>实质：</p>
+<p>1.程序员在比实际主存空间大得多的逻辑地址空间中编写程序</p>
+<p>2.程序执行的时候，要把当前需要的程序段以及相应的数据块调入主存当中，不用的部分放在磁盘上</p>
+<h4 id="虚拟存储技术的实质"><a href="#虚拟存储技术的实质" class="headerlink" title="虚拟存储技术的实质"></a>虚拟存储技术的实质</h4><p>进程调入物理主存的空间（程序中活跃的片段占用了主存的物理空间）</p>
+<p><img src="/home/alex/图片/xuange.png" alt="upload successl"></p>
+<p>每个程序会有一个页表来说明它这一页的情况<br>（在磁盘上/内存上/空页）</p>
+<p><img src="/home/alex/图片/vmm.png" alt="upload successl"></p>
+<p>cpu拿到的是虚拟地址，要求转化为主存地址，而这个过程是在执行指令的时候完成的，只能通过硬件来完成</p>
+<p><img src="/home/alex/图片/2018-27.png" alt="filename already exists, med"></p>
+<p>加载一个可执行文件，执行的时候，不会实际上把数据都加载到内存当中，而是生成该程序对应的一个页表。然后按照按需调页原则，通过pageFault异常来实现，把数据装入到内存当中。</p>
+<h4 id="主存–磁盘"><a href="#主存–磁盘" class="headerlink" title="主存–磁盘"></a>主存–磁盘</h4><p><img src="/home/alex/图片/images.png" alt="upload successl"></p>
+<p>因为访问磁盘的时间会比较长，因此要尽可能减少磁盘的次数</p>
+<p>write back 只写主存，不写磁盘</p>
+<h4 id="页表"><a href="#页表" class="headerlink" title="页表"></a>页表</h4><p>用结构数组来实现</p>
+<p><img src="/home/alex/图片/vlid.png" alt="upload successfu"></p>
+<p>装入位-&gt;valid bit</p>
+<p>修改位-&gt;dirty bit</p>
+<p>替换控制位-&gt;根据其使用情况，决定该page是淘汰掉还是保留<br>eg（LRU.LMU）</p>
+<p>实页号-&gt;页框号</p>
+<p><strong>每个进程有一个页表，其中有装入位，dirty位，替换控制位，访问权限位（确定是否可读/可写）还有禁止缓存位，实页号</strong></p>
+<p>一个页数的项数有什么来决定？<strong>虚拟地址空间大小来决定</strong></p>
+<p>项数 = 虚拟地址空间大小 / 页大小</p>
+<p>4GB/4KB = 2^20 项</p>
+<p>每个进程的页表大小一样吗？</p>
+<p><strong><em>各个进程有相同虚拟空间，所以理论上一样。实际大小看具体实现方式，如“空洞：页面如何处理</em></strong></p>
+<p><img src="/home/alex/图片/2018-28.png" alt="fil"></p>
+<p>页表分三种</p>
+<p><img src="/home/alex/图片/ju.png" alt="upload successl"></p>
+<h4 id="逻辑地址转换为物理地址"><a href="#逻辑地址转换为物理地址" class="headerlink" title="逻辑地址转换为物理地址"></a>逻辑地址转换为物理地址</h4><p><img src="/home/alex/图片/VA.png" alt="upload success"></p>
+<p>VA：VIRTUAL ADDRESS</p>
+<p>类比于全相连cache，地址只有两部分，高位的tag，低位的偏移量。这里也是类似，page no,表示页表索引，页表基址存放在一个寄存器当中，<strong><em>页表的地址 = 基址+页表索引×页框大小</em></strong> </p>
+<p>PF： frame no. ，即物理页号，其加上disp偏移量就等于PA，物理地址。</p>
+<p>V = 0时，发生缺页。</p>
+<h4 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h4><p>这个时候就需要操作系统来帮忙处理</p>
+<p><img src="/home/alex/图片/vm2.png" alt="upload success"></p>
+<h4 id="TLB（快表）"><a href="#TLB（快表）" class="headerlink" title="TLB（快表）"></a>TLB（快表）</h4><p><img src="/home/alex/图片/um.png" alt="upload sssful"></p>
+<p>全相连中，tag = 标签号，没有组号</p>
+<p>组相连当中，虚页号高位作为tag，低位作为组号（index）</p>
+<p><img src="/home/alex/图片/TLB.png" alt="upload succe"></p>
+<p>1.从virtual page中得到虚页号，把虚页号与TLB中的tag作比较，如果valid=0 or valid = 1 but tag!=VA,then 发生缺页。</p>
+<p>2.于是从主存的页表(慢表)开始寻找，由于页表中的表项是按照索引号排列的，所以并不需要tag号。如果V=0，还找不到，则时候就要到外存当中的磁盘找对应的表项。</p>
+<p>3.如果找到了，可以直接从page frame中生成物理地址号，这样就不需要访问向前面部分介绍的那样，访问主存。</p>
+<p><strong><em>所以引入快表（在cache）目的就是减少主存的访问次数，提高逻辑地址与物理地址转换的速度。</em></strong></p>
+<p><img src="/home/alex/图片/cmt.png" alt="upload successfl"></p>
+<p>最理想路径： VA-&gt;HIT1-&gt;HIT3-&gt;CPU 不用访问主存</p>
+<p>如果发生了TLB缺失（miss1），在主存中的的页表中寻找，如果找到了就是hit2，继续送到cache里面，否则就是miss 2 ，发生page fault</p>
+<p>如果送到cache，cache miss了，就发生miss 3，从主存那里找。</p>
+<h5 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h5><p><img src="/home/alex/图片/2018-30.png" alt="filename already exists, renaed"></p>
+<p>最上面那一段属于页表，中间段属于TLB，下面那一段是cache</p>
+<p>大概过程：虚拟地址从TLB表中寻找，如果找不到就去页表找，然后映射为物理地址后，物理地址在cache中找，找不到就访问主存，从主存中找。</p>
+<p>虚拟地址分为20位的虚拟页号，12位的页内地址</p>
+<p>上图中由于是组相连，因此虚拟页号分为tag标记以及组索引，当v=1而且TLB标记等于标记号的时候，就找到了物理页号，然后物理页号与虚拟地址的业内地址结合起来，就找到了物理地址。然后物理地址就又分为标记号，组索引以及块内地址，于cache中寻找所要寻找的字节。</p>
+<p><img src="/home/alex/图片/ca.png" alt="upload successl"></p>
+<p>缺页处理是由操作系统来作的</p>
+<p><img src="/home/alex/图片/HMM.png" alt="upload ful"></p>
+<p>如果不在页表当中，就绝对不可能再快表当中；如果页表缺失，说明信息不在主存，cache也一定不可能有！</p>
+<p>三个都miss过程：</p>
+<p>1.快表miss，去页表（在主存）中找，访存1次</p>
+<p>2.页表miss，只能从磁盘中寻找，访问磁盘一次</p>
+<p>3.cache miss，从主存当中寻找，访存第二次</p>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img src="/home/alex/图片/lee.png" alt="upload succesul"></p>
+<p>页表项数： 虚拟地址大小 / 页大小</p>
+<p><img src="/home/alex/图片/phy.png" alt="upload succesl"></p>
+<p>虚拟地址中，高8位就是虚拟页号，低6位就是偏移量。</p>
+<p>物理地址中，高6位是实页号，低6号是偏移量。</p>
+<p>快表：</p>
+<p><img src="/home/alex/图片/bufen.png" alt="upload successl"></p>
+<p>16个TLB项，4路组相连，说明TLBI是2，剩下6位就是tag位</p>
+<p>快表中0A34数据有误，因为其VPN就是tag+set号</p>
+<p> tag是0A,set是03，所以VPN为 00101011 就是0x2B</p>
+<p>但是在慢表中，0x2Bvalid位是0，所以说明数据有误</p>
+<p>cache：</p>
+<p><img src="/home/alex/图片/china.png" alt="upload succesful"></p>
+<p>一共有16行，所以CI是4，偏移量是2（主存块4B）</p>
+<p><img src="/home/alex/图片/jizz.png" alt="upload succesul"></p>
+<p>VPN = 0xF TLBI = 0x3 TLBT = 0x3</p>
+<p>即在快表的第三组中找tag==3的，找到了，说明其命中，没有page fault，PPN是0D</p>
+<p>0D = 1101</p>
+<p>所以物理地址为（PPN+VPO）<br>001101010100</p>
+<p>C0 = 00<br>CI = 0101<br>CT = 001101</p>
+<p>在cache中找第5行，tag为001101的16位数据</p>
+<p>B0 = 36 B1 = 72</p>
+<p>所以要找的数据是7236(小端，高位数据在高位)</p>
+<h4 id="分段式虚拟存储器"><a href="#分段式虚拟存储器" class="headerlink" title="分段式虚拟存储器"></a>分段式虚拟存储器</h4><p>分段方式很好管理，但是占的空间多，储存空间管理不好管理。</p>
+<p><img src="/home/alex/图片/fenduan.png" alt="oad successful"></p>
+<p><img src="/home/alex/图片/2018-31.png" alt="file already exists, renamed"></p>
+<h4 id="段页式存储器"><a href="#段页式存储器" class="headerlink" title="段页式存储器"></a>段页式存储器</h4><p><img src="/home/alex/图片/ta.png" alt="upload succful"></p>
+<h5 id="练习题9-5"><a href="#练习题9-5" class="headerlink" title="练习题9.5"></a>练习题9.5</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;sys/mman.h&gt;</span><br><span class="line">char *bufp</span><br><span class="line"></span><br><span class="line">//fd 为open函数返回的文件描述符</span><br><span class="line">void *mmap(void *start,size_t length,int prot,int flags,int fd,off_t offset)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//创建一个包含size字节的只读，私有，请求二进制0的虚拟内存区域，如果调用成功，bufp则为新区域的地址</span><br><span class="line">bufp = Mmap(NULL,size,PROT_READ,MAP_PRIVATE|MAP_ANON,0,0);</span><br></pre></td></tr></table></figure>
+<p>用以上函数，讲一个任意大小的磁盘文件复制到stdout，文件名作为一个命令行参数传递。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;csapp.h&gt;</span><br><span class="line"></span><br><span class="line">void mmapcopy(int fd,int size)&#123;</span><br><span class="line">    char *bufp;</span><br><span class="line">    bufp = Mmap(NULL,size,PROT_READ,MAP_PRIVATE,fd,0);</span><br><span class="line">    Write(1,bufp,size);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line">    if(argc!=2)&#123;</span><br><span class="line">        printf(&quot;usage: %s &lt;filename&gt;\n&quot;,argv[0]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int fd;</span><br><span class="line">    struct stat stat;</span><br><span class="line">    fd = Open(argv[0],O_RDONLY,0);</span><br><span class="line">    fstat(fd,&amp;stat);</span><br><span class="line">    mmapcopy(fd,stat.st_size);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>//文件描述符的用法<br>//<a href="https://blog.csdn.net/u012736748/article/details/74626145" target="_blank" rel="noopener">https://blog.csdn.net/u012736748/article/details/74626145</a></p>
+<p>文件描述符是一个索引，指向内核为每一个进程所维护的该进程打开文件的记录表。</p>
+<h4 id="删除虚拟地址"><a href="#删除虚拟地址" class="headerlink" title="删除虚拟地址"></a>删除虚拟地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int mummap（void *start,size_t length）;</span><br></pre></td></tr></table></figure>
+<h3 id="动态内存分配"><a href="#动态内存分配" class="headerlink" title="动态内存分配"></a>动态内存分配</h3><h4 id="usage-of-malloc-package"><a href="#usage-of-malloc-package" class="headerlink" title="usage of malloc package"></a>usage of malloc package</h4><p><img src="/home/alex/图片/mallocz.png" alt="upload scessful"></p>
+<p><img src="/home/alex/图片/2018-71.png" alt="fildy existsenamed"></p>
+<p>可以通过诸如malloc,new等方法让程序运行的时候得到虚拟内存。动态内存分配器会管理一个虚拟内存区域，叫做堆。</p>
+<p>分配器以块为单位来维护堆，可以进行分配或者释放。有两种类型：</p>
+<pre><code>1.显式分配器：应用分配并且回收空间（malloc &amp; free）
+2.隐式分配器，只负责分配，但是不负责回收（JAVA中的垃圾收集）
+</code></pre><p>过程如下：</p>
+<p><img src="/home/alex/图片/malloc.png" alt="upload "></p>
+<p><img src="/home/alex/图片/gg.png" alt="upload"></p>
+<h4 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h4><p>假设给定一个malloc和free的请求的序列目标是尽可能提高吞吐量和内存利用率。</p>
+<p>吞吐量： 单位时间内完成的请求数量。</p>
+<p>内存利用率：主要影响因素是内存碎片。</p>
+<h5 id="内部碎片"><a href="#内部碎片" class="headerlink" title="内部碎片"></a>内部碎片</h5><p><img src="/home/alex/图片/内存碎片.png" alt="upld successful"></p>
+<h5 id="外部碎片"><a href="#外部碎片" class="headerlink" title="外部碎片"></a>外部碎片</h5><p><img src="/home/alex/图片/外部.png" alt="upload ssful"></p>
+<h4 id="Peak-Memory-Utilization"><a href="#Peak-Memory-Utilization" class="headerlink" title="Peak Memory Utilization"></a>Peak Memory Utilization</h4><p><img src="/home/alex/图片/per.png" alt="upload susful"></p>
+<h4 id="implementation"><a href="#implementation" class="headerlink" title="implementation"></a>implementation</h4><h5 id="how-to-free"><a href="#how-to-free" class="headerlink" title="how to free"></a>how to free</h5><p><img src="/home/alex/图片/implementation.png" alt="upload successf"></p>
+<p>pointer 前面用一个word记录block size</p>
+<p>free的时候，访问指针前一个word就可以知道blocksize了</p>
+<h5 id="keeping-track-of-free-blocks"><a href="#keeping-track-of-free-blocks" class="headerlink" title="keeping track of free blocks"></a>keeping track of free blocks</h5><p><img src="/home/alex/图片/how.png" alt="uploadsuccessful"></p>
+<h5 id="implicit-free-lists"><a href="#implicit-free-lists" class="headerlink" title="implicit free lists"></a>implicit free lists</h5><p><img src="/home/alex/图片/2018-72.png" alt="filename alredy exists, renamed"></p>
+<p>因为每一个block是8-byte alignment的，因此最后3位必定都是0，所以可以利用最后一位来存储该块是否已经分配</p>
+<h5 id="example"><a href="#example" class="headerlink" title="example"></a>example</h5><p><img src="/home/alex/图片/2018-73.png" alt="filenamey exists, renamed"></p>
+<h5 id="Finding-a-free-block"><a href="#Finding-a-free-block" class="headerlink" title="Finding a free block"></a>Finding a free block</h5><p><img src="/home/alex/图片/2018-74.png" alt="filename already exists, renamd"></p>
+<p>这里的 <em>p &amp; -2 -&gt;  </em>p &amp; 1111111…110 即得到block的size ，i.e mask out the last bit</p>
+<h5 id="allocating-in-free-block"><a href="#allocating-in-free-block" class="headerlink" title="allocating in free block"></a>allocating in free block</h5><p><img src="/home/alex/图片/alloc.png" alt="upload succesul"></p>
+<h5 id="freeing-a-block"><a href="#freeing-a-block" class="headerlink" title="freeing a block"></a>freeing a block</h5><p><img src="/home/alex/图片/freeing.png" alt="upload cessful"></p>
+<h5 id="Coalescing"><a href="#Coalescing" class="headerlink" title="Coalescing"></a>Coalescing</h5><p><img src="/home/alex/图片/coalescing.png" alt="upload succsful"></p>
+<p>next pointer points to where 2 stores</p>
+<p>如果2开头的block是空的，那么 <em>p = </em>p +*next</p>
+<p>意思就是说4 = 4+2 = 6</p>
+<h5 id="Explicit-Free-Lists"><a href="#Explicit-Free-Lists" class="headerlink" title="Explicit Free Lists"></a>Explicit Free Lists</h5><p><img src="/home/alex/图片/VM.png" alt="upload succeful"></p>
+<h3 id="一些区别"><a href="#一些区别" class="headerlink" title="一些区别"></a>一些区别</h3><p>explicit empty list &amp; implicit empty list</p>
+<p>隐式的话，分配时间是块总数线性时间，而显式的话，是空闲块数量的线性时间，一般来说显式会比隐式更快。</p>
+<p>first fit &amp;&amp; next fit &amp;&amp; best fit</p>
+<p>首次适配：从头开始搜索空闲链表，选择第一个合适的空闲块。</p>
+<p>下一次适配：从上一次搜索结束的位置开始搜索。</p>
+<p>最佳适配：检索每一个空闲块，选择适合需求的最小空闲块。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/06/Stack-Pointer-Frame-Pointer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/06/Stack-Pointer-Frame-Pointer/" itemprop="url">Stack Pointer/Frame Pointer</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-06T14:16:08+08:00">
+                2018-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Stack-Frame"><a href="#Stack-Frame" class="headerlink" title="Stack Frame"></a>Stack Frame</h3><p><img src="/home/alex/图片/2018-18.png" alt="fil"></p>
+<p>firstly, callee stack save the old caller ‘s stack ‘s ebp</p>
+<p>lastly, the argument build means the arguments for calling any other function </p>
+<p><img src="/home/alex/图片/2.png" alt="upload successfl"></p>
+<p>pushl $zip2,$zip1 把参数压进栈顶，然后call swap，会把caller的return address压入栈</p>
+<h3 id="whole-code"><a href="#whole-code" class="headerlink" title="whole code"></a>whole code</h3><p><img src="/home/alex/图片/whole.png" alt="upload succesful"></p>
+<h4 id="set-up-code"><a href="#set-up-code" class="headerlink" title="set up code"></a>set up code</h4><p><img src="/home/alex/图片/2018-19.png" alt="filename already exists, amed"></p>
+<p>一. push %ebp 把caller的 bast pointer 的数值压栈</p>
+<p>二.movl %esp,%ebp （把esp 移动到ebp，即设置ebp = esp，这一步是设置callee的base pointer）</p>
+<p>三.%ebx 是swap过程中可能会调用的参数</p>
+<p><a href="https://www.cnblogs.com/qq78292959/archive/2012/07/20/2600865.html" target="_blank" rel="noopener">https://www.cnblogs.com/qq78292959/archive/2012/07/20/2600865.html</a></p>
+<p>附上：EAX 是”累加器”(accumulator), 它是很多加法乘法指令的缺省寄存器。</p>
+<p>EBX 是”基地址”(base)寄存器, 在内存寻址时存放基地址。</p>
+<p>ECX 是计数器(counter), 是重复(REP)前缀指令和LOOP指令的内定计数器。</p>
+<p>EDX 则总是被用来放整数除法产生的余数。</p>
+<p>但是对于　%eax,%ecx,%edx　不能像ｅｂｘ一样，保存在callee中</p>
+<h4 id="body-code"><a href="#body-code" class="headerlink" title="body code"></a>body code</h4><p><img src="/home/alex/图片/ebp.png" alt="upload successfl"></p>
+<h4 id="finish-code"><a href="#finish-code" class="headerlink" title="finish code"></a>finish code</h4><p><img src="/home/alex/图片/sp.png" alt="upload sucu"></p>
+<ol>
+<li>%ebp-4 就是 old %ebx 的地址 ，把-4（%ebp）移到%ebx，相当于把原来的%ebx复原</li>
+</ol>
+<p>2.第二是 把 %ebp 移到 %esp，即现在%esp指向%ebp</p>
+<p>(第一第二条指令相当于 pop %ebx)<br><img src="/home/alex/图片/d.png" alt="upload successf"></p>
+<p>3.popl %ebp<br>本质上是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0(%esp),%ebp </span><br><span class="line">%esp +4</span><br></pre></td></tr></table></figure></p>
+<p>这个时候base pointer复原，变回caller stack　的数值</p>
+<p>４.ret 根据返回地址返回</p>
+<p>其中leave instruction<br>等价于<br>mov ％ebp,%esp</p>
+<p>popl %ebp</p>
+<h3 id="register-saving-convention"><a href="#register-saving-convention" class="headerlink" title="register saving convention"></a>register saving convention</h3><p><img src="/home/alex/图片/tong.png" alt="upload succesul"></p>
+<p>yoo当中，我们希望%edx不会因为调用了who函数之后发生改变，问题是，who调用过程中，%edx是可能发生改变的。</p>
+<p>因此我们要制定convention，在使用这些寄存器之前先保存他们！</p>
+<p><img src="/home/alex/图片/2018-20.png" alt="filename already exists, rnamed"></p>
+<p>分类如下<br><img src="/home/alex/图片/2018-21.png" alt="fileame already exists, renamed"></p>
+<p>%eax save the return address so it is caller saved register</p>
+<h4 id="example"><a href="#example" class="headerlink" title="example"></a>example</h4><p><img src="/home/alex/图片/2018-22.png" alt="filename already exis, renamed"></p>
+<p><img src="/home/alex/图片/you.png" alt="upload successf"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.pushl %ebp #save the caller&apos;s ebp</span><br><span class="line"></span><br><span class="line">2.movl %esp,%ebp  #set callee&apos;s ebp</span><br><span class="line"></span><br><span class="line">3.subl $16,%esp   # add 16 bytes, add temporary space</span><br><span class="line"></span><br><span class="line">4.movl 8(%ebp),%edx  # set edx = x</span><br><span class="line"></span><br><span class="line">5.movl $1,-4(%ebp)</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-23.png" alt="filename already eists, renamed"></p>
+<p>两个pushl 相当于把 s_helper函数的两个参数传了进去</p>
+<p>&amp;val始终指向val，当函数结束的时候，返回的值就保存在了-4(%ebp)当中</p>
+<p><img src="/home/alex/图片/st.png" alt="upload sucessful"></p>
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>1.若调用函数有多个参数，stack从下到上，依次为第一个，第二个函数。</p>
+<p>2.函数调用的参数在stack的上方，就是在caller准备好参数后再调用callee,就是说argument 是caller saved 的</p>
+<p>3.函数结果返回在%eax</p>
+<p>4.local variable 是存放在 callee-saved registers那里</p>
+<h3 id="x86-64-conventions"><a href="#x86-64-conventions" class="headerlink" title="x86-64 conventions"></a>x86-64 conventions</h3><p>在x86 中，由于registers 的数目变多，因此可以把local variable 和argument存储在register当中，那样就可以减少对stack 的使用了</p>
+<p>下图是16个 8-byte gpr<br><img src="/home/alex/图片/2018-24.png" alt="filename exists, rena"></p>
+<p>黄色的是caller saved</p>
+<p>绿色的是 callee saved</p>
+<h4 id="specifications"><a href="#specifications" class="headerlink" title="specifications"></a>specifications</h4><p><img src="/home/alex/图片/dij.png" alt="up"></p>
+<p>1.用callq 而不用call，因为要返回一个64-bit address,also decrement 8而不是4（8 bytes）</p>
+<p>2.因为gpr实现了ebp / rbp 功能，因此不需要使用stack来更新 ，而且rsp能代替实现frame pointer 的功能</p>
+<p>3.由于gpr只有6个argument register，所以当函数参数少于六个的时候，不需要用到栈结构</p>
+<h3 id="example-1"><a href="#example-1" class="headerlink" title="example"></a>example</h3><p><img src="/home/alex/图片/y.png" alt="upload successfu"></p>
+<p>q - 8byte - 64bits</p>
+<p>l - 4byte - 32bits</p>
+<p>w - 2byte - 16bits</p>
+<p>b - 1byte - 8bits</p>
+<p><img src="/home/alex/图片/2018-25.png" alt="filename already exists, rena"></p>
+<h4 id="prepare-for-the-arguments"><a href="#prepare-for-the-arguments" class="headerlink" title="prepare for the arguments"></a>prepare for the arguments</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">movq $1,%rdi</span><br><span class="line">leaq 16(%rsp),%rsi</span><br><span class="line">movl $2,%rdx</span><br><span class="line">leaq 24(%rsp),%rcx</span><br><span class="line">movl $3,%r8</span><br><span class="line">leaq 28(%rsp),%r9</span><br><span class="line">movl $4,(%rsp)     #Arg 7</span><br><span class="line">leaq 31(%rsp),%rax</span><br><span class="line">movq %rax,8(%rsp)  #Arg 8</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/cltq.png" alt="upload succesul"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">movswl 28(%rsp),%eax # %eax = x3</span><br><span class="line"></span><br><span class="line">movsbl 31(%rsp),%edx # %edx = x4</span><br><span class="line"></span><br><span class="line">s 表示 signextend</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/CSAPP-MIPS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/14/CSAPP-MIPS/" itemprop="url">CSAPP-MIPS</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T21:00:00+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
+                    <span itemprop="name">CSAPP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="Registers-寄存器"><a href="#Registers-寄存器" class="headerlink" title="Registers 寄存器"></a>Registers 寄存器</h5><hr>
+<p>1.一共有32个general register</p>
+<p>2.有两种使用方法: 直接使用对应的编号或者是对应的寄存器名称</p>
+<table>
+<thead>
+<tr>
+<th>寄存器编号</th>
+<th>寄存器名称</th>
+<th>寄存器用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>zero</td>
+<td>return 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>$at</td>
+<td>汇编保留寄存器</td>
+</tr>
+<tr>
+<td>2-3</td>
+<td>$v0-$v1</td>
+<td>（value）存储表达式或者是函数的返回值</td>
+</tr>
+<tr>
+<td>4-7</td>
+<td>$a0-$a3</td>
+<td>(Argument) 存储子程序前四个参数，调用时不保存</td>
+</tr>
+<tr>
+<td>8-15</td>
+<td>$t0-$t7</td>
+<td>临时变量，调用时不保存，调用完成后要恢复</td>
+</tr>
+<tr>
+<td>16-23</td>
+<td>$s0-$s7</td>
+<td>函数调用的时候必须保存，调用完成后需要恢复</td>
+</tr>
+<tr>
+<td>24-25</td>
+<td>$t8-$t9</td>
+<td>属性和$t0-$t7一致</td>
+</tr>
+<tr>
+<td>26-27</td>
+<td>$k0-$k1</td>
+<td>（kernel）中断函数返回值</td>
+</tr>
+<tr>
+<td>28</td>
+<td>$gp</td>
+<td>global pointer 指向64K大小的静态数据块的中间地址</td>
+</tr>
+<tr>
+<td>29</td>
+<td>$sp</td>
+<td>stack pointer</td>
+</tr>
+<tr>
+<td>30</td>
+<td>$fp/$s8</td>
+<td>frame pointer</td>
+</tr>
+<tr>
+<td>31</td>
+<td>$ra</td>
+<td>return address</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h5 id="Program-Structure-程序结构"><a href="#Program-Structure-程序结构" class="headerlink" title="Program Structure 程序结构"></a>Program Structure 程序结构</h5><hr>
+<p>本质其实就只是数据声明+普通文本+程序编码（文件后缀为.s，或者.asm也行） 数据声明在代码段之后（其实在其之前也没啥问题，也更符合高级程序设计的习惯）<br>Data Declarations 数据声明</p>
+<pre><code>数据段以 .data为开始标志
+声明变量后，即在主存中分配空间。
+</code></pre><p>Code 代码</p>
+<pre><code>代码段以 .text为开始标志
+其实就是各项指令操作
+程序入口为main：标志
+程序结束标志（详见下文）
+</code></pre><h6 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">		.data  # 数据变量声明</span><br><span class="line">		</span><br><span class="line">        .text  #代码段</span><br><span class="line">        </span><br><span class="line">main:   主函数入口</span><br></pre></td></tr></table></figure>
+<hr>
+<h5 id="数据声明"><a href="#数据声明" class="headerlink" title="数据声明"></a>数据声明</h5><p>example</p>
+<p>var1:   &emsp;  .word 3     </p>
+<p>array:  &emsp;  .byte ‘a’,’b’  # 声明一个存储两个字符的数组array1，并赋值’a’,’b’</p>
+<p>array1:  &emsp;  .space 40    #为变量array2 分配40个未使用的连续空间</p>
+<hr>
+<h6 id="其他指令汇总"><a href="#其他指令汇总" class="headerlink" title="其他指令汇总"></a>其他指令汇总</h6><hr>
+<p><a href="https://blog.csdn.net/king523103/article/details/45967991" target="_blank" rel="noopener">MIPS入门</a></p>
+<h5 id="实战-冒泡排序"><a href="#实战-冒泡排序" class="headerlink" title="实战-冒泡排序"></a>实战-冒泡排序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">array: .space 1024</span><br><span class="line">input_msg: .asciiz &quot;Enter the number of integers:\n&quot;</span><br><span class="line">input_int_msg: .asciiz &quot;Enter integers to be sorted\n&quot;</span><br><span class="line">output_msg: .asciiz &quot;the sorted numbers are\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.globl main</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">	la $a0,input_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	 </span><br><span class="line">	li $v0,5  #接受用户输入的数组长度</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	la $t6,array #数组首地址</span><br><span class="line">	move $t7,$zero #循环变量i</span><br><span class="line">	move $t8,$zero #循环变量j</span><br><span class="line">	move $t9,$v0  #数组长度</span><br><span class="line"></span><br><span class="line">	addi $t3,$zero,1</span><br><span class="line">	beq $v0,$t3,special</span><br><span class="line">			</span><br><span class="line">input:</span><br><span class="line"></span><br><span class="line">	la $a0,input_int_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	li $v0,5  </span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	#for(int i=0;i&lt;num;i++)</span><br><span class="line">        #cin&gt;&gt;arr[i];</span><br><span class="line">        </span><br><span class="line">        move $t0,$t7 #$t0 is i</span><br><span class="line">        sll $t0,$t0,2 #i become byte offset</span><br><span class="line">        move $t1,$t6 #$t1 is &amp;array[0]</span><br><span class="line">        add $t1,$t1,$t0 #$t1 is &amp;array[i]</span><br><span class="line">        sw $v0,0($t1) #cin&gt;&gt;array[i]</span><br><span class="line">	</span><br><span class="line">	addi $t7,$t7,1</span><br><span class="line">	blt $t7,$t9,input #if ++i&lt;length</span><br><span class="line"> </span><br><span class="line">	move $t7,$zero</span><br><span class="line">	</span><br><span class="line">loop1:	# 每次外层循环比内层循环的循环变量设为0</span><br><span class="line">	move $t8,$zero</span><br><span class="line">loop2:</span><br><span class="line">	#read arr[j+1] and arr[j]</span><br><span class="line">	</span><br><span class="line">	move $t2,$t8 #t2 is j</span><br><span class="line">	sll $t2,$t2,2 #j=*4;</span><br><span class="line">	addu $t1,$t2,$t6 #&amp;arr[j]</span><br><span class="line">	lw $t4,0($t1)  #arr[j]</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	addi $t2,$t8,1 #j+1</span><br><span class="line">	sll $t2,$t2,2 #(j+1)*4</span><br><span class="line">	addu $t0,$t2,$t6 #&amp;arr[j+1]</span><br><span class="line">	lw   $t5,0($t0) #$t5 = arr[j+1]</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	bge $t5,$t4,skip #if arr[j+1]&gt;arr[j] skip</span><br><span class="line"></span><br><span class="line">	sw  $t5,0($t1)</span><br><span class="line">	sw  $t4,0($t0)</span><br><span class="line">	</span><br><span class="line">skip:</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	addi $t8,$t8,1 #j++</span><br><span class="line">	subi $t1,$t9,1 #t1 = num-1</span><br><span class="line">	sub  $t1,$t1,$t7 #t1 = num-1-i</span><br><span class="line">	blt  $t8,$t1,loop2 # if j&lt;num-i-1 t2=1</span><br><span class="line">	addi $t7,$t7,1 #i++</span><br><span class="line">	sub  $t3,$t9,1</span><br><span class="line">	blt  $t7,$t3,loop1  #if i&lt;num-1 then continue loop1</span><br><span class="line">	j output</span><br><span class="line">	</span><br><span class="line">special:</span><br><span class="line">	la $a0,input_int_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	li $v0,5  </span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	#for(int i=0;i&lt;num;i++)</span><br><span class="line">        #cin&gt;&gt;arr[i];</span><br><span class="line">        </span><br><span class="line">        move $t0,$t7 #$t0 is i</span><br><span class="line">        sll $t0,$t0,2 #i become byte offset</span><br><span class="line">        move $t1,$t6 #$t1 is &amp;array[0]</span><br><span class="line">        add $t1,$t1,$t0 #$t1 is &amp;array[i]</span><br><span class="line">        sw $v0,0($t1) #cin&gt;&gt;array[i]</span><br><span class="line">	</span><br><span class="line">output:</span><br><span class="line">	</span><br><span class="line">	la $a0,output_msg</span><br><span class="line">	li $v0,4</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	move $t7,$zero</span><br><span class="line">print:</span><br><span class="line">	</span><br><span class="line">	move $t0,$t7</span><br><span class="line">	</span><br><span class="line">	sll $t0,$t0,2</span><br><span class="line">	</span><br><span class="line">	add $t1,$t6,$t0</span><br><span class="line">	</span><br><span class="line">	lw $a0,0($t1) #argument a0</span><br><span class="line">	</span><br><span class="line">	li $v0,1</span><br><span class="line">	syscall</span><br><span class="line">	</span><br><span class="line">	addi $t7,$t7,1</span><br><span class="line">	blt $t7,$t9,print</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/11/14/算法-Sliding-Window/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/14/算法-Sliding-Window/" itemprop="url">算法-(2018-11-14) Sliding Window&Dijkstra枚举</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-14T15:58:00+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="sliding-window-leetcode-239"><a href="#sliding-window-leetcode-239" class="headerlink" title="sliding window leetcode 239"></a>sliding window leetcode 239</h5><p><a href="https://leetcode.com/problems/sliding-window-maximum/description/" target="_blank" rel="noopener">https://leetcode.com/problems/sliding-window-maximum/description/</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">method 1: time complexity O(Nlog(k))</span><br><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">        </span><br><span class="line">        multiset&lt;int&gt;st;</span><br><span class="line">        vector&lt;int&gt;vec;</span><br><span class="line">        list&lt;int&gt; lst;</span><br><span class="line">        for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            if(i-k&gt;=0)&#123;</span><br><span class="line">                int top = lst.front();</span><br><span class="line">                lst.pop_front();</span><br><span class="line">                st.erase(st.find(top));</span><br><span class="line">            &#125;</span><br><span class="line">         </span><br><span class="line">            lst.push_back(nums[i]);</span><br><span class="line">            st.insert(nums[i]);</span><br><span class="line">              if(i-k&gt;=-1)&#123;</span><br><span class="line">                vec.push_back(*st.rbegin());</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return vec;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">method 2</span><br><span class="line"></span><br><span class="line">1. use a deque to store the index in the window , each window must fall in the range(i-k+1,i). so whenever an index smaller than i-k+1,pop_front() to discard the element; </span><br><span class="line"></span><br><span class="line">2. when insert a new element nums[i], compare it with the top of the queue , until q[front]&gt;nums[i] ,that is to say, q[front] is always the max element in the window</span><br><span class="line"></span><br><span class="line">  vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) &#123;</span><br><span class="line">       </span><br><span class="line">         deque&lt;int&gt;dq;</span><br><span class="line">         vector&lt;int&gt;res;</span><br><span class="line">         if(nums.empty())</span><br><span class="line">             return res;</span><br><span class="line">         for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            while(!dq.empty()&amp;&amp;dq.front()&lt;i-k+1)&#123;</span><br><span class="line">                dq.pop_front();</span><br><span class="line">            &#125;</span><br><span class="line">            //remove smaller elements in window</span><br><span class="line">            while(!dq.empty()&amp;&amp;nums[dq.back()]&lt;=nums[i])&#123;</span><br><span class="line">                dq.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">             dq.push_back(i);</span><br><span class="line">             if(i-k+1&gt;=0)&#123;</span><br><span class="line">                 res.push_back(nums[dq.front()]);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         return res;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里sliding window就是移动窗口的时候，每次把最左边的值pop掉，然后不断比较最右边的值与新插入的值，保证新插入的值是最好的candidate，那么窗口最左边的值就会是最大值。</p>
+<p>Kattis</p>
+<p>#include <algorithm></algorithm></p>
+<p>#include <set></set></p>
+<p>#include <iostream></iostream></p>
+<p>#include <queue></queue></p>
+<p>#include <vector></vector></p>
+<p>#include <string></string></p>
+<p>#include <map></map></p>
+<p>using namespace std;</p>
+<p>struct edge{<br>    int from;<br>    int to;<br>    int weight;<br>};</p>
+<p>typedef pair&lt;int,int&gt; ip;</p>
+<p>#define INF 0x3f3f3f3f</p>
+<p>void dijkstra(vector&lt;vector<ip>&gt;&amp;adj,vector<int>&amp;dist,int source){</int></ip></p>
+<pre><code>priority_queue&lt;ip,vector&lt;ip&gt;,greater&lt;ip&gt;&gt; q;
+q.push({0,source});
+dist[source] = 0;
+while(!q.empty()){
+    auto top = q.top();
+    q.pop();
+    int u = top.second;
+    for(auto p:adj[u]){
+        int v = p.first;
+        int weight = p.second;
+        if(dist[v]==INF||dist[v]&gt;dist[u]+weight){
+            dist[v] = dist[u]+weight;
+            q.push(make_pair(dist[v],v));
+        }
+    }
+}
+</code></pre><p>}</p>
+<p><a href="https://open.kattis.com/problems/flowerytrails" target="_blank" rel="noopener">https://open.kattis.com/problems/flowerytrails</a></p>
+<p><strong><em>对于有多条最短路，并且求所有最短路的路径之和</em></strong></p>
+<p>1.分别对起始点和终点跑DIjkstra</p>
+<p>2.枚举每一条初始点与终点分别到这条边距离，分别为d1,d2，如果d1+d2+w==shortestPath,则ans+=w;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int P,T;</span><br><span class="line">    cin&gt;&gt;P&gt;&gt;T;</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; adj(P);</span><br><span class="line">    vector&lt;vector&lt;ip&gt;&gt; parent(P);</span><br><span class="line">    vector&lt;int&gt;distStart(P,INF);</span><br><span class="line">    vector&lt;int&gt;distEnd(P,INF);</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;edgeVec;</span><br><span class="line"></span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from,to,w;</span><br><span class="line">        cin&gt;&gt;from&gt;&gt;to&gt;&gt;w;</span><br><span class="line">        edgeVec.push_back(make_tuple(from,to,w));</span><br><span class="line">        adj[from].push_back(make_pair(to,w));</span><br><span class="line">        adj[to].push_back(make_pair(from,w));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dijkstra(adj,distStart,0);</span><br><span class="line">    dijkstra(adj,distEnd,P-1);</span><br><span class="line"></span><br><span class="line">    int shortestPath = distStart[P-1];</span><br><span class="line">    int ans=0;</span><br><span class="line">    for(int i=0;i&lt;T;i++)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(edgeVec[i]);</span><br><span class="line">        int to = get&lt;1&gt;(edgeVec[i]);</span><br><span class="line">        int weight = get&lt;2&gt;(edgeVec[i]);</span><br><span class="line"></span><br><span class="line">        if(distStart[to]+distEnd[from]+weight==shortestPath||</span><br><span class="line">        distStart[from]+distEnd[to]+weight==shortestPath)&#123;</span><br><span class="line">            ans+=weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout&lt;&lt;ans*2;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/29/DS-Graph/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/29/DS-Graph/" itemprop="url">DS-Topo,Bipartite,max flow&min cut</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T10:38:37+08:00">
+                2018-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Topological-Sort"><a href="#Topological-Sort" class="headerlink" title="Topological Sort"></a>Topological Sort</h3><h4 id="ver1-DFS"><a href="#ver1-DFS" class="headerlink" title="ver1 DFS"></a>ver1 DFS</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">for each unvisited node u in V:</span><br><span class="line">	DFS(u)</span><br><span class="line">    for each neighbour h of u:</span><br><span class="line">    	if(!visited)</span><br><span class="line">        	DFS(h)</span><br><span class="line">    finish DFS(u) // push_back u to the list</span><br><span class="line">reverse the list!</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/topo.png" alt="upload successl"></p>
+<h4 id="ver2-BFS-Khan"><a href="#ver2-BFS-Khan" class="headerlink" title="ver2 BFS (Khan)"></a>ver2 BFS (Khan)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">push vertices with no incoming edges to the queue</span><br><span class="line">while(!q.empty):</span><br><span class="line">	u = q.top </span><br><span class="line">    q.pop</span><br><span class="line">    for each neighbor x of u</span><br><span class="line">    	delete u-&gt;x</span><br><span class="line">        if x has no incoming edges,then push x to the queu</span><br><span class="line">//done</span><br></pre></td></tr></table></figure>
+<h3 id="Bipartite"><a href="#Bipartite" class="headerlink" title="Bipartite"></a>Bipartite</h3><h4 id="definition"><a href="#definition" class="headerlink" title="definition"></a>definition</h4><p><img src="/home/alex/图片/def.png" alt="upload successfl"></p>
+<p>1.说白了就是图的所有点可以分为两个set，每个set之间互相没有边，只有set与set之间的点有边。</p>
+<p>2.应用于无向图。</p>
+<h4 id="Bipartite-checker"><a href="#Bipartite-checker" class="headerlink" title="Bipartite checker"></a>Bipartite checker</h4><h4 id="ver1-DFS-1"><a href="#ver1-DFS-1" class="headerlink" title="ver1 DFS"></a>ver1 DFS</h4><p>每个点的邻居与它不同色（就是不同一个set）</p>
+<p>每个点与它的邻居的邻居同色，它邻居的邻居与它在同一个set</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for each unvisited vertex in u:</span><br><span class="line">	dfs(u)</span><br><span class="line">    for each neighbor v in u:</span><br><span class="line">    	if(v is unvisited)</span><br><span class="line">        	assign u as different color</span><br><span class="line">        else if u and v has same color</span><br><span class="line">        	break!</span><br><span class="line">            it is not a bipartite</span><br></pre></td></tr></table></figure>
+<h4 id="ver2-BFS"><a href="#ver2-BFS" class="headerlink" title="ver2 BFS"></a>ver2 BFS</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">push vertexs with no incoming edged to queue</span><br><span class="line">while(!queue.empty())</span><br><span class="line">	u = queue.top</span><br><span class="line">    q.pop</span><br><span class="line">    for v in neighbor in u</span><br><span class="line">    	if(v.color==u.color)</span><br><span class="line">        	exit;//no bipartite</span><br><span class="line">        else if unvisited </span><br><span class="line">        	assign different color to v</span><br></pre></td></tr></table></figure>
+<h3 id="max-flow"><a href="#max-flow" class="headerlink" title="max flow"></a>max flow</h3><h4 id="intro-to-mincut-problem"><a href="#intro-to-mincut-problem" class="headerlink" title="intro to mincut problem"></a>intro to mincut problem</h4><p><img src="/home/alex/图片/2018-46.png" alt="filename already exists, renmed"></p>
+<h4 id="intro-to-maxflow-problem"><a href="#intro-to-maxflow-problem" class="headerlink" title="intro to maxflow problem"></a>intro to maxflow problem</h4><p><img src="/home/alex/图片/2018-47.png" alt="filename already exists, rename"></p>
+<h3 id="Ford-Fulkerson-Algorithm"><a href="#Ford-Fulkerson-Algorithm" class="headerlink" title="Ford-Fulkerson Algorithm"></a>Ford-Fulkerson Algorithm</h3><p>mincut 和 maxflow problem 实际上是等价的，解决了其中一个，另外一个就自然解决了。</p>
+<p><img src="/home/alex/图片/2018-49.png" alt="filename already exists, reamed"></p>
+<p>如上图，a为开始点。各边左数字为capacity，右边数字为flow</p>
+<p>a-&gt;b满了，a-&gt;b有一个cut</p>
+<p>a-&gt;c不满，即（flow&lt;capacity）</p>
+<p>c-&gt;e满了（flow==capacity）</p>
+<p>c-&gt;d满了（flow==capacity）</p>
+<p>设点a,c为集合P，其余所有点为集合P‘</p>
+<p>则capacity of P-&gt;P’ 就等于maximum flow </p>
+<p><img src="/home/alex/图片/2018-50.png" alt="filename already exists, renaed"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Start with 0 flow</span><br><span class="line">while there exists an augmenting path:</span><br><span class="line">	find an augmenting path</span><br><span class="line">    compute bottleneck capacity</span><br><span class="line">    increase flow on that path by bottleneck 	 capacity</span><br></pre></td></tr></table></figure>
+<h5 id="Augmenting-Path"><a href="#Augmenting-Path" class="headerlink" title="Augmenting Path:"></a>Augmenting Path:</h5><p>find an <strong><em>undirected</em></strong> path from s to t such that:</p>
+<pre><code>can increase flow on forward edges(not full.)
+can decrease flow on backward edge(not empty.)
+</code></pre><h5 id="termination"><a href="#termination" class="headerlink" title="termination"></a>termination</h5><p>all paths from s to t are blocked by either a:</p>
+<p>full forward edge</p>
+<p>empty backward edge</p>
+<h5 id="relationship-between-flow-and-cuts"><a href="#relationship-between-flow-and-cuts" class="headerlink" title="relationship between flow and cuts"></a>relationship between flow and cuts</h5><p><img src="/home/alex/图片/flow.png" alt="upload succesful"></p>
+<p><img src="/home/alex/图片/lizi.png" alt="upload succsful"></p>
+<h5 id="network-of-flow"><a href="#network-of-flow" class="headerlink" title="network of flow"></a>network of flow</h5><p><img src="/home/alex/图片/shenzong.png" alt="upload succeful"></p>
+<p><img src="/home/alex/图片/ziyou.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/path.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/pm.png" alt="upload succsful"></p>
+<p><img src="/home/alex/图片/max.png" alt="upload succeful"></p>
+<p>so how to find mincut from maxflow f?</p>
+<p>start from s,find the forward edge that is not full or backward edge that is not empty</p>
+<p><img src="/home/alex/图片/bengk.png" alt="upload succesl"></p>
+<h3 id="Ford-fulkerson算法"><a href="#Ford-fulkerson算法" class="headerlink" title="Ford-fulkerson算法"></a>Ford-fulkerson算法</h3><p>Ford-fulkerson算法就是： 不断在残留网络中找增广路，直到没有为止。</p>
+<p> Time complexity : O(C*E) ,C 是容量和</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Time complexity of the above algorithm is O(max_flow * E). We run a loop while there is an augmenting path. In worst case, we may add 1 unit flow in every iteration. Therefore the time complexity becomes O(max_flow * E).</span><br></pre></td></tr></table></figure>
+<h4 id="Dinic-算法"><a href="#Dinic-算法" class="headerlink" title="Dinic 算法"></a>Dinic 算法</h4><p>Dinic: 每次寻找最短的增广路until找不到，可证明最多能找V次。</p>
+<p>Time complexity : O（V^2E）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1) Initialize residual graph G as given graph.</span><br><span class="line">1) Do BFS of G to construct a level graph (or</span><br><span class="line">   assign levels to vertices) and also check if </span><br><span class="line">   more flow is possible.</span><br><span class="line">    a) If more flow is not possible, then return.</span><br><span class="line">    b) Send multiple flows in G using level graph </span><br><span class="line">       until blocking flow is reached. Here using </span><br><span class="line">       level graph means, in every flow,</span><br><span class="line">       levels of path nodes should be 0, 1, 2...</span><br><span class="line">       (in order) from s to t.</span><br></pre></td></tr></table></figure>
+<p>A flow is <strong><em>Blocking Flow</em></strong> if no more flow can be sent using level graph, i.e., no more s-t path exists such that path vertices have current levels 0, 1, 2… in order. </p>
+<h3 id="Dinic-code-Kattis-maximum-flow"><a href="#Dinic-code-Kattis-maximum-flow" class="headerlink" title="Dinic code-Kattis maximum flow"></a>Dinic code-Kattis maximum flow</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"> #include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdbool.h&gt;</span><br><span class="line">#include &lt;bits/stdc++.h&gt;</span><br><span class="line">#define M 50</span><br><span class="line">#define N 50</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">//https://www.geeksforgeeks.org/dinics-algorithm-maximum-flow/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct Edge &#123;</span><br><span class="line"></span><br><span class="line">    int to;</span><br><span class="line">    unsigned long rev;//store index of reverse edge in adjacency</span><br><span class="line">    int flow, cap;//cap is capacity</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class Dinic &#123;</span><br><span class="line">    using AdjacencyList=vector&lt; vector&lt;Edge&gt; &gt;;</span><br><span class="line"></span><br><span class="line">    bool bfs() &#123;</span><br><span class="line">        queue&lt;int&gt; q;</span><br><span class="line">        q.push(source);</span><br><span class="line">        fill(begin(levels), end(levels), -1);</span><br><span class="line">        levels[source] = 0;</span><br><span class="line">        while (!q.empty()) &#123;</span><br><span class="line">            const auto now = q.front(); q.pop();</span><br><span class="line">            for (const auto&amp; e : adjList[now]) &#123;</span><br><span class="line">                if (levels[e.to] == -1 &amp;&amp; e.flow &lt; e.cap) &#123;</span><br><span class="line">                    q.push(e.to);</span><br><span class="line">                    levels[e.to] = levels[now] + 1;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return levels[sink] != -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //a dfs based function to send flow after BFS</span><br><span class="line">//has figured out that there is a possible flow</span><br><span class="line">//and constructed levels.This function called multiple times for a</span><br><span class="line">//a single call of BFS</span><br><span class="line">//flow: current flow sent by parent function call</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int dfs(int v, int flow) &#123;</span><br><span class="line">        if (flow == 0) return 0;</span><br><span class="line">        if (v == sink) return flow;</span><br><span class="line">        for (int &amp; i = currentEdge[v]; i &lt; (int) adjList[v].size(); ++i) &#123;</span><br><span class="line">            Edge&amp; edge = adjList[v][i];</span><br><span class="line">            if (levels[v] + 1 == levels[edge.to]) &#123;</span><br><span class="line">                const auto minimalFlow = dfs(edge.to, min(flow, edge.cap - edge.flow));</span><br><span class="line">                if (minimalFlow &gt; 0) &#123;</span><br><span class="line">                    //add flow to current edge</span><br><span class="line">                    edge.flow += minimalFlow;</span><br><span class="line">                    //subtract flow from reverse edge</span><br><span class="line">                    adjList[edge.to][edge.rev].flow -= minimalFlow;</span><br><span class="line">                    return minimalFlow;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    vector&lt;int&gt; levels, currentEdge;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line"></span><br><span class="line">    int source, sink;</span><br><span class="line">    AdjacencyList adjList;</span><br><span class="line"></span><br><span class="line">    void AddEdge(int a, int b, int cap) &#123;</span><br><span class="line">        //ADJList动态变化，节省空间</span><br><span class="line">        if (max(a, b) &gt;= (int) adjList.size()) &#123;</span><br><span class="line">            adjList.resize(max(a, b) + 1);</span><br><span class="line">            levels.resize(max(a, b) + 1);</span><br><span class="line">            currentEdge.resize(max(a, b) + 1);</span><br><span class="line">        &#125;</span><br><span class="line">        const auto rev_a = adjList[b].size();</span><br><span class="line">        const auto rev_b = adjList[a].size();</span><br><span class="line">        adjList[a].push_back(&#123;b, rev_a, 0, cap&#125;);</span><br><span class="line">        adjList[b].push_back(&#123;a, rev_b, 0, 0&#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int MaxFlow(int s, int t) &#123;</span><br><span class="line">        source = s;</span><br><span class="line">        sink = t;</span><br><span class="line">        int flow = 0;</span><br><span class="line">        //augment the flow while there is path</span><br><span class="line">        //from source to sink</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            int m = bfs();</span><br><span class="line">            if (!m) break;</span><br><span class="line">            fill(begin(currentEdge), end(currentEdge), 0);</span><br><span class="line">            while (int pushed = dfs(source, INT_MAX)) &#123;</span><br><span class="line">                flow += pushed;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return flow;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int n,m,s,t;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;m&gt;&gt;s&gt;&gt;t;</span><br><span class="line">    Dinic d;</span><br><span class="line">    d.sink =s;</span><br><span class="line">    d.source = t;</span><br><span class="line">    vector&lt;vector&lt;int&gt;&gt;flow(n,vector&lt;int&gt;(n,0));</span><br><span class="line">    for(int i=0;i&lt;m;i++)&#123;</span><br><span class="line">        int u,v,c;</span><br><span class="line">        cin&gt;&gt;u&gt;&gt;v&gt;&gt;c;</span><br><span class="line">        //flow[u][v] = c;</span><br><span class="line">        d.AddEdge(u,v,c);</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;n&lt;&lt;&quot; &quot;&lt;&lt;d.MaxFlow(s,t)&lt;&lt;&quot; &quot;;</span><br><span class="line">    //SIZE is the number of edges used in the solution</span><br><span class="line">    //</span><br><span class="line">    int size = 0;</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;ans;</span><br><span class="line">    for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">        for(auto &amp;e:d.adjList[i])&#123;</span><br><span class="line">            if(e.flow&gt;0)</span><br><span class="line">            &#123;</span><br><span class="line">                size++;</span><br><span class="line">                ans.push_back(&#123;i,e.to,e.flow&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;size&lt;&lt;endl;</span><br><span class="line">    for(auto &amp;t:ans)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(t);</span><br><span class="line">        int to = get&lt;1&gt;(t);</span><br><span class="line">        int f = get&lt;2&gt;(t);</span><br><span class="line">        cout&lt;&lt;from&lt;&lt;&quot; &quot;&lt;&lt;to&lt;&lt;&quot; &quot;&lt;&lt;f&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/stack-and-heap-and-memory-leak/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -868,1350 +2313,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/15/CSAPP-存储层次结构/" itemprop="url">CSAPP 存储层次结构/Cahce</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T06:01:00+08:00">
-                2018-10-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
-                    <span itemprop="name">CSAPP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="存储层次结构概况"><a href="#存储层次结构概况" class="headerlink" title="存储层次结构概况"></a>存储层次结构概况</h3><p><img src="/home/alex/图片/ccc.png" alt="image"></p>
-<h4 id="存储器的特性"><a href="#存储器的特性" class="headerlink" title="存储器的特性"></a>存储器的特性</h4><h5 id="1-非易失性，即断电后不会丢失数据"><a href="#1-非易失性，即断电后不会丢失数据" class="headerlink" title="1.非易失性，即断电后不会丢失数据"></a>1.非易失性，即断电后不会丢失数据</h5><p><img src="/home/alex/图片/bios.png" alt="bios"></p>
-<p>CPU和主存都是易失性，而BIOS和硬盘是非易失的</p>
-<p>通电之后CPU通过BIOS芯片开始执行程序，把硬盘配置好后，再从硬盘读取数据搬运到主存，然后CPU才能够执行程序。</p>
-<h5 id="2-可读可写"><a href="#2-可读可写" class="headerlink" title="2.可读可写"></a>2.可读可写</h5><h5 id="3-随机访问"><a href="#3-随机访问" class="headerlink" title="3.随机访问"></a>3.随机访问</h5><p>访问数据与其位置无关</p>
-<p>主存与BIOS(basic input output system)能够实现随即访问数据。</p>
-<p>但是硬盘则不是。</p>
-<h5 id="4-访问时间"><a href="#4-访问时间" class="headerlink" title="4.访问时间"></a>4.访问时间</h5><p>主存速度高于硬盘访问时间</p>
-<p><img src="/home/alex/图片/DRAM.png" alt="dram"></p>
-<p>DRAM读取数据时间是CPU读取时间的一百倍，因此执行一条指令的时候非常的慢！</p>
-<p>因此考虑在CPU 和DRAM之间添加一个SRAM，使得CPU所需要的程序和数据大部分时间存放在Cache中，大大缩短执行指令时候所需要的时间周期。</p>
-<p><img src="/home/alex/图片/MH.png" alt="MH"></p>
-<h3 id="DRAM"><a href="#DRAM" class="headerlink" title="DRAM"></a>DRAM</h3><p>右下角就是内存条，通常也叫内存模组，是由若干个DRAM芯片组成的，核心就是左图的内存阵列，从外界输入行列信号，就可以读取一个基本存储单元，如红圈每个存储单元有若干个bit，通常是4个或者8个，每一个放大来看如右上角电路图所示。</p>
-<p><img src="/home/alex/图片/2018-9.png" alt="a"></p>
-<p>基本存储单元</p>
-<p><img src="/home/alex/图片/refresh.png" alt="upload successfu"></p>
-<p>通过存储的电容来表示存储的bit信息，对SDRAM的读写，主要体现在电容的冲放电，而这个是很难再做提高的。</p>
-<p><img src="/home/alex/图片/SRAM.png" alt="upl"></p>
-<p>SRAM采取的是晶体管开关存储，远比电容充电放电要快，所以SRAM比DRAM要快，现代CPU的高速缓存通常用SRAM实现</p>
-<p><img src="/home/alex/图片/upl2.png" alt="upl2"></p>
-<h4 id="内存工作原理"><a href="#内存工作原理" class="headerlink" title="内存工作原理"></a>内存工作原理</h4><p>第一步，申请系统总线，获得总线控制权后，会把地址送到内存控制器中。</p>
-<p>然后内存控制器会把地址分解为行地址和列地址</p>
-<p><img src="/home/alex/图片/SDRAM.png" alt="SDRAM"></p>
-<p>第二步 行访问</p>
-<p>内存控制器向SDRAM发起访存操作</p>
-<p><img src="/home/alex/图片/hangfangwen.png" alt="SDRAM2"></p>
-<p>这一行当中所有存储单元的信号通过放大器之后会放在一个缓冲区当中。这就是激活/行访问</p>
-<p>第三步 列访问<br><img src="/home/alex/图片/column.png" alt="COLUMN"></p>
-<p>第四步 送回CPU</p>
-<p><img src="/home/alex/图片/CAIYANG.png" alt="CAIYANG"></p>
-<p>内存控制器把采样到的数据送回给CPU</p>
-<p>CPU之后又发送地址信号，如果不是同一行，则就要把激活的行关闭。</p>
-<p>这个过程叫做预充电</p>
-<h5 id="SDRAM的关键性能参数："><a href="#SDRAM的关键性能参数：" class="headerlink" title="SDRAM的关键性能参数："></a>SDRAM的关键性能参数：</h5><p>1.tRCD row to column delay  从行选到列选的延迟时间</p>
-<p>2.CL CAS Latency  从列选到数据输出的延迟周期数</p>
-<p>3.tRP 行预充电时间</p>
-<p>数据个数就等同于内存条上DRAM芯片个数<br><img src="/home/alex/图片/gap.png" alt="upload successfu"></p>
-<p>所以整个过程的周期并不等于7.5ns！</p>
-<p>DDR SDRAM 比 SDR SDRAM 要快，原因是前者一次能比后者取多两倍的数据</p>
-<p>DDR是数据传输的方式，不等同于内存</p>
-<p><img src="/home/alex/图片/data.png" alt="upload successf"></p>
-<h5 id="DDR-与-SDR-对比"><a href="#DDR-与-SDR-对比" class="headerlink" title="DDR 与 SDR 对比"></a>DDR 与 SDR 对比</h5><p><img src="/home/alex/图片/DDR.png" alt="ddr"></p>
-<p>DDR由于一次读取两个数据，所以tRCD和CL变慢了，但是每个周期能同时取两个数据。<br>这里的带宽就是由每个周期取得的数据计算出来的。</p>
-<p>衡量CPU有两个指标</p>
-<h6 id="访存带宽"><a href="#访存带宽" class="headerlink" title="访存带宽"></a>访存带宽</h6><p>单位时间内存储器所存取的信息量。</p>
-<h6 id="访存延迟"><a href="#访存延迟" class="headerlink" title="访存延迟"></a>访存延迟</h6><p>读出第一个数据所需要的时间。</p>
-<h4 id="Cache工作原理"><a href="#Cache工作原理" class="headerlink" title="Cache工作原理"></a>Cache工作原理</h4><h5 id="空间局部性："><a href="#空间局部性：" class="headerlink" title="空间局部性："></a>空间局部性：</h5><p>空间局部性是一旦一个指令一个存储单元被访问，那么它附近的单元也将很快被访问</p>
-<h5 id="时间局部性："><a href="#时间局部性：" class="headerlink" title="时间局部性："></a>时间局部性：</h5><p>时间局部性是一旦一个指令被执行了，则在不久的将来，它可能再被执行。</p>
-<p><img src="/home/alex/图片/a.png" alt="uploa"></p>
-<p><img src="/home/alex/图片/cache.png" alt="upload succ"></p>
-<h5 id="操作过程"><a href="#操作过程" class="headerlink" title="操作过程"></a>操作过程</h5><p><img src="/home/alex/图片/cao.png" alt="uploa"></p>
-<p>怎么把虚拟地址转化为实际地址是个问题</p>
-<h5 id="Cache读操作"><a href="#Cache读操作" class="headerlink" title="Cache读操作"></a>Cache读操作</h5><p>1.第一条指令，由于一开始Cache是空的，所以没有命中。因此Cache访问主存。</p>
-<p>之所以分配给表项1，是由地址倒数第二个数字决定的。（不看H）</p>
-<p>然后前面的所有项(20)放到标签处。</p>
-<p><img src="/home/alex/图片/2018-10.png" alt="filename already exists, ren"></p>
-<p>2.第二种情况，没有命中，因为表被占用了。</p>
-<p>4011H，先检查有效位1，发现原来标签是20H，因此把地址替换掉。</p>
-<p><img src="/home/alex/图片/oc.png" alt="upload success"></p>
-<h5 id="Cache写操作"><a href="#Cache写操作" class="headerlink" title="Cache写操作"></a>Cache写操作</h5><p><img src="/home/alex/图片/write.png" alt="write"></p>
-<h4 id="平均访存时间"><a href="#平均访存时间" class="headerlink" title="平均访存时间"></a>平均访存时间</h4><p><img src="/home/alex/图片/memory.png" alt="visit"></p>
-<p><img src="/home/alex/图片/策略.png" alt="upload successfu"></p>
-<p>Cache映射策略，直接映射会遇到这么一个问题：</p>
-<p>就是存储器会每隔八个地址把数据映射到Cache中，如果程序交替访问这两个数据，那么每次访问都会访问主存，把地址写入到Cache中，这样性能比没有Cache的时候还要差。</p>
-<p>也可以通过二路组，四路组相联策略，但是代价是每次取数据的时候，要取多个标签比较，如直接映射只需要取一个标签出来，如图中的0，而二路组则要2个。而且这样会使得硬件电路变得复杂化，增加了命中时间，得不偿失。</p>
-<p><img src="/home/alex/图片/visi.png" alt="upload succe"></p>
-<h4 id="常见Cache替换算法"><a href="#常见Cache替换算法" class="headerlink" title="常见Cache替换算法"></a>常见Cache替换算法</h4><p><img src="/home/alex/图片/x86.png" alt="upload succ"></p>
-<p>LRU的实现：</p>
-<p>1.队列</p>
-<p>2.用LRUnumber，例如初始化每块的LRUnumber为0，当要访问这块Cache的时候重新设置为0，然后其他块++1，然后LRUnumber最大的那个block就是最近最少使用的块。</p>
-<p>计算机领域单位使用情况</p>
-<p><img src="/home/alex/图片/dan.png" alt="upload succesful"></p>
-<h3 id="Cache-映射"><a href="#Cache-映射" class="headerlink" title="Cache 映射"></a>Cache 映射</h3><h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p><img src="/home/alex/图片/mapping.png" alt="map"></p>
-<p>Cache 大小：</p>
-<p>假设每个槽，就是cache的每个block能装512个(2^9)byte，说明b = 9</p>
-<p>然后一共有16个sets，说明 s = 4，</p>
-<p>因此cache地址一共是（s+b = 13位）</p>
-<p>主存的第0块，第16块，第32块。。都能放在cache的0槽当中，但是怎么知道<br>是哪个块群的呢?因此用标记号来说明，那么标记号该有几位？就是块群的个数2^7=128</p>
-<p>所以标记号就是7位，标记号用来指出对应行来自于哪个块群。</p>
-<p>主存大小：<br>2048 块 <em> 512B/块 = 2^11 </em> 2^ 9 = 2^20</p>
-<p>所以主存地址一共20位，包含了9位的块内地址，4位cache索引，剩下7位主存标记。<br>主存一共2048（2^11）块，所以主存标记和cache索引用来标记主存的具体块号。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">例如：给定地址 0220CH</span><br><span class="line"></span><br><span class="line">转化为二进制 0000 0010 0001 0000 1100</span><br><span class="line"></span><br><span class="line">前7位 0000 001  决定来自于块群 1</span><br><span class="line"></span><br><span class="line">中间4位 0001 决定来自块群的具体哪个块  第一块</span><br><span class="line"></span><br><span class="line">后面9位，块内地址 决定了块内的哪个单元 第12个单元</span><br></pre></td></tr></table></figure>
-<p><strong>所以大概过程</strong></p>
-<p>拿来一个主存地址，然后划分为三段，根据中间索引号来寻找cache对应槽，然后看<br>valid位和标记位，如果valid=0，说明里面是空的，冷不命中，要从主存把地址送过来。如果valid=1，而且主存标记刚好是标记位，就根据块内地址在槽内寻找对应单元。</p>
-<p><img src="/home/alex/图片/youxiao.png" alt="upload succeul"></p>
-<p>给定32位主存地址，划分为三部分。</p>
-<p>首先由于块大小为16（2^4）B，因此b = 4,偏移位 4位</p>
-<p>索引位呢？  中间的索引位决定于cache有多少行</p>
-<p>因此行数=64KB/16B = 4K = 2^12 行</p>
-<p>因此中间索引位一共有12位</p>
-<p>剩下16位就是tag位，标记位</p>
-<p>给定内存地址，先由中间12行找到cache对应的行，看tag位与valid位是否满足条件，（valid=1说明这一行有数据）满足条件就hit，hit了就根据偏移位寻找对应的数据。</p>
-<p>块大小位16B，即128bit，使用多路选择器MUX来选择取哪个32位的data。</p>
-<p>11 最左边 10 中左 01 中右 00最右边</p>
-<p>如果取的是int型（word），由于word alignment，即内存地址最后的两位其实是不需要理会的。那么只看第三第四位，就是所谓的block offset。决定所取int放在哪个block.</p>
-<p>而如果要取的是char型，要在取了word之后再通过一个MUX，根据主存地址最后两位（Byte Offset）来得到要取哪个byte。</p>
-<p><img src="/home/alex/图片/ex.png" alt="upload successl"></p>
-<h3 id="cache-容量"><a href="#cache-容量" class="headerlink" title="cache 容量"></a>cache 容量</h3><p>上图中容量为  行数 X（每一行的bit数）</p>
-<p>（16+1）<em>4K + 64K </em> 8 = 72.5KB</p>
-<p>数据 64KB/72.5KB   =88.3%</p>
-<p>有一个64行，块容量为16bytes的cache</p>
-<p>十进制地址 1200应该映射到哪一行？</p>
-<p>方法一： 【1200/16】mod 64  = 11</p>
-<p>方法二： 1200转换为二进制 0100 1011 0000</p>
-<p>索引号 = 6 ，即看中间存的是哪一行，001011 就是 11</p>
-<p>实现一个直接映射，16K行数据，块大小为1个字（4B），32位主存地址的cache需要多少容量？</p>
-<p>16K = 2^14 行数据，即中间索引有14位</p>
-<p>byte =4B ，b = 2</p>
-<p>所以tag = 32-2-14  =16</p>
-<p>因此16K<em>（1+16）+16K</em>4B  =16K*(1+16+32)  =784Kbits<br>(1+16)中，1是valid位</p>
-<p>特点</p>
-<p><img src="/home/alex/图片/quan.png" alt="upload succesl"></p>
-<h4 id="全相联映射方式"><a href="#全相联映射方式" class="headerlink" title="全相联映射方式"></a>全相联映射方式</h4><p><img src="/home/alex/图片/this.png" alt="upload successf"></p>
-<p>给定地址，根据标记主存块号找到数据所在主存的哪一块，00000001111就是第15块，但是不知道在Cache的哪个槽中，所以只能一个一个槽比较。所以叫按内容访问。</p>
-<p>为什么没有cache索引字段？</p>
-<p>因为其可以任意映射到某一个行当中.</p>
-<p><img src="/home/alex/图片/2018-16.png" alt="filename already exists, remed"></p>
-<p>优点就是没有冲突，时间相对加快，但是tag长了，而且每一行都有一个比较器，比较时间长了，相当于命中时间会加长，而且比较成本也增加了，cache容量也变大了！</p>
-<p><img src="/home/alex/图片/ans.png" alt="upload successf"></p>
-<p>前8位标记表示cache属于哪个组群</p>
-<p>中间3位表示属于哪个组</p>
-<p>后面9位表示偏移量，表示要找到那个数据</p>
-<p>Eg: 地址 0000 0001 001 00000 1100</p>
-<p>前8位表示在第一组群 中间三位（cache索引）表示cache的第一个set  ，就是第一个族群的第001块，就是第九块，把这一块映射到cache的第一组当中。</p>
-<p><img src="/home/alex/图片/2018-17.png" alt="filename already exists, renam"></p>
-<p>两个比较器并向同时比较，最多有一个cache的tag与主存地址的tag相同，OR选择器的结果就是hit的结果。</p>
-<p>通过多路选择器把所要找的cache data的block找出来！</p>
-<p><img src="/home/alex/图片/bome.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/zombi.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/over.png" alt="upload succes"></p>
-<p><img src="/home/alex/图片/inyourhead.png" alt="upload succe"></p>
-<p>顺便讲一下什么叫按字节编址，按字编址。</p>
-<p>字 word = 4byte</p>
-<p>字节 byte = 8bit</p>
-<p>位 bit</p>
-<p><img src="/home/alex/图片/ra.png" alt="upload success"></p>
-<p><img src="/home/alex/图片/shell.png" alt="upload succe"></p>
-<p><img src="/home/alex/图片/sudden.png" alt="upload succes"></p>
-<p><img src="/home/alex/图片/animal.png" alt="upload succesl"></p>
-<p><img src="/home/alex/图片/am.png" alt="upload success"></p>
-<p><img src="/home/alex/图片/dlearning.png" alt="upload succe"></p>
-<p><img src="/home/alex/图片/today.png" alt="upload successf"></p>
-<p>上面的图怎么看？</p>
-<pre><code>1. 每一block64个字。访问第0block，冷不命中，放到第0组。那哪一行呢？都可以，一般按照顺序来，因此放在第0组第0行。然后第0组所有元素就都在第0组第0行中取。
-2. 然后访问第1组，冷不命中，放在第1组第0行。第0，16，32，48block都放在第0组，分别放在第0，1，2，3行。
-3. 当取到第64block的时候，miss，根据LRU把第0组行第0行替换掉。一直到第67block结束第一次循环。
-4. 然后来到第二次循环，想要找第0组，但是已经被刚才第64组替换掉了，而且第0block只能放在第0组，因此根据LRU，替换掉第0组第一行，一直到第四个block的时候，这时候第4block放在第4组的的第0行，没有miss。
-5. 由于第16，17，18，19个block已经被替换，当访问第16,17,18,19个block的时候，根据LRU，分别吧0，1，2，3组的第二行的32，33，34，35block替换。同理，当访问32，33，34，35block的时候，又把第三行的48495051替换。同理，访问48，49，50，51的时候，又miss，又把第一行的对应64，65，66，67替换掉。
-6. 所以第二次-第九次循环，每次都有5*4=20次miss
-</code></pre><p>命中率： (43520-68-9*20)/43520 = 99.43%</p>
-<h4 id="Cache读和写的一致性问题"><a href="#Cache读和写的一致性问题" class="headerlink" title="Cache读和写的一致性问题"></a>Cache读和写的一致性问题</h4><p><img src="/home/alex/图片/we.png" alt="upload successl"></p>
-<p><img src="/home/alex/图片/way.png" alt="upload succeful"></p>
-<p>同时写cache和主存，但是主存要慢得多，这样写完了cache之后要等待主存。<br>所以可以增加一个buffer 写缓冲。<br>就是CPU可以把数据写到cache中。写完了之后不等写道主存，继续写cache，写到主存的工作就交给write buffer，由memory controller传回到DRAM</p>
-<p><img src="/home/alex/图片/para.png" alt="upload successf"></p>
-<p><img src="/home/alex/图片/haleluya.png" alt="upload successful"></p>
-<p><img src="/home/alex/图片/hale.png" alt="upload successful"></p>
-<p>写穿透就是同时写cache和主存，写分配就是同时更新主存和cache<br>Write Trough 算法<br>如果能够找到i，使得TAG（i） == X,<br>如果是读操作，就直接返回块内地址DATA[i]；<br>写操作就除了要写块内地址，还要写主存</p>
-<p>如果miss掉<br>读操作就是读主存的数据，然后打标签，送到cache<br>写操作就是先写主存，然后打标签，最后在块内new一个新的数据</p>
-<p>Cache越大越好，命中率越高，但是越大的话成本越高<br>Block 不能太大，也不能太小</p>
-<h4 id="Cache-数目"><a href="#Cache-数目" class="headerlink" title="Cache 数目"></a>Cache 数目</h4><p><img src="/home/alex/图片/shumu.png" alt="upload successl"></p>
-<p>L1，分立cache，为了实现流水线，同时取数据和指令，提高并行性。</p>
-<p>第二个问题：<br>因为他有L1，L2两个cache，即使不命中也没有关系</p>
-<p>第三个问题：最后Level的cache与指令流无关，不需要考虑并行。因此优先考虑空间的利用率，同时命中率比命中时间更重要。</p>
-<p>L1比L2容量小，（越大命中率越高）比L2快，命中时间短，如果L1不命中，只好寄托在L2身上，因此L2的命中率就显得特别重要。</p>
-<h4 id="Cache-实现举例"><a href="#Cache-实现举例" class="headerlink" title="Cache 实现举例"></a>Cache 实现举例</h4><p>用2个状态位：</p>
-<pre><code>S: SHARE
-E：EXCLUSIVE
-M: MODIFIED （是否dirty bit）
-VALID 是否有效
-</code></pre><p>LRU用1位： </p>
-<p><img src="/home/alex/图片/silence.png" alt="upload succel"></p>
-<h4 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h4><p><img src="/home/alex/图片/eg.png" alt="upload successful"></p>
-<h5 id="1-不考虑一致性：dirty-bit-；替换控制即LRU位"><a href="#1-不考虑一致性：dirty-bit-；替换控制即LRU位" class="headerlink" title="1. 不考虑一致性：dirty bit ；替换控制即LRU位"></a>1. 不考虑一致性：dirty bit ；替换控制即LRU位</h5><p>256MB 表示主存地址 28位</p>
-<p>64B – b = 6</p>
-<p>Cache 8行 -中间索引位 3</p>
-<p>Tag位 19位 别忘了要考虑valid位</p>
-<p>（1+19）<em>8 + 64</em>8*8 （每行一个block）(64B是64byte，1byte 8 bits)</p>
-<h5 id="2-64B-16个元素-一行16个元素"><a href="#2-64B-16个元素-一行16个元素" class="headerlink" title="2. 64B-16个元素 一行16个元素"></a>2. 64B-16个元素 一行16个元素</h5><p>A[0][31] 地址 320+4*31 = 444 [444/64] = 6</p>
-<p>因此主存块号为6，6mod8 = 6因此在第六行。</p>
-<p>或者444 为0000110111100B 中间三位是索引位，就是第六行</p>
-<p>而A[1][1] = (320+256*4+8 )/64 mod 8=5 同理也可以把地址转化为二进制来计算。</p>
-<h5 id="3-A-每隔16元素一次冷不命中，命中率（15-16）"><a href="#3-A-每隔16元素一次冷不命中，命中率（15-16）" class="headerlink" title="3.A 每隔16元素一次冷不命中，命中率（15/16）"></a>3.A 每隔16元素一次冷不命中，命中率（15/16）</h5><p>B 每次相隔256个元素，256/16 = 16 块，16mod 8=0，每次访问后面数组元素的时候，总会把上一次装入到cache中的主存块覆盖掉。</p>
-<p>所以每次访问的时候都会发生冲突，替换，因此没有一次命中。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/12/Program-Optimization/" itemprop="url">Program Optimization && Pipeline &&Architecture Lab</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T07:39:00+08:00">
-                2018-10-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ICS/" itemprop="url" rel="index">
-                    <span itemprop="name">ICS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="General-Useful-Optimizations"><a href="#General-Useful-Optimizations" class="headerlink" title="General Useful Optimizations"></a>General Useful Optimizations</h3><h4 id="Code-Motion"><a href="#Code-Motion" class="headerlink" title="Code Motion"></a>Code Motion</h4><h5 id="reduce-the-frequency-where-computation-performed"><a href="#reduce-the-frequency-where-computation-performed" class="headerlink" title="reduce the frequency where computation performed"></a>reduce the frequency where computation performed</h5><p><img src="/home/alex/图片/ics1.png" alt="ics1"></p>
-<p>try to use shift,add to replace multiply</p>
-<h4 id="Reduction-on-strength"><a href="#Reduction-on-strength" class="headerlink" title="Reduction on strength"></a>Reduction on strength</h4><p><img src="/home/alex/图片/ics2.png" alt="ics2"></p>
-<p>leaq (%rsi,%rcx),%rcx means %rcx = %rcx+%rsi</p>
-<p>%rcx now is n  </p>
-<p>%rsi now is i*n+j</p>
-<h4 id="Share-common-Subexpressions"><a href="#Share-common-Subexpressions" class="headerlink" title="Share common Subexpressions"></a>Share common Subexpressions</h4><p><img src="/home/alex/图片/ics3.png" alt="ics3"></p>
-<p>#### </p>
-<p>possibly the memory of A and B overlap and the change of B might affect A</p>
-<p><img src="/home/alex/图片/ics4.png" alt="ics4"></p>
-<p>Memory aliasing, closely related (arguably synonymous) to pointer aliasing, means that more than one variable name points to the same underlying stored value. </p>
-<h4 id="Benchmark-Computation"><a href="#Benchmark-Computation" class="headerlink" title="Benchmark Computation"></a>Benchmark Computation</h4><p>Cycles Per Element(CPE)</p>
-<p>Length = n</p>
-<p>CPE  =cycles per OP</p>
-<p>T = CPE*n+Overhead??  what is overhead?</p>
-<p><img src="/home/alex/图片/ics7.png" alt="ics7"></p>
-<p><img src="/home/alex/图片/ics5.png" alt="ics5"></p>
-<p>You don’t need to use get_vec in each loop,so avoid bound checking</p>
-<p><img src="/home/alex/图片/ics6.png" alt="ics6"></p>
-<h3 id="流水线的冒险"><a href="#流水线的冒险" class="headerlink" title="流水线的冒险"></a>流水线的冒险</h3><p>阻止下一条指令在下一个时钟周期开始执行的情况</p>
-<p>1.结构冒险</p>
-<p>所需要的硬件部件正在为之前的指令工作</p>
-<p>2.数据冒险</p>
-<p>需要等待之前的指令来完成数据的读写</p>
-<p>3.控制冒险</p>
-<p>需要根据之前指令的结果决定下一步的行为</p>
-<h4 id="结构冒险"><a href="#结构冒险" class="headerlink" title="结构冒险"></a>结构冒险</h4><p>执行指令的硬件发生争抢</p>
-<p><img src="/home/alex/图片/ics10.png" alt="ics10"></p>
-<h6 id="解决方案一：-冒泡停顿"><a href="#解决方案一：-冒泡停顿" class="headerlink" title="解决方案一：  冒泡停顿"></a>解决方案一：  冒泡停顿</h6><p>但如果连续出现冒泡停顿，则会影响指令执行的效率</p>
-<p><img src="/home/alex/图片/ics11.png" alt="ics11"></p>
-<h6 id="解决方案二：-把数据和指令放在不同的存储器"><a href="#解决方案二：-把数据和指令放在不同的存储器" class="headerlink" title="解决方案二：  把数据和指令放在不同的存储器"></a>解决方案二：  把数据和指令放在不同的存储器</h6><p>但值得注意的是，冯诺伊曼结构要求内存（主存储器）同时存放<br>数据和指令，而只是在CPU的高速缓存（cache）当中，数据和指令可以分开存放</p>
-<p>这个在设计CPU就已经处理好了，但是如果要设计一个新的处理器，这是一个要考虑的问题</p>
-<p><img src="/home/alex/图片/ics12.png" alt="ics12"></p>
-<h4 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h4><p>解决方法1：<br><img src="/home/alex/图片/ics13.png" alt="ics13"></p>
-<p>解决方法2：</p>
-<p>冲突产生原因是add 指令 需要 read 上一条指令write的结果（$t0）</p>
-<p>但其实，$t0的值已经在ALU阶段就已经计算好，而add指令中，其实不是非得在<br>R阶段读$t0，只要在ALU阶段读取到数值就行。</p>
-<p>那么就可以在sub指令中，把ALU计算得到的结果$t0送到流水线寄存器当中，<br>然后再送到add指令的ALU中。</p>
-<p><img src="/home/alex/图片/ics15.png" alt="ics15"></p>
-<p>从硬件角度来看，我们要这样修改：</p>
-<p><img src="/home/alex/图片/ics16.png" alt="ics16"></p>
-<p>sub先执行，所以在前面，add后执行，所以在后面</p>
-<p>add指令需要用到前一条指令的结果，因此设置了绿色的旁路，<br>以是否有数据冒险情况作为激活信号。</p>
-<p><img src="/home/alex/图片/ics17.png" alt="ics17"></p>
-<p>第二种情况</p>
-<p>对应下图</p>
-<p><img src="/home/alex/图片/ics18.png" alt="ics18"></p>
-<p>第三条指令需要用到第一条指令得到的结果，第一条的$t0在DMEM与write back阶段之间，所以呢，就是对应上上图，在访存阶段末期，通过旁路把数据传回给ALU</p>
-<p>如果 instruction 3也需要用到$t0，因为R阶段之前，第一条指令刚好完成了write back，因此可以正常运行</p>
-<h5 id="load-use冒险，不能用数据前递来解决"><a href="#load-use冒险，不能用数据前递来解决" class="headerlink" title="load-use冒险，不能用数据前递来解决"></a>load-use冒险，不能用数据前递来解决</h5><p>如下图，因为or需要用到上一条指令的$t1,但是or至少要在ALU阶段读取$t1的数值，然而lw只能在完成了访存阶段后才能把结果写回到$t1,因此只能通过冒泡来延后or指令的执行时间了。</p>
-<p><img src="/home/alex/图片/ics19.png" alt="ics19"></p>
-<h4 id="控制冒险"><a href="#控制冒险" class="headerlink" title="控制冒险"></a>控制冒险</h4><p>要到ALU阶段才能决定是否要取分支</p>
-<p><img src="/home/alex/图片/ics14.png" alt="ics14"></p>
-<h5 id="转移指令对流水线的影响"><a href="#转移指令对流水线的影响" class="headerlink" title="转移指令对流水线的影响"></a>转移指令对流水线的影响</h5><p><img src="/home/alex/图片/ics21.png" alt="ics21"></p>
-<p>beq指令只有在进行完执行（ALU）阶段之后才能确定是否发生跳转，加入跳转条件成立，则说明lw sw是不应该取的。这时跳回sub指令，导致性能被浪费。</p>
-<h5 id="转移指令的分类"><a href="#转移指令的分类" class="headerlink" title="转移指令的分类"></a>转移指令的分类</h5><p><img src="/home/alex/图片/ics22.png" alt="ics22"></p>
-<h6 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h6><p>j指令在取指的时候就能判断是否为j指令，然后取出后26位，加上末两位的00，<br>然后在PC - update 阶段就能取PC+4的前四位，这些操作都能在一个时钟周期内完成。</p>
-<p><img src="/home/alex/图片/ics23.png" alt="ics23"></p>
-<p><img src="/home/alex/图片/ics24.png" alt="ics24"></p>
-<p><img src="/home/alex/图片/ics25.png" alt="ics25"></p>
-<p><img src="/home/alex/图片/ics26.png" alt="ics26"></p>
-<p>译码阶段进行R【rs】，R【rt】的读取，在执行阶段进行两数的比较<br><img src="/home/alex/图片/ics27.png" alt="ics27"></p>
-<p>但实际上进行减法不需要ALU那么复杂的部件，可以在译码阶段进行一点小改动</p>
-<p><img src="/home/alex/图片/ics28.png" alt="ics28"></p>
-<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p><img src="/home/alex/图片/ics29.png" alt="ics29"></p>
-<p>为了避免停顿，可以把转移指令的前一条与转移指令无关的指令（xor）移到转移指令的下一条。</p>
-<p><img src="/home/alex/图片/delay.png" alt="ics30"></p>
-<h3 id="Arch-Lab"><a href="#Arch-Lab" class="headerlink" title="Arch Lab"></a>Arch Lab</h3><p>Part C </p>
-<p>利用循环展开技术与加载使用冒险</p>
-<p>加载使用冒险：</p>
-<p><img src="/home/alex/图片/bubble.png" alt="bb"></p>
-<p>因此可以在mrmovl后添加另外一条mrmovl指令，来抵消流水线停顿，同时也使得下一次操作提前取值。</p>
-<p>循环展开大意就是减少循环次数，在每次循环的时候同时进行多次操作。同时也可以配合并行，并行就是例如把每次累加操作的的结果分为两部分，如奇数项累加成S1，偶数项累加成S2，最后结果就是S1+S2。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#You can modify this portion</span><br><span class="line">    # Loop header</span><br><span class="line">    xorq %rax,%rax      # count = 0;</span><br><span class="line">    iaddq $-2,%rdx</span><br><span class="line">    andq %rdx,%rdx      # len &lt;= 0?</span><br><span class="line">    jl newLoop      # if so, goto Done:</span><br><span class="line"></span><br><span class="line">Loop:   mrmovq (%rdi), %r10 # read val from src...</span><br><span class="line">    mrmovq 8(%rdi),%r11</span><br><span class="line">    rmmovq %r10, (%rsi) # ...and store it to dst</span><br><span class="line">    andq %r10, %r10     # val &lt;= 0?</span><br><span class="line">    jle Npos        # if so, goto Npos:</span><br><span class="line">    iaddq $1, %rax      # count++</span><br><span class="line">Npos:</span><br><span class="line">    rmmovq %r11,8(%rsi)</span><br><span class="line">    andq %r11,%r11</span><br><span class="line">    jle judge</span><br><span class="line">    iaddq $1,%rax</span><br><span class="line"></span><br><span class="line">judge:</span><br><span class="line">    iaddq $16,%rdi</span><br><span class="line">    iaddq $16,%rsi</span><br><span class="line">    iaddq $-2,%rdx</span><br><span class="line">    jge Loop</span><br><span class="line"></span><br><span class="line">newLoop:</span><br><span class="line">    iaddq $2,%rdx</span><br><span class="line">    je Done</span><br><span class="line">    mrmovq (%rdi),%r10</span><br><span class="line">    rmmovq %r10,(%rsi)</span><br><span class="line">    andq %r10,%r10</span><br><span class="line">    jle Done</span><br><span class="line">    iaddq $1,%rax</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/09/CSAPP-第四章-处理器体系结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/09/CSAPP-第四章-处理器体系结构/" itemprop="url">CSAPP 第四章 处理器体系结构——Y86流水线基本原理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T03:18:00+08:00">
-                2018-10-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Y86-流水线的实现"><a href="#Y86-流水线的实现" class="headerlink" title="Y86 流水线的实现"></a>Y86 流水线的实现</h2><h3 id="PC的计算"><a href="#PC的计算" class="headerlink" title="PC的计算"></a>PC的计算</h3><p>在非流水线结构中，计算PC是在时间周期结束的时候进行的。</p>
-<p>而在流水线实现中，计算PC作为指令执行的第一步。</p>
-<h3 id="Fetch-阶段"><a href="#Fetch-阶段" class="headerlink" title="Fetch 阶段"></a>Fetch 阶段</h3><p>三种情况：</p>
-<p>1.预测错误，从流水线寄存器M（M_valA）读出该指令valP的数值，即下一条指令的地址。</p>
-<p>2.RET 指令 W_valM 从流水线寄存器读出返回地址（访存）。</p>
-<p>3.其他情况会使用存放在流水线寄存器F中的PC的预测值。</p>
-<p>HCL代码如下：</p>
-<p><img src="/home/alex/图片/2018-7.png" alt="ics24"></p>
-<p>其中 f_predPC</p>
-<p><img src="/home/alex/图片/ICS22.png" alt="ics22"></p>
-<p>exercises:</p>
-<p>写出 f_stat的HCL代码，提供取出指令的临时状态</p>
-<p>word f_stat = </p>
-<p>f_icode == IHALT : SHLT</p>
-<p>mem_error : SADR</p>
-<p>!instr_valid : SINS</p>
-<p>1: SAOK</p>
-<h3 id="译码和写回阶段"><a href="#译码和写回阶段" class="headerlink" title="译码和写回阶段"></a>译码和写回阶段</h3><h4 id="dsrc-A"><a href="#dsrc-A" class="headerlink" title="dsrc_A"></a>dsrc_A</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">word dsrc_A =</span><br><span class="line"></span><br><span class="line">DICODE in &#123;IRRMOVQ,IRMMOVQ,IPUSHQ,IOPQ&#125; : D_rA</span><br><span class="line"></span><br><span class="line">DICODE in &#123;IPOPQ,IRETURN&#125; : RRSP</span><br><span class="line"></span><br><span class="line">1: RNONE</span><br></pre></td></tr></table></figure>
-<h5 id="PUSH"><a href="#PUSH" class="headerlink" title="PUSH"></a>PUSH</h5><p>RRMOVQ，RMMOVQ source A的值来自于寄存器A</p>
-<p>而push 实际上就是</p>
-<p>subl $4,%esp</p>
-<p>movl %ebp,(%esp)</p>
-<p>call实际上是 push+jump,先把返回地址（此时存放在EIP中）push进%ebp，<br>然后再jump到要执行指令的地址</p>
-<h5 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h5><p>而POP指令实际上是 </p>
-<p>movl (%esp),%eip //eip寄存器是保存CPU所要读取指令地址的寄存器</p>
-<p>addl $4,%esp</p>
-<h5 id="return"><a href="#return" class="headerlink" title="return"></a>return</h5><p>return 实际上是 把栈顶地址弹出到EIP，然后按照EIP指示的指令地址继续执行程序</p>
-<p>需要用到栈指针来作为source A</p>
-<h5 id="dsrc-B"><a href="#dsrc-B" class="headerlink" title="dsrc_B"></a>dsrc_B</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">word d_srcB = </span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IOPQ，IMRMOVQ，IRMOVQ&#125; ：d_srcB</span><br><span class="line">DICODE IN &#123;IPUSHQ,IPOPQ,IRET,ICALL&#125; ：RRSP</span><br><span class="line">1:RNONE</span><br></pre></td></tr></table></figure>
-<h5 id="dstE"><a href="#dstE" class="headerlink" title="dstE"></a>dstE</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">word d_dstE = </span><br><span class="line"></span><br><span class="line">// 目的寄存器是rB而且存储的是由数值运算得到的结果</span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IOPQ,IIRMOVQ,IRRMOVQ&#125; : D_rB:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//因为pushq,popq都需要涉及到</span><br><span class="line"></span><br><span class="line">push: subl $4,%rsp</span><br><span class="line">pop : addl $4,%rsp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">DICODE IN &#123;IPUSHQ,IPOPQ,IRET,ICALL&#125;： RRSP</span><br><span class="line"></span><br><span class="line">1： RNONE</span><br></pre></td></tr></table></figure>
-<h5 id="dstM"><a href="#dstM" class="headerlink" title="dstM"></a>dstM</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">DICODE IN &#123;IMRMOVQ,IPOPQ&#125;: R_rA</span><br><span class="line"></span><br><span class="line">1: RNONE</span><br></pre></td></tr></table></figure>
-<h5 id="d-valA"><a href="#d-valA" class="headerlink" title="d_valA"></a>d_valA</h5><p>这五个转发源存在优先级，通常流水线的实现总是给处于最早的流水线阶段中的转发源以较高的优先级。</p>
-<p><img src="/home/alex/图片/2018-8.png" alt="ics25"></p>
-<p>只有pop指令关心访存或者写回阶段的两个源之间的优先级</p>
-<p>pop 指令看作是 </p>
-<p>movl (%rsp) , %rsp</p>
-<p>addl $4,%rsp</p>
-<p>因为默认 m_valM 访存的优先级 大于 M_valE 计算的优先级<br>因此加入下一条指令是</p>
-<p>movl %rsp, %rax</p>
-<p>则会把%rsp+4 之前的值传到%rax，满足x86的pop操作规定</p>
-<h5 id="aluA"><a href="#aluA" class="headerlink" title="aluA"></a>aluA</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">word aluA = [</span><br><span class="line">   E_icode in &#123;IRRMOVQ,IOPQ&#125; : E_valA</span><br><span class="line">   E_icode in &#123;IIRMOVQ,IRMMOVQ,IMRMOVQ&#125; : E_valC</span><br><span class="line">   E_icode in &#123;ICALLQ, IPUSHQ&#125; : -8 //如果是iaddl 就是-4</span><br><span class="line">   E_icode in &#123;IPOPQ,IRETQ&#125; : 8</span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<h5 id="aluB"><a href="#aluB" class="headerlink" title="aluB"></a>aluB</h5><p><img src="/home/alex/图片/ics30.png" alt="ics30"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/11/CSAPP-程序及指令/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/11/CSAPP-程序及指令/" itemprop="url">CSAPP-程序及指令</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-11T05:16:00+08:00">
-                2018-09-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="CPU的基本结构与功能"><a href="#CPU的基本结构与功能" class="headerlink" title="CPU的基本结构与功能"></a>CPU的基本结构与功能</h2><p><img src="/home/alex/图片/prog.png" alt="image"></p>
-<p>CPI （Cycles Per Instruction）用于衡量电脑的性能<br>，指每条指令的时钟数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CPI=TC/IC</span><br></pre></td></tr></table></figure>
-<p>表示某个程序的所有指令的条数；TC表示执行某个程序所花费的时钟周期)</p>
-<p><img src="/home/alex/图片/under.png" alt="image"><br>加深理解：<br>M【R【ebp】+8】指的是命令行参数首个地址，即char *str的地址，M【地址】等于在内存中取值，相当于这个就是strcpy的第二个实际参数str</p>
-<p>而R【ebp】-16 意思就是buffer[0]，即buffer的首地址</p>
-<p><img src="/home/alex/图片/7.png" alt="image"></p>
-<p>红线下面都是在CPU了里面进行操作</p>
-<p>红线上面都是通过总线在外面进行操作</p>
-<p><img src="/home/alex/图片/lalala.png" alt="image"></p>
-<p><img src="/home/alex/图片/MIPS.png" alt="image"></p>
-<p>笔记：</p>
-<p>取值令和PC+“1” 是并行的，（同时操作），“1”指一条指令的长度</p>
-<p>在MIPS中，每个指令都是定长的，32位，占4位，因此实际上是PC+4</p>
-<p>而在X86中，每个指令都不是定长的，是边长的，一定要在指令译码之后才能确定指令有多长</p>
-<p>异常和指令区别：</p>
-<p>异常指和处理中的这条指令有关的的问题</p>
-<p>中断指和处理中的指令无关的问题</p>
-<p><img src="/home/alex/图片/he.png" alt="image"></p>
-<p><img src="/home/alex/图片/寄存器.png" alt="image"></p>
-<p><img src="/home/alex/图片/von.png" alt="image"></p>
-<p>MDR：内存数据寄存器</p>
-<p>MAR: 主存地址寄存器</p>
-<p><img src="/home/alex/图片/eflags.png" alt="image"></p>
-<p>GPR 8个通用寄存器  属于可见寄存器</p>
-<p>EFLAGs 标志寄存器  属于半可见寄存器</p>
-<p>EIP 指令指针  属于半可见寄存器</p>
-<p><img src="/home/alex/图片/exe.png" alt="image"></p>
-<p>绿色的地址实际上是虚拟空间的地址。这里假定</p>
-<h4 id="取值令"><a href="#取值令" class="headerlink" title="取值令"></a>取值令</h4><p>取地址放到EIP中，再放到主存地址寄存器当中。55 89 e5 放在主存。</p>
-<p>控制器会发出读命令（红线），存储器会根据读信号根据传入的地址寻找里面的数值</p>
-<p>过一段时间后（取数时间） 数据就会放在数据线上。</p>
-<h4 id="指令译码"><a href="#指令译码" class="headerlink" title="指令译码"></a>指令译码</h4><p>根据功能产生控制信号</p>
-<p><img src="/home/alex/图片/kanjia.png" alt="image"></p>
-<p>R[esp]&lt;-R[esp]-4  ESP处的地址-4 变成 bffefffc</p>
-<p>M[R[esp]]&lt;-R[ebp]</p>
-<h4 id="esp内容放到MAR"><a href="#esp内容放到MAR" class="headerlink" title="esp内容放到MAR"></a>esp内容放到MAR</h4><p><img src="/home/alex/图片/esp.png" alt="image"></p>
-<p><img src="/home/alex/图片/ssss.png" alt="image"></p>
-<p>写信号，把要写的地址bffeffc 和写的内容（MDR中的bfff0020）传输到存储器中</p>
-<p><img src="/home/alex/图片/2018-3.png" alt="image"></p>
-<p><img src="/home/alex/图片/alu.png" alt="image"></p>
-<p>而eax是0号寄存器，edx是2号寄存器</p>
-<p><img src="/home/alex/图片/dd.png" alt="image"></p>
-<p>经过这条指令之后</p>
-<p><img src="/home/alex/图片/zz.png" alt="image"></p>
-<p>结果变成这样</p>
-<p><img src="/home/alex/图片/2018-4.png" alt="image"></p>
-<p>小结</p>
-<p><img src="/home/alex/图片/Linked.png" alt="image"></p>
-<h3 id="练习答案"><a href="#练习答案" class="headerlink" title="练习答案"></a>练习答案</h3><p><img src="/home/alex/图片/2018-5.png" alt="image"></p>
-<p><img src="/home/alex/图片/2018-6.png" alt="image"></p>
-<p>什么是指令寄存器？什么是程序计数器？</p>
-<p>指令寄存器（IR，Instruction Register），是临时放置从内存里面取得的程序指令的寄存器，用于存放当前从主存储器读出的正在执行的一条指令。</p>
-<p>什么是程序计数器PC？</p>
-<p>程序计数器是用于存放下一条指令所在单元的地址的地方。</p>
-<p>当执行一条指令时，首先需要根据PC中存放的指令地址，将指令由内存取到指令寄存器中，此过程称为“取指令”。与此同时，PC中的地址或自动加1或由转移指针给出下一条指令的地址。此后经过分析指令，执行指令。完成第一条指令的执行，而后根据PC取出第二条指令的地址，如此循环，执行每一条指令。</p>
-<h2 id="访问存储操作与基本术语"><a href="#访问存储操作与基本术语" class="headerlink" title="访问存储操作与基本术语"></a>访问存储操作与基本术语</h2><p><img src="/home/alex/图片/term.png" alt="imaeg"></p>
-<p><img src="/home/alex/图片/li.png" alt="image"></p>
-<h3 id="存储器的分类"><a href="#存储器的分类" class="headerlink" title="存储器的分类"></a>存储器的分类</h3><h4 id="按工作性质-存储方式分类"><a href="#按工作性质-存储方式分类" class="headerlink" title="按工作性质/存储方式分类"></a>按工作性质/存储方式分类</h4><ol>
-<li>Random Access Memory(RAM)</li>
-</ol>
-<p>随机存取存储器 </p>
-<p>每个单元读写时间一样，与各单元所在位置无关，如内存</p>
-<p>2.Sequential Access Memo在ry（SAM）</p>
-<p>顺序采取存储器</p>
-<p>数据按照顺序从存储载体的始端读出或者写入，因此存取时间长短与所在信息的位置有关。如磁带</p>
-<p><img src="/home/alex/图片/luan.png" alt="image"></p>
-<h3 id="其他分类方式"><a href="#其他分类方式" class="headerlink" title="其他分类方式"></a>其他分类方式</h3><p><img src="/home/alex/图片/存储器.png" alt="image"></p>
-<h3 id="按功能-容量-速度-所在位置分类"><a href="#按功能-容量-速度-所在位置分类" class="headerlink" title="按功能/容量/速度/所在位置分类"></a>按功能/容量/速度/所在位置分类</h3><h4 id="寄存器："><a href="#寄存器：" class="headerlink" title="寄存器："></a>寄存器：</h4><p>封装在CPU中，用于存放当前执行的指令以及使用的数据</p>
-<p>用触发器实现，速度快，x86 8个,MIPS 32个</p>
-<h4 id="高速存储（cache）："><a href="#高速存储（cache）：" class="headerlink" title="高速存储（cache）："></a>高速存储（cache）：</h4><p>位于CPU内部或者附近，用来存放当前要执行的局部程序段和数据</p>
-<p>用SRAM实现，速度可以与CPU匹配，容量小</p>
-<p><img src="/home/alex/图片/neicun.png" alt="image"></p>
-<h4 id="内存与外存关系："><a href="#内存与外存关系：" class="headerlink" title="内存与外存关系："></a>内存与外存关系：</h4><p><img src="/home/alex/图片/relation.png" alt="upload successful"></p>
-<p><img src="/home/alex/图片/RAM.png" alt="存储器受CPU总线控制"></p>
-<p>存储器受CPU总线控制，总线就是链接CPU和存储器的数据线，地址线和控制线</p>
-<p>由于地址线是36位，因此存储单元地址有2^36种可能性，即可以寻找地址的范围为0-2^32-1 即64GB</p>
-<p><img src="/home/alex/图片/daikuan.png" alt="imaeg"></p>
-<p>Tmc&gt;TA</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/10/CS230-Shallow-Neural-Networks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/10/CS230-Shallow-Neural-Networks/" itemprop="url">CS230 Shallow Neural Networks</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-10T04:19:00+08:00">
-                2018-09-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="神经网络是什么"><a href="#神经网络是什么" class="headerlink" title="神经网络是什么"></a>神经网络是什么</h2><p><img src="/home/alex/图片/sn.png" alt="image"></p>
-<p>左下角，第一层就是计算a[1]，然后加上更新后的W【2】，b【2】，在第二层计算新的结果<br>z【2】</p>
-<p><img src="/home/alex/图片/Presentation.png" alt="image"></p>
-<h5 id="注意一般不把输入层算在神经网络层内"><a href="#注意一般不把输入层算在神经网络层内" class="headerlink" title="注意一般不把输入层算在神经网络层内"></a>注意一般不把输入层算在神经网络层内</h5><p>注意hidden layer 其实就是一个4x1的列矩阵</p>
-<h5 id="神经网络表示"><a href="#神经网络表示" class="headerlink" title="神经网络表示"></a>神经网络表示</h5><p><br><br><img src="/home/alex/图片/ss.png" alt="image"></p>
-<p>符号右上角表示层数，右下角表示该层第几个结点</p>
-<p>实际上可以把神经网络计算过错化为向量矩阵运算</p>
-<p><img src="/home/alex/图片/NNRL.png" alt="image"></p>
-<p>Z （4X1） =  W (4X3) * x(3,1) +b(4,1)</p>
-<h3 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h3><h4 id="tanh"><a href="#tanh" class="headerlink" title="tanh"></a>tanh</h4><p>用tanh效果会比sigmodi好，因为均值为0，说明能起到数据中心化效果</p>
-<p><img src="/home/alex/图片/ac1.png" alt="image"></p>
-<h4 id="线性整流函数（ReLU）"><a href="#线性整流函数（ReLU）" class="headerlink" title="线性整流函数（ReLU）"></a>线性整流函数（ReLU）</h4><p><img src="/home/alex/图片/relu.png" alt="image"></p>
-<p>使用ReLU 会使得神经网络学习的速度加快，因为在tanh与sigmoid当中，当斜率降低的时候，学习的速度也会相应的下降。</p>
-<p>而ReLu则会减少则种情况</p>
-<p><img src="/home/alex/图片/PAC.png" alt="image"></p>
-<p>一般而言，不用sigmoid</p>
-<h4 id="激活函数的导数"><a href="#激活函数的导数" class="headerlink" title="激活函数的导数"></a>激活函数的导数</h4><p>在反向传播的时候，需要计算激活函数的导数</p>
-<h4 id="神经网络的梯度下降"><a href="#神经网络的梯度下降" class="headerlink" title="神经网络的梯度下降"></a>神经网络的梯度下降</h4><p>重点关注dZ【1】 dW的计算原理<br><img src="/home/alex/图片/ressss.png" alt="image"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/09/CSAPP-重定位/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/09/CSAPP-重定位/" itemprop="url">CSAPP-重定位</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-09T23:56:00+08:00">
-                2018-09-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ICS/" itemprop="url" rel="index">
-                    <span itemprop="name">ICS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="共享库与动态链接概述"><a href="#共享库与动态链接概述" class="headerlink" title="共享库与动态链接概述"></a>共享库与动态链接概述</h2><p>使用静态库 .a文件有一些缺点</p>
-<p>1.静态库函数被包含在每个进程的代码段中，对于并发运行上百个进程的系统，会造成极大的主存资源浪费</p>
-<p>2.静态库函数会被和并在可执行目标中，磁盘上存放着数千个可执行文件，会造成磁盘空间的极大浪费</p>
-<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>Shared Libraries(共享库)</p>
-<p>Linux 称为 动态共享对象 (Dynamic Shared Objects,.so文件)</p>
-<p>Windows 中的.dll 文件</p>
-<p>原理就是： 包含目标模块的文件，每个模块包含有代码和数据，从程序中分离出来，磁盘和内存中只有一个备份，可以在装入或者运行的时候被动态加载与链接。</p>
-<p>举个例子，printf（）的代码不会包含在每个调用其的文件当中，所有进程共享调用这一份代码。</p>
-<h3 id="共享库优点："><a href="#共享库优点：" class="headerlink" title="共享库优点："></a>共享库优点：</h3><h5 id="第一次加载的时候进行：（load-time-linking）"><a href="#第一次加载的时候进行：（load-time-linking）" class="headerlink" title="第一次加载的时候进行：（load-time linking）"></a>第一次加载的时候进行：（load-time linking）</h5><p>在linux当中通常由动态链接器自动处理</p>
-<p>libc.so 通常按这种方式被动态链接</p>
-<h5 id="在开始运行后进行："><a href="#在开始运行后进行：" class="headerlink" title="在开始运行后进行："></a>在开始运行后进行：</h5><p>在linux中，调用dlopen()等接口实现</p>
-<p><img src="/home/alex/图片/dynamic.png" alt="image"></p>
-<p>生成的代码文件是放在内存当中</p>
-<h4 id="位置无关代码（PIC）"><a href="#位置无关代码（PIC）" class="headerlink" title="位置无关代码（PIC）"></a>位置无关代码（PIC）</h4><p><img src="/home/alex/图片/222.png" alt="image"></p>
-<p>要跳转的目标地址 = 当前PC（当前指令下一条指令地址）+ 立即数<br><img src="/home/alex/图片/33.png" alt="image"></p>
-<p>不需要重定位<br><img src="/home/alex/图片/yinyong.png" alt="image"></p>
-<p>第三种情况</p>
-<p><img src="/home/alex/图片/2018-2.png" alt="image"></p>
-<p>call 指令的功能是：<br>1.把下一条指令地址压栈</p>
-<p>2.jump到那条指令</p>
-<p>popl %ebx 的功能就是把该条指令的地址送到 %ebx寄存器当中</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/06/CSAPP-cache-lab/" itemprop="url">CSAPP-buflab</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T03:18:00+08:00">
-                2018-09-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="cache-lab"><a href="#cache-lab" class="headerlink" title="cache lab"></a>cache lab</h5><p>原函数返回地址—-&lt;<br>保存的%ebp值（栈帧指针）—-&lt;<br>缓冲区—-&lt;<br>缓冲区—-&lt;<br>。。。。<br>。。。。<br>%esp(栈指针)—-&lt;</p>
-<h3 id="Level2"><a href="#Level2" class="headerlink" title="Level2"></a>Level2</h3><p><img src="/home/alex/图片/c.png" alt="image"></p>
-<p>global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value</p>
-<p>我们现在要找到global_value的地址，发现</p>
-<p>0x804d100就是value的地址，0x804d108就是cookie的地址。因此我们想把0x804d100地址所在的数值改为我们的cookie</p>
-<p><img src="/home/alex/图片/p2.png" alt="image"></p>
-<p>建立p2.s文件</p>
-<p>注意x86是data-load 是利用register来完成的</p>
-<p><img src="/home/alex/图片/ps2.png" alt="image"></p>
-<p>把cookie值传到%eax 临时寄存器，然后把寄存器里面的数值传给global_value的地址</p>
-<p>最后把bang函数地址压栈，那么原来返回地址就会改为执行bang函数了。</p>
-<p>反汇编得到的代码：</p>
-<p><img src="/home/alex/图片/obj.png" alt="image"></p>
-<p>gdb调试寻找缓冲区的位置，注意缓冲区不是esp-0x38，而是ebp-0x28噢</p>
-<p>得到缓冲区首地址为0x55683938</p>
-<p>意思就是说返回地址变回缓冲区首地址，然后原函数返回的时候会跳到缓冲区地址，然后开始访问我们自己写的机器代码，实现把global_value值改为cookie的功能。</p>
-<p><img src="/home/alex/图片/2222.png" alt="image"></p>
-<p>最后结果：</p>
-<p><img src="/home/alex/图片/2018-1.png" alt="image"></p>
-<h3 id="level3"><a href="#level3" class="headerlink" title="level3"></a>level3</h3><p>是把返回地址改为cookie值，同时不改变原函数压栈情况</p>
-<p>因为覆盖栈的时候，会把ebp（基址指针给覆盖掉，所以先记录下基址的地址）</p>
-<p><img src="/home/alex/图片/getBuf.png" alt="image"></p>
-<p>汇编代码<br>我们应该要改变eax的值为cookie,同时把原来getbuf后一条指令的地址压栈</p>
-<p><img src="/home/alex/图片/cook.png" alt="image"></p>
-<p>然后为了求基址地址，这里折腾了好久，原来要求的不是寄存器本身的值，而是求寄存器指向的值</p>
-<p>但why？？？<br><img src="/home/alex/图片/re.png" alt="image"></p>
-<p>最后结果：</p>
-<p>b8 14 03 aa<br>65 68 be 8d<br>04 08 c3 00 &lt;—attack code<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>90 39 68 55 &lt;— address of ebp,to ensure that the original ebp doesn’t change<br>38 39 68 55 &lt;— initial address of buff zone</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2266,7 +2367,7 @@ VALID 是否有效
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">50</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

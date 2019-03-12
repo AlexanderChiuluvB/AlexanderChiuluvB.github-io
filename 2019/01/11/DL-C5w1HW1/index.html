@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Overview of the model创建一个基于字符的语言模型  在每一个时间步，RNN基于先前的字符去预测下一个字符是什么，dataset X = {x1,x2,….xT}是输入，而输出Y={y1,y2…yT}使得y^T = x^(T+1) 大概步骤Initialize parameters Run the optimization loop     Forward propagation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL-C5w1HW1">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/01/11/DL-C5w1HW1/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="Overview of the model创建一个基于字符的语言模型  在每一个时间步，RNN基于先前的字符去预测下一个字符是什么，dataset X = {x1,x2,….xT}是输入，而输出Y={y1,y2…yT}使得y^T = x^(T+1) 大概步骤Initialize parameters Run the optimization loop     Forward propagation">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-185.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sample.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/disap.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-186.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-187.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-188.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-189.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/love.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-190.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-191.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-192.png">
+<meta property="og:updated_time" content="2019-01-11T11:08:49.733Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DL-C5w1HW1">
+<meta name="twitter:description" content="Overview of the model创建一个基于字符的语言模型  在每一个时间步，RNN基于先前的字符去预测下一个字符是什么，dataset X = {x1,x2,….xT}是输入，而输出Y={y1,y2…yT}使得y^T = x^(T+1) 大概步骤Initialize parameters Run the optimization loop     Forward propagation">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-185.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/01/11/DL-C5w1HW1/"/>
+
+
+
+
+
+  <title>DL-C5w1HW1 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/01/11/DL-C5w1HW1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DL-C5w1HW1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-11T13:46:03+08:00">
+                2019-01-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Overview-of-the-model"><a href="#Overview-of-the-model" class="headerlink" title="Overview of the model"></a>Overview of the model</h3><p>创建一个基于字符的语言模型</p>
+<p><img src="/home/alex/图片/2018-185.png" alt="filename already exists, renamed"></p>
+<p>在每一个时间步，RNN基于先前的字符去预测下一个字符是什么，dataset X = {x1,x2,….xT}是输入，而输出Y={y1,y2…yT}使得y^T = x^(T+1)</p>
+<h4 id="大概步骤"><a href="#大概步骤" class="headerlink" title="大概步骤"></a>大概步骤</h4><pre><code>Initialize parameters
+Run the optimization loop
+    Forward propagation to compute the loss function
+    Backward propagation to compute the gradients with respect to the loss function
+    Clip the gradients to avoid exploding gradients
+    Using the gradients, update your parameter with the gradient descent update rule.
+Return the learned parameters
+</code></pre><h4 id="clip"><a href="#clip" class="headerlink" title="clip"></a>clip</h4><p>防止梯度爆炸或者弥散，让所有参数的梯度都限定在一个范围内，如某一个值如果大于maxValue，则这个值设置为maxValue</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">def clip(gradients, maxValue):</span><br><span class="line">    &apos;&apos;&apos;</span><br><span class="line">    Clips the gradients&apos; values between minimum and maximum.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    gradients -- a dictionary containing the gradients &quot;dWaa&quot;, &quot;dWax&quot;, &quot;dWya&quot;, &quot;db&quot;, &quot;dby&quot;</span><br><span class="line">    maxValue -- everything above this number is set to this number, and everything less than -maxValue is set to -maxValue</span><br><span class="line">    </span><br><span class="line">    Returns: </span><br><span class="line">    gradients -- a dictionary with the clipped gradients.</span><br><span class="line">    &apos;&apos;&apos;</span><br><span class="line">    </span><br><span class="line">    dWaa, dWax, dWya, db, dby = gradients[&apos;dWaa&apos;], gradients[&apos;dWax&apos;], gradients[&apos;dWya&apos;], gradients[&apos;db&apos;], gradients[&apos;dby&apos;]</span><br><span class="line">   </span><br><span class="line">    for gradient in [dWax, dWaa, dWya, db, dby]:</span><br><span class="line">        np.clip(gradient,-maxValue,maxValue,out=gradient)</span><br><span class="line">    </span><br><span class="line">    gradients = &#123;&quot;dWaa&quot;: dWaa, &quot;dWax&quot;: dWax, &quot;dWya&quot;: dWya, &quot;db&quot;: db, &quot;dby&quot;: dby&#125;</span><br><span class="line">    </span><br><span class="line">    return gradients</span><br></pre></td></tr></table></figure>
+<h4 id="sample"><a href="#sample" class="headerlink" title="sample"></a>sample</h4><p><img src="/home/alex/图片/sample.png" alt="upload sucessful"></p>
+<ul>
+<li><p>step1 设置好第0层激活层和第一个输入字符为0向量</p>
+</li>
+<li><p>forward propagate</p>
+</li>
+</ul>
+<p><img src="/home/alex/图片/disap.png" alt="upload succesful"></p>
+<p>生成一个概率向量，就是这个向量所有数加起来是1，每个数代表着某个字符出现的概率。</p>
+<ul>
+<li><p>采样，根据生成的概率向量，选择下一个生成的字符</p>
+</li>
+<li><p>替换x^t的值为x^(t+1)，然后在forward propagate中继续重复这个过程，直到遇到”\n”字符。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">def sample(parameters, char_to_ix, seed):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Sample a sequence of characters according to a sequence of probability distributions output of the RNN</span><br><span class="line"></span><br><span class="line">    Arguments:</span><br><span class="line">    parameters -- python dictionary containing the parameters Waa, Wax, Wya, by, and b. </span><br><span class="line">    char_to_ix -- python dictionary mapping each character to an index.</span><br><span class="line">    seed -- used for grading purposes. Do not worry about it.</span><br><span class="line"></span><br><span class="line">    Returns:</span><br><span class="line">    indices -- a list of length n containing the indices of the sampled characters.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Retrieve parameters and relevant shapes from &quot;parameters&quot; dictionary</span><br><span class="line">    Waa, Wax, Wya, by, b = parameters[&apos;Waa&apos;], parameters[&apos;Wax&apos;], parameters[&apos;Wya&apos;], parameters[&apos;by&apos;], parameters[&apos;b&apos;]</span><br><span class="line">    vocab_size = by.shape[0]</span><br><span class="line">    n_a = Waa.shape[1]</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    # Step 1: Create the one-hot vector x for the first character (initializing the sequence generation). (≈1 line)</span><br><span class="line">    x = np.zeros((vocab_size, 1))</span><br><span class="line">    # Step 1&apos;: Initialize a_prev as zeros (≈1 line)</span><br><span class="line">    a_prev = np.zeros((n_a, 1))</span><br><span class="line">    </span><br><span class="line">    # Create an empty list of indices, this is the list which will contain the list of indices of the characters to generate (≈1 line)</span><br><span class="line">    indices = []</span><br><span class="line">    </span><br><span class="line">    # Idx is a flag to detect a newline character, we initialize it to -1</span><br><span class="line">    idx = -1 </span><br><span class="line">    </span><br><span class="line">    # Loop over time-steps t. At each time-step, sample a character from a probability distribution and append </span><br><span class="line">    # its index to &quot;indices&quot;. We&apos;ll stop if we reach 50 characters (which should be very unlikely with a well </span><br><span class="line">    # trained model), which helps debugging and prevents entering an infinite loop. </span><br><span class="line">    counter = 0</span><br><span class="line">    newline_character = char_to_ix[&apos;\n&apos;]</span><br><span class="line">    </span><br><span class="line">    while (idx != newline_character and counter != 50):</span><br><span class="line">        </span><br><span class="line">        # Step 2: Forward propagate x using the equations (1), (2) and (3)</span><br><span class="line">        a = np.tanh(np.dot(Wax, x) + np.dot(Waa, a_prev) + b)</span><br><span class="line">        z = np.dot(Wya, a) + by</span><br><span class="line">        y = softmax(z)</span><br><span class="line">        </span><br><span class="line">        # for grading purposes</span><br><span class="line">        np.random.seed(counter+seed) </span><br><span class="line">        </span><br><span class="line">        # Step 3: Sample the index of a character within the vocabulary from the probability distribution y</span><br><span class="line">        idx = np.random.choice(list(range(vocab_size)), p = y.ravel())</span><br><span class="line"></span><br><span class="line">        # Append the index to &quot;indices&quot;</span><br><span class="line">        indices.append(idx)</span><br><span class="line">        </span><br><span class="line">        # Step 4: Overwrite the input character as the one corresponding to the sampled index.</span><br><span class="line">        x = np.zeros((vocab_size, 1))</span><br><span class="line">        x[idx] = 1</span><br><span class="line">        </span><br><span class="line">        # Update &quot;a_prev&quot; to be &quot;a&quot;</span><br><span class="line">        a_prev = a</span><br><span class="line">        </span><br><span class="line">        # for grading purposes</span><br><span class="line">        seed += 1</span><br><span class="line">        counter +=1</span><br><span class="line">        </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">    if (counter == 50):</span><br><span class="line">        indices.append(char_to_ix[&apos;\n&apos;])</span><br><span class="line">    </span><br><span class="line">    return indices</span><br></pre></td></tr></table></figure>
+<h4 id="Gradient-descent"><a href="#Gradient-descent" class="headerlink" title="Gradient descent"></a>Gradient descent</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">def optimize(X, Y, a_prev, parameters, learning_rate = 0.01):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Execute one step of the optimization to train the model.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- list of integers, where each integer is a number that maps to a character in the vocabulary.</span><br><span class="line">    Y -- list of integers, exactly the same as X but shifted one index to the left.</span><br><span class="line">    a_prev -- previous hidden state.</span><br><span class="line">    parameters -- python dictionary containing:</span><br><span class="line">                        Wax -- Weight matrix multiplying the input, numpy array of shape (n_a, n_x)</span><br><span class="line">                        Waa -- Weight matrix multiplying the hidden state, numpy array of shape (n_a, n_a)</span><br><span class="line">                        Wya -- Weight matrix relating the hidden-state to the output, numpy array of shape (n_y, n_a)</span><br><span class="line">                        b --  Bias, numpy array of shape (n_a, 1)</span><br><span class="line">                        by -- Bias relating the hidden-state to the output, numpy array of shape (n_y, 1)</span><br><span class="line">    learning_rate -- learning rate for the model.</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    loss -- value of the loss function (cross-entropy)</span><br><span class="line">    gradients -- python dictionary containing:</span><br><span class="line">                        dWax -- Gradients of input-to-hidden weights, of shape (n_a, n_x)</span><br><span class="line">                        dWaa -- Gradients of hidden-to-hidden weights, of shape (n_a, n_a)</span><br><span class="line">                        dWya -- Gradients of hidden-to-output weights, of shape (n_y, n_a)</span><br><span class="line">                        db -- Gradients of bias vector, of shape (n_a, 1)</span><br><span class="line">                        dby -- Gradients of output bias vector, of shape (n_y, 1)</span><br><span class="line">    a[len(X)-1] -- the last hidden state, of shape (n_a, 1)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Forward propagate through time (≈1 line)</span><br><span class="line">    loss, cache = rnn_forward(X, Y, a_prev, parameters)</span><br><span class="line">    </span><br><span class="line">    # Backpropagate through time (≈1 line)</span><br><span class="line">    gradients, a = rnn_backward(X, Y, parameters, cache)</span><br><span class="line">    </span><br><span class="line">    # Clip your gradients between -5 (min) and 5 (max) (≈1 line)</span><br><span class="line">    gradients = clip(gradients, maxValue=5)</span><br><span class="line">    </span><br><span class="line">    # Update parameters (≈1 line)</span><br><span class="line">    parameters = update_parameters(parameters, gradients, learning_rate)</span><br><span class="line">    </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return loss, gradients, a[len(X)-1]</span><br></pre></td></tr></table></figure>
+<h4 id="model"><a href="#model" class="headerlink" title="model"></a>model</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"># GRADED FUNCTION: model</span><br><span class="line"></span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def model(data, ix_to_char, char_to_ix, num_iterations = 50000, n_a = 50, dino_names = 7, vocab_size = 27):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Trains the model and generates dinosaur names. </span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    data -- text corpus</span><br><span class="line">    ix_to_char -- dictionary that maps the index to a character</span><br><span class="line">    char_to_ix -- dictionary that maps a character to an index</span><br><span class="line">    num_iterations -- number of iterations to train the model for</span><br><span class="line">    n_a -- number of units of the RNN cell</span><br><span class="line">    dino_names -- number of dinosaur names you want to sample at each iteration. </span><br><span class="line">    vocab_size -- number of unique characters found in the text, size of the vocabulary</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    parameters -- learned parameters</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Retrieve n_x and n_y from vocab_size</span><br><span class="line">    n_x, n_y = vocab_size, vocab_size</span><br><span class="line">    </span><br><span class="line">    # Initialize parameters</span><br><span class="line">    parameters = initialize_parameters(n_a, n_x, n_y)</span><br><span class="line">    </span><br><span class="line">    # Initialize loss (this is required because we want to smooth our loss, don&apos;t worry about it)</span><br><span class="line">    loss = get_initial_loss(vocab_size, dino_names)</span><br><span class="line">    </span><br><span class="line">    # Build list of all dinosaur names (training examples).</span><br><span class="line">    with open(&quot;names.txt&quot;) as f:</span><br><span class="line">        examples = f.readlines()</span><br><span class="line">    examples = [x.lower().strip() for x in examples]</span><br><span class="line">    </span><br><span class="line">    # Shuffle list of all dinosaur names</span><br><span class="line">    np.random.seed(0)</span><br><span class="line">    np.random.shuffle(examples)</span><br><span class="line">    </span><br><span class="line">    # Initialize the hidden state of your LSTM</span><br><span class="line">    a_prev = np.zeros((n_a, 1))</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    lossList = []</span><br><span class="line">    # Optimization loop</span><br><span class="line">    for j in range(num_iterations):</span><br><span class="line">        </span><br><span class="line">        ### START CODE HERE ###</span><br><span class="line">        </span><br><span class="line">        # Use the hint above to define one training example (X,Y) (≈ 2 lines)</span><br><span class="line">        index = j % len(examples)</span><br><span class="line">        X = [None] + [char_to_ix[ch] for ch in examples[index]] </span><br><span class="line">        Y = X[1:] + [char_to_ix[&quot;\n&quot;]]</span><br><span class="line">        </span><br><span class="line">        # Perform one optimization step: Forward-prop -&gt; Backward-prop -&gt; Clip -&gt; Update parameters</span><br><span class="line">        # Choose a learning rate of 0.01</span><br><span class="line">        curr_loss, gradients, a_prev = optimize(X, Y, a_prev, parameters, learning_rate = 0.01)</span><br><span class="line">        </span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">        # Use a latency trick to keep the loss smooth. It happens here to accelerate the training.</span><br><span class="line">        loss = smooth(loss, curr_loss)</span><br><span class="line">        lossList.append(loss)</span><br><span class="line">        # Every 2000 Iteration, generate &quot;n&quot; characters thanks to sample() to check if the model is learning properly</span><br><span class="line">        if j % 2000 == 0:</span><br><span class="line">            </span><br><span class="line">            print(&apos;Iteration: %d, Loss: %f&apos; % (j, loss) + &apos;\n&apos;)</span><br><span class="line">            </span><br><span class="line">            # The number of dinosaur names to print</span><br><span class="line">            seed = 0</span><br><span class="line">            for name in range(dino_names):</span><br><span class="line">                </span><br><span class="line">                # Sample indices and print them</span><br><span class="line">                sampled_indices = sample(parameters, char_to_ix, seed)</span><br><span class="line">                print_sample(sampled_indices, ix_to_char)</span><br><span class="line">                </span><br><span class="line">                seed += 1  # To get the same result for grading purposed, increment the seed by one. </span><br><span class="line">      </span><br><span class="line">            print(&apos;\n&apos;)</span><br><span class="line">                </span><br><span class="line">    plt.plot(range(num_iterations),lossList)</span><br><span class="line">        </span><br><span class="line">    return parameters</span><br></pre></td></tr></table></figure>
+<p>训练数据是88000个英文last name</p>
+<p><img src="/home/alex/图片/2018-186.png" alt="filename aeady exists, renamed"></p>
+<hr>
+<h3 id="手把手搭建RNN"><a href="#手把手搭建RNN" class="headerlink" title="手把手搭建RNN"></a>手把手搭建RNN</h3><h4 id="RNN-cell"><a href="#RNN-cell" class="headerlink" title="RNN cell"></a>RNN cell</h4><p>一个RNN可以看做是一个cell的重复</p>
+<pre><code>1.Compute the hidden state with tanh activation: a⟨t⟩=tanh(Waaa⟨t−1⟩+Waxx⟨t⟩+ba).
+2.Using your new hidden state a⟨t⟩, compute the prediction ŷ ⟨t⟩=softmax(Wyaa⟨t⟩+by). We provided you a function: softmax.
+3.Store (a⟨t⟩,a⟨t−1⟩,x⟨t⟩,parameters) in cache
+4.Return a⟨t⟩ , y⟨t⟩  and cache
+</code></pre> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">    </span><br><span class="line">def rnn_cell_forward(xt, a_prev, parameters):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements a single forward step of the RNN-cell as described in Figure (2)</span><br><span class="line"></span><br><span class="line">    Arguments:</span><br><span class="line">    xt -- your input data at timestep &quot;t&quot;, numpy array of shape (n_x, m).</span><br><span class="line">    a_prev -- Hidden state at timestep &quot;t-1&quot;, numpy array of shape (n_a, m)</span><br><span class="line">    parameters -- python dictionary containing:</span><br><span class="line">                        Wax -- Weight matrix multiplying the input, numpy array of shape (n_a, n_x)</span><br><span class="line">                        Waa -- Weight matrix multiplying the hidden state, numpy array of shape (n_a, n_a)</span><br><span class="line">                        Wya -- Weight matrix relating the hidden-state to the output, numpy array of shape (n_y, n_a)</span><br><span class="line">                        ba --  Bias, numpy array of shape (n_a, 1)</span><br><span class="line">                        by -- Bias relating the hidden-state to the output, numpy array of shape (n_y, 1)</span><br><span class="line">    Returns:</span><br><span class="line">    a_next -- next hidden state, of shape (n_a, m)</span><br><span class="line">    yt_pred -- prediction at timestep &quot;t&quot;, numpy array of shape (n_y, m)</span><br><span class="line">    cache -- tuple of values needed for the backward pass, contains (a_next, a_prev, xt, parameters)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Retrieve parameters from &quot;parameters&quot;</span><br><span class="line">    Wax = parameters[&quot;Wax&quot;]</span><br><span class="line">    Waa = parameters[&quot;Waa&quot;]</span><br><span class="line">    Wya = parameters[&quot;Wya&quot;]</span><br><span class="line">    ba = parameters[&quot;ba&quot;]</span><br><span class="line">    by = parameters[&quot;by&quot;]</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### (≈2 lines)</span><br><span class="line">    # compute next activation state using the formula given above</span><br><span class="line">    a_next = np.tanh(np.dot(Waa, a_prev) + np.dot(Wax, xt) + ba)</span><br><span class="line">    # compute output of the current cell using the formula given above</span><br><span class="line">    yt_pred = softmax(np.dot(Wya, a_next) + by)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # store values you need for backward propagation in cache</span><br><span class="line">    cache = (a_next, a_prev, xt, parameters)</span><br><span class="line">    </span><br><span class="line">    return a_next, yt_pred, cache</span><br></pre></td></tr></table></figure>
+<h4 id="RNN-forward"><a href="#RNN-forward" class="headerlink" title="RNN forward"></a>RNN forward</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">def rnn_forward(x, a0, parameters):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implement the forward propagation of the recurrent neural network described in Figure (3).</span><br><span class="line"></span><br><span class="line">    Arguments:</span><br><span class="line">    x -- Input data for every time-step, of shape (n_x, m, T_x).</span><br><span class="line">    a0 -- Initial hidden state, of shape (n_a, m)</span><br><span class="line">    parameters -- python dictionary containing:</span><br><span class="line">                        Waa -- Weight matrix multiplying the hidden state, numpy array of shape (n_a, n_a)</span><br><span class="line">                        Wax -- Weight matrix multiplying the input, numpy array of shape (n_a, n_x)</span><br><span class="line">                        Wya -- Weight matrix relating the hidden-state to the output, numpy array of shape (n_y, n_a)</span><br><span class="line">                        ba --  Bias numpy array of shape (n_a, 1)</span><br><span class="line">                        by -- Bias relating the hidden-state to the output, numpy array of shape (n_y, 1)</span><br><span class="line"></span><br><span class="line">    Returns:</span><br><span class="line">    a -- Hidden states for every time-step, numpy array of shape (n_a, m, T_x)</span><br><span class="line">    y_pred -- Predictions for every time-step, numpy array of shape (n_y, m, T_x)</span><br><span class="line">    caches -- tuple of values needed for the backward pass, contains (list of caches, x)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Initialize &quot;caches&quot; which will contain the list of all caches</span><br><span class="line">    caches = []</span><br><span class="line">    </span><br><span class="line">    # Retrieve dimensions from shapes of x and Wy</span><br><span class="line">    n_x, m, T_x = x.shape</span><br><span class="line">    n_y, n_a = parameters[&quot;Wya&quot;].shape</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # initialize &quot;a&quot; and &quot;y&quot; with zeros (≈2 lines)</span><br><span class="line">    a = np.zeros((n_a,m,T_x))</span><br><span class="line">    y_pred= np.zeros((n_y,m,T_x))</span><br><span class="line">    # Initialize a_next (≈1 line)</span><br><span class="line">    a_next = a0</span><br><span class="line">    </span><br><span class="line">    # loop over all time-steps</span><br><span class="line">    for t in range(T_x):</span><br><span class="line">        # Update next hidden state, compute the prediction, get the cache (≈1 line)</span><br><span class="line">        a_next,yt_pred,cache = rnn_cell_forward(x[:,:,t], a_next, parameters)</span><br><span class="line">        # Save the value of the new &quot;next&quot; hidden state in a (≈1 line)</span><br><span class="line">        a[:,:,t] = a_next</span><br><span class="line">        # Save the value of the prediction in y (≈1 line)</span><br><span class="line">        y_pred[:,:,t] = yt_pred</span><br><span class="line">        # Append &quot;cache&quot; to &quot;caches&quot; (≈1 line)</span><br><span class="line">        caches.append(cache)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # store values needed for backward propagation in cache</span><br><span class="line">    caches = (caches, x)</span><br><span class="line">    </span><br><span class="line">    return a, y_pred, caches</span><br></pre></td></tr></table></figure>
+<h4 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h4><p>遗忘门</p>
+<p>我们假设我们正在阅读一段文本中的单词, 并希望使用 LSTM 来跟踪语法结构, 例如主语是单数还是复数。如果主语从一个单数词变为复数词, 我们需要找到一种方法来去除以前存储的单数/复数状态的内存值。在 LSTM 中, 遗忘门让我们这样做:</p>
+<p><img src="/home/alex/图片/2018-187.png" alt="filename eady exists, renamed"></p>
+<p>更新门</p>
+<p><img src="/home/alex/图片/2018-188.png" alt="filename aeady exists, renamed"></p>
+<p>输出门</p>
+<p><img src="/home/alex/图片/2018-189.png" alt="filename ready exists, renamed"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"># GRADED FUNCTION: lstm_cell_forward</span><br><span class="line"></span><br><span class="line">def lstm_cell_forward(xt, a_prev, c_prev, parameters):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implement a single forward step of the LSTM-cell as described in Figure (4)</span><br><span class="line"></span><br><span class="line">    Arguments:</span><br><span class="line">    xt -- your input data at timestep &quot;t&quot;, numpy array of shape (n_x, m).</span><br><span class="line">    a_prev -- Hidden state at timestep &quot;t-1&quot;, numpy array of shape (n_a, m)</span><br><span class="line">    c_prev -- Memory state at timestep &quot;t-1&quot;, numpy array of shape (n_a, m)</span><br><span class="line">    parameters -- python dictionary containing:</span><br><span class="line">                        Wf -- Weight matrix of the forget gate, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bf -- Bias of the forget gate, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wi -- Weight matrix of the update gate, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bi -- Bias of the update gate, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wc -- Weight matrix of the first &quot;tanh&quot;, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bc --  Bias of the first &quot;tanh&quot;, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wo -- Weight matrix of the output gate, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bo --  Bias of the output gate, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wy -- Weight matrix relating the hidden-state to the output, numpy array of shape (n_y, n_a)</span><br><span class="line">                        by -- Bias relating the hidden-state to the output, numpy array of shape (n_y, 1)</span><br><span class="line">                        </span><br><span class="line">    Returns:</span><br><span class="line">    a_next -- next hidden state, of shape (n_a, m)</span><br><span class="line">    c_next -- next memory state, of shape (n_a, m)</span><br><span class="line">    yt_pred -- prediction at timestep &quot;t&quot;, numpy array of shape (n_y, m)</span><br><span class="line">    cache -- tuple of values needed for the backward pass, contains (a_next, c_next, a_prev, c_prev, xt, parameters)</span><br><span class="line">    </span><br><span class="line">    Note: ft/it/ot stand for the forget/update/output gates, cct stands for the candidate value (c tilde),</span><br><span class="line">          c stands for the memory value</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # Retrieve parameters from &quot;parameters&quot;</span><br><span class="line">    Wf = parameters[&quot;Wf&quot;]</span><br><span class="line">    bf = parameters[&quot;bf&quot;]</span><br><span class="line">    Wi = parameters[&quot;Wi&quot;]</span><br><span class="line">    bi = parameters[&quot;bi&quot;]</span><br><span class="line">    Wc = parameters[&quot;Wc&quot;]</span><br><span class="line">    bc = parameters[&quot;bc&quot;]</span><br><span class="line">    Wo = parameters[&quot;Wo&quot;]</span><br><span class="line">    bo = parameters[&quot;bo&quot;]</span><br><span class="line">    Wy = parameters[&quot;Wy&quot;]</span><br><span class="line">    by = parameters[&quot;by&quot;]</span><br><span class="line">    </span><br><span class="line">    # Retrieve dimensions from shapes of xt and Wy</span><br><span class="line">    n_x, m = xt.shape</span><br><span class="line">    n_y, n_a = Wy.shape</span><br><span class="line"></span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    # Concatenate a_prev and xt (≈3 lines)</span><br><span class="line">    concat = np.zeros((n_a+n_x,m))</span><br><span class="line">    concat[:n_a,:] = a_prev</span><br><span class="line">    concat[n_a:,:] = xt</span><br><span class="line">    # Compute values for ft, it, cct, c_next, ot, a_next using the formulas given figure (4) (≈6 lines)</span><br><span class="line">    ft = sigmoid(np.dot(Wf,concat)+bf)</span><br><span class="line">    it = sigmoid(np.dot(Wi,concat)+bi)</span><br><span class="line">    cct = np.tanh(np.dot(Wc,concat)+bc)</span><br><span class="line">    c_next = ft*c_prev+it*cct</span><br><span class="line">    ot = sigmoid(np.dot(Wo,concat)+bo)</span><br><span class="line">    a_next = ot*np.tanh(c_next)</span><br><span class="line">    # Compute prediction of the LSTM cell (≈1 line)</span><br><span class="line">    yt_pred = softmax(np.dot(Wy,a_next)+by)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line"></span><br><span class="line">    # store values needed for backward propagation in cache</span><br><span class="line">    cache = (a_next, c_next, a_prev, c_prev, ft, it, cct, ot, xt, parameters)</span><br><span class="line"></span><br><span class="line">    return a_next, c_next, yt_pred, cache</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">def lstm_forward(x, a0, parameters):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implement the forward propagation of the recurrent neural network using an LSTM-cell described in Figure (3).</span><br><span class="line"></span><br><span class="line">    Arguments:</span><br><span class="line">    x -- Input data for every time-step, of shape (n_x, m, T_x).</span><br><span class="line">    a0 -- Initial hidden state, of shape (n_a, m)</span><br><span class="line">    parameters -- python dictionary containing:</span><br><span class="line">                        Wf -- Weight matrix of the forget gate, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bf -- Bias of the forget gate, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wi -- Weight matrix of the update gate, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bi -- Bias of the update gate, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wc -- Weight matrix of the first &quot;tanh&quot;, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bc -- Bias of the first &quot;tanh&quot;, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wo -- Weight matrix of the output gate, numpy array of shape (n_a, n_a + n_x)</span><br><span class="line">                        bo -- Bias of the output gate, numpy array of shape (n_a, 1)</span><br><span class="line">                        Wy -- Weight matrix relating the hidden-state to the output, numpy array of shape (n_y, n_a)</span><br><span class="line">                        by -- Bias relating the hidden-state to the output, numpy array of shape (n_y, 1)</span><br><span class="line">                        </span><br><span class="line">    Returns:</span><br><span class="line">    a -- Hidden states for every time-step, numpy array of shape (n_a, m, T_x)</span><br><span class="line">    y -- Predictions for every time-step, numpy array of shape (n_y, m, T_x)</span><br><span class="line">    caches -- tuple of values needed for the backward pass, contains (list of all the caches, x)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # Initialize &quot;caches&quot;, which will track the list of all the caches</span><br><span class="line">    caches = []</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    # Retrieve dimensions from shapes of x and Wy (≈2 lines)</span><br><span class="line">    n_x, m, T_x = x.shape</span><br><span class="line">    n_y, n_a = parameters[&quot;Wy&quot;].shape</span><br><span class="line">    </span><br><span class="line">    # initialize &quot;a&quot;, &quot;c&quot; and &quot;y&quot; with zeros (≈3 lines)</span><br><span class="line">    a = np.zeros((n_a, m, T_x))</span><br><span class="line">    c = a</span><br><span class="line">    y = np.zeros((n_y, m, T_x))</span><br><span class="line">    </span><br><span class="line">    # Initialize a_next and c_next (≈2 lines)</span><br><span class="line">    a_next = a0</span><br><span class="line">    c_next = np.zeros(a_next.shape)</span><br><span class="line">    </span><br><span class="line">    # loop over all time-steps</span><br><span class="line">    for t in range(T_x):</span><br><span class="line">        # Update next hidden state, next memory state, compute the prediction, get the cache (≈1 line)</span><br><span class="line">        a_next, c_next, yt, cache = lstm_cell_forward(x[:,:,t], a_next, c_next, parameters)</span><br><span class="line">        # Save the value of the new &quot;next&quot; hidden state in a (≈1 line)</span><br><span class="line">        a[:,:,t] = a_next</span><br><span class="line">        # Save the value of the prediction in y (≈1 line)</span><br><span class="line">        y[:,:,t] = yt</span><br><span class="line">        # Save the value of the next cell state (≈1 line)</span><br><span class="line">        c[:,:,t]  = c_next</span><br><span class="line">        # Append the cache into caches (≈1 line)</span><br><span class="line">        caches.append(cache)</span><br><span class="line">        </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # store values needed for backward propagation in cache</span><br><span class="line">    caches = (caches, x)</span><br><span class="line"></span><br><span class="line">    return a, y, c, caches</span><br></pre></td></tr></table></figure>
+<h4 id="RNN-backward-pass"><a href="#RNN-backward-pass" class="headerlink" title="RNN backward pass"></a>RNN backward pass</h4><p><img src="/home/alex/图片/love.png" alt="upload succul"></p>
+<h3 id="LSTM-music-generation"><a href="#LSTM-music-generation" class="headerlink" title="LSTM music generation"></a>LSTM music generation</h3><p><img src="/home/alex/图片/2018-190.png" alt="filename exists, renamed"></p>
+<p>从一个更长的序列中随机选取30个数值片段来训练模型，因此不会设置x(1) 为 零向量。 设置每个片段都有相同长度Tx=30，使得矢量化更容易。</p>
+<h4 id="building-model"><a href="#building-model" class="headerlink" title="building model"></a>building model</h4><p>对于序列生成，测试的时候不能提前知道所有的x^t数值，而使用x^t = y^(t-1)一次生成一个，因此要实现for循环来访问不同的时间步，函数djmodel()将使用for循环调用LSTM层TX T次，并且每次第Tx步都应该有共享权重，而不应该重新初始化权重。</p>
+<p>在Keras中实现具有共享权重层的关键步骤</p>
+<p>1.定义层对象</p>
+<p>2.前向传播输入时候调用这些对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">n_a = 64 </span><br><span class="line">reshapor = Reshape((1, n_values))</span><br><span class="line">LSTM_cell = LSTM(n_a, return_state = True)</span><br><span class="line">Densor = Dense(n_values, activation=&apos;softmax&apos;)</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-191.png" alt="filename exists, renamed"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">def create_model(Tx, n_a, n_values):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implement the model</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    Tx -- length of the sequence in a corpus</span><br><span class="line">    n_a -- the number of activations used in our model</span><br><span class="line">    n_values -- number of unique values in the music data </span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    model -- a keras model with the </span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Define the input of your model with a shape </span><br><span class="line">    X = Input(shape=(Tx, n_values))</span><br><span class="line">    </span><br><span class="line">    # Define s0, initial hidden state for the decoder LSTM</span><br><span class="line">    a0 = Input(shape=(n_a,), name=&apos;a0&apos;)</span><br><span class="line">    c0 = Input(shape=(n_a,), name=&apos;c0&apos;)</span><br><span class="line">    a = a0</span><br><span class="line">    c = c0</span><br><span class="line">    </span><br><span class="line">    # Step 1: Create empty list to append the outputs while you iterate (≈1 line)</span><br><span class="line">    output = []</span><br><span class="line">    </span><br><span class="line">    # Step 2: Loop</span><br><span class="line">    for t in range(Tx):</span><br><span class="line">        </span><br><span class="line">        # Step 2.A: select the &quot;t&quot;th time step vector from X. </span><br><span class="line">        x = Lambda(lambda x:X[:,t,:])(X)</span><br><span class="line">        # Step 2.B: Use reshapor to reshape x to be (1, n_values) (≈1 line)</span><br><span class="line">        x = reshapor(x)</span><br><span class="line">        # Step 2.C: Perform one step of the LSTM_cell</span><br><span class="line">        a,_,c = LSTM_cell(x,initial_state = [a,c])</span><br><span class="line">        # Step 2.D: Apply densor to the hidden state output of LSTM_Cell</span><br><span class="line">        out = Densor(a)</span><br><span class="line">        # Step 2.E: add the output to &quot;outputs&quot;</span><br><span class="line">        output.append(out)</span><br><span class="line">    # Step 3: Create model instance</span><br><span class="line">    model = Model([X,a0,c0],output)</span><br><span class="line">    </span><br><span class="line">    return model</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model = create_model(Tx = 30 , n_a = n_a, n_values = n_values)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opt = Adam(lr=0.1, beta_1=0.9, beta_2=0.999, decay=0.003)</span><br><span class="line"></span><br><span class="line">model.compile(optimizer=opt, loss=&apos;categorical_crossentropy&apos;, metrics=[&apos;accuracy&apos;])</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">m = 60</span><br><span class="line">a0 = np.zeros((m,n_a))</span><br><span class="line">c0 = np.zeros((m,n_a))</span><br><span class="line">model.fit([X, a0, c0], list(Y), epochs=500)</span><br></pre></td></tr></table></figure>
+<h3 id="LSTM-1"><a href="#LSTM-1" class="headerlink" title="LSTM"></a>LSTM</h3><p><img src="/home/alex/图片/2018-192.png" alt="filename exists, renamed"></p>
+<p>用上个cell预测的值来作为下个cell的输入值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">def music_inference_model(LSTM_cell, densor, n_values = n_values, n_a = 64, Ty = 100):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Uses the trained &quot;LSTM_cell&quot; and &quot;densor&quot; from model() to generate a sequence of values.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    LSTM_cell -- the trained &quot;LSTM_cell&quot; from model(), Keras layer object</span><br><span class="line">    densor -- the trained &quot;densor&quot; from model(), Keras layer object</span><br><span class="line">    n_values -- integer, umber of unique values</span><br><span class="line">    n_a -- number of units in the LSTM_cell</span><br><span class="line">    Ty -- integer, number of time steps to generate</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    inference_model -- Keras model instance</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Define the input of your model with a shape </span><br><span class="line">    x0 = Input(shape=(1, n_values))</span><br><span class="line">    </span><br><span class="line">    # Define s0, initial hidden state for the decoder LSTM</span><br><span class="line">    a0 = Input(shape=(n_a,), name=&apos;a0&apos;)</span><br><span class="line">    c0 = Input(shape=(n_a,), name=&apos;c0&apos;)</span><br><span class="line">    a = a0</span><br><span class="line">    c = c0</span><br><span class="line">    x = x0</span><br><span class="line"></span><br><span class="line">    # Step 1: Create an empty list of &quot;outputs&quot; to later store your predicted values (≈1 line)</span><br><span class="line">    outputs = []</span><br><span class="line">    </span><br><span class="line">    # Step 2: Loop over Ty and generate a value at every time step</span><br><span class="line">    for t in range(Ty):</span><br><span class="line">        </span><br><span class="line">        # Step 2.A: Perform one step of LSTM_cell (≈1 line)</span><br><span class="line">        a, _, c = LSTM_cell(x, initial_state=[a, c])</span><br><span class="line">        </span><br><span class="line">        # Step 2.B: Apply Dense layer to the hidden state output of the LSTM_cell (≈1 line)</span><br><span class="line">        out = densor(a)</span><br><span class="line"></span><br><span class="line">        # Step 2.C: Append the prediction &quot;out&quot; to &quot;outputs&quot;. out.shape = (None, 78) (≈1 line)</span><br><span class="line">        outputs.append(out)</span><br><span class="line">        </span><br><span class="line">        # Step 2.D: Select the next value according to &quot;out&quot;, and set &quot;x&quot; to be the one-hot representation of the</span><br><span class="line">        #           selected value, which will be passed as the input to LSTM_cell on the next step. We have provided </span><br><span class="line">        #           the line of code you need to do this. </span><br><span class="line">        x = Lambda(one_hot)(out)</span><br><span class="line">        </span><br><span class="line">    # Step 3: Create model instance with the correct &quot;inputs&quot; and &quot;outputs&quot; (≈1 line)</span><br><span class="line">    inference_model = Model(inputs = [x0, a0, c0], outputs = outputs)</span><br><span class="line">    </span><br><span class="line">    return inference_model</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/03/DL-C5W1/" rel="next" title="DL-C5W1">
+                <i class="fa fa-chevron-left"></i> DL-C5W1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/10/DL-C5W2/" rel="prev" title="DL-C5W2">
+                DL-C5W2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Overview-of-the-model"><span class="nav-number">1.</span> <span class="nav-text">Overview of the model</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大概步骤"><span class="nav-number">1.1.</span> <span class="nav-text">大概步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#clip"><span class="nav-number">1.2.</span> <span class="nav-text">clip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sample"><span class="nav-number">1.3.</span> <span class="nav-text">sample</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradient-descent"><span class="nav-number">1.4.</span> <span class="nav-text">Gradient descent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#model"><span class="nav-number">1.5.</span> <span class="nav-text">model</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手把手搭建RNN"><span class="nav-number">2.</span> <span class="nav-text">手把手搭建RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RNN-cell"><span class="nav-number">2.1.</span> <span class="nav-text">RNN cell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RNN-forward"><span class="nav-number">2.2.</span> <span class="nav-text">RNN forward</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LSTM"><span class="nav-number">2.3.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RNN-backward-pass"><span class="nav-number">2.4.</span> <span class="nav-text">RNN backward pass</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LSTM-music-generation"><span class="nav-number">3.</span> <span class="nav-text">LSTM music generation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#building-model"><span class="nav-number">3.1.</span> <span class="nav-text">building model</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LSTM-1"><span class="nav-number">4.</span> <span class="nav-text">LSTM</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
