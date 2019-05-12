@@ -88,7 +88,8 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ssssss.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-236.png">
-<meta property="og:updated_time" content="2019-03-12T06:04:24.466Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-245.png">
+<meta property="og:updated_time" content="2019-04-28T07:35:51.486Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计网-运输层">
 <meta name="twitter:description" content="运输层协议在不同主机的应用进程之间提供了逻辑通信，通过逻辑通信，运行不同进程的主机就会好像直接相连一样。 而网络层提供了主机之间的逻辑联系。 发送端： 运输层把应用程序进程接收到的报文转换成运输层分组，成为运输层报文段。实现方法为把应用报文划分为较小的块，并为每块加上一个运输层首部以生成运输层报文段。在发送端系统当中，运输层把这些报文段传递给网络层，网络层将其封装为网络层分组，向目的地发送。网络路">
@@ -346,32 +347,58 @@
 <p>而<strong>网络层</strong>提供了主机之间的逻辑联系。</p>
 <p>发送端： 运输层把应用程序进程接收到的报文转换成运输层分组，成为运输层报文段。实现方法为把应用报文划分为较小的块，并为每块加上一个运输层首部以生成运输层报文段。在发送端系统当中，运输层把这些报文段传递给网络层，网络层将其封装为网络层分组，向目的地发送。<br>网络路由器仅仅作用于数据报的网络层字段，即不检查封装在该数据报的运输层报文段的字段。</p>
 <p>接收端：网络层提取运输层报文段，把报文段上交给运输层，运输层处理接收到的报文段，使得该报文段中的数据为接收应用进程使用。</p>
+<p>网络层提供了主机之间的逻辑通信，而运输层为运行在不同主机上的进程提供了逻辑通信。</p>
+<p>运输协议能够提供的服务常常受制于网络层协议的服务模型。如果网络层协议无法为主机之间发送的运输层报文段提供时延或者带宽保证的话，运输层也不能为进程之间的发送应用程序报文提供时延或者带宽保证</p>
 <h4 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h4><p>UDP： 用户数据报协议：不可靠，无连接</p>
 <p>TCP： 传输控制协议： 可靠，面向连接</p>
 <p>运输层分组：报文段</p>
 <p>IP：网络层的一个协议，每台主机一个IP地址，是不可靠服务</p>
-<h4 id="多路复用与多路分解"><a href="#多路复用与多路分解" class="headerlink" title="多路复用与多路分解"></a>多路复用与多路分解</h4><p><img src="/home/alex/图片/ssssss.png" alt="upload sucessful"></p>
+<p>IP服务类型是尽力而为，不可靠的。</p>
+<p>带宽： 数据通信的最大吞吐量</p>
+<p>报文段： TCP和UDP的分组</p>
+<p>数据报： 网络层分组</p>
+<h4 id="多路复用与多路分解"><a href="#多路复用与多路分解" class="headerlink" title="多路复用与多路分解"></a>多路复用与多路分解</h4><p>TCP 和 UDP 最基本责任： 把两个端系统间的IP的交付服务拓展为运行在端系统上的两个进程之间的交付服务。</p>
+<p>这个过程也叫作多路复用和多路分解</p>
+<p><img src="/home/alex/图片/ssssss.png" alt="upload sucessful"></p>
 <p>运输层从下方的网络层接收报文段，运输层负责把这些报文段中的数据交付给主机上运行的应用程序进程。</p>
 <p>一个进程有一个或多个套接字，socket作为进程与网络传递数据的一个门户。</p>
 <p>那么怎么把运输层报文段定向到适当的套接字？接收端中，运输层检查这些字段，标识出接收套接字，进而把报文段定向到该套接字。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将运输层报文段中的数据交付到正确的套接字叫做多路分解</span><br></pre></td></tr></table></figure>
-<p>在源主机从不同的套接字中收集数据块，并为每个数据块封装上首部信息从而生成报文段，然后把报文段传递到网络层，叫做多路复用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将运输层报文段中的数据交付到正确的套接字叫做多路分解</span><br><span class="line"></span><br><span class="line">在源主机从不同的套接字中收集数据块，并为每个数据块封装上首部信息从而生成报文段，然后把报文段传递到网络层，叫做多路复用。</span><br></pre></td></tr></table></figure>
 <h5 id="运输层报文段中的源与目的端口字段"><a href="#运输层报文段中的源与目的端口字段" class="headerlink" title="运输层报文段中的源与目的端口字段"></a>运输层报文段中的源与目的端口字段</h5><p><img src="/home/alex/图片/2018-236.png" alt="filename alrea exists, renamed"></p>
 <p>1.套接字有唯一标识符<br>2.每个报文段有特殊字段来指示该报文段所要交付到的套接字。</p>
 <p>在主机上的每个套接字能够分配一个端口号，当报文段到达主机时，运输层检查报文段中的目的端口号，并且将其定向到相应的套接字。然后报文段中的数据通过套接字进入其所连接的进程。</p>
-<h4 id="无连接的多路复用与分解"><a href="#无连接的多路复用与分解" class="headerlink" title="无连接的多路复用与分解"></a>无连接的多路复用与分解</h4><p>无连接是指发送方和接收方的运输层实体之间没有握手。</p>
+<h4 id="无连接的多路复用与分解"><a href="#无连接的多路复用与分解" class="headerlink" title="无连接的多路复用与分解"></a>无连接的多路复用与分解</h4><p>无连接是指发送方和接收方的运输层实体之间没有握手。<br>UDP是通过（目的IP,目的端口号）来标识的。如果源IP和源端口号相同，那么会两个报文段会通过相同的套接字被定向到相同的目的进程。</p>
 <p>例子：</p>
 <p>主机A一个进程有UDP端口19157，他要发送一个应用程序数据块给位于主机B的另一个进程，该进程具有UDP端口46428,主机A的运输层创建一个运输层报文段，其中包括应用程序数据，源端口号以及目的端口号。</p>
 <p>运输层把报文段传递给网络层封装到一个IP数据报，然后交付给主机B。B能够运行多个进程，每个进程有自己的UDP套接字与相应的端口号。B会检查报文段的目的端口号，将每个报文段定向分解到相应的socket</p>
 <p>而源端口号的用途就是可以作为B回发报文给A的时候，作为返回地址的一部分。</p>
-<h4 id="连接的多路复用与分解"><a href="#连接的多路复用与分解" class="headerlink" title="连接的多路复用与分解"></a>连接的多路复用与分解</h4><p>TCP套接字由一个四元组（源IP地址，源端口号，目的IP地址，目的端口号）来标志。</p>
+<h4 id="连接的多路复用与分解"><a href="#连接的多路复用与分解" class="headerlink" title="连接的多路复用与分解"></a>连接的多路复用与分解</h4><p>TCP套接字由一个四元组（源IP地址，源端口号，目的IP地址，目的端口号）来标志。而UDP标识的二元组仅有目的IP地址和目的端口号。</p>
+<p>当TCP报文段从网络到达一台主机的时候，主机使用全部四个数值来把报文段定向分解到相应的套接字。</p>
+<p>具体来说，对UDP，如果两个报文段的有不同的源IP地址和源端口号，但具有相同的目的IP地址和目的端口号，那么两个报文段将通过相同的目的套接字被定向到相同的目的进程。</p>
+<p>而TCP如果两个报文段的源IP地址和端口号不同，会被定向到两个不同的套接字。</p>
 <p>例子：</p>
-<p>1.TCP服务器由一个 socket 它在12000端口上等待来自TCP客户的连接请求。</p>
-<p>2.客户发起连接请求。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clientSocket = socket(AF_INET,SOCK_STREAM)</span><br><span class="line"></span><br><span class="line">clientSocket.connect((serverName,12000))</span><br></pre></td></tr></table></figure>
+<p>1.TCP服务器有一个 socket 它在12000端口上等待来自TCP客户的连接请求。</p>
+<p>2.客户创建一个套接字，发起连接请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">clientSocket = socket(AF_INET,SOCK_STREAM)</span><br><span class="line"></span><br><span class="line">clientSocket.connect((serverName,12000))</span><br></pre></td></tr></table></figure>
 <p>3.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connectionSoekct,addr = serverSoskct.accept()</span><br></pre></td></tr></table></figure>
-<p>该服务器进程在端口12000等待接受连接，并且创建一个新的套接字。</p>
+<p>操作系统接收到具有目的端口的连接请求报文段，该服务器进程在端口12000等待接受连接，并且创建一个新的套接字。</p>
+<p>持续HTTP连接的使用：整条持续链接期间，客户与服务器之间经由同一个服务器套接字交换HTTP报文，然而如果使用非持续HTTP链接，每一对请求/响应都创建一个新的TCP链接然后随之关闭。</p>
+<h3 id="无连接运输-UDP"><a href="#无连接运输-UDP" class="headerlink" title="无连接运输 UDP"></a>无连接运输 UDP</h3><p>在发送报文段之前，发送方和接收方的运输层实体之间没有握手。直接与IP打交道，UDP从应用程序得到数据，附加上用于多路复用和分解的源端口和源地址以及其他两个小字段，然后把形成的报文段交给网络层。网络层把运输层报文段封装到一个IP数据报中，然后尽力把报文段交付给接收主机。主机接收到报文段之后UDP使用目的端口把报文段中的数据交付给正确的应用程序。</p>
+<h3 id="面向连接的TCP"><a href="#面向连接的TCP" class="headerlink" title="面向连接的TCP"></a>面向连接的TCP</h3><p>应用进程开始向另外一个进程发送数据之前，两个进程必须先相互握手。即必须相互发送某些预备报文段，以确定数据传输的参数。</p>
+<p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
+<p>TCP链接点对点，是单个发送方与单个接收方之间的连接。</p>
+<p>TCP三次握手</p>
+<p>TCP会为每块客户数据配上一个TCP首部，从而形成多个TCP报文段，报文段被下传到网络层，网络层将其封装在网络层IP数据报中，然后再被发送到网络。</p>
+<h4 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h4><p>解决流水线的差错恢复两种基本方法：</p>
+<p>1.回退N步(GBN)</p>
+<p>发送方在发完一个数据帧之后，连续发送若干个数据帧，即使在连续发送的过程中收到了接收方发来的应答帧，也可以继续发送。发送方在发完一个数据帧的时候都要设置超时定时器，当发送了N个帧之后，如果发现该N帧的前一个帧在计时器超时后仍未返回确认信息，则判断该帧出错或者丢失，发送方不得不重新发送出错帧以及其后的N帧。</p>
+<p>“累计确认”：允许接收端在连续收到好几个正确的确认帧之后，只对最后一个数据帧发送确认信息。</p>
+<p><img src="/home/alex/图片/2018-245.png" alt="filename alre exists, renamed"></p>
+<p>2.选择重传（SR）</p>
+<p>通过让发送方仅重传那些它怀疑在接收方出错的分组而避免了不必要的重传。</p>
+<p>就是接收方发现某帧出错之后，其后继续送来的正确的帧虽然不能立即递交给接收方的高层，但接收方可以收下来，存放在一个缓冲区中。</p>
+<p>同时要求发送方重新传送出错的那一帧，一旦收到重新传来的那个帧，就可以要把缓存区的其他帧一起按正确的顺序传递给高层。</p>
 
       
     </div>
@@ -405,6 +432,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/14/强化学习/" rel="prev" title="强化学习">
+                强化学习 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -485,7 +516,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -540,7 +571,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层协议"><span class="nav-number">1.</span> <span class="nav-text">运输层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用与多路分解"><span class="nav-number">1.2.</span> <span class="nav-text">多路复用与多路分解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运输层报文段中的源与目的端口字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">运输层报文段中的源与目的端口字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无连接的多路复用与分解"><span class="nav-number">1.3.</span> <span class="nav-text">无连接的多路复用与分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接的多路复用与分解"><span class="nav-number">1.4.</span> <span class="nav-text">连接的多路复用与分解</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层协议"><span class="nav-number">1.</span> <span class="nav-text">运输层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用与多路分解"><span class="nav-number">1.2.</span> <span class="nav-text">多路复用与多路分解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运输层报文段中的源与目的端口字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">运输层报文段中的源与目的端口字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无连接的多路复用与分解"><span class="nav-number">1.3.</span> <span class="nav-text">无连接的多路复用与分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接的多路复用与分解"><span class="nav-number">1.4.</span> <span class="nav-text">连接的多路复用与分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接运输-UDP"><span class="nav-number">2.</span> <span class="nav-text">无连接运输 UDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向连接的TCP"><span class="nav-number">3.</span> <span class="nav-text">面向连接的TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构造可靠数据传输协议"><span class="nav-number">3.1.</span> <span class="nav-text">构造可靠数据传输协议</span></a></li></ol></li></ol></div>
             
 
           </div>

@@ -272,6 +272,363 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/05/01/体系结构-存储器层次结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/01/体系结构-存储器层次结构/" itemprop="url">体系结构——指令级并行</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-01T16:15:44+08:00">
+                2019-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="指令级并行"><a href="#指令级并行" class="headerlink" title="指令级并行"></a>指令级并行</h3><p>指令之间可以重叠执行</p>
+<p>基本概念：</p>
+<p><img src="/home/alex/图片/zzzs.png" alt="upload succssful"></p>
+<p>提高ILP常见基本方法： 循环级并行</p>
+<h4 id="数据相关："><a href="#数据相关：" class="headerlink" title="数据相关："></a>数据相关：</h4><p><img src="/home/alex/图片/mips.png" alt="upload suessful"></p>
+<p>相关会带来冒险，解决方法两种：</p>
+<p>1.指令调度，保持相关，但避免发生冒险</p>
+<p>2.通过代码变换消除相关</p>
+<p>数据流经寄存器的时候，检测容易。</p>
+<p>但是若数据流动经过存储器的时候，检测比较复杂。</p>
+<p>因为实际逻辑地址与物理地址转换之间的关系，导致相同形式的地址有效地址未必相同，而形式不同的地址有效地址可能相同。</p>
+<p>复习：</p>
+<p><img src="/home/alex/图片/2018-246.png" alt="filename already exists, renamed"></p>
+<h4 id="名称相关"><a href="#名称相关" class="headerlink" title="名称相关"></a>名称相关</h4><p>名称为指令所访问的寄存器或者存储器单元的名称</p>
+<p>如果两条指令使用相同的名称，但是它们之间<strong>并没有数据流动，则称这两条指令存在名称相关</strong>。</p>
+<p>相关有两种：</p>
+<p>1.反相关：</p>
+<p>指令j写的名称 = 指令i读的名称</p>
+<p>2.输出相关：</p>
+<p>指令j写的名称 = 指令i写的名称</p>
+<p>如果指令中名称改变了，不影响另一条指令的执行。</p>
+<p>换名技术：</p>
+<p>1.改变指令中操作数的名称来消除名相关。</p>
+<p>2.对于寄存器操作数进行换名：寄存器换名</p>
+<p><img src="/home/alex/图片/2018-247.png" alt="filename already  renamed"></p>
+<p><img src="/home/alex/图片/SHUJUMAOXIAN.png" alt="upload succeul"></p>
+<p>保证程序的正确执行：数据流与异常行为</p>
+<p><img src="/home/alex/图片/2018-248.png" alt="filename alre exists, renamed"></p>
+<p><img src="/home/alex/图片/fenzhi.png" alt="upload ul"></p>
+<p> BEQZ RNAME,ADDRESS  若R ==0 ，跳转到ADDRESS的偏移地址处</p>
+<h3 id="基本流水线调度与循环展开"><a href="#基本流水线调度与循环展开" class="headerlink" title="基本流水线调度与循环展开"></a>基本流水线调度与循环展开</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">for(i=999;i&gt;=0;i=i-1)&#123;</span><br><span class="line">	x[i]  = x[i] + s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>转换为MIPS<br>假设R1的初值是数组元素的最高地址，8（R2）指向最后一个元素。F2包含标量值s</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LOOP: LW F1,0(R1)</span><br><span class="line">	stall</span><br><span class="line">	ADD F4,F1,F2</span><br><span class="line">	stall</span><br><span class="line">    stall</span><br><span class="line">    SW  F4 ,0(R1)</span><br><span class="line">	ADDI R1,R1 #-8</span><br><span class="line">	BNEQZ R1,R2,LOOP</span><br></pre></td></tr></table></figure>
+<p>指令调度之后的MIPS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Loop： LW F1,0(R1)</span><br><span class="line">		Addi R1,R1,#-8</span><br><span class="line">       	ADD F4,F1,F2</span><br><span class="line">        STALL</span><br><span class="line">        STALL</span><br><span class="line">        SW F4 ,0(R1)</span><br><span class="line">        BNEQZ R1,R2,loop</span><br></pre></td></tr></table></figure>
+<h4 id="循环展开技术"><a href="#循环展开技术" class="headerlink" title="循环展开技术"></a>循环展开技术</h4><p>把循环体代码复制多次并且按顺序排列，然后相应调整循环的结束条件。</p>
+<p>给编译器进行指令调度带来更大空间</p>
+<p><img src="/home/alex/图片/meiyou.png" alt="upload sccessful"></p>
+<p><img src="/home/alex/图片/2018-249.png" alt="filename alre exists, renamed"></p>
+<p>总结：</p>
+<p>指令级并行做法：</p>
+<p>1.循环展开</p>
+<p>2.寄存器重命名以消除冒险</p>
+<p>3.指令调度</p>
+<h4 id="使用高级分支预测降低分支成本"><a href="#使用高级分支预测降低分支成本" class="headerlink" title="使用高级分支预测降低分支成本"></a>使用高级分支预测降低分支成本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">if （aa= =2）</span><br><span class="line">	 aa= 0；</span><br><span class="line">if （bb= =2）</span><br><span class="line">	 bb= 0；</span><br><span class="line">if （aa！= bb）&#123;  &#125;；</span><br></pre></td></tr></table></figure>
+<p>MIPS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ADDI R3,R1,#-2</span><br><span class="line">BNEQZ R3,L1</span><br><span class="line">ADD R1,R0,R0</span><br><span class="line">L1: ADDI R3,R2,#-2</span><br><span class="line">	BNEQZ R3,L2</span><br><span class="line">    ADD R2,R0,R0</span><br><span class="line">L2: SUB R3,R1,R2</span><br><span class="line">	BNEQZ R3,L3</span><br></pre></td></tr></table></figure>
+<h4 id="相关预测"><a href="#相关预测" class="headerlink" title="相关预测"></a>相关预测</h4><p>利用其他分支行为进行预测的分支预测器</p>
+<p>竞赛预测器：</p>
+<p><img src="/home/alex/图片/asf.png" alt="upload sful"></p>
+<h4 id="动态调度克服数据冒险"><a href="#动态调度克服数据冒险" class="headerlink" title="动态调度克服数据冒险"></a>动态调度克服数据冒险</h4><p>静态调度： 仅仅依靠编译器对代码进行静态调度，减少相关和冒险。</p>
+<p>只是在编译而不是程序执行的阶段进行代码调度和优化，本质上是把相关指令拉开距离来减少可能产生的停顿。</p>
+<p>动态调度： </p>
+<p>在程序的执行过程中，依靠专门硬件对代码进行调度，减少数据相关导致的停顿。</p>
+<p>动态调度思想：</p>
+<p><img src="/home/alex/图片/dongtai.png" alt="upload suessful"></p>
+<p><img src="/home/alex/图片/姨妈阶段.png" alt="uplad successful"></p>
+<p>把Decode阶段拆分为两个阶段</p>
+<p><img src="/home/alex/图片/zzaf.png" alt="upload cessful"></p>
+<p>指令调度使得异常处理变得复杂：</p>
+<h4 id="不精确异常："><a href="#不精确异常：" class="headerlink" title="不精确异常："></a>不精确异常：</h4><p>当执行指令i导致发生异常时，处理机的现场（状态）与严格按程序顺序执行指令i时的现场不同。</p>
+<h4 id="精确异常"><a href="#精确异常" class="headerlink" title="精确异常:"></a>精确异常:</h4><p>当执行指令i导致发生异常时，处理机的现场（状态）与严格按程序顺序执行指令i时的现场相同。</p>
+<h4 id="Tomasulo-算法"><a href="#Tomasulo-算法" class="headerlink" title="Tomasulo 算法"></a>Tomasulo 算法</h4><p>核心思想：记录和检测指令相关，操作数一旦就绪立即执行，把发生RAW冒险的可能性减少到最小。</p>
+<p>通过寄存器换名来消除WAR和WAW冒险</p>
+<p>反相关会导致WAR冲突 </p>
+<p>输出相关会导致WAW冲突</p>
+<p><img src="/home/alex/图片/2018-250.png" alt="filename ready exists, renamed"><br>其实前两个F6和最后一个F6逻辑上是没有关联的<br>第一个F8和最后两个F8也是没有关联的</p>
+<p><img src="/home/alex/图片/Tomasulo.png" alt="uploaduccessful"></p>
+<p><img src="/home/alex/图片/2018-251.png" alt="filename alre exists, renamed"></p>
+<h4 id="保留站"><a href="#保留站" class="headerlink" title="保留站"></a>保留站</h4><p>保留站保存一条已经流出并等待到本功能部件执行的指令。<br>包括：操作码，操作数和用于检测和解决冲突的信息。</p>
+<p><img src="/home/alex/图片/caozuoshu.png" alt="upload sful"></p>
+<h4 id="公共数据总线CDB"><a href="#公共数据总线CDB" class="headerlink" title="公共数据总线CDB"></a>公共数据总线CDB</h4><p>所有功能部件的计算结果都送到CDB上，由它把这些结果直接送到各个需要该结果的地方。</p>
+<p>在具有多个执行部件且采用多流出（即每个时钟周期流出多条指令）的流水线中，需要采用多条CDB</p>
+<h4 id="缓冲器"><a href="#缓冲器" class="headerlink" title="缓冲器"></a>缓冲器</h4><p>存放读写寄存器的数据与地址</p>
+<p><img src="/home/alex/图片/模拟器.png" alt="upload successl"></p>
+<p>寄存器换名是通过保留站和流出逻辑来共同完成的。</p>
+<p>当指令流出的时候，操作数如果还没有计算出来，把指令中相应的寄存器号换名为将产生这个操作数的保留站的标识。</p>
+<p>指令流出保留站之后，操作数寄存器号或者换为数据本身，或者换成保留站的标识，不再与寄存器有关系。</p>
+<h4 id="Tomasulo算法特点"><a href="#Tomasulo算法特点" class="headerlink" title="Tomasulo算法特点"></a>Tomasulo算法特点</h4><p>冒险检测与指令执行控制是分布的。</p>
+<p>每个功能部件的保留站中的信息决定了什么时候指令可以在该功能部件开始执行。</p>
+<p>计算结果通过CDB直接从产生他的保留站传送到所有需要它的功能部件，不用经过寄存器。</p>
+<h4 id="Tomasulo算法"><a href="#Tomasulo算法" class="headerlink" title="Tomasulo算法"></a>Tomasulo算法</h4><p>指令执行步骤：</p>
+<p>发射： 从指令队列头部取指令</p>
+<p><img src="/home/alex/图片/缓冲.png" alt="uplad successful"></p>
+<p><img src="/home/alex/图片/2018-252.png" alt="filename alread exists, renamed"></p>
+<p><img src="/home/alex/图片/ba.png" alt="upload sucessful"></p>
+<p><img src="/home/alex/图片/PRML.png" alt="upl successful"></p>
+<p>example：</p>
+<p>当执行了第一条指令并且已经把结果写入的时候</p>
+<p><img src="/home/alex/图片/2018-253.png" alt="filename alrey exists, renamed"></p>
+<p>算法两个优点：</p>
+<h4 id="冒险检测逻辑是分布的。"><a href="#冒险检测逻辑是分布的。" class="headerlink" title="冒险检测逻辑是分布的。"></a>冒险检测逻辑是分布的。</h4><p>（通过保留站和CDB实现）</p>
+<p>如果有多条指令已经获得了一个操作数，并同时在等待同一运算结果，那么这个结果一产生，就可以通过CDB同时播送给所有这些指令，使它们可以同时执行。</p>
+<h4 id="消除了WAW冒险和WAR冒险导致的停顿。"><a href="#消除了WAW冒险和WAR冒险导致的停顿。" class="headerlink" title="消除了WAW冒险和WAR冒险导致的停顿。"></a>消除了WAW冒险和WAR冒险导致的停顿。</h4><p>使用保留站进行寄存器换名，并且操作数一旦准备就绪就放到保留站。</p>
+<h3 id="以下是Tomasulate-C-模拟"><a href="#以下是Tomasulate-C-模拟" class="headerlink" title="以下是Tomasulate C++ 模拟"></a>以下是Tomasulate C++ 模拟</h3><h4 id="基于硬件推测："><a href="#基于硬件推测：" class="headerlink" title="基于硬件推测："></a>基于硬件推测：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">对分支指令的结果进行猜测，并假设这个猜测</span><br><span class="line">总是对的，然后按这个猜测结果继续取、流出和执</span><br><span class="line">行后续的指令。只是执行指令的结果不是写回到寄</span><br><span class="line">存器或存储器，而是放到一个称为ROB（ReOrder </span><br><span class="line">Buffer）的缓冲器中。等到相应的指令得到“确认”</span><br><span class="line">（commit）（即确实是应该执行的）之后，才将结</span><br><span class="line">果写入寄存器或存储器。</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/zhiling.png" alt="uplo successful"></p>
+<p><img src="/home/alex/图片/2018-254.png" alt="e already exists, renamed"></p>
+<p>//看到PPT 101</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/03/14/强化学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/14/强化学习/" itemprop="url">强化学习</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-14T10:04:11+08:00">
+                2019-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>三个主要概念：</p>
+<p>环境状态，行动和奖励</p>
+<p>强化学习的目标一般是变化的，不明确的，甚至可能不存在绝对正确的标签。</p>
+<h3 id="策略网络与估值网络"><a href="#策略网络与估值网络" class="headerlink" title="策略网络与估值网络"></a>策略网络与估值网络</h3><p>Policy-based 方法直接预测在某个环境下应该采取的Action，而Value based方法则预测某个环境状态下所有Action的期望价值（Q值）</p>
+<p>策略网络预测出当前局势下应该采取的Action，给出的是执行某个Action的概率。</p>
+<p>而估值网络预测的是当前局势下每个Action的期望价值。</p>
+<h3 id="Model-based-和-Model-free"><a href="#Model-based-和-Model-free" class="headerlink" title="Model-based 和 Model-free"></a>Model-based 和 Model-free</h3><p>基于模型的：根据环境状态和采取的行动预测接下来的环境状态，并利用这个信息训练强化学习模型。</p>
+<p>不基于模型的：不需要对环境状态进行预测 也不考虑行动将如何影响环境。</p>
+<h3 id="Tensorflow-策略网络"><a href="#Tensorflow-策略网络" class="headerlink" title="Tensorflow 策略网络"></a>Tensorflow 策略网络</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r = r1+γr2+γ^2r3...</span><br></pre></td></tr></table></figure>
+<p>模型通过学习Action在Environment中获得的反馈，使用梯度更新模型参数。</p>
+<p>代码参照：</p>
+<p>见github</p>
+<h3 id="Tensorflow-估值网络"><a href="#Tensorflow-估值网络" class="headerlink" title="Tensorflow 估值网络"></a>Tensorflow 估值网络</h3><p>Q-learning 指从当前这一步到所有后续步骤，总共可以期望获取的最大价值。（Action-&gt;Q）</p>
+<p>在每一个state下选择Q值最高的Action，Qlearning不依赖于环境模型，在有限马尔科夫决策过程中，证明最终可以找到最优策略。</p>
+<h3 id="Q-learning"><a href="#Q-learning" class="headerlink" title="Q-learning"></a>Q-learning</h3><p>Q-learning 指从当前这一步到所有后续步骤，总共可以期望获取的最大价值。（Action-&gt;Q）</p>
+<p>在每一个state下选择Q值最高的Action，Qlearning不依赖于环境模型，在有限马尔科夫决策过程中，证明最终可以找到最优策略。</p>
+<p>目标是求解函数$Q(s_{t},a_{t})$ ,以（状态，行为，奖励，下一个状态）构成的元组为样本来进行训练，其中$(s_{t},a_{t},r_{t+1},s_{t+1})$</p>
+<p>学习目标是 $r_{t+1}+\gamma * max_{a}Q(s_{t+1},a)$ 是当前Action获得的reward加上下一步可以获得的最大期望价值。参数$\gamma$ 表示一个衰减系数，决定了未来奖励在学习中的重要性</p>
+<p>整个Q-learning：</p>
+<p>$$<br>Q_{new}(s_{t},a_{t}) =(1-a)<em>Q_{old}(s_{t},a_{t})+a(r_{t+1}+\gamma </em> max_{a}Q(s_{t+1},a))<br>$$</p>
+<p>就是把旧的Q-learning向着学习目标按一个较小的学习速率α来学习</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/03/12/计网-运输层/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -347,32 +704,58 @@
 <p>而<strong>网络层</strong>提供了主机之间的逻辑联系。</p>
 <p>发送端： 运输层把应用程序进程接收到的报文转换成运输层分组，成为运输层报文段。实现方法为把应用报文划分为较小的块，并为每块加上一个运输层首部以生成运输层报文段。在发送端系统当中，运输层把这些报文段传递给网络层，网络层将其封装为网络层分组，向目的地发送。<br>网络路由器仅仅作用于数据报的网络层字段，即不检查封装在该数据报的运输层报文段的字段。</p>
 <p>接收端：网络层提取运输层报文段，把报文段上交给运输层，运输层处理接收到的报文段，使得该报文段中的数据为接收应用进程使用。</p>
+<p>网络层提供了主机之间的逻辑通信，而运输层为运行在不同主机上的进程提供了逻辑通信。</p>
+<p>运输协议能够提供的服务常常受制于网络层协议的服务模型。如果网络层协议无法为主机之间发送的运输层报文段提供时延或者带宽保证的话，运输层也不能为进程之间的发送应用程序报文提供时延或者带宽保证</p>
 <h4 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h4><p>UDP： 用户数据报协议：不可靠，无连接</p>
 <p>TCP： 传输控制协议： 可靠，面向连接</p>
 <p>运输层分组：报文段</p>
 <p>IP：网络层的一个协议，每台主机一个IP地址，是不可靠服务</p>
-<h4 id="多路复用与多路分解"><a href="#多路复用与多路分解" class="headerlink" title="多路复用与多路分解"></a>多路复用与多路分解</h4><p><img src="/home/alex/图片/ssssss.png" alt="upload sucessful"></p>
+<p>IP服务类型是尽力而为，不可靠的。</p>
+<p>带宽： 数据通信的最大吞吐量</p>
+<p>报文段： TCP和UDP的分组</p>
+<p>数据报： 网络层分组</p>
+<h4 id="多路复用与多路分解"><a href="#多路复用与多路分解" class="headerlink" title="多路复用与多路分解"></a>多路复用与多路分解</h4><p>TCP 和 UDP 最基本责任： 把两个端系统间的IP的交付服务拓展为运行在端系统上的两个进程之间的交付服务。</p>
+<p>这个过程也叫作多路复用和多路分解</p>
+<p><img src="/home/alex/图片/ssssss.png" alt="upload sucessful"></p>
 <p>运输层从下方的网络层接收报文段，运输层负责把这些报文段中的数据交付给主机上运行的应用程序进程。</p>
 <p>一个进程有一个或多个套接字，socket作为进程与网络传递数据的一个门户。</p>
 <p>那么怎么把运输层报文段定向到适当的套接字？接收端中，运输层检查这些字段，标识出接收套接字，进而把报文段定向到该套接字。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将运输层报文段中的数据交付到正确的套接字叫做多路分解</span><br></pre></td></tr></table></figure>
-<p>在源主机从不同的套接字中收集数据块，并为每个数据块封装上首部信息从而生成报文段，然后把报文段传递到网络层，叫做多路复用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将运输层报文段中的数据交付到正确的套接字叫做多路分解</span><br><span class="line"></span><br><span class="line">在源主机从不同的套接字中收集数据块，并为每个数据块封装上首部信息从而生成报文段，然后把报文段传递到网络层，叫做多路复用。</span><br></pre></td></tr></table></figure>
 <h5 id="运输层报文段中的源与目的端口字段"><a href="#运输层报文段中的源与目的端口字段" class="headerlink" title="运输层报文段中的源与目的端口字段"></a>运输层报文段中的源与目的端口字段</h5><p><img src="/home/alex/图片/2018-236.png" alt="filename alrea exists, renamed"></p>
 <p>1.套接字有唯一标识符<br>2.每个报文段有特殊字段来指示该报文段所要交付到的套接字。</p>
 <p>在主机上的每个套接字能够分配一个端口号，当报文段到达主机时，运输层检查报文段中的目的端口号，并且将其定向到相应的套接字。然后报文段中的数据通过套接字进入其所连接的进程。</p>
-<h4 id="无连接的多路复用与分解"><a href="#无连接的多路复用与分解" class="headerlink" title="无连接的多路复用与分解"></a>无连接的多路复用与分解</h4><p>无连接是指发送方和接收方的运输层实体之间没有握手。</p>
+<h4 id="无连接的多路复用与分解"><a href="#无连接的多路复用与分解" class="headerlink" title="无连接的多路复用与分解"></a>无连接的多路复用与分解</h4><p>无连接是指发送方和接收方的运输层实体之间没有握手。<br>UDP是通过（目的IP,目的端口号）来标识的。如果源IP和源端口号相同，那么会两个报文段会通过相同的套接字被定向到相同的目的进程。</p>
 <p>例子：</p>
 <p>主机A一个进程有UDP端口19157，他要发送一个应用程序数据块给位于主机B的另一个进程，该进程具有UDP端口46428,主机A的运输层创建一个运输层报文段，其中包括应用程序数据，源端口号以及目的端口号。</p>
 <p>运输层把报文段传递给网络层封装到一个IP数据报，然后交付给主机B。B能够运行多个进程，每个进程有自己的UDP套接字与相应的端口号。B会检查报文段的目的端口号，将每个报文段定向分解到相应的socket</p>
 <p>而源端口号的用途就是可以作为B回发报文给A的时候，作为返回地址的一部分。</p>
-<h4 id="连接的多路复用与分解"><a href="#连接的多路复用与分解" class="headerlink" title="连接的多路复用与分解"></a>连接的多路复用与分解</h4><p>TCP套接字由一个四元组（源IP地址，源端口号，目的IP地址，目的端口号）来标志。</p>
+<h4 id="连接的多路复用与分解"><a href="#连接的多路复用与分解" class="headerlink" title="连接的多路复用与分解"></a>连接的多路复用与分解</h4><p>TCP套接字由一个四元组（源IP地址，源端口号，目的IP地址，目的端口号）来标志。而UDP标识的二元组仅有目的IP地址和目的端口号。</p>
+<p>当TCP报文段从网络到达一台主机的时候，主机使用全部四个数值来把报文段定向分解到相应的套接字。</p>
+<p>具体来说，对UDP，如果两个报文段的有不同的源IP地址和源端口号，但具有相同的目的IP地址和目的端口号，那么两个报文段将通过相同的目的套接字被定向到相同的目的进程。</p>
+<p>而TCP如果两个报文段的源IP地址和端口号不同，会被定向到两个不同的套接字。</p>
 <p>例子：</p>
-<p>1.TCP服务器由一个 socket 它在12000端口上等待来自TCP客户的连接请求。</p>
-<p>2.客户发起连接请求。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clientSocket = socket(AF_INET,SOCK_STREAM)</span><br><span class="line"></span><br><span class="line">clientSocket.connect((serverName,12000))</span><br></pre></td></tr></table></figure>
+<p>1.TCP服务器有一个 socket 它在12000端口上等待来自TCP客户的连接请求。</p>
+<p>2.客户创建一个套接字，发起连接请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">clientSocket = socket(AF_INET,SOCK_STREAM)</span><br><span class="line"></span><br><span class="line">clientSocket.connect((serverName,12000))</span><br></pre></td></tr></table></figure>
 <p>3.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connectionSoekct,addr = serverSoskct.accept()</span><br></pre></td></tr></table></figure>
-<p>该服务器进程在端口12000等待接受连接，并且创建一个新的套接字。</p>
+<p>操作系统接收到具有目的端口的连接请求报文段，该服务器进程在端口12000等待接受连接，并且创建一个新的套接字。</p>
+<p>持续HTTP连接的使用：整条持续链接期间，客户与服务器之间经由同一个服务器套接字交换HTTP报文，然而如果使用非持续HTTP链接，每一对请求/响应都创建一个新的TCP链接然后随之关闭。</p>
+<h3 id="无连接运输-UDP"><a href="#无连接运输-UDP" class="headerlink" title="无连接运输 UDP"></a>无连接运输 UDP</h3><p>在发送报文段之前，发送方和接收方的运输层实体之间没有握手。直接与IP打交道，UDP从应用程序得到数据，附加上用于多路复用和分解的源端口和源地址以及其他两个小字段，然后把形成的报文段交给网络层。网络层把运输层报文段封装到一个IP数据报中，然后尽力把报文段交付给接收主机。主机接收到报文段之后UDP使用目的端口把报文段中的数据交付给正确的应用程序。</p>
+<h3 id="面向连接的TCP"><a href="#面向连接的TCP" class="headerlink" title="面向连接的TCP"></a>面向连接的TCP</h3><p>应用进程开始向另外一个进程发送数据之前，两个进程必须先相互握手。即必须相互发送某些预备报文段，以确定数据传输的参数。</p>
+<p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
+<p>TCP链接点对点，是单个发送方与单个接收方之间的连接。</p>
+<p>TCP三次握手</p>
+<p>TCP会为每块客户数据配上一个TCP首部，从而形成多个TCP报文段，报文段被下传到网络层，网络层将其封装在网络层IP数据报中，然后再被发送到网络。</p>
+<h4 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h4><p>解决流水线的差错恢复两种基本方法：</p>
+<p>1.回退N步(GBN)</p>
+<p>发送方在发完一个数据帧之后，连续发送若干个数据帧，即使在连续发送的过程中收到了接收方发来的应答帧，也可以继续发送。发送方在发完一个数据帧的时候都要设置超时定时器，当发送了N个帧之后，如果发现该N帧的前一个帧在计时器超时后仍未返回确认信息，则判断该帧出错或者丢失，发送方不得不重新发送出错帧以及其后的N帧。</p>
+<p>“累计确认”：允许接收端在连续收到好几个正确的确认帧之后，只对最后一个数据帧发送确认信息。</p>
+<p><img src="/home/alex/图片/2018-245.png" alt="filename alre exists, renamed"></p>
+<p>2.选择重传（SR）</p>
+<p>通过让发送方仅重传那些它怀疑在接收方出错的分组而避免了不必要的重传。</p>
+<p>就是接收方发现某帧出错之后，其后继续送来的正确的帧虽然不能立即递交给接收方的高层，但接收方可以收下来，存放在一个缓冲区中。</p>
+<p>同时要求发送方重新传送出错的那一帧，一旦收到重新传来的那个帧，就可以要把缓存区的其他帧一起按正确的顺序传递给高层。</p>
 
           
         
@@ -614,7 +997,82 @@
 在来自 DNS 服务器的回答中，回答区域包含了对最初请求的名字的资源记录。前面讲过每个资源记录中有 Type（如 A、NS、CNAME 和 MX）字段、Value 字段和 TTL 字段。在回答报文的回答区域中可以包含多条 RR，因此一个主机名能够有多个 IP 地址（例如，就像本节前面讨论的冗余 Web 服务器）。
 权威区域包含了其他权威服务器的记录。
 附加区域包含了其他有帮助的记录。例如，对于一个 MX 请求的回答报文的回答区域包含了一条资源记录，该记录提供了邮件服务器的规范主机名。该附加区域包含一个类型 A 记录，该记录提供了用于该邮件服务器的规范主机名的 IP 地址。
-</code></pre>
+</code></pre><h4 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h4><p>定义了Web客户机如何向Web服务器请求Web页面以及Web服务器如何将Web页面传递给Web客户机</p>
+<p>http报文格式两种：</p>
+<p>1.客户端：浏览器请求Web对象（request）报文<br>2.服务器：Web服务器对请求进行响应，发送包含该对象的报文</p>
+<p>http使用TCP作为底层服务，客户端发起一个与服务器的TCP链接，同时http是无状态的</p>
+<h4 id="非持久性链接-amp-持久性链接"><a href="#非持久性链接-amp-持久性链接" class="headerlink" title="非持久性链接&amp;持久性链接"></a>非持久性链接&amp;持久性链接</h4><p>非持久性链接：每个请求与响应对是一个经单独的TCP连接发送</p>
+<p>其中每个TCP链接只传输一个对象，只传输一个请求报文和一个响应报文。<br>每个TCP链接在服务器返回对象后会关闭，即该链接不为其他对象而持续下来。</p>
+<p>持久性链接：所有请求、响应对经相同的TCP连接发送</p>
+<h4 id="请求一个html文件所需的时间"><a href="#请求一个html文件所需的时间" class="headerlink" title="请求一个html文件所需的时间"></a>请求一个html文件所需的时间</h4><p>往返时间RRT：</p>
+<p>分组在客户机与服务器往返的时间</p>
+<p>响应时间：</p>
+<p>total time = 2*RRT + 文件传输时间</p>
+<p><img src="/home/alex/图片/2018-239.png" alt="filename eady exists, renamed"></p>
+<p>非持续链接的缺点：</p>
+<p>为每个请求对象建立和维护一个全新的连接。<br>取对象的时候需要两个RTTs，每个TCP链接都要客户机和服务器分配TCP的缓冲区和保持TCP变量。</p>
+<h4 id="持久性链接"><a href="#持久性链接" class="headerlink" title="持久性链接"></a>持久性链接</h4><p>服务器在发送response之后，客户机与服务器之间的后续请求可以使用相同的链接。</p>
+<p>有非流水线（客户机只能在前一个响应接收到之后才能发出新的请求）<br>和流水线（客户机遇到引用就会产生一个请求）方式</p>
+<p><img src="/home/alex/图片/2018-240.png" alt="filename eady exists, renamed"></p>
+<h4 id="提交表单数据"><a href="#提交表单数据" class="headerlink" title="提交表单数据"></a>提交表单数据</h4><p>用户所请求的Web页面的内容依赖于用户在表单字段中输入的内容。</p>
+<h5 id="Post方法"><a href="#Post方法" class="headerlink" title="Post方法"></a>Post方法</h5><p>输入的内容将包含在http请求报文的实体主体中。</p>
+<h5 id="URL方法"><a href="#URL方法" class="headerlink" title="URL方法"></a>URL方法</h5><p>使用GET方法</p>
+<p>表单字段中的输入的内容放在URL字段中</p>
+<p>put方法 把请求报文的实体主体的对象上传到指定Web服务器的指定的路径。</p>
+<h4 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h4><p>1.HTTP response报文，set-cookie首部行</p>
+<p>2.端系统中保留cookie一个文件，由浏览器管理</p>
+<p>3.HTTP request报文： cookie首部行</p>
+<p>4.Web站点的后端数据库</p>
+<h4 id="proxy-server"><a href="#proxy-server" class="headerlink" title="proxy server"></a>proxy server</h4><p><img src="/home/alex/图片/2018-241.png" alt="filene already exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-242.png" alt="filename aeady exists, renamed"></p>
+<h4 id="ftp-文件传输协议"><a href="#ftp-文件传输协议" class="headerlink" title="ftp 文件传输协议"></a>ftp 文件传输协议</h4><p>实现本地和远程文件系统上的移动文件</p>
+<p>文件传输的时候，FTP客户和服务器之间要建立两个TCP链接。</p>
+<h5 id="控制链接"><a href="#控制链接" class="headerlink" title="控制链接"></a>控制链接</h5><p>1.链接是持久性的。</p>
+<p>2．控制信息的带外控制</p>
+<p>３．ＦＴＰ客户端发起控制连接</p>
+<h5 id="数据连接"><a href="#数据连接" class="headerlink" title="数据连接"></a>数据连接</h5><p>1.数据连接用于传输文件</p>
+<p>2.非持久性链接</p>
+<p>3.由FTP服务器发起数据链接（PORT模式）</p>
+<p>4.客户机发起（PASV模式）</p>
+<p><img src="/home/alex/图片/2018-243.png" alt="filename lready exists, renamed"></p>
+<h4 id="PORT模式"><a href="#PORT模式" class="headerlink" title="PORT模式"></a>PORT模式</h4><p>PORT模式建立数据传输通道是由服务器端发起的，服务器使用20端口连接客户端某一个大于1024的端口。</p>
+<h4 id="PASV模式"><a href="#PASV模式" class="headerlink" title="PASV模式"></a>PASV模式</h4><p>数据传输通道的建立是由FTP客户端发起的，他使用一个大于1024的端口链接服务器的1024以上的某一个端口。</p>
+<h4 id="ftp维持状态（state）"><a href="#ftp维持状态（state）" class="headerlink" title="ftp维持状态（state）"></a>ftp维持状态（state）</h4><p>在整个会话期间，保留用户的状态信息</p>
+<h4 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h4><p>四个重要组件：</p>
+<p>1.用户代理</p>
+<p>撰写完邮件，用户代理将向其邮件服务器发送邮件，并且该邮件被放在邮件服务器的发送队列中</p>
+<p>2.邮件服务器</p>
+<p>报文队列：包含目前不能投递的邮件报文</p>
+<p>邮箱：每个接收方在邮件服务器都有一个邮箱，邮箱管理和维护发给用户的报文</p>
+<p>3.简单邮件传输协议</p>
+<p>TCP</p>
+<p>每个邮件服务器既有SMTP客户端运行，又有SMTP服务器端运行。发送邮件的时候，就表现为SMTP客户端，接收邮件的时候，表现为SMTP服务器</p>
+<p>直接传输 不使用中间服务器来发送邮件</p>
+<p>4.邮件访问协议</p>
+<p><img src="/home/alex/图片/2018-244.png" alt="filename eady exists, renamed"></p>
+<p>SMTP协议传输过程</p>
+<p>1.首先客户机在25端口建立一个到SMTP服务器的TCP链接</p>
+<p>2.传输的三个阶段：</p>
+<p>1.握手</p>
+<p>2.报文传输</p>
+<p>3.结束</p>
+<h4 id="smtp与http的异同点"><a href="#smtp与http的异同点" class="headerlink" title="smtp与http的异同点"></a>smtp与http的异同点</h4><p>相同点</p>
+<p>1.smtp和持久的http使用持续链接来传输文件</p>
+<p>从web服务器向web浏览器</p>
+<p>从一个邮件服务器向另外一个邮件服务器</p>
+<p>2.都使用ASCII命令/响应交互</p>
+<p>smtp与http不同点</p>
+<p>1.pull协议和push协议</p>
+<p>http:pull（拉协议）</p>
+<p>使用浏览器从web服务器拉取信息，TCP是想要获取文件一方首先发起的。</p>
+<p>email：push(协议)</p>
+<p>发送邮件的服务器把文件推向接收邮件服务器，TCP是发送文件一方首先发起的。</p>
+<p>2.smtp要求报文全部使用7-bit ASCII 码</p>
+<p>如果报文包含非7-bitASCII码或者如图像的二进制数据，则通常使用base-64来进行编码</p>
+<p>3.处理一个既包含文本也包含图形的其他多媒体类型</p>
+<p>http：每个对象封装在各自的响应报文中。</p>
+<p>smtp： 多个对象在一个多分部的报文中传送</p>
+
           
         
       
@@ -1694,311 +2152,11 @@ Return the learned parameters
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/31/DL-C4W3-YOLO/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/31/DL-C4W3-YOLO/" itemprop="url">DL-C4W3(YOLO)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-31T14:24:36+08:00">
-                2018-12-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="intro-边框的定义"><a href="#intro-边框的定义" class="headerlink" title="intro 边框的定义"></a>intro 边框的定义</h3><p><img src="/home/alex/图片/2018-149.png" alt="filename alreay exists, renamed"></p>
-<p>加入我们要分类80个物品，那么就有80个c（c0,c1…c80）</p>
-<h3 id="YOLO"><a href="#YOLO" class="headerlink" title="YOLO"></a>YOLO</h3><p>you only look once，只做一次前馈传播，并使用非最大化抑制之后就可以输出目标框。</p>
-<h4 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h4><p><img src="/home/alex/图片/编码.png" alt="uplouccessful"></p>
-<p><img src="/home/alex/图片/sleep.png" alt="upload succful"></p>
-<p>所谓anchor box，就是用来使得一个格子能够检测出多个对象。需要预先定义好anchor box的形状，当每找到一个对象的中点的时候，不仅仅把中点分配给对应的grid，而且还会分配到对应的anchor box</p>
-<p>对于每个anchor box，找出该框包含某一类的概率</p>
-<p><img src="/home/alex/图片/计算.png" alt="upload ccessful"></p>
-<h4 id="可视化预测"><a href="#可视化预测" class="headerlink" title="可视化预测"></a>可视化预测</h4><p><img src="/home/alex/图片/取最大值.png" alt="upload sful"></p>
-<p><img src="/home/alex/图片/2018-150.png" alt="filename already exists, ramed"></p>
-<p>当框框太多的时候，使用<em>非最大化抑制</em>的方法剔除一些重叠的框框。</p>
-<p>code见下</p>
-<h4 id="filter-box"><a href="#filter-box" class="headerlink" title="filter_box"></a>filter_box</h4><p><img src="/home/alex/图片/filter.png" alt="upload sucsful"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def yolo_filter_boxes(box_confidence, boxes, box_class_probs, threshold = .6):</span><br><span class="line">  &quot;&quot;&quot;</span><br><span class="line">    通过阈值来过滤对象和分类的置信度。</span><br><span class="line"></span><br><span class="line">    参数：</span><br><span class="line">        box_confidence  - tensor类型，维度为（19,19,5,1）,包含19x19单元格中每个单元格预测的5个锚框中的所有的锚框的pc （一些对象的置信概率）。</span><br><span class="line">        boxes - tensor类型，维度为(19,19,5,4)，包含了所有的锚框的（px,py,ph,pw ）。</span><br><span class="line">        box_class_probs - tensor类型，维度为(19,19,5,80)，包含了所有单元格中所有锚框的所有对象( c1,c2,c3，···，c80 )检测的概率。</span><br><span class="line">        threshold - 实数，阈值，如果分类预测的概率高于它，那么这个分类预测的概率就会被保留。</span><br><span class="line"></span><br><span class="line">    返回：</span><br><span class="line">        scores - tensor 类型，维度为(None,)，包含了保留了的锚框的分类概率。</span><br><span class="line">        boxes - tensor 类型，维度为(None,4)，包含了保留了的锚框的(b_x, b_y, b_h, b_w)</span><br><span class="line">        classess - tensor 类型，维度为(None,)，包含了保留了的锚框的索引</span><br><span class="line"></span><br><span class="line">    注意：&quot;None&quot;是因为你不知道所选框的确切数量，因为它取决于阈值。</span><br><span class="line">          比如：如果有10个锚框，scores的实际输出大小将是（10,）</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Step 1: Compute box scores</span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    box_scores = box_confidence * box_class_probs</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 2: Find the box_classes thanks to the max box_scores, keep track of the corresponding score</span><br><span class="line">    ### START CODE HERE ### (≈ 2 lines)</span><br><span class="line">    box_classes = K.argmax(box_scores, axis = -1)</span><br><span class="line">    box_class_scores = K.max(box_scores, axis = -1)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 3: Create a filtering mask based on &quot;box_class_scores&quot; by using &quot;threshold&quot;. The mask should have the</span><br><span class="line">    # same dimension as box_class_scores, and be True for the boxes you want to keep (with probability &gt;= threshold)</span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    filtering_mask = (box_class_scores &gt;= threshold)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 4: Apply the mask to scores, boxes and classes</span><br><span class="line">    ### START CODE HERE ### (≈ 3 lines)</span><br><span class="line">    scores = tf.boolean_mask(box_class_scores,filtering_mask)</span><br><span class="line">    boxes = tf.boolean_mask(boxes,filtering_mask)</span><br><span class="line">    classes= tf.boolean_mask(box_classes,filtering_mask)</span><br><span class="line">    </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return scores, boxes, classes</span><br></pre></td></tr></table></figure>
-<h4 id="非最大化抑制"><a href="#非最大化抑制" class="headerlink" title="非最大化抑制"></a>非最大化抑制</h4><p><img src="/home/alex/图片/2018-151.png" alt="filename already exists, renamed"></p>
-<p>1.假设首先设定阈值为0.6，抛弃所有pc&lt;=0.6可能性的框框，这一步先剔除了所有可能性很低的框框。</p>
-<p>2.选中一个pc最大的框框，作为输出，然后抛弃所有其他的与输出的交并比&gt;=0.5的框框</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">def yolo_non_max_suppression(scores, boxes, classes, max_boxes = 10, iou_threshold = 0.5):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Applies Non-max suppression (NMS) to set of boxes</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    scores -- tensor of shape (None,), output of yolo_filter_boxes()</span><br><span class="line">    boxes -- tensor of shape (None, 4), output of yolo_filter_boxes() that have been scaled to the image size (see later)</span><br><span class="line">    classes -- tensor of shape (None,), output of yolo_filter_boxes()</span><br><span class="line">    max_boxes -- integer, maximum number of predicted boxes you&apos;d like</span><br><span class="line">    iou_threshold -- real value, &quot;intersection over union&quot; threshold used for NMS filtering</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    scores -- tensor of shape (, None), predicted score for each box</span><br><span class="line">    boxes -- tensor of shape (4, None), predicted box coordinates</span><br><span class="line">    classes -- tensor of shape (, None), predicted class for each box</span><br><span class="line">    </span><br><span class="line">    Note: The &quot;None&quot; dimension of the output tensors has obviously to be less than max_boxes. Note also that this</span><br><span class="line">    function will transpose the shapes of scores, boxes, classes. This is made for convenience.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    max_boxes_tensor = K.variable(max_boxes, dtype=&apos;int32&apos;)     # tensor to be used in tf.image.non_max_suppression()</span><br><span class="line">    K.get_session().run(tf.variables_initializer([max_boxes_tensor])) # initialize variable max_boxes_tensor</span><br><span class="line">    </span><br><span class="line">    # Use tf.image.non_max_suppression() to get the list of indices corresponding to boxes you keep</span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    indicesList = tf.image.non_max_suppression(</span><br><span class="line">    boxes,</span><br><span class="line">    scores,</span><br><span class="line">    max_boxes,</span><br><span class="line">    iou_threshold,</span><br><span class="line">    score_threshold=float(&apos;-inf&apos;),</span><br><span class="line">    name=None</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">    # Use K.gather() to select only nms_indices from scores, boxes and classes</span><br><span class="line">    ### START CODE HERE ### (≈ 3 lines)</span><br><span class="line">    #把在indicesList的scores gather起来</span><br><span class="line">    scores = K.gather(scores,indicesList)</span><br><span class="line">    boxes = K.gather(boxes,indicesList)</span><br><span class="line">    classes = K.gather(classes,indicesList)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return scores, boxes, classes</span><br></pre></td></tr></table></figure>
-<h3 id="所有框进行过滤"><a href="#所有框进行过滤" class="headerlink" title="所有框进行过滤"></a>所有框进行过滤</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">def yolo_eval(yolo_outputs, image_shape = (720., 1280.), max_boxes=10, score_threshold=.6, iou_threshold=.5):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Converts the output of YOLO encoding (a lot of boxes) to your predicted boxes along with their scores, box coordinates and classes.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    yolo_outputs -- output of the encoding model (for image_shape of (608, 608, 3)), contains 4 tensors:</span><br><span class="line">                    box_confidence: tensor of shape (None, 19, 19, 5, 1)</span><br><span class="line">                    box_xy: tensor of shape (None, 19, 19, 5, 2)</span><br><span class="line">                    box_wh: tensor of shape (None, 19, 19, 5, 2)</span><br><span class="line">                    box_class_probs: tensor of shape (None, 19, 19, 5, 80)</span><br><span class="line">    image_shape -- tensor of shape (2,) containing the input shape, in this notebook we use (608., 608.) (has to be float32 dtype)</span><br><span class="line">    max_boxes -- integer, maximum number of predicted boxes you&apos;d like</span><br><span class="line">    score_threshold -- real value, if [ highest class probability score &lt; threshold], then get rid of the corresponding box</span><br><span class="line">    iou_threshold -- real value, &quot;intersection over union&quot; threshold used for NMS filtering</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    scores -- tensor of shape (None, ), predicted score for each box</span><br><span class="line">    boxes -- tensor of shape (None, 4), predicted box coordinates</span><br><span class="line">    classes -- tensor of shape (None,), predicted class for each box</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### </span><br><span class="line">    </span><br><span class="line">    # Retrieve outputs of the YOLO model (≈1 line)</span><br><span class="line">    box_confidence,box_xy,box_wh,box_class_probs = yolo_outputs</span><br><span class="line"></span><br><span class="line">    # Convert boxes to be ready for filtering functions </span><br><span class="line">    boxes = yolo_boxes_to_corners(box_xy, box_wh) </span><br><span class="line">    # Use one of the functions you&apos;ve implemented to perform Score-filtering with a threshold of score_threshold (≈1 line)</span><br><span class="line">    scores,boxes,classes = yolo_filter_boxes(box_confidence,boxes,box_class_probs,score_threshold)</span><br><span class="line">    # Scale boxes back to original image shape.</span><br><span class="line">    boxes = scale_boxes(boxes, image_shape)</span><br><span class="line">    # Use one of the functions you&apos;ve implemented to perform Non-max suppression with a threshold of iou_threshold (≈1 line)</span><br><span class="line">    scores,boxes,classes = yolo_non_max_suppression(scores, boxes, classes,max_boxes,iou_threshold)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return scores, boxes, classes</span><br></pre></td></tr></table></figure>
-<h3 id="YOLO总结"><a href="#YOLO总结" class="headerlink" title="YOLO总结"></a>YOLO总结</h3><p><img src="/home/alex/图片/2018-152.png" alt="filename eady exists, renamed"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/29/DL-C4W2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/29/DL-C4W2/" itemprop="url">DL-C4W2</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-29T13:26:56+08:00">
-                2018-12-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="LeNet-5"><a href="#LeNet-5" class="headerlink" title="LeNet -5"></a>LeNet -5</h3><p><img src="/home/alex/图片/alex.png" alt="upload ful"></p>
-<h3 id="AlexNet"><a href="#AlexNet" class="headerlink" title="AlexNet"></a>AlexNet</h3><p><img src="/home/alex/图片/local.png" alt="upload ssful"></p>
-<p>conv-&gt;max pool-&gt;conv-&gt;max pool-&gt;conv-&gt;conv-&gt;conv-&gt;conv-&gt;max pool-&gt;fc-&gt;fc-&gt;fc</p>
-<h3 id="VGG-16"><a href="#VGG-16" class="headerlink" title="VGG-16"></a>VGG-16</h3><p><img src="/home/alex/图片/VGG16.png" alt="upload ssful"></p>
-<p>16指的是只有１６层网络有需要学习的参数，ｐｏｏｌｉｎｇ层是没有要学习的参数的。</p>
-<p>箭头下方的[CONV 64]指有６４个ｆｉｌｔｅｒ，x2值对两层作卷积</p>
-<h3 id="ResNet"><a href="#ResNet" class="headerlink" title="ResNet"></a>ResNet</h3><h4 id="residual-block"><a href="#residual-block" class="headerlink" title="residual block"></a>residual block</h4><p><img src="/home/alex/图片/bl.png" alt="uload successful"></p>
-<p><img src="/home/alex/图片/tiaodong.png" alt="uplosuccessful"></p>
-<p> 增加short cut之后成为残差块的网络结构</p>
-<p><img src="/home/alex/图片/2018-140.png" alt="filename alreay exists, renamed"></p>
-<p> 可以构建更为深层的网络</p>
-<h3 id="Residual-Network"><a href="#Residual-Network" class="headerlink" title="Residual Network"></a>Residual Network</h3><p><img src="/home/alex/图片/residual Network.png" alt="ccessful"></p>
-<p> 没有residual block的网络叫做plain network</p>
-<h4 id="why-it-works"><a href="#why-it-works" class="headerlink" title="why it works?"></a>why it works?</h4><p><img src="/home/alex/图片/2018-141.png" alt="filenamelready exists, renamed"></p>
-<p>对于越深层的神经网络来说，参数越来越多，越来越难选择，将会导致连学习identity function（f(x)=x）都很困难，而如果用residual block，a^[l+2] = g(a^[l]) = a^[l],对于残差块来学习identity function 其实是很简单的，所以不影响性能。</p>
-<p><img src="/home/alex/图片/哪里.png" alt="upload successfl"></p>
-<p>在经历了相同的conv之后增加一层pooling</p>
-<h3 id="1x1-convolution"><a href="#1x1-convolution" class="headerlink" title="1x1 convolution"></a>1x1 convolution</h3><p>又叫做网中网</p>
-<p><img src="/home/alex/图片/2018-142.png" alt="filenamey exists, renamed"></p>
-<p>对一层 nxnxc 的图片，应用1x1xc的卷积核，得到新一层</p>
-<p>nxnx1，f个filter处理后，就得到一个nxnxf的新层。</p>
-<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><h5 id="降维或升维"><a href="#降维或升维" class="headerlink" title="降维或升维"></a>降维或升维</h5><p>压缩channel个数，当卷积核个数小于输入channel数量的时候</p>
-<p><img src="/home/alex/图片/convu.png" alt="upload sful"></p>
-<h5 id="增加非线性"><a href="#增加非线性" class="headerlink" title="增加非线性"></a>增加非线性</h5><p>why？</p>
-<p><img src="/home/alex/图片/2018-143.png" alt="filename already exists,med"></p>
-<h5 id="跨通道信息交互"><a href="#跨通道信息交互" class="headerlink" title="跨通道信息交互"></a>跨通道信息交互</h5><p><img src="/home/alex/图片/sun.png" alt="ud successful"></p>
-<h3 id="Inception-Network"><a href="#Inception-Network" class="headerlink" title="Inception Network"></a>Inception Network</h3><p>ref:</p>
-<p><a href="https://zhuanlan.zhihu.com/p/40050371" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/40050371</a></p>
-<p><a href="https://blog.csdn.net/a1154761720/article/details/53411365" target="_blank" rel="noopener">https://blog.csdn.net/a1154761720/article/details/53411365</a></p>
-<p><img src="/home/alex/图片/inception.png" alt="upload sssful"></p>
-<h3 id="compute-cost"><a href="#compute-cost" class="headerlink" title="compute cost"></a>compute cost</h3><p><img src="/home/alex/图片/2018-145.png" alt="filename alr exists, renamed"></p>
-<p>filter的第三个通道数目 == input feature map的第三个通道数目</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">结果参数 = 输入层 HxWx卷积核个数</span><br><span class="line"></span><br><span class="line">总计算成本 = (结果参数28x28x32) × （卷积核大小5x5x192）</span><br></pre></td></tr></table></figure>
-<h4 id="bottleneck-layer"><a href="#bottleneck-layer" class="headerlink" title="bottleneck layer"></a>bottleneck layer</h4><p><img src="/home/alex/图片/2018-146.png" alt="filename already exists,med"></p>
-<h3 id="inception-network"><a href="#inception-network" class="headerlink" title="inception network"></a>inception network</h3><h4 id="google-net"><a href="#google-net" class="headerlink" title="google net"></a>google net</h4><p><img src="/home/alex/图片/googleNet.png" alt="upload suc"></p>
-<p>1x1convolution 能够有效减少参数数量，加快训练</p>
-<p><img src="/home/alex/图片/2018-147.png" alt="filename already exi, renamed"></p>
-<p>可以观察到有一些旁路也输入到softmax中，因为hidden layer有时候的预测效果也不错，这么做可以防止过拟合</p>
-<h3 id="Transfer-Learning"><a href="#Transfer-Learning" class="headerlink" title="Transfer Learning"></a>Transfer Learning</h3><p>小数据集<br><img src="/home/alex/图片/xiaoshujuji.png" alt="up successful"></p>
-<p>大数据集<br><img src="/home/alex/图片/dashujuji.png" alt="upload ssful"></p>
-<h3 id="数据扩充"><a href="#数据扩充" class="headerlink" title="数据扩充"></a>数据扩充</h3><p><img src="/home/alex/图片/2018-148.png" alt="filename already erenamed"></p>
-<p>多CPU多线程实现</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2048,7 +2206,7 @@ Return the learned parameters
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

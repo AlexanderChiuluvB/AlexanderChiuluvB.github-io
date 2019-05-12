@@ -272,6 +272,297 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/22/线性模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/22/线性模型/" itemprop="url">PRML-线性模型</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-22T13:55:54+08:00">
+                2018-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="线性基函数模型"><a href="#线性基函数模型" class="headerlink" title="线性基函数模型"></a>线性基函数模型</h3><p>线性回归模型 y(x,w) = w0+w1x1+w2x2+…wDxD</p>
+<p>而为了改进模型，把xi替换为非线性表达式</p>
+<p><img src="/home/alex/图片/six.png" alt="uploaccessful"></p>
+<p>本实验使用了多项式基函数，高斯基函数和sigmoid基函数，以及混合型（多项式+sin正弦）而损失函数有两种选择，<em>交叉熵</em>函数以及<em>均方误差</em>，这里选择均方误差，求导比较方便。</p>
+<h3 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h3><h4 id="多项式基函数"><a href="#多项式基函数" class="headerlink" title="多项式基函数"></a>多项式基函数</h4><p>y = w0+w1<em>x1+w2</em>x2^2 + b</p>
+<p>λ2是L2正则化系数，可以解决过拟合问题</p>
+<p>正则化意义：<a href="https://blog.csdn.net/jinping_shi/article/details/52433975" target="_blank" rel="noopener">https://blog.csdn.net/jinping_shi/article/details/52433975</a></p>
+<h4 id="推导-1"><a href="#推导-1" class="headerlink" title="推导"></a>推导</h4><p><img src="/home/alex/图片/2018-98.png" alt="filename alrey exists, renamed"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def propogate(w,b,X,Y):</span><br><span class="line"></span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    :param w: (n,1)</span><br><span class="line">    :param b: scalar</span><br><span class="line">    :param X: (n,m)</span><br><span class="line">    :param Y: (1,n)</span><br><span class="line">    :return: grads a dict that saves the params dw,db</span><br><span class="line">            cost saves the cost after each iteration</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    #np.squeeze</span><br><span class="line">    #squeeze 函数：从数组的形状中删除单维度条目，即把shape中为1的维度去掉</span><br><span class="line">    m = X.shape[1]</span><br><span class="line"></span><br><span class="line">    Yba = np.dot(w.T,X) + b</span><br><span class="line"></span><br><span class="line">    cost = np.squeeze((0.5/m *np.dot((Yba-Y),(Yba-Y).T)))</span><br><span class="line"></span><br><span class="line">    dw = (1./m) * np.dot(X,(Yba-Y).T)</span><br><span class="line"></span><br><span class="line">    db = (1./m) * np.squeeze(np.sum(Yba-Y))</span><br><span class="line">    #save the updated result to the grads dict</span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db&#125;</span><br><span class="line"></span><br><span class="line">    return grads,cost</span><br><span class="line"></span><br><span class="line">def optimize(w,b,X,Y,epochs,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    :param w: (n,1) </span><br><span class="line">    :param b: scalar</span><br><span class="line">    :param X: (n,m)</span><br><span class="line">    :param Y: (1,n)</span><br><span class="line">    :param epochs: 迭代次数 </span><br><span class="line">    :param learning_rate: </span><br><span class="line">    :param l2: 正则化系数 </span><br><span class="line">    :return: params</span><br><span class="line">            grads save the final params ,used for test</span><br><span class="line">            costs save the cost</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    costs = []</span><br><span class="line"></span><br><span class="line">    for i in range(epochs):</span><br><span class="line">        grads,cost = propogate(w,b,X,Y)</span><br><span class="line">        dw = grads[&quot;dw&quot;]</span><br><span class="line">        db = grads[&quot;db&quot;]</span><br><span class="line"></span><br><span class="line">        w-=learning_rate*dw+l2*w</span><br><span class="line">        b-=learning_rate*db</span><br><span class="line"></span><br><span class="line">    params = &#123;&quot;w&quot;:w,&quot;b&quot;:b&#125;</span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db&#125;</span><br><span class="line"></span><br><span class="line">    return params,grads,costs</span><br><span class="line"></span><br><span class="line">def main(x_train, y_train,n,epoches,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;训练模型，并返回从x到y的映射。&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # 使用线性回归训练模型，根据训练集计算最优化参数</span><br><span class="line">    ## 请补全此处代码，替换以下示例</span><br><span class="line">    m = x_train.shape[0]</span><br><span class="line">    w = (np.random.randn(n,1))</span><br><span class="line">    X = np.zeros((n,m),dtype = np.float64)</span><br><span class="line">    b = np.float(0)</span><br><span class="line">    for i in range(n):</span><br><span class="line">        X[i,:] = x_train**(i+1)</span><br><span class="line">    Y = np.float64(np.reshape(y_train,newshape=(1,m)))</span><br><span class="line">    params,grads,costs = optimize(w,b,X,Y,epoches,learning_rate,l2)</span><br><span class="line">    w = params[&apos;w&apos;]</span><br><span class="line">    b = params[&apos;b&apos;]</span><br><span class="line">    def f(x):</span><br><span class="line">        ## 请补全此处代码，替换以下示例</span><br><span class="line">        m = x.shape[0]</span><br><span class="line"></span><br><span class="line">        X = np.zeros((n,m))</span><br><span class="line">        for i in range(n):</span><br><span class="line">            X[i,:] = x**(i+1)</span><br><span class="line">        y = b+np.dot(w.T,X)</span><br><span class="line">        return y.squeeze()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    return f</span><br></pre></td></tr></table></figure>
+<h4 id="result"><a href="#result" class="headerlink" title="result"></a>result</h4><p>参数：n=2 epochs = 100000 lr 1e-7</p>
+<p><img src="/home/alex/图片/2018-97.png" alt="filename alrey exists, renamed"></p>
+<h4 id="高斯基函数"><a href="#高斯基函数" class="headerlink" title="高斯基函数"></a>高斯基函数</h4><p><img src="/home/alex/图片/gaosiji.png" alt="upload succeful"></p>
+<h4 id="推导-2"><a href="#推导-2" class="headerlink" title="推导"></a>推导</h4><p><img src="/home/alex/图片/推导.png" alt="upload ssful"></p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def propogate(w,b,X,Y,mu,s):</span><br><span class="line"></span><br><span class="line">    m = X.shape[1]</span><br><span class="line">    Z = (X-mu)/s</span><br><span class="line">    A = np.exp(-(Z*Z)/2)</span><br><span class="line">    Yba = np.dot(w.T,A) + b</span><br><span class="line">    cost = np.squeeze((0.5/m *np.dot((Yba-Y),(Yba-Y).T)))</span><br><span class="line"></span><br><span class="line">    dY = 1./m*(Yba-Y)</span><br><span class="line">    dw = np.dot(A,dY.T)</span><br><span class="line">    db = np.squeeze(np.sum(dY))</span><br><span class="line">    dA = w*dY</span><br><span class="line">    dZ = dA*A*(-Z)</span><br><span class="line">    dmu = 1./m*np.sum(dZ*(-1/s),axis=1,keepdims=True)</span><br><span class="line">    ds = 1./m*np.sum(dZ*(-(X-mu)/(s*s)),axis=1,keepdims=True)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db,&quot;dmu&quot;:dmu,&quot;ds&quot;:ds&#125;</span><br><span class="line"></span><br><span class="line">    return grads,cost</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def optimize(w,b,X,Y,mu,s,epochs,learning_rate,l2):</span><br><span class="line"></span><br><span class="line">    costs = []</span><br><span class="line"></span><br><span class="line">    for i in range(epochs):</span><br><span class="line">        grads,cost = propogate(w,b,X,Y,mu,s)</span><br><span class="line">        dw = grads[&quot;dw&quot;]</span><br><span class="line">        db = grads[&quot;db&quot;]</span><br><span class="line">        dmu = grads[&quot;dmu&quot;]</span><br><span class="line">        ds = grads[&quot;ds&quot;]</span><br><span class="line"></span><br><span class="line">        w-=learning_rate*dw+l2*w</span><br><span class="line">        b-=learning_rate*db+l2*b</span><br><span class="line">        mu-=learning_rate*dmu+l2*mu</span><br><span class="line">        s -=learning_rate*ds+l2*s</span><br><span class="line"></span><br><span class="line">        costs.append(cost)</span><br><span class="line"></span><br><span class="line">    params = &#123;&quot;w&quot;:w,&quot;b&quot;:b,&quot;mu&quot;:mu,&quot;s&quot;:s&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    return params,costs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main(x_train, y_train,n,epoches,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;训练模型，并返回从x到y的映射。&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # 使用线性回归训练模型，根据训练集计算最优化参数</span><br><span class="line">    ## 请补全此处代码，替换以下示例</span><br><span class="line">    m = x_train.shape[0]</span><br><span class="line">    w = (np.random.randn(n,1))</span><br><span class="line">    # means of gaussian</span><br><span class="line">    mu = np.random.randn(n,1)</span><br><span class="line">    #I still have no idea why set like this?</span><br><span class="line">    for i in range(n):</span><br><span class="line">        mu[i,0]+=i*40</span><br><span class="line">    X = np.zeros((n,m),dtype = np.float64)</span><br><span class="line">    b = np.float(0)</span><br><span class="line">    for i in range(n):</span><br><span class="line">        X[i,:] = x_train</span><br><span class="line">    Y = np.float64(np.reshape(y_train,newshape=(1,m)))</span><br><span class="line"></span><br><span class="line">    #initalize s if s is too close to 0 then it will go wrong</span><br><span class="line">    while True:</span><br><span class="line">        flag = True</span><br><span class="line">        s = np.random.randn(n,1)</span><br><span class="line">        jump = np.int32(np.abs(s)&lt;1)</span><br><span class="line">        if(np.sum(jump))&gt;=1:</span><br><span class="line">            flag = False</span><br><span class="line">        if flag is True:</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line">    params,costs = optimize(w,b,X,Y,mu,s,epoches,learning_rate,l2)</span><br><span class="line">    w = params[&apos;w&apos;]</span><br><span class="line">    b = params[&apos;b&apos;]</span><br><span class="line">    mu = params[&apos;mu&apos;]</span><br><span class="line">    s = params[&apos;s&apos;]</span><br><span class="line">    def f(x):</span><br><span class="line">        ## 请补全此处代码，替换以下示例</span><br><span class="line">        m = x.shape[0]</span><br><span class="line"></span><br><span class="line">        X = np.zeros((n,m))</span><br><span class="line">        for i in range(n):</span><br><span class="line">            X[i,:] = x</span><br><span class="line">        Z = (X-mu)/s</span><br><span class="line">        A = np.exp(-(Z*Z)/2)</span><br><span class="line">        y = b+np.dot(w.T,A)</span><br><span class="line">        return y.squeeze()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    return f</span><br></pre></td></tr></table></figure>
+<p>参数：f = gaussian.main(x_train, y_train,3,500000,1e-2,0)</p>
+<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p><img src="/home/alex/图片/2018-100.png" alt="fileme already exists, renamed"></p>
+<h4 id="sigmoid-函数"><a href="#sigmoid-函数" class="headerlink" title="sigmoid 函数"></a>sigmoid 函数</h4><p><img src="/home/alex/图片/zhuanjiang.png" alt="upload succeful"></p>
+<h4 id="推导-3"><a href="#推导-3" class="headerlink" title="推导"></a>推导</h4><p>结果与高斯类似</p>
+<p><img src="/home/alex/图片/2018-99.png" alt="fiename already exists, renamed"></p>
+<h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def sigmoidFunction(z):</span><br><span class="line">    return 1./(1+np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def propogate(w,b,X,Y,mu,s):</span><br><span class="line"></span><br><span class="line">    m = X.shape[1]</span><br><span class="line">    Z = (X-mu)/s</span><br><span class="line">    A = sigmoidFunction(Z)</span><br><span class="line">    Yba = np.dot(w.T,A) + b</span><br><span class="line">    cost = np.squeeze((0.5/m *np.dot((Yba-Y),(Yba-Y).T)))</span><br><span class="line"></span><br><span class="line">    dY = 1./m*(Yba-Y)</span><br><span class="line">    dw = np.dot(A,dY.T)</span><br><span class="line">    db = np.squeeze(np.sum(dY))</span><br><span class="line">    dA = w*dY</span><br><span class="line">    dZ = dA*A*(1-A)</span><br><span class="line">    dmu = 1./m*np.sum(dZ*(-1./s),axis=1,keepdims=True)</span><br><span class="line">    ds = 1./m*np.sum(dZ*(-(X-mu)/(s*s)),axis=1,keepdims=True)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db,&quot;dmu&quot;:dmu,&quot;ds&quot;:ds&#125;</span><br><span class="line"></span><br><span class="line">    return grads,cost</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def optimize(w,b,X,Y,mu,s,epochs,learning_rate,l2):</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    costs = []</span><br><span class="line"></span><br><span class="line">    for i in range(epochs):</span><br><span class="line">        grads,cost = propogate(w,b,X,Y,mu,s)</span><br><span class="line">        dw = grads[&quot;dw&quot;]</span><br><span class="line">        db = grads[&quot;db&quot;]</span><br><span class="line">        dmu = grads[&quot;dmu&quot;]</span><br><span class="line">        ds = grads[&quot;ds&quot;]</span><br><span class="line"></span><br><span class="line">        w-=learning_rate*dw+l2*w</span><br><span class="line">        b-=learning_rate*db+l2*b</span><br><span class="line">        mu-=learning_rate*dmu+l2*mu</span><br><span class="line">        s -=learning_rate*ds+l2*s</span><br><span class="line"></span><br><span class="line">        costs.append(cost)</span><br><span class="line"></span><br><span class="line">    params = &#123;&quot;w&quot;:w,&quot;b&quot;:b,&quot;mu&quot;:mu,&quot;s&quot;:s&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    return params,costs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main(x_train, y_train,n,epoches,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;训练模型，并返回从x到y的映射。&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # 使用线性回归训练模型，根据训练集计算最优化参数</span><br><span class="line">    ## 请补全此处代码，替换以下示例</span><br><span class="line">    m = x_train.shape[0]</span><br><span class="line">    w = (np.random.randn(n,1))</span><br><span class="line">    # means of gaussian</span><br><span class="line">    mu = np.random.randn(n,1)</span><br><span class="line">    # mu is the mean of the sigmoid</span><br><span class="line">    for i in range(n):</span><br><span class="line">        mu[i,0]+= i*100/n</span><br><span class="line">    X = np.zeros((n,m),dtype = np.float64)</span><br><span class="line">    b = np.float(0)</span><br><span class="line">    for i in range(n):</span><br><span class="line">        X[i,:] = x_train</span><br><span class="line">    Y = np.float64(np.reshape(y_train,newshape=(1,m)))</span><br><span class="line"></span><br><span class="line">    #initalize s if s is too close to 0 then it will go wrong</span><br><span class="line">    while True:</span><br><span class="line">        flag = True</span><br><span class="line">        s = np.random.randn(n,1)</span><br><span class="line">        jump = np.int32(np.abs(s)&lt;1)</span><br><span class="line">        if(np.sum(jump))&gt;=1:</span><br><span class="line">            flag = False</span><br><span class="line">        if flag is True:</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line">    params,costs = optimize(w,b,X,Y,mu,s,epoches,learning_rate,l2)</span><br><span class="line">    w = params[&apos;w&apos;]</span><br><span class="line">    b = params[&apos;b&apos;]</span><br><span class="line">    mu = params[&apos;mu&apos;]</span><br><span class="line">    s = params[&apos;s&apos;]</span><br><span class="line">    def f(x):</span><br><span class="line">        ## 请补全此处代码，替换以下示例</span><br><span class="line">        m = x.shape[0]</span><br><span class="line"></span><br><span class="line">        X = np.zeros((n,m))</span><br><span class="line">        for i in range(n):</span><br><span class="line">            X[i,:] = x</span><br><span class="line">        Z = (X-mu)/s</span><br><span class="line">        A = sigmoidFunction(Z)</span><br><span class="line">        y = b+np.dot(w.T,A)</span><br><span class="line">        return y.squeeze()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    return f</span><br></pre></td></tr></table></figure>
+<p>参数：  f = sigmoid.main(x_train, y_train,10,100000,1e-2,0)</p>
+<h4 id="结果-1"><a href="#结果-1" class="headerlink" title="结果"></a>结果</h4><p><img src="/home/alex/图片/jieguo.png" alt="upload successful"></p>
+<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><p><a href="https://github.com/Haicang/PRML/blob/master/lab1/Report.ipynb" target="_blank" rel="noopener">https://github.com/Haicang/PRML/blob/master/lab1/Report.ipynb</a></p>
+<p><a href="https://blog.csdn.net/pipisorry/article/details/73770637" target="_blank" rel="noopener">https://blog.csdn.net/pipisorry/article/details/73770637</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/18/生产者与消费者模型-同步异步概念/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/生产者与消费者模型-同步异步概念/" itemprop="url">生产者与消费者模型&同步异步概念</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-18T13:01:48+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Ref：</p>
+<p><a href="https://blog.csdn.net/fuzhongmin05/article/details/54616344" target="_blank" rel="noopener">https://blog.csdn.net/fuzhongmin05/article/details/54616344</a></p>
+<p><img src="/home/alex/图片/expla.png" alt="upload succsful"></p>
+<p>code:</p>
+<p><img src="/home/alex/图片/code.png" alt="upload successl"></p>
+<p><strong><em>无法避免竞争</em></strong></p>
+<p>对count的访问没有做限制。</p>
+<p>这里有可能出现竞争条件，其原因是对count的访问未作限制。有可能出现以下情况：缓冲区为空，消费者刚刚读取count的值发现它为0，此时调度程序决定暂停消费者并启动运行生产者。生产者向缓冲区加入一个数据项，count加1。现在count的值变成了1，它推断认为count刚才为0，所以消费者此时一定在睡眠，于是生产者调用wakeup来唤醒消费者。</p>
+<p> 但是消费者在逻辑上并未睡眠，所以wakeup信号丢失，当消费者下次运行时，它将测试先前读取的count值，发现它为0。于是睡眠，生产者迟早会填满整个缓冲区，然后睡眠，这样一来，两个进程将永远睡眠下去。</p>
+<h3 id="引入信号量的操作"><a href="#引入信号量的操作" class="headerlink" title="引入信号量的操作"></a>引入信号量的操作</h3><p> Dijkstra建议设立两种操作：down和up（分别为一般化后的sleep和wakeup）。对一信号量执行down操作，则是检查其值是否大于0。若该值大于0，则将其减1（即用掉一个保存的唤醒信号）并继续；若该值为0，则进程将睡眠，而且此时down操作并未结束。检查数值、修改变量值以及可能发生的睡眠操作均作为一个单一的、不可分割的原子操作完成。保证一旦一个信号量操作开始，则在该操作完成或阻塞之前，其他进程均不允许访问该信号量。这种原子性对于解决同步问题和避免竞争条件是绝对必要的。所谓原子操作，是指一组相关联的操作要么都不间断地执行，要么不执行。</p>
+<p> up操作对信号量的值增1。如果一个或多个进程在该信号量上睡眠，无法完成一个先前的down操作，则由系统选择其中的一个（如随机挑选）并允许该进程完成它的down操作。于是，对一个有进程在其上睡眠的信号量执行一次up操作后，该信号量的值仍旧是0，但在其上睡眠的进程却少了一个。信号量的值增加1和唤醒一个进程同样也是不可分割的，不会有某个进程因执行up而阻塞，正如前面的模型中不会有进程因执行wakeup而阻塞一样。</p>
+<p> 在Dijkstra原来的论文中，他分别使用名称P和V而不是down和up，荷兰语中，Proberen的意思是尝试，Verhogen的含义是增加或升高。</p>
+<p>从物理上说明信号量的P、V操作的含义。 P(S)表示申请一个资源，S.value&gt;0表示有资源可用,其值为资源的数目；S.value=0表示无资源可用；S.value&lt;0, 则|S.value|表示S等待队列中的进程个数。V(S)表示释放一个资源，信号量的初值应该大于等于0。P操作相当于“等待一个信号”，而V操作相当于“发送一个信号”，在实现同步过程中，V操作相当于发送一个信号说合作者已经完成了某项任务，在实现互斥过程中，V操作相当于发送一个信号说临界资源可用了。实际上，在实现互斥时，P、V操作相当于申请资源和释放资源。</p>
+<p>该解决方案使用了三个信号量：一个称为full，用来记录充满缓冲槽数目，一个称为empty，记录空的缓冲槽总数；一个称为mutex，用来确保生产者和消费者不会同时访问缓冲区。full的初值为0，empty的初值为缓冲区中槽的数目，mutex的初值为1。供两个或多个进程使用的信号量，其初值为1，保证同时只有一个进程可以进入临界区，称作二元信号量。如果每个进程在进入临界区前都执行down操作，并在刚刚退出时执行一个up操作，就能够实现互斥。</p>
+<p> 在下面的例子中，我们实际上是通过两种不同的方式来使用信号量，两者之间的区别是很重要的，信号量mutex用于互斥，它用于保证任一时刻只有一个进程读写缓冲区和相关的变量。互斥是避免混乱所必需的操作。</p>
+<p>例题：</p>
+<p><img src="/home/alex/图片/mancao.png" alt="uplouccessful"></p>
+<p> items  就是full，记录满槽数目，初始值位0</p>
+<p> slots 就是empty，就是缓冲区中槽的数目,初始值为10</p>
+<p> mutex inital value  = 0</p>
+<p>那么insert function</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">P(slots);       //empty slot-1</span><br><span class="line">P(mutex);		//进入临界区</span><br><span class="line">insert_item</span><br><span class="line">V(mutex);		//离开临界区</span><br><span class="line">V(items);		//full slot+1</span><br></pre></td></tr></table></figure>
+<p>remove function</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">P(items);		//满槽数目-1</span><br><span class="line">P(mutex);		</span><br><span class="line">remove_item;</span><br><span class="line">V(mutex);</span><br><span class="line">V(slots);		//空槽数目+1</span><br></pre></td></tr></table></figure>
+<p>本例中，信号量保证缓冲区满的时候生产者停止运行，缓冲区空的时候消费者停止运行。</p>
+<h3 id="信号量用于同步"><a href="#信号量用于同步" class="headerlink" title="信号量用于同步"></a>信号量用于同步</h3><h4 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h4><p>一个进程执行某个请求，如果需要一段时间才能返回信息，那么进程会一直等待下去。也就是说直到收到返回信息才继续下去。</p>
+<h4 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h4><p>进程不需要一直等待下去，继续执行下面的操作，不管其他进程的状态。</p>
+<p>对于无界缓冲区问题，消费者只需关心缓冲区是否空即可</p>
+<p><img src="/home/alex/图片/empty.png" alt="upload suessful">。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/18/僵尸进程和孤儿进程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1550,350 +1841,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/12/CSAPP-SHELL-LAB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/12/CSAPP-SHELL-LAB/" itemprop="url">CSAPP-SHELL LAB</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-12T13:45:47+08:00">
-                2018-12-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>整个过程中要考虑显式阻塞</p>
-<p>1.在访问全局变量（jobs）以及调用给定函数的时候，要阻塞所有的信号，务必保证这些使用for循环遍历的函数不被中断。</p>
-<p>2.在一些函数或者指令有必须的先后顺序的时候，要阻塞，保证前一个函数调用完成，再调用后面一个函数。</p>
-<p>其他事项：</p>
-<p><img src="/home/alex/图片/2018-70.png" alt="filename already exists, renaed"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//判断是否是当前引起停止信号的是否是前台进程</span><br><span class="line">volatile sig_atomic_t fg_stop_or_exit;</span><br></pre></td></tr></table></figure></p>
-<h3 id="eval函数"><a href="#eval函数" class="headerlink" title="eval函数"></a>eval函数</h3><p>功能是对用户输入的参数进行解析，命令有两种，一种是内置的命令，会立刻执行，否则就要ｆｏｒｋ一个新的子进程并且把该任务在子进程的上下文中运行。<strong><em>如果是前台任务则需要等到它运行结束才返回</em></strong></p>
-<p>每个子进程必须有一个独一无二的进程组id，通过在fork（）之后子进程的Setpgid(0,0)实现，这样当我们向前台程序发送ctrl+c或者ctrl+z命令才不会影响到后台程序。否则所有的子进程会与当前的tsh shell进程为同一个进程组，发送信号的时候，前后台子进程都会收到。</p>
-<p>同时fork新进程的前后要阻塞SIGCHLD信号，防止出现竞争的同步错误：fork之后会在job列表里添加job，信号处理函数sigchld_handler回收进程后会在job列表中删除，如果信号来得很早，那么就可能发生先删除后添加的情况，那么job就会永远在列表中（内存泄漏？），所以我们先block掉SIGCHLD，添加job后再还原。</p>
-<p>说白了就是要避免僵尸进程，防止父进程没有给子进程收尸，屏蔽这个信号，那么父亲进程就会不关心这个子进程，子进程结束将由init进程去处理。</p>
-<h6 id="setpgid-函数"><a href="#setpgid-函数" class="headerlink" title="setpgid 函数"></a>setpgid 函数</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int setpgid (pid_t pid,pgid_t pgid);</span><br></pre></td></tr></table></figure>
-<p>该函数的意义是找到进程ID为pid的进程，将其进程组ID修改为pgid，如果pid=0，说明要修改进程组ID。如果是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setpgid(0,0)</span><br></pre></td></tr></table></figure>
-<p>表示创立新的进程组，并且指定的进程会成为进程组的首进程。</p>
-<p>如果执行成功就返回组识别码，如果有错误则返回-1，错误原因保存在errno中。</p>
-<h4 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h4><p>eval函数实现如下：</p>
-<p>if builtin_command return 0,then shell starts a new child process,and execute the requested programs in the child process,if the user asks for running the program in background, then shell return back to the top of the loop,waiting for next command. otherwise shell uses the waitpid function to wait for the jobs ‘ termination. when jobs terminates,shell begin a new loop.</p>
-<p>参考：<br><a href="https://blog.csdn.net/zxygww/article/details/25976107" target="_blank" rel="noopener">https://blog.csdn.net/zxygww/article/details/25976107</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">void eval(char *cmdline)</span><br><span class="line">&#123;</span><br><span class="line">    char *argv[MAXARGS];  //argument list execve()</span><br><span class="line">    char buf[MAXLINE];</span><br><span class="line">    int argc;</span><br><span class="line">    int bg; //whether the job is in fg or bg</span><br><span class="line">    bg = parseline(cmdline,argv);</span><br><span class="line">    sigset_t mask_chld,mask_all,mask_prev;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    </span><br><span class="line">    sigemptyset(&amp;mask_chld);</span><br><span class="line">    #把SIGCHLD信号赋给mask_chld</span><br><span class="line">    sigaddset(&amp;mask_chld,SIGCHLD);</span><br><span class="line">    #fill所有SIG信号给mask_all</span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line">    strcpy(buf,cmdline);</span><br><span class="line"></span><br><span class="line">    //empty command</span><br><span class="line">    if(argv[0]==NULL)&#123;</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!builtin_cmd(argv))&#123;</span><br><span class="line">		//如果不是内部函数，首先要把SIGCHLD信号阻塞住，以防出现竞争条件。</span><br><span class="line">		//子进程要解决信号阻塞，并执行相关的函数</span><br><span class="line">        //if the below code are outside of the buildin_cmd function,</span><br><span class="line">        //then these locks won&apos;t be realeased when executing inner commands</span><br><span class="line">        //block the SIGCHLD in order to prevent child process ends between father process</span><br><span class="line">		//先要阻塞SIGCHLD信号</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_chld,&amp;mask_prev);</span><br><span class="line">        //codes below won&apos;t be interrupt by signal SIGCHLD</span><br><span class="line"></span><br><span class="line">        //running a child process</span><br><span class="line">        //</span><br><span class="line">        if((pid=fork())==0)&#123;</span><br><span class="line">         //由于子进程会继承block的特性，所以子进程要记得unblock。</span><br><span class="line">            sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);//unblock the order</span><br><span class="line">            //change the process &apos;s group, not the same as tsh&apos;s group</span><br><span class="line">            setpgid(0,0);</span><br><span class="line">            if(execve(argv[0],argv,environ)&lt;0)&#123;</span><br><span class="line">                printf(&quot;%s: Command not found\n&quot;,argv[0]);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            //if execve cannot process then child process will execute main process</span><br><span class="line">            exit(0);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //blcok all signal</span><br><span class="line">        //为我阻挡一切！！就算天塌下来也要先addjob不然顺序乱就gg</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,NULL);</span><br><span class="line">        //foreGround</span><br><span class="line">        if(!bg)&#123;</span><br><span class="line">            addjob(jobs,pid,FG,cmdline);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            addjob(jobs,pid,BG,cmdline);</span><br><span class="line">        &#125;</span><br><span class="line">        //block sigchld again</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_chld,NULL);</span><br><span class="line"></span><br><span class="line">        //father process wait until front process stops</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        //父进程要判断子进程是前台进程还是后台进程，如果是前台进程，则调用waitpid来等待前台进程，如果是后台，把新添加进程利用addjob添加到工作组中。</span><br><span class="line">        if(!bg)&#123;</span><br><span class="line">            //Block until process pid is no longer the foreground process</span><br><span class="line">            waitfg(pid);</span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            sigprocmask(SIG_BLOCK,&amp;mask_all,NULL);</span><br><span class="line">            struct job_t * currbgmask = getjobpid(jobs,pid);</span><br><span class="line">            printf(&quot;[%d] (%d) %s&quot;,currbgmask-&gt;jid,currbgmask-&gt;pid,currbgmask-&gt;cmdline);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //unblock all signals</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="builtin-command"><a href="#builtin-command" class="headerlink" title="builtin_command"></a>builtin_command</h3><p>注意访问全局变量jobs的时候要阻塞全部信号就是了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">int builtin_cmd(char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    sigset_t mask_all,mask_prev;</span><br><span class="line"></span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line"></span><br><span class="line">    if(!strcmp(argv[0],&quot;quit&quot;))&#123;</span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!strcmp(argv[0],&quot;&amp;&quot;))&#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!strcmp(argv[0],&quot;jobs&quot;))&#123;</span><br><span class="line">        //when visit a global variance,you need to block all signals</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;mask_prev);</span><br><span class="line">        listjobs(jobs);</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(!strcmp(argv[0],&quot;bg&quot;)||!strcmp(argv[0],&quot;fg&quot;))&#123;</span><br><span class="line">        do_bgfg(argv);</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;     /* not a builtin command */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="waitfg"><a href="#waitfg" class="headerlink" title="waitfg"></a>waitfg</h3><p>只要进程号一直是前台程序，就一直sleep等待</p>
-<p>但奇怪的是，这个版本的waitfg函数运行有错误</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line"> * waitfg - Block until process pid is no longer the foreground process</span><br><span class="line"> */</span><br><span class="line"> </span><br><span class="line">void waitfg(pid_t pid)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    //fgpid return the pid of the front process id</span><br><span class="line">    </span><br><span class="line">    while((pid==fgpid(jobs)))&#123;</span><br><span class="line">        sleep(0);</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以下版本：<br>是书中545中介绍的一种显式接收信号的方法</p>
-<p>只要信号处理函数回收了前台进程，它就会将fg_stop_or_exit(注意用volatile关键字声明) 置1，这样我们的waitfg函数就会退出，接着读取用户的下一个输入.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * waitfg - Block until process pid is no longer the foreground process</span><br><span class="line"> */</span><br><span class="line">void waitfg(pid_t pid)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    sigset_t mask;</span><br><span class="line">    sigemptyset(&amp;mask);</span><br><span class="line">    fg_stop_or_exit = 0;</span><br><span class="line">   </span><br><span class="line">    ////只有发出这个信号的子进程是前台进程才设置fg_stop_or_exit标志。</span><br><span class="line">    while(!fg_stop_or_exit)&#123;</span><br><span class="line">        sigsuspend(&amp;mask);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="sigint-handler-amp-sigtstp-handler"><a href="#sigint-handler-amp-sigtstp-handler" class="headerlink" title="sigint_handler &amp; sigtstp_handler"></a>sigint_handler &amp; sigtstp_handler</h3><p>思路：</p>
-<p>1.获取前台进程（fgpid），判断当前是否有前台进程，如果没有则直接返回，有则进行步骤2</p>
-<p>2.使用kill函数，发送SIGINT/SIGTSTP信号给前台进程组</p>
-<h6 id="kill函数使用"><a href="#kill函数使用" class="headerlink" title="kill函数使用"></a>kill函数使用</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int kill(pid_t pid,int sig);</span><br><span class="line"></span><br><span class="line">//如果pid大于0，那么kill函数发送信号号码sig给进程pid，如果pid==0，那么kill发送信号sig给调用进程所在进程组中的每个进程，包括调用进程自己。如果pid&lt;0，则发送sig给进程组|pid|中的每个进程。</span><br></pre></td></tr></table></figure>
-<h4 id="代码如下"><a href="#代码如下" class="headerlink" title="代码如下"></a>代码如下</h4><p>1.访问jobs的时候要阻塞所有信号</p>
-<p>2.kill的pid是负的，说明发送信号对象是进程组，是所有前台程序</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * sigint_handler - The kernel sends a SIGINT to the shell whenver the</span><br><span class="line"> *    user types ctrl-c at the keyboard.  Catch it and send it along</span><br><span class="line"> *    to the foreground job.</span><br><span class="line"> */</span><br><span class="line">void sigint_handler(int sig)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    int olderrno = errno;</span><br><span class="line">    sigset_t mask_all,prev_all;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line">    //execute global function, so block all signals</span><br><span class="line">    sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;prev_all);</span><br><span class="line">    pid=fgpid(jobs);</span><br><span class="line">    sigprocmask(SIG_SETMASK,&amp;prev_all,NULL);</span><br><span class="line"></span><br><span class="line">    //only process the front process</span><br><span class="line">    //pid==0 means background process?</span><br><span class="line"></span><br><span class="line">    if(pid!=0)&#123;</span><br><span class="line">        kill(-pid,SIGINT);</span><br><span class="line">        //printf(&quot;Job [%d] (%d) terminated by signal %d\n&quot;,pid2jid(pid),pid,sig);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    errno = olderrno;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="代码如下-1"><a href="#代码如下-1" class="headerlink" title="代码如下"></a>代码如下</h4><p>1.注意如果进程已经停止，就不要再把它设置为停止了否则会出错。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * sigtstp_handler - The kernel sends a SIGTSTP to the shell whenever</span><br><span class="line"> *     the user types ctrl-z at the keyboard. Catch it and suspend the</span><br><span class="line"> *     foreground job by sending it a SIGTSTP.</span><br><span class="line"> */</span><br><span class="line">void sigtstp_handler(int sig)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    pid_t pid;</span><br><span class="line">    pid=fgpid(jobs);</span><br><span class="line"></span><br><span class="line">    if(pid!=0)&#123;</span><br><span class="line">        struct job_t *job = getjobpid(jobs,pid);</span><br><span class="line">        if(job-&gt;state==ST)</span><br><span class="line">            return;</span><br><span class="line">        else</span><br><span class="line">            kill(-pid,SIGTSTP);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="sigchld-handler"><a href="#sigchld-handler" class="headerlink" title="sigchld_handler"></a>sigchld_handler</h3><p>status表示中止进程或者停止进程的原因，WNOHANG|WUNTRACED作用是判断当前进程中是否存在已经停止或者终止的进程，如果存在则返回pid，不存在立即返回</p>
-<p>WIFSTOPPED(status):表示如果进程是因为停止的信号而停止，那么返回true</p>
-<p>WIFSIGNALED(status):表示进程是因为捕获的信号而中止，返回true</p>
-<p>WIFEXITED(status): 表示进程通过调用exit()或者return正常结束，则返回true。</p>
-<p>参考：<a href="https://www.cnblogs.com/sky-heaven/p/8074273.html" target="_blank" rel="noopener">https://www.cnblogs.com/sky-heaven/p/8074273.html</a></p>
-<p><img src="/home/alex/图片/2018-69.png" alt="filename already exists, rnamed"></p>
-<h4 id="代码如下："><a href="#代码如下：" class="headerlink" title="代码如下："></a>代码如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * sigchld_handler - The kernel sends a SIGCHLD to the shell whenever</span><br><span class="line"> *     a child job terminates (becomes a zombie), or stops because it</span><br><span class="line"> *     received a SIGSTOP or SIGTSTP signal. The handler reaps all</span><br><span class="line"> *     available zombie children, but doesn&apos;t wait for any other</span><br><span class="line"> *     currently running children to terminate.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">void sigchld_handler(int sig)</span><br><span class="line">&#123;</span><br><span class="line">    int olderrno = errno;</span><br><span class="line">    sigset_t mask_all,prev_all;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    struct job_t *gc_job;</span><br><span class="line">    int status;</span><br><span class="line"></span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line"></span><br><span class="line">    //尽可能回收子进程，使用WNOHANG,使得如果当前进程都没有停止的时候直接返回，</span><br><span class="line">    //而不是挂起该回收进程，这样可能会阻碍无法两个短时间结束的后台进程</span><br><span class="line"></span><br><span class="line">    while((pid = waitpid(-1,&amp;status,WNOHANG|WUNTRACED))&gt;0)&#123;</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;prev_all);</span><br><span class="line">        gc_job = getjobpid(jobs,pid);</span><br><span class="line">        //说明当前引起停止的确实是前台进程</span><br><span class="line">        if(pid==fgpid(jobs))&#123;</span><br><span class="line">            fg_stop_or_exit=1;</span><br><span class="line">        &#125;</span><br><span class="line">        //子进程正常结束，返回一个非0值</span><br><span class="line">        if(WIFEXITED(status))&#123;</span><br><span class="line">            deletejob(jobs,pid);</span><br><span class="line">        &#125;</span><br><span class="line">        //子进程被暂停，只有暂停不用deletejobs</span><br><span class="line">        else if(WIFSTOPPED(status))&#123;</span><br><span class="line">            //子进程停止引起waitpid函数返回,再判断该进程是否是前台进程</span><br><span class="line">            gc_job-&gt;state = ST;</span><br><span class="line">            printf(&quot;Job [%d] (%d) stopped by signal %d\n&quot;, gc_job-&gt;jid, gc_job-&gt;pid, WSTOPSIG(status));</span><br><span class="line">        &#125;</span><br><span class="line">        //因捕获信号而终止</span><br><span class="line">        else if (WIFSIGNALED(status))&#123;</span><br><span class="line">            //子进程终止引起的返回，判断是否是前台进程</span><br><span class="line">            //并且判断该信号是否是未捕获的的信号</span><br><span class="line">            printf(&quot;Job [%d] (%d) terminated by signal %d\n&quot;, gc_job-&gt;jid, gc_job-&gt;pid, WTERMSIG(status));</span><br><span class="line">            deletejob(jobs,pid);</span><br><span class="line">        &#125;</span><br><span class="line">        fflush(stdout);</span><br><span class="line">        //unblock all signals</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;prev_all,NULL);</span><br><span class="line">    &#125;</span><br><span class="line">    errno = olderrno;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="do-fgbg"><a href="#do-fgbg" class="headerlink" title="do_fgbg"></a>do_fgbg</h3><p>1.输入时%num 代表jobsid，num代表进程id</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * do_bgfg - Execute the builtin bg and fg commands</span><br><span class="line"> */</span><br><span class="line">void do_bgfg(char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    //parameters</span><br><span class="line">    char *para = argv[1];</span><br><span class="line">    </span><br><span class="line">    //lack parameters</span><br><span class="line">    if(para==NULL)&#123;</span><br><span class="line">        printf(&quot;%s command requires PID or %%jobid argument\n&quot;,argv[0]);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //full dirname</span><br><span class="line">    char *cmd = argv[0];</span><br><span class="line"></span><br><span class="line">    struct job_t*curr_job;</span><br><span class="line">    sigset_t mask_all,mask_prev;</span><br><span class="line">    int curr_jid;</span><br><span class="line">    sigfillset(&amp;mask_all);</span><br><span class="line"></span><br><span class="line">    //first character of the paramaters</span><br><span class="line">    //linux command: fg %n bring process n from background to frontground</span><br><span class="line">    if(para[0]==&apos;%&apos;)&#123;</span><br><span class="line">  </span><br><span class="line">        // the argument is a job id</span><br><span class="line">        curr_jid = atoi(&amp;(para[1]));</span><br><span class="line">        //mistake process2</span><br><span class="line">        curr_job = getjobjid(jobs,curr_jid);</span><br><span class="line">        if(curr_job==NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;%%%d: No such job\n&quot;,curr_jid);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    else&#123;</span><br><span class="line">    	// the argument is a process id</span><br><span class="line">        curr_jid = atoi(para);</span><br><span class="line">        if(curr_jid==0)&#123;</span><br><span class="line">            printf(&quot;%s: argument must be a PID or %%jobid\n&quot;,cmd);</span><br><span class="line">            fflush(stdout);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        //block all signals when visit global vairance</span><br><span class="line">        sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;mask_prev);</span><br><span class="line">        curr_jid = pid2jid(curr_jid);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //block all signals when visit global vairance</span><br><span class="line">    sigprocmask(SIG_BLOCK,&amp;mask_all,&amp;mask_prev);</span><br><span class="line">    curr_job = getjobjid(jobs,curr_jid);</span><br><span class="line"></span><br><span class="line">    if(curr_job==NULL)&#123;</span><br><span class="line">        printf(&quot;(%s): No such process\n&quot;,para);</span><br><span class="line">        fflush(stdout);</span><br><span class="line">        sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //bg</span><br><span class="line">    if(!strcmp(cmd,&quot;bg&quot;))&#123;</span><br><span class="line">        switch(curr_job-&gt;state)&#123;</span><br><span class="line">            case ST:</span><br><span class="line">                //change from stop to bg ST-&gt;BG</span><br><span class="line">                //meanwhile send signal to child process</span><br><span class="line">                curr_job-&gt;state =BG;</span><br><span class="line">                kill(-(curr_job-&gt;pid),SIGCONT);</span><br><span class="line">                printf(&quot;[%d] (%d) %s&quot;,curr_job-&gt;jid,curr_job-&gt;pid,curr_job-&gt;cmdline);</span><br><span class="line">                break;</span><br><span class="line">            case BG:</span><br><span class="line">                break;</span><br><span class="line">            case UNDEF:</span><br><span class="line">            case FG:</span><br><span class="line">                unix_error(&quot;bg or undef error&quot;);</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//要用waitfg指令，等待前台作业结束后再退出    </span><br><span class="line">    else&#123;</span><br><span class="line">        switch(curr_job-&gt;state)&#123;</span><br><span class="line">            //如果作业本身是STOP的话，要记得发送信号（SIGCONT，让其继续运行）</span><br><span class="line">            case ST:</span><br><span class="line">                //change from stop to bg ST-&gt;BG</span><br><span class="line">                //meanwhile send signal to child process</span><br><span class="line">                curr_job-&gt;state =FG;</span><br><span class="line">                //发射信号给前台进程组，所有前台进程都会受到信号</span><br><span class="line">                kill(-(curr_job-&gt;pid),SIGCONT);</span><br><span class="line">                //if change to fg,then you need to wait until it dies</span><br><span class="line">                waitfg(curr_job-&gt;pid);</span><br><span class="line">                break;</span><br><span class="line">            case BG:</span><br><span class="line">                curr_job-&gt;state =FG;</span><br><span class="line">                waitfg(curr_job-&gt;pid);</span><br><span class="line">                break;</span><br><span class="line">            case UNDEF:</span><br><span class="line">            case FG:</span><br><span class="line">                unix_error(&quot;bg or undef error&quot;);</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    sigprocmask(SIG_SETMASK,&amp;mask_prev,NULL);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>当我们在真正的shell（例如bash）中执行tsh时，tsh本身也是被放在前台进程组中的，它的子进程也会在前台进程组中，例如下图所示：</p>
-<p><img src="/home/alex/图片/jinchengzu.png" alt="upload succsful"></p>
-<h3 id="引用："><a href="#引用：" class="headerlink" title="引用："></a>引用：</h3><p>1.<a href="https://www.cnblogs.com/liqiuhao/p/8120617.html" target="_blank" rel="noopener">https://www.cnblogs.com/liqiuhao/p/8120617.html</a></p>
-<p>2.<a href="https://blog.csdn.net/xiaolian_hust/article/details/80087376" target="_blank" rel="noopener">https://blog.csdn.net/xiaolian_hust/article/details/80087376</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/09/DS-动态规划/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/09/DS-动态规划/" itemprop="url">DS-动态规划</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-09T14:11:52+08:00">
-                2018-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Leetcode-647"><a href="#Leetcode-647" class="headerlink" title="Leetcode 647"></a>Leetcode 647</h3><p> Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray).</p>
-<p>Example 1:</p>
-<p>Input: [1,3,5,4,7]<br>Output: 3<br>Explanation: The longest continuous increasing subsequence is [1,3,5], its length is 3.<br>Even though [1,3,5,7] is also an increasing subsequence, it’s not a continuous one where 5 and 7 are separated by 4. </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">int findLengthOfLCIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">       int n = nums.size();</span><br><span class="line">       int dp[n];</span><br><span class="line">       dp[0]=1;</span><br><span class="line">       int res = 1;</span><br><span class="line">       for(int i=1;i&lt;nums.size();i++)&#123;</span><br><span class="line">           if(nums[i-1]&lt;nums[i])&#123;</span><br><span class="line">               dp[i] = dp[i-1]+1;</span><br><span class="line">           &#125;</span><br><span class="line">           else&#123;</span><br><span class="line">               dp[i] = 1;</span><br><span class="line">           &#125;</span><br><span class="line">           res = max(dp[i],res);</span><br><span class="line">       &#125;</span><br><span class="line">       return res;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="printLIS-路径"><a href="#printLIS-路径" class="headerlink" title="printLIS 路径"></a>printLIS 路径</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">//M saves the index</span><br><span class="line">int M[MAX+1];</span><br><span class="line">int pre[MAX+1];</span><br><span class="line">int pathIndex[MAX+1];</span><br><span class="line"></span><br><span class="line">vector&lt;int&gt;vec;</span><br><span class="line"></span><br><span class="line">void print(int pos)&#123;</span><br><span class="line">    if(pos==-1)return;</span><br><span class="line">    print(pre[pos]);</span><br><span class="line">    cout&lt;&lt;&quot; &quot;&lt;&lt;vec[pos];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    ios::sync_with_stdio(false);</span><br><span class="line">    cin.tie(NULL); cout.tie(NULL);</span><br><span class="line"></span><br><span class="line">    int N;</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        cin&gt;&gt;N;</span><br><span class="line">        if(N==0)</span><br><span class="line">            break;</span><br><span class="line">        vec.assign(N,0);</span><br><span class="line">        for(int i=0;i&lt;N;i++)&#123;</span><br><span class="line">            cin&gt;&gt;vec[i];</span><br><span class="line">        &#125;</span><br><span class="line">        int L = 0;</span><br><span class="line">        for(int i=0;i&lt;N;i++)&#123;</span><br><span class="line">            int lo = 1;</span><br><span class="line">            int Hi = L;</span><br><span class="line">            //find the largest mid &lt;=L such that vec[M[mid]]&lt;vec[i]</span><br><span class="line">            while(lo&lt;=Hi)&#123;</span><br><span class="line">                int mid = ceil((lo+Hi)/2.0);</span><br><span class="line">                if(vec[M[mid]]&lt;vec[i])&#123;</span><br><span class="line">                    lo=mid+1;</span><br><span class="line">                &#125;else&#123;</span><br><span class="line">                    Hi = mid-1;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //newL is 1 greater than the longest prefix of vec[i]</span><br><span class="line">            int newL = lo;</span><br><span class="line">            //vec[i]的前驱节点是newL-1子串的最后一个索引</span><br><span class="line">            pre[i] = M[newL-1];</span><br><span class="line">			//NEWL新子串的最后一个索引就是i</span><br><span class="line">            M[newL] = i;</span><br><span class="line"></span><br><span class="line">            if(newL&gt;L)</span><br><span class="line">                L = newL;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        int k = M[L];</span><br><span class="line">        for(int i=L-1;i&gt;=0;i--)&#123;</span><br><span class="line">            pathIndex[i] = k;</span><br><span class="line">            k = pre[k];</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;L&lt;&lt;&quot; &quot;;</span><br><span class="line">        for(int i=0;i&lt;=L-1;i++)&#123;</span><br><span class="line">            cout&lt;&lt;vec[pathIndex[i]]&lt;&lt;&quot; &quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;endl;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="Leetcode-300"><a href="#Leetcode-300" class="headerlink" title="Leetcode 300"></a>Leetcode 300</h3><p>Given an unsorted array of integers, find the length of longest increasing subsequence.</p>
-<p>Example:</p>
-<p>Input: [10,9,2,5,3,7,101,18]<br>Output: 4<br>Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4. </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">int lengthOfLIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">    </span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">        int n = nums.size();</span><br><span class="line">        int dp[n];</span><br><span class="line">        for(int i=0;i&lt;n;i++)</span><br><span class="line">            dp[i]=1;</span><br><span class="line">        for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">            for(int j=0;j&lt;i;j++)&#123;</span><br><span class="line">                if(nums[j]&lt;nums[i])&#123;</span><br><span class="line">                    //仅当dp[j]+1&gt;dp[i]的时候才更新</span><br><span class="line">                    if(dp[j]+1&gt;dp[i])&#123;</span><br><span class="line">                        dp[i]=dp[j]+1;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        int res = 0;</span><br><span class="line">        for(int i=0;i&lt;n;i++)</span><br><span class="line">            res = max(res,dp[i]);</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>复杂度：O（n^2）</p>
-<p>解析：</p>
-<p><a href="https://www.youtube.com/watch?v=CE2b_-XfVDk" target="_blank" rel="noopener">https://www.youtube.com/watch?v=CE2b_-XfVDk</a></p>
-<p>以下是O(nlogn)作法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int lengthOfLIS(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">    </span><br><span class="line">       if(nums.empty())</span><br><span class="line">           return 0;</span><br><span class="line">        int n = nums.size();</span><br><span class="line">        int dp[n];</span><br><span class="line">        dp[0] = nums[0];</span><br><span class="line">        int len=1;</span><br><span class="line">        for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">            int left=0;</span><br><span class="line">            int right = len-1;</span><br><span class="line">            int mid;</span><br><span class="line">            if(dp[len-1]&lt;nums[i])&#123;</span><br><span class="line">                dp[len++]=nums[i];</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                while(left&lt;=right)&#123;</span><br><span class="line">                    mid = (left+right)/2;</span><br><span class="line">                    if(dp[mid]&lt;nums[i])&#123;</span><br><span class="line">                        left = mid+1;</span><br><span class="line">                    &#125;else&#123;</span><br><span class="line">                        right = mid-1;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                dp[left] = nums[i];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return len;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>dp[i]表示长度为i的LIS序列的最后一个数字最小末尾</p>
-<p><a href="https://www.cnblogs.com/ziyi--caolu/p/3227121.html" target="_blank" rel="noopener">https://www.cnblogs.com/ziyi--caolu/p/3227121.html</a></p>
-<h3 id="leetcode-53"><a href="#leetcode-53" class="headerlink" title="leetcode 53"></a>leetcode 53</h3><p>Longest maximum subarray</p>
-<p>Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.</p>
-<p>Example:</p>
-<p>Input: [-2,1,-3,4,-1,2,1,-5,4],<br>Output: 6<br>Explanation: [4,-1,2,1] has the largest sum = 6.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int max_sum(vector&lt;int&gt;&amp;nums,int i)&#123;</span><br><span class="line">        if(i==0)</span><br><span class="line">            return nums[i];</span><br><span class="line">        int res = max(nums[i],nums[i]+max_sum(nums,i-1));</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int maxSubArray(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        </span><br><span class="line">        if(nums.empty())</span><br><span class="line">            return 0;</span><br><span class="line">        int res = nums[0];</span><br><span class="line">        for(int i=0;i&lt;nums.size();i++)&#123;</span><br><span class="line">            res = max(res,max_sum(nums,i));</span><br><span class="line">        &#125;</span><br><span class="line">        return res;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>方法二：</p>
-<p>转移方程： dp[i] = nums[i]+(dp[i-1]&gt;0?dp[i-1]:0);</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int maxSubArray(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">      if(nums.empty())</span><br><span class="line">          return 0;</span><br><span class="line">      int n = nums.size();</span><br><span class="line">      int dp[n];</span><br><span class="line">      dp[0] = nums[0];</span><br><span class="line">      int res = dp[0];</span><br><span class="line">      for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">          dp[i] = nums[i]+(dp[i-1]&gt;0?dp[i-1]:0);</span><br><span class="line">          res = max(res,dp[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      return res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>拓展</p>
-<p>给定K个整数的序列{ N1, N2, …, NK }，其任意连续子序列可表示为{ Ni, Ni+1, …,<br>Nj }，其中 1 &lt;= i &lt;= j &lt;= K。最大连续子序列是所有连续子序列中元素和最大的一个，<br>例如给定序列{ -2, 11, -4, 13, -5, -2 }，其最大连续子序列为{ 11, -4, 13 }，最大和<br>为20。<br>在今年的数据结构考卷中，要求编写程序得到最大和，现在增加一个要求，即还需要输出该<br>子序列的第一个和最后一个元素。</p>
-<p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=1231" target="_blank" rel="noopener">http://acm.hdu.edu.cn/showproblem.php?pid=1231</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line">#define INF 0x3f3f3f3f</span><br><span class="line">int A[30][30][30];</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int k;</span><br><span class="line"></span><br><span class="line">    while(true)&#123;</span><br><span class="line">        long long int dp[10001];</span><br><span class="line">        int arr[10001];</span><br><span class="line">        cin&gt;&gt;k;</span><br><span class="line">        if(k==0)</span><br><span class="line">            break;</span><br><span class="line">        int posFlag = 0;</span><br><span class="line">        for(int i=1;i&lt;=k;i++)&#123;</span><br><span class="line">            scanf(&quot;%d&quot;,&amp;arr[i]);</span><br><span class="line">            if(arr[i]&gt;=0)</span><br><span class="line">                posFlag=1;</span><br><span class="line">        &#125;</span><br><span class="line">        if(posFlag!=1)&#123;</span><br><span class="line">            cout&lt;&lt;0&lt;&lt;&quot; &quot;&lt;&lt;arr[1]&lt;&lt;&quot; &quot;&lt;&lt;arr[k]&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            double max = -INF;</span><br><span class="line">            dp[1]=arr[1];</span><br><span class="line">            int resulti=1;</span><br><span class="line">            for(int i=1;i&lt;=k;i++)&#123;</span><br><span class="line">                //or dp[i] = max(dp[i-1]+arr[i],arr[i])</span><br><span class="line">                dp[i] = arr[i]+(dp[i-1]&gt;0?dp[i-1]:0);</span><br><span class="line">                if(dp[i]&gt;max)&#123;</span><br><span class="line">                    max = dp[i];</span><br><span class="line">                    resulti = i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            double max2=0;</span><br><span class="line">            int start=1;</span><br><span class="line">            for(int i=resulti;i&gt;=1;i--)&#123;</span><br><span class="line">                max2+=arr[i];</span><br><span class="line">                if(max2==max)&#123;</span><br><span class="line">                    start = i;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            cout&lt;&lt;max&lt;&lt;&quot; &quot;&lt;&lt;arr[start]&lt;&lt;&quot; &quot;&lt;&lt;arr[resulti]&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>关键是要找到子序列的第一个元素。</p>
-<p>当找到最后一个元素的索引时候，从索引处由后往前找，知道sum等于结果的max，记录下此时的索引i，于是便找到了第一个元素的索引i</p>
-<h3 id="Longest-common-subsequence"><a href="#Longest-common-subsequence" class="headerlink" title="Longest common subsequence"></a>Longest common subsequence</h3><p><img src="/home/alex/图片/LCS.png" alt="upload successul"></p>
-<p>转移方程 ： res = max(lcs(i-1,j),lcs(i,j-1),1+lcs(i-1,j-1))</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">string a=&quot;bananinn&quot;;</span><br><span class="line">string b = &quot;kaninan&quot;;</span><br><span class="line"></span><br><span class="line">int lcs(int i,int j)&#123;</span><br><span class="line">    if(i==-1||j==-1)</span><br><span class="line">        return 0;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int res=0;</span><br><span class="line">    res = max(res,lcs(i-1,j));</span><br><span class="line">    res = max(res,lcs(i,j-1));</span><br><span class="line"></span><br><span class="line">    if(a[i]==b[j])&#123;</span><br><span class="line">        res = max(res,1+lcs(i-1,j-1));</span><br><span class="line">    &#125;</span><br><span class="line">    return res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    int mem[1000][1000];</span><br><span class="line">    memset(mem,-1,sizeof(mem));</span><br><span class="line">    int ans = 0;</span><br><span class="line">    for(int i=0;i&lt;8;i++)&#123;</span><br><span class="line">        for(int j=0;j&lt;7;j++)&#123;</span><br><span class="line">            ans = max(ans,lcs(i,j));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;ans&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="DP模板"><a href="#DP模板" class="headerlink" title="DP模板"></a>DP模板</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Dynamic programming formulation</span><br><span class="line">map&lt;problem, value&gt; memory;</span><br><span class="line">	value dp(problem P) &#123;</span><br><span class="line">		if (is_base_case(P)) &#123;</span><br><span class="line">			return base_case_value(P);</span><br><span class="line">	&#125;</span><br><span class="line">		if (memory.find(P) != memory.end()) &#123;</span><br><span class="line">			return memory[P];</span><br><span class="line">	&#125;</span><br><span class="line">		value result = some value;</span><br><span class="line">		for (problem Q in subproblems(P)) &#123;</span><br><span class="line">			result = combine(result, dp(Q));	</span><br><span class="line">		&#125;</span><br><span class="line">		memory[P] = result;</span><br><span class="line">		return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="Traveling-Salesman-problem"><a href="#Traveling-Salesman-problem" class="headerlink" title="Traveling Salesman problem"></a>Traveling Salesman problem</h3><p><img src="/home/alex/图片/2018-51.png" alt="filename already existsamed"></p>
-<p>TSP问题就是在一张有权图，从某个起点出发，然后go through each node exactly once and finally return to the beginning node,such that the weightSum is minimal</p>
-<h4 id="NP-HARD"><a href="#NP-HARD" class="headerlink" title="NP-HARD"></a>NP-HARD</h4><p>no solution with dominomial time complexity </p>
-<p><img src="/home/alex/图片/TSP.png" alt="upload succsful"></p>
-<p>子问题一共有 2^n*n 个，每个子问题用O(n)复杂度来解决</p>
-<p>T:(2^n*n^2)</p>
-<h3 id="0-1背包问题"><a href="#0-1背包问题" class="headerlink" title="0-1背包问题"></a>0-1背包问题</h3><p>状态转移方程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//f[i][j]表示i个物品，容量j背包的物品最大价值</span><br><span class="line">//若f[i][j] == f[i-1][j],说明不装第i个</span><br><span class="line">//否则装入第i个，同时容量-w,价值+v,w,v分别为第i个物品的重量和价值</span><br><span class="line"></span><br><span class="line">f[i][j] = max(f[i-1][j],f[i-1][j-w]+v);</span><br></pre></td></tr></table></figure></p>
-<h4 id="kattis-knapsack"><a href="#kattis-knapsack" class="headerlink" title="kattis - knapsack"></a>kattis - knapsack</h4><p>关键是如何打印出装入的物品的index</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line">    double capa;</span><br><span class="line">    int n;</span><br><span class="line">    while(cin&gt;&gt;capa&amp;&amp;cin&gt;&gt;n)&#123;</span><br><span class="line">        int capacity = floor(capa);</span><br><span class="line">        vector&lt;vector&lt;int&gt;&gt;f(n+1,vector&lt;int&gt;(capacity+1,0));</span><br><span class="line">        values.assign(n+1,0);</span><br><span class="line">        weights.assign(n+1,0);</span><br><span class="line">        for(int i=1;i&lt;=n;i++)&#123;</span><br><span class="line">            int v,w;</span><br><span class="line">            cin&gt;&gt;v&gt;&gt;w;</span><br><span class="line">            weights[i] = w;</span><br><span class="line">            values[i] = v;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for(int i=1;i&lt;=n;i++)&#123;</span><br><span class="line">            int v = values[i];</span><br><span class="line">            int w = weights[i];</span><br><span class="line">            for(int j=1;j&lt;=capacity;j++)&#123;</span><br><span class="line">                if(j&lt;w)&#123;</span><br><span class="line">                    f[i][j] = f[i-1][j];</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                f[i][j] = max(f[i-1][j],f[i-1][j-w]+v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //打印最终装入的物品的index！ 即寻找f[i][j]!=f[i-1][j]</span><br><span class="line">        vector&lt;int&gt;res;</span><br><span class="line">        int j = capacity;</span><br><span class="line">        for(int i=n;i&gt;=1;i--)&#123;</span><br><span class="line">            if(f[i][j]!=f[i-1][j])&#123;</span><br><span class="line">                res.push_back(i-1);</span><br><span class="line">                j-=weights[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;res.size()&lt;&lt;endl;</span><br><span class="line">        for(auto i:res)</span><br><span class="line">            cout&lt;&lt;i&lt;&lt;&quot; &quot;;</span><br><span class="line">        cout&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="http://poj.org/problem?id=1579" target="_blank" rel="noopener">http://poj.org/problem?id=1579</a></p>
-<h3 id="记忆化搜索"><a href="#记忆化搜索" class="headerlink" title="记忆化搜索"></a>记忆化搜索</h3><p>把递归结果存在表里，减少不必要的递归次数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">int A[30][30][30];</span><br><span class="line"></span><br><span class="line">int w(int a,int b,int c)&#123;</span><br><span class="line">    if(a&lt;=0||b&lt;=0||c&lt;=0)&#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    if(a&gt;20||b&gt;20||c&gt;20)&#123;</span><br><span class="line">        return w(20,20,20);</span><br><span class="line">    &#125;</span><br><span class="line">    if(A[a][b][c])  //if already in A no need to do recursion</span><br><span class="line">        return A[a][b][c];</span><br><span class="line">    if(a&lt;b&amp;&amp;b&lt;c)&#123;</span><br><span class="line">        A[a][b][c] =w(a,b,c-1)+w(a,b-1,c-1)-w(a,b-1,c); //A[a][b][c-1]+A[a][b-1][c-1]-A[a][b-1][c];</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">        A[a][b][c] = w(a-1,b,c)+w(a-1,b-1,c)+w(a-1,b,c-1)-w(a-1,b-1,c-1);//A[a-1][b][c]+A[a-1][b-1][c]+A[a-1][b][c-1]-A[a-1][b-1][c-1];</span><br><span class="line">    return A[a][b][c];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    memset(A,0,sizeof(A));</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        int a,b,c;</span><br><span class="line">        cin&gt;&gt;a&gt;&gt;b&gt;&gt;c;</span><br><span class="line">        if(a==-1&amp;&amp;b==-1&amp;&amp;c==-1)</span><br><span class="line">            break;</span><br><span class="line">        cout&lt;&lt;w(a,b,c)&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="dfs-solve-TSP"><a href="#dfs-solve-TSP" class="headerlink" title="dfs solve TSP"></a>dfs solve TSP</h3><p><a href="https://open.kattis.com/problems/beepers" target="_blank" rel="noopener">https://open.kattis.com/problems/beepers</a></p>
-<p>dfs解TSP问题</p>
-<p>基本思路是从出发点开始，尝试从出发点到其他所有点的可能性，然后回溯。</p>
-<p>dfs的大概思路就是当n&lt;num的时候，尝试到不同的点，回溯，当n==num的时候，比较现在的路径长度是否小于最短路径。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">int shortest,num;</span><br><span class="line">int startx,starty;</span><br><span class="line">struct node&#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">&#125;;</span><br><span class="line">vector&lt;node&gt;vec;</span><br><span class="line">int visited[MAX];</span><br><span class="line"></span><br><span class="line">int dis(int x1,int y1,int x2,int y2)&#123;</span><br><span class="line">    return abs(x1-x2)+abs(y1-y2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void DFS(int cur,int len,int n)&#123;</span><br><span class="line"></span><br><span class="line">    if(n==num)&#123;</span><br><span class="line">        int t = dis(vec[cur].x,vec[cur].y,startx,starty);</span><br><span class="line">        if(len+t&lt;shortest)&#123;</span><br><span class="line">            shortest = len+t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;else if(len&lt;shortest)&#123;</span><br><span class="line">        int i;</span><br><span class="line">        for(i=0;i&lt;num;i++)&#123;</span><br><span class="line">            if(visited[i]==0)&#123;</span><br><span class="line">                visited[i] = 1;</span><br><span class="line">                DFS(i,len+dis(vec[cur].x,vec[cur].y,vec[i].x,vec[i].y),n+1);</span><br><span class="line">                visited[i] = 0;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    ios::sync_with_stdio(false);</span><br><span class="line">    cin.tie(NULL); cout.tie(NULL);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int sc;</span><br><span class="line">    int row,col;</span><br><span class="line">    cin&gt;&gt;sc;</span><br><span class="line">    while(sc--)&#123;</span><br><span class="line">        cin&gt;&gt;row&gt;&gt;col;</span><br><span class="line">        cin&gt;&gt;startx&gt;&gt;starty;</span><br><span class="line">        cin&gt;&gt;num;</span><br><span class="line">        vec.clear();</span><br><span class="line">        for(int i=0;i&lt;num;i++)&#123;</span><br><span class="line">            int xx,yy;</span><br><span class="line">            cin&gt;&gt;xx&gt;&gt;yy;</span><br><span class="line">            vec.push_back(&#123;xx,yy&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        shortest = INF;</span><br><span class="line">        memset(visited,0,sizeof(visited));</span><br><span class="line"></span><br><span class="line">        for(int i=0;i&lt;num;i++)&#123;</span><br><span class="line">            int tempL = dis(vec[i].x,vec[i].y,startx,starty);</span><br><span class="line">            visited[i] = 1;</span><br><span class="line">            DFS(i,tempL,1);</span><br><span class="line">            visited[i] = 0;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;shortest&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="leetcode-931"><a href="#leetcode-931" class="headerlink" title="leetcode 931"></a>leetcode 931</h3><p>minimum falling path sum</p>
-<p><img src="/home/alex/图片/minimum.png" alt="upload scessful"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int minFallingPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; A) &#123;</span><br><span class="line">    int res = INT_MAX;</span><br><span class="line">    int row = A.size();</span><br><span class="line">    int col = A[0].size();</span><br><span class="line">    int dp[row][col+2];</span><br><span class="line">   </span><br><span class="line">    for(int i=1;i&lt;row;i++)&#123;</span><br><span class="line">        for(int j=0;j&lt;col;j++)&#123;</span><br><span class="line">            if(j==0)&#123;</span><br><span class="line">                A[i][j] = A[i][j]+min(A[i-1][j],A[i-1][j+1]);</span><br><span class="line">            &#125;</span><br><span class="line">            else if(j==col-1)&#123;</span><br><span class="line">                A[i][j] = A[i][j]+min(A[i-1][j],A[i-1][j-1]);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">               A[i][j] = A[i][j]+min(A[i-1][j],min(A[i-1][j-1],A[i-1][j+1]));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for(int i=0;i&lt;col;i++)&#123;</span><br><span class="line">        res = min(res,A[row-1][i]);</span><br><span class="line">    &#125;</span><br><span class="line">    return res;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>复杂度 n^2</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1943,7 +1895,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

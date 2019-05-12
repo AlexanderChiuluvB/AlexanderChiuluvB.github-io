@@ -88,7 +88,13 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-234.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-235.png">
-<meta property="og:updated_time" content="2019-03-09T03:59:32.930Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-239.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-240.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-241.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-242.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-243.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-244.png">
+<meta property="og:updated_time" content="2019-03-26T07:19:54.923Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计网-应用层">
 <meta name="twitter:description" content="进程通信进行通信实际上是进程，本书关注运行在不同端系统上的进程通信，他们通过跨越计算机网络交换报文而相互通信。 客户和服务器进程在每队通信进程中，我们会将这两个进程之一标记为客户，另一个标记为服务器。  发起通信的进程被标记为客户，会话开始时候等待联系的进程是服务器。  进程与计算机网络之间的借口进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。  当一个进程想向位于">
@@ -464,7 +470,82 @@
 在来自 DNS 服务器的回答中，回答区域包含了对最初请求的名字的资源记录。前面讲过每个资源记录中有 Type（如 A、NS、CNAME 和 MX）字段、Value 字段和 TTL 字段。在回答报文的回答区域中可以包含多条 RR，因此一个主机名能够有多个 IP 地址（例如，就像本节前面讨论的冗余 Web 服务器）。
 权威区域包含了其他权威服务器的记录。
 附加区域包含了其他有帮助的记录。例如，对于一个 MX 请求的回答报文的回答区域包含了一条资源记录，该记录提供了邮件服务器的规范主机名。该附加区域包含一个类型 A 记录，该记录提供了用于该邮件服务器的规范主机名的 IP 地址。
-</code></pre>
+</code></pre><h4 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h4><p>定义了Web客户机如何向Web服务器请求Web页面以及Web服务器如何将Web页面传递给Web客户机</p>
+<p>http报文格式两种：</p>
+<p>1.客户端：浏览器请求Web对象（request）报文<br>2.服务器：Web服务器对请求进行响应，发送包含该对象的报文</p>
+<p>http使用TCP作为底层服务，客户端发起一个与服务器的TCP链接，同时http是无状态的</p>
+<h4 id="非持久性链接-amp-持久性链接"><a href="#非持久性链接-amp-持久性链接" class="headerlink" title="非持久性链接&amp;持久性链接"></a>非持久性链接&amp;持久性链接</h4><p>非持久性链接：每个请求与响应对是一个经单独的TCP连接发送</p>
+<p>其中每个TCP链接只传输一个对象，只传输一个请求报文和一个响应报文。<br>每个TCP链接在服务器返回对象后会关闭，即该链接不为其他对象而持续下来。</p>
+<p>持久性链接：所有请求、响应对经相同的TCP连接发送</p>
+<h4 id="请求一个html文件所需的时间"><a href="#请求一个html文件所需的时间" class="headerlink" title="请求一个html文件所需的时间"></a>请求一个html文件所需的时间</h4><p>往返时间RRT：</p>
+<p>分组在客户机与服务器往返的时间</p>
+<p>响应时间：</p>
+<p>total time = 2*RRT + 文件传输时间</p>
+<p><img src="/home/alex/图片/2018-239.png" alt="filename eady exists, renamed"></p>
+<p>非持续链接的缺点：</p>
+<p>为每个请求对象建立和维护一个全新的连接。<br>取对象的时候需要两个RTTs，每个TCP链接都要客户机和服务器分配TCP的缓冲区和保持TCP变量。</p>
+<h4 id="持久性链接"><a href="#持久性链接" class="headerlink" title="持久性链接"></a>持久性链接</h4><p>服务器在发送response之后，客户机与服务器之间的后续请求可以使用相同的链接。</p>
+<p>有非流水线（客户机只能在前一个响应接收到之后才能发出新的请求）<br>和流水线（客户机遇到引用就会产生一个请求）方式</p>
+<p><img src="/home/alex/图片/2018-240.png" alt="filename eady exists, renamed"></p>
+<h4 id="提交表单数据"><a href="#提交表单数据" class="headerlink" title="提交表单数据"></a>提交表单数据</h4><p>用户所请求的Web页面的内容依赖于用户在表单字段中输入的内容。</p>
+<h5 id="Post方法"><a href="#Post方法" class="headerlink" title="Post方法"></a>Post方法</h5><p>输入的内容将包含在http请求报文的实体主体中。</p>
+<h5 id="URL方法"><a href="#URL方法" class="headerlink" title="URL方法"></a>URL方法</h5><p>使用GET方法</p>
+<p>表单字段中的输入的内容放在URL字段中</p>
+<p>put方法 把请求报文的实体主体的对象上传到指定Web服务器的指定的路径。</p>
+<h4 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h4><p>1.HTTP response报文，set-cookie首部行</p>
+<p>2.端系统中保留cookie一个文件，由浏览器管理</p>
+<p>3.HTTP request报文： cookie首部行</p>
+<p>4.Web站点的后端数据库</p>
+<h4 id="proxy-server"><a href="#proxy-server" class="headerlink" title="proxy server"></a>proxy server</h4><p><img src="/home/alex/图片/2018-241.png" alt="filene already exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-242.png" alt="filename aeady exists, renamed"></p>
+<h4 id="ftp-文件传输协议"><a href="#ftp-文件传输协议" class="headerlink" title="ftp 文件传输协议"></a>ftp 文件传输协议</h4><p>实现本地和远程文件系统上的移动文件</p>
+<p>文件传输的时候，FTP客户和服务器之间要建立两个TCP链接。</p>
+<h5 id="控制链接"><a href="#控制链接" class="headerlink" title="控制链接"></a>控制链接</h5><p>1.链接是持久性的。</p>
+<p>2．控制信息的带外控制</p>
+<p>３．ＦＴＰ客户端发起控制连接</p>
+<h5 id="数据连接"><a href="#数据连接" class="headerlink" title="数据连接"></a>数据连接</h5><p>1.数据连接用于传输文件</p>
+<p>2.非持久性链接</p>
+<p>3.由FTP服务器发起数据链接（PORT模式）</p>
+<p>4.客户机发起（PASV模式）</p>
+<p><img src="/home/alex/图片/2018-243.png" alt="filename lready exists, renamed"></p>
+<h4 id="PORT模式"><a href="#PORT模式" class="headerlink" title="PORT模式"></a>PORT模式</h4><p>PORT模式建立数据传输通道是由服务器端发起的，服务器使用20端口连接客户端某一个大于1024的端口。</p>
+<h4 id="PASV模式"><a href="#PASV模式" class="headerlink" title="PASV模式"></a>PASV模式</h4><p>数据传输通道的建立是由FTP客户端发起的，他使用一个大于1024的端口链接服务器的1024以上的某一个端口。</p>
+<h4 id="ftp维持状态（state）"><a href="#ftp维持状态（state）" class="headerlink" title="ftp维持状态（state）"></a>ftp维持状态（state）</h4><p>在整个会话期间，保留用户的状态信息</p>
+<h4 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h4><p>四个重要组件：</p>
+<p>1.用户代理</p>
+<p>撰写完邮件，用户代理将向其邮件服务器发送邮件，并且该邮件被放在邮件服务器的发送队列中</p>
+<p>2.邮件服务器</p>
+<p>报文队列：包含目前不能投递的邮件报文</p>
+<p>邮箱：每个接收方在邮件服务器都有一个邮箱，邮箱管理和维护发给用户的报文</p>
+<p>3.简单邮件传输协议</p>
+<p>TCP</p>
+<p>每个邮件服务器既有SMTP客户端运行，又有SMTP服务器端运行。发送邮件的时候，就表现为SMTP客户端，接收邮件的时候，表现为SMTP服务器</p>
+<p>直接传输 不使用中间服务器来发送邮件</p>
+<p>4.邮件访问协议</p>
+<p><img src="/home/alex/图片/2018-244.png" alt="filename eady exists, renamed"></p>
+<p>SMTP协议传输过程</p>
+<p>1.首先客户机在25端口建立一个到SMTP服务器的TCP链接</p>
+<p>2.传输的三个阶段：</p>
+<p>1.握手</p>
+<p>2.报文传输</p>
+<p>3.结束</p>
+<h4 id="smtp与http的异同点"><a href="#smtp与http的异同点" class="headerlink" title="smtp与http的异同点"></a>smtp与http的异同点</h4><p>相同点</p>
+<p>1.smtp和持久的http使用持续链接来传输文件</p>
+<p>从web服务器向web浏览器</p>
+<p>从一个邮件服务器向另外一个邮件服务器</p>
+<p>2.都使用ASCII命令/响应交互</p>
+<p>smtp与http不同点</p>
+<p>1.pull协议和push协议</p>
+<p>http:pull（拉协议）</p>
+<p>使用浏览器从web服务器拉取信息，TCP是想要获取文件一方首先发起的。</p>
+<p>email：push(协议)</p>
+<p>发送邮件的服务器把文件推向接收邮件服务器，TCP是发送文件一方首先发起的。</p>
+<p>2.smtp要求报文全部使用7-bit ASCII 码</p>
+<p>如果报文包含非7-bitASCII码或者如图像的二进制数据，则通常使用base-64来进行编码</p>
+<p>3.处理一个既包含文本也包含图形的其他多媒体类型</p>
+<p>http：每个对象封装在各自的响应报文中。</p>
+<p>smtp： 多个对象在一个多分部的报文中传送</p>
+
       
     </div>
     
@@ -581,7 +662,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -636,7 +717,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程通信"><span class="nav-number">1.</span> <span class="nav-text">进程通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户和服务器进程"><span class="nav-number">1.1.</span> <span class="nav-text">客户和服务器进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程与计算机网络之间的借口"><span class="nav-number">1.2.</span> <span class="nav-text">进程与计算机网络之间的借口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程寻址"><span class="nav-number">1.3.</span> <span class="nav-text">进程寻址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运输服务"><span class="nav-number">1.4.</span> <span class="nav-text">运输服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Internet-提供的运输服务"><span class="nav-number">2.</span> <span class="nav-text">Internet 提供的运输服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP服务"><span class="nav-number">2.1.</span> <span class="nav-text">TCP服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">3.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web"><span class="nav-number">4.</span> <span class="nav-text">Web</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非持续链接"><span class="nav-number">5.</span> <span class="nav-text">非持续链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持续链接"><span class="nav-number">6.</span> <span class="nav-text">持续链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP的三次握手"><span class="nav-number">7.</span> <span class="nav-text">TCP的三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户与服务器的交互：cookie"><span class="nav-number">8.</span> <span class="nav-text">用户与服务器的交互：cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web缓存（proxy-cache）"><span class="nav-number">9.</span> <span class="nav-text">Web缓存（proxy cache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件GET方法"><span class="nav-number">10.</span> <span class="nav-text">条件GET方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS：因特网的目录服务"><span class="nav-number">11.</span> <span class="nav-text">DNS：因特网的目录服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-是什么"><span class="nav-number">11.1.</span> <span class="nav-text">DNS 是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#工作流程"><span class="nav-number">11.2.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-功能"><span class="nav-number">11.3.</span> <span class="nav-text">DNS 功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式，层次的数据库"><span class="nav-number">11.4.</span> <span class="nav-text">分布式，层次的数据库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS的解析流程"><span class="nav-number">11.5.</span> <span class="nav-text">DNS的解析流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS在服务器之间的解析步骤"><span class="nav-number">11.6.</span> <span class="nav-text">DNS在服务器之间的解析步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS缓存"><span class="nav-number">11.7.</span> <span class="nav-text">DNS缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS记录"><span class="nav-number">11.8.</span> <span class="nav-text">DNS记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-报文"><span class="nav-number">11.9.</span> <span class="nav-text">DNS 报文</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程通信"><span class="nav-number">1.</span> <span class="nav-text">进程通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户和服务器进程"><span class="nav-number">1.1.</span> <span class="nav-text">客户和服务器进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程与计算机网络之间的借口"><span class="nav-number">1.2.</span> <span class="nav-text">进程与计算机网络之间的借口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程寻址"><span class="nav-number">1.3.</span> <span class="nav-text">进程寻址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运输服务"><span class="nav-number">1.4.</span> <span class="nav-text">运输服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Internet-提供的运输服务"><span class="nav-number">2.</span> <span class="nav-text">Internet 提供的运输服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP服务"><span class="nav-number">2.1.</span> <span class="nav-text">TCP服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">3.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web"><span class="nav-number">4.</span> <span class="nav-text">Web</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非持续链接"><span class="nav-number">5.</span> <span class="nav-text">非持续链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持续链接"><span class="nav-number">6.</span> <span class="nav-text">持续链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP的三次握手"><span class="nav-number">7.</span> <span class="nav-text">TCP的三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户与服务器的交互：cookie"><span class="nav-number">8.</span> <span class="nav-text">用户与服务器的交互：cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web缓存（proxy-cache）"><span class="nav-number">9.</span> <span class="nav-text">Web缓存（proxy cache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件GET方法"><span class="nav-number">10.</span> <span class="nav-text">条件GET方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS：因特网的目录服务"><span class="nav-number">11.</span> <span class="nav-text">DNS：因特网的目录服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-是什么"><span class="nav-number">11.1.</span> <span class="nav-text">DNS 是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#工作流程"><span class="nav-number">11.2.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-功能"><span class="nav-number">11.3.</span> <span class="nav-text">DNS 功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式，层次的数据库"><span class="nav-number">11.4.</span> <span class="nav-text">分布式，层次的数据库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS的解析流程"><span class="nav-number">11.5.</span> <span class="nav-text">DNS的解析流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS在服务器之间的解析步骤"><span class="nav-number">11.6.</span> <span class="nav-text">DNS在服务器之间的解析步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS缓存"><span class="nav-number">11.7.</span> <span class="nav-text">DNS缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS记录"><span class="nav-number">11.8.</span> <span class="nav-text">DNS记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-报文"><span class="nav-number">11.9.</span> <span class="nav-text">DNS 报文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP协议"><span class="nav-number">11.10.</span> <span class="nav-text">HTTP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#非持久性链接-amp-持久性链接"><span class="nav-number">11.11.</span> <span class="nav-text">非持久性链接&amp;持久性链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#请求一个html文件所需的时间"><span class="nav-number">11.12.</span> <span class="nav-text">请求一个html文件所需的时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#持久性链接"><span class="nav-number">11.13.</span> <span class="nav-text">持久性链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提交表单数据"><span class="nav-number">11.14.</span> <span class="nav-text">提交表单数据</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Post方法"><span class="nav-number">11.14.1.</span> <span class="nav-text">Post方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#URL方法"><span class="nav-number">11.14.2.</span> <span class="nav-text">URL方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cookie"><span class="nav-number">11.15.</span> <span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proxy-server"><span class="nav-number">11.16.</span> <span class="nav-text">proxy server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ftp-文件传输协议"><span class="nav-number">11.17.</span> <span class="nav-text">ftp 文件传输协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#控制链接"><span class="nav-number">11.17.1.</span> <span class="nav-text">控制链接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据连接"><span class="nav-number">11.17.2.</span> <span class="nav-text">数据连接</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PORT模式"><span class="nav-number">11.18.</span> <span class="nav-text">PORT模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PASV模式"><span class="nav-number">11.19.</span> <span class="nav-text">PASV模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ftp维持状态（state）"><span class="nav-number">11.20.</span> <span class="nav-text">ftp维持状态（state）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#电子邮件"><span class="nav-number">11.21.</span> <span class="nav-text">电子邮件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#smtp与http的异同点"><span class="nav-number">11.22.</span> <span class="nav-text">smtp与http的异同点</span></a></li></ol></li></ol></div>
             
 
           </div>

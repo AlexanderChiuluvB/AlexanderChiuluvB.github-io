@@ -272,6 +272,306 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/31/DL-C4W3-YOLO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/31/DL-C4W3-YOLO/" itemprop="url">DL-C4W3(YOLO)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-31T14:24:36+08:00">
+                2018-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="intro-边框的定义"><a href="#intro-边框的定义" class="headerlink" title="intro 边框的定义"></a>intro 边框的定义</h3><p><img src="/home/alex/图片/2018-149.png" alt="filename alreay exists, renamed"></p>
+<p>加入我们要分类80个物品，那么就有80个c（c0,c1…c80）</p>
+<h3 id="YOLO"><a href="#YOLO" class="headerlink" title="YOLO"></a>YOLO</h3><p>you only look once，只做一次前馈传播，并使用非最大化抑制之后就可以输出目标框。</p>
+<h4 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h4><p><img src="/home/alex/图片/编码.png" alt="uplouccessful"></p>
+<p><img src="/home/alex/图片/sleep.png" alt="upload succful"></p>
+<p>所谓anchor box，就是用来使得一个格子能够检测出多个对象。需要预先定义好anchor box的形状，当每找到一个对象的中点的时候，不仅仅把中点分配给对应的grid，而且还会分配到对应的anchor box</p>
+<p>对于每个anchor box，找出该框包含某一类的概率</p>
+<p><img src="/home/alex/图片/计算.png" alt="upload ccessful"></p>
+<h4 id="可视化预测"><a href="#可视化预测" class="headerlink" title="可视化预测"></a>可视化预测</h4><p><img src="/home/alex/图片/取最大值.png" alt="upload sful"></p>
+<p><img src="/home/alex/图片/2018-150.png" alt="filename already exists, ramed"></p>
+<p>当框框太多的时候，使用<em>非最大化抑制</em>的方法剔除一些重叠的框框。</p>
+<p>code见下</p>
+<h4 id="filter-box"><a href="#filter-box" class="headerlink" title="filter_box"></a>filter_box</h4><p><img src="/home/alex/图片/filter.png" alt="upload sucsful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def yolo_filter_boxes(box_confidence, boxes, box_class_probs, threshold = .6):</span><br><span class="line">  &quot;&quot;&quot;</span><br><span class="line">    通过阈值来过滤对象和分类的置信度。</span><br><span class="line"></span><br><span class="line">    参数：</span><br><span class="line">        box_confidence  - tensor类型，维度为（19,19,5,1）,包含19x19单元格中每个单元格预测的5个锚框中的所有的锚框的pc （一些对象的置信概率）。</span><br><span class="line">        boxes - tensor类型，维度为(19,19,5,4)，包含了所有的锚框的（px,py,ph,pw ）。</span><br><span class="line">        box_class_probs - tensor类型，维度为(19,19,5,80)，包含了所有单元格中所有锚框的所有对象( c1,c2,c3，···，c80 )检测的概率。</span><br><span class="line">        threshold - 实数，阈值，如果分类预测的概率高于它，那么这个分类预测的概率就会被保留。</span><br><span class="line"></span><br><span class="line">    返回：</span><br><span class="line">        scores - tensor 类型，维度为(None,)，包含了保留了的锚框的分类概率。</span><br><span class="line">        boxes - tensor 类型，维度为(None,4)，包含了保留了的锚框的(b_x, b_y, b_h, b_w)</span><br><span class="line">        classess - tensor 类型，维度为(None,)，包含了保留了的锚框的索引</span><br><span class="line"></span><br><span class="line">    注意：&quot;None&quot;是因为你不知道所选框的确切数量，因为它取决于阈值。</span><br><span class="line">          比如：如果有10个锚框，scores的实际输出大小将是（10,）</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    # Step 1: Compute box scores</span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    box_scores = box_confidence * box_class_probs</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 2: Find the box_classes thanks to the max box_scores, keep track of the corresponding score</span><br><span class="line">    ### START CODE HERE ### (≈ 2 lines)</span><br><span class="line">    box_classes = K.argmax(box_scores, axis = -1)</span><br><span class="line">    box_class_scores = K.max(box_scores, axis = -1)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 3: Create a filtering mask based on &quot;box_class_scores&quot; by using &quot;threshold&quot;. The mask should have the</span><br><span class="line">    # same dimension as box_class_scores, and be True for the boxes you want to keep (with probability &gt;= threshold)</span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    filtering_mask = (box_class_scores &gt;= threshold)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 4: Apply the mask to scores, boxes and classes</span><br><span class="line">    ### START CODE HERE ### (≈ 3 lines)</span><br><span class="line">    scores = tf.boolean_mask(box_class_scores,filtering_mask)</span><br><span class="line">    boxes = tf.boolean_mask(boxes,filtering_mask)</span><br><span class="line">    classes= tf.boolean_mask(box_classes,filtering_mask)</span><br><span class="line">    </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return scores, boxes, classes</span><br></pre></td></tr></table></figure>
+<h4 id="非最大化抑制"><a href="#非最大化抑制" class="headerlink" title="非最大化抑制"></a>非最大化抑制</h4><p><img src="/home/alex/图片/2018-151.png" alt="filename already exists, renamed"></p>
+<p>1.假设首先设定阈值为0.6，抛弃所有pc&lt;=0.6可能性的框框，这一步先剔除了所有可能性很低的框框。</p>
+<p>2.选中一个pc最大的框框，作为输出，然后抛弃所有其他的与输出的交并比&gt;=0.5的框框</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">def yolo_non_max_suppression(scores, boxes, classes, max_boxes = 10, iou_threshold = 0.5):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Applies Non-max suppression (NMS) to set of boxes</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    scores -- tensor of shape (None,), output of yolo_filter_boxes()</span><br><span class="line">    boxes -- tensor of shape (None, 4), output of yolo_filter_boxes() that have been scaled to the image size (see later)</span><br><span class="line">    classes -- tensor of shape (None,), output of yolo_filter_boxes()</span><br><span class="line">    max_boxes -- integer, maximum number of predicted boxes you&apos;d like</span><br><span class="line">    iou_threshold -- real value, &quot;intersection over union&quot; threshold used for NMS filtering</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    scores -- tensor of shape (, None), predicted score for each box</span><br><span class="line">    boxes -- tensor of shape (4, None), predicted box coordinates</span><br><span class="line">    classes -- tensor of shape (, None), predicted class for each box</span><br><span class="line">    </span><br><span class="line">    Note: The &quot;None&quot; dimension of the output tensors has obviously to be less than max_boxes. Note also that this</span><br><span class="line">    function will transpose the shapes of scores, boxes, classes. This is made for convenience.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    max_boxes_tensor = K.variable(max_boxes, dtype=&apos;int32&apos;)     # tensor to be used in tf.image.non_max_suppression()</span><br><span class="line">    K.get_session().run(tf.variables_initializer([max_boxes_tensor])) # initialize variable max_boxes_tensor</span><br><span class="line">    </span><br><span class="line">    # Use tf.image.non_max_suppression() to get the list of indices corresponding to boxes you keep</span><br><span class="line">    ### START CODE HERE ### (≈ 1 line)</span><br><span class="line">    indicesList = tf.image.non_max_suppression(</span><br><span class="line">    boxes,</span><br><span class="line">    scores,</span><br><span class="line">    max_boxes,</span><br><span class="line">    iou_threshold,</span><br><span class="line">    score_threshold=float(&apos;-inf&apos;),</span><br><span class="line">    name=None</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">    # Use K.gather() to select only nms_indices from scores, boxes and classes</span><br><span class="line">    ### START CODE HERE ### (≈ 3 lines)</span><br><span class="line">    #把在indicesList的scores gather起来</span><br><span class="line">    scores = K.gather(scores,indicesList)</span><br><span class="line">    boxes = K.gather(boxes,indicesList)</span><br><span class="line">    classes = K.gather(classes,indicesList)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return scores, boxes, classes</span><br></pre></td></tr></table></figure>
+<h3 id="所有框进行过滤"><a href="#所有框进行过滤" class="headerlink" title="所有框进行过滤"></a>所有框进行过滤</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">def yolo_eval(yolo_outputs, image_shape = (720., 1280.), max_boxes=10, score_threshold=.6, iou_threshold=.5):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Converts the output of YOLO encoding (a lot of boxes) to your predicted boxes along with their scores, box coordinates and classes.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    yolo_outputs -- output of the encoding model (for image_shape of (608, 608, 3)), contains 4 tensors:</span><br><span class="line">                    box_confidence: tensor of shape (None, 19, 19, 5, 1)</span><br><span class="line">                    box_xy: tensor of shape (None, 19, 19, 5, 2)</span><br><span class="line">                    box_wh: tensor of shape (None, 19, 19, 5, 2)</span><br><span class="line">                    box_class_probs: tensor of shape (None, 19, 19, 5, 80)</span><br><span class="line">    image_shape -- tensor of shape (2,) containing the input shape, in this notebook we use (608., 608.) (has to be float32 dtype)</span><br><span class="line">    max_boxes -- integer, maximum number of predicted boxes you&apos;d like</span><br><span class="line">    score_threshold -- real value, if [ highest class probability score &lt; threshold], then get rid of the corresponding box</span><br><span class="line">    iou_threshold -- real value, &quot;intersection over union&quot; threshold used for NMS filtering</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    scores -- tensor of shape (None, ), predicted score for each box</span><br><span class="line">    boxes -- tensor of shape (None, 4), predicted box coordinates</span><br><span class="line">    classes -- tensor of shape (None,), predicted class for each box</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### </span><br><span class="line">    </span><br><span class="line">    # Retrieve outputs of the YOLO model (≈1 line)</span><br><span class="line">    box_confidence,box_xy,box_wh,box_class_probs = yolo_outputs</span><br><span class="line"></span><br><span class="line">    # Convert boxes to be ready for filtering functions </span><br><span class="line">    boxes = yolo_boxes_to_corners(box_xy, box_wh) </span><br><span class="line">    # Use one of the functions you&apos;ve implemented to perform Score-filtering with a threshold of score_threshold (≈1 line)</span><br><span class="line">    scores,boxes,classes = yolo_filter_boxes(box_confidence,boxes,box_class_probs,score_threshold)</span><br><span class="line">    # Scale boxes back to original image shape.</span><br><span class="line">    boxes = scale_boxes(boxes, image_shape)</span><br><span class="line">    # Use one of the functions you&apos;ve implemented to perform Non-max suppression with a threshold of iou_threshold (≈1 line)</span><br><span class="line">    scores,boxes,classes = yolo_non_max_suppression(scores, boxes, classes,max_boxes,iou_threshold)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return scores, boxes, classes</span><br></pre></td></tr></table></figure>
+<h3 id="YOLO总结"><a href="#YOLO总结" class="headerlink" title="YOLO总结"></a>YOLO总结</h3><p><img src="/home/alex/图片/2018-152.png" alt="filename eady exists, renamed"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/29/DL-C4W2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/29/DL-C4W2/" itemprop="url">DL-C4W2</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-29T13:26:56+08:00">
+                2018-12-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="LeNet-5"><a href="#LeNet-5" class="headerlink" title="LeNet -5"></a>LeNet -5</h3><p><img src="/home/alex/图片/alex.png" alt="upload ful"></p>
+<h3 id="AlexNet"><a href="#AlexNet" class="headerlink" title="AlexNet"></a>AlexNet</h3><p><img src="/home/alex/图片/local.png" alt="upload ssful"></p>
+<p>conv-&gt;max pool-&gt;conv-&gt;max pool-&gt;conv-&gt;conv-&gt;conv-&gt;conv-&gt;max pool-&gt;fc-&gt;fc-&gt;fc</p>
+<h3 id="VGG-16"><a href="#VGG-16" class="headerlink" title="VGG-16"></a>VGG-16</h3><p><img src="/home/alex/图片/VGG16.png" alt="upload ssful"></p>
+<p>16指的是只有１６层网络有需要学习的参数，ｐｏｏｌｉｎｇ层是没有要学习的参数的。</p>
+<p>箭头下方的[CONV 64]指有６４个ｆｉｌｔｅｒ，x2值对两层作卷积</p>
+<h3 id="ResNet"><a href="#ResNet" class="headerlink" title="ResNet"></a>ResNet</h3><h4 id="residual-block"><a href="#residual-block" class="headerlink" title="residual block"></a>residual block</h4><p><img src="/home/alex/图片/bl.png" alt="uload successful"></p>
+<p><img src="/home/alex/图片/tiaodong.png" alt="uplosuccessful"></p>
+<p> 增加short cut之后成为残差块的网络结构</p>
+<p><img src="/home/alex/图片/2018-140.png" alt="filename alreay exists, renamed"></p>
+<p> 可以构建更为深层的网络</p>
+<h3 id="Residual-Network"><a href="#Residual-Network" class="headerlink" title="Residual Network"></a>Residual Network</h3><p><img src="/home/alex/图片/residual Network.png" alt="ccessful"></p>
+<p> 没有residual block的网络叫做plain network</p>
+<h4 id="why-it-works"><a href="#why-it-works" class="headerlink" title="why it works?"></a>why it works?</h4><p><img src="/home/alex/图片/2018-141.png" alt="filenamelready exists, renamed"></p>
+<p>对于越深层的神经网络来说，参数越来越多，越来越难选择，将会导致连学习identity function（f(x)=x）都很困难，而如果用residual block，a^[l+2] = g(a^[l]) = a^[l],对于残差块来学习identity function 其实是很简单的，所以不影响性能。</p>
+<p><img src="/home/alex/图片/哪里.png" alt="upload successfl"></p>
+<p>在经历了相同的conv之后增加一层pooling</p>
+<h3 id="1x1-convolution"><a href="#1x1-convolution" class="headerlink" title="1x1 convolution"></a>1x1 convolution</h3><p>又叫做网中网</p>
+<p><img src="/home/alex/图片/2018-142.png" alt="filenamey exists, renamed"></p>
+<p>对一层 nxnxc 的图片，应用1x1xc的卷积核，得到新一层</p>
+<p>nxnx1，f个filter处理后，就得到一个nxnxf的新层。</p>
+<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><h5 id="降维或升维"><a href="#降维或升维" class="headerlink" title="降维或升维"></a>降维或升维</h5><p>压缩channel个数，当卷积核个数小于输入channel数量的时候</p>
+<p><img src="/home/alex/图片/convu.png" alt="upload sful"></p>
+<h5 id="增加非线性"><a href="#增加非线性" class="headerlink" title="增加非线性"></a>增加非线性</h5><p>why？</p>
+<p><img src="/home/alex/图片/2018-143.png" alt="filename already exists,med"></p>
+<h5 id="跨通道信息交互"><a href="#跨通道信息交互" class="headerlink" title="跨通道信息交互"></a>跨通道信息交互</h5><p><img src="/home/alex/图片/sun.png" alt="ud successful"></p>
+<h3 id="Inception-Network"><a href="#Inception-Network" class="headerlink" title="Inception Network"></a>Inception Network</h3><p>ref:</p>
+<p><a href="https://zhuanlan.zhihu.com/p/40050371" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/40050371</a></p>
+<p><a href="https://blog.csdn.net/a1154761720/article/details/53411365" target="_blank" rel="noopener">https://blog.csdn.net/a1154761720/article/details/53411365</a></p>
+<p><img src="/home/alex/图片/inception.png" alt="upload sssful"></p>
+<h3 id="compute-cost"><a href="#compute-cost" class="headerlink" title="compute cost"></a>compute cost</h3><p><img src="/home/alex/图片/2018-145.png" alt="filename alr exists, renamed"></p>
+<p>filter的第三个通道数目 == input feature map的第三个通道数目</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">结果参数 = 输入层 HxWx卷积核个数</span><br><span class="line"></span><br><span class="line">总计算成本 = (结果参数28x28x32) × （卷积核大小5x5x192）</span><br></pre></td></tr></table></figure>
+<h4 id="bottleneck-layer"><a href="#bottleneck-layer" class="headerlink" title="bottleneck layer"></a>bottleneck layer</h4><p><img src="/home/alex/图片/2018-146.png" alt="filename already exists,med"></p>
+<h3 id="inception-network"><a href="#inception-network" class="headerlink" title="inception network"></a>inception network</h3><h4 id="google-net"><a href="#google-net" class="headerlink" title="google net"></a>google net</h4><p><img src="/home/alex/图片/googleNet.png" alt="upload suc"></p>
+<p>1x1convolution 能够有效减少参数数量，加快训练</p>
+<p><img src="/home/alex/图片/2018-147.png" alt="filename already exi, renamed"></p>
+<p>可以观察到有一些旁路也输入到softmax中，因为hidden layer有时候的预测效果也不错，这么做可以防止过拟合</p>
+<h3 id="Transfer-Learning"><a href="#Transfer-Learning" class="headerlink" title="Transfer Learning"></a>Transfer Learning</h3><p>小数据集<br><img src="/home/alex/图片/xiaoshujuji.png" alt="up successful"></p>
+<p>大数据集<br><img src="/home/alex/图片/dashujuji.png" alt="upload ssful"></p>
+<h3 id="数据扩充"><a href="#数据扩充" class="headerlink" title="数据扩充"></a>数据扩充</h3><p><img src="/home/alex/图片/2018-148.png" alt="filename already erenamed"></p>
+<p>多CPU多线程实现</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/28/Ubuntu-耳机-无线网驱动/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1625,302 +1925,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/22/线性模型/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/22/线性模型/" itemprop="url">PRML-线性模型</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-22T13:55:54+08:00">
-                2018-12-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="线性基函数模型"><a href="#线性基函数模型" class="headerlink" title="线性基函数模型"></a>线性基函数模型</h3><p>线性回归模型 y(x,w) = w0+w1x1+w2x2+…wDxD</p>
-<p>而为了改进模型，把xi替换为非线性表达式</p>
-<p><img src="/home/alex/图片/six.png" alt="uploaccessful"></p>
-<p>本实验使用了多项式基函数，高斯基函数和sigmoid基函数，以及混合型（多项式+sin正弦）而损失函数有两种选择，<em>交叉熵</em>函数以及<em>均方误差</em>，这里选择均方误差，求导比较方便。</p>
-<h3 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h3><h4 id="多项式基函数"><a href="#多项式基函数" class="headerlink" title="多项式基函数"></a>多项式基函数</h4><p>y = w0+w1<em>x1+w2</em>x2^2 + b</p>
-<p>λ2是L2正则化系数，可以解决过拟合问题</p>
-<p>正则化意义：<a href="https://blog.csdn.net/jinping_shi/article/details/52433975" target="_blank" rel="noopener">https://blog.csdn.net/jinping_shi/article/details/52433975</a></p>
-<h4 id="推导-1"><a href="#推导-1" class="headerlink" title="推导"></a>推导</h4><p><img src="/home/alex/图片/2018-98.png" alt="filename alrey exists, renamed"></p>
-<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def propogate(w,b,X,Y):</span><br><span class="line"></span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    :param w: (n,1)</span><br><span class="line">    :param b: scalar</span><br><span class="line">    :param X: (n,m)</span><br><span class="line">    :param Y: (1,n)</span><br><span class="line">    :return: grads a dict that saves the params dw,db</span><br><span class="line">            cost saves the cost after each iteration</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    #np.squeeze</span><br><span class="line">    #squeeze 函数：从数组的形状中删除单维度条目，即把shape中为1的维度去掉</span><br><span class="line">    m = X.shape[1]</span><br><span class="line"></span><br><span class="line">    Yba = np.dot(w.T,X) + b</span><br><span class="line"></span><br><span class="line">    cost = np.squeeze((0.5/m *np.dot((Yba-Y),(Yba-Y).T)))</span><br><span class="line"></span><br><span class="line">    dw = (1./m) * np.dot(X,(Yba-Y).T)</span><br><span class="line"></span><br><span class="line">    db = (1./m) * np.squeeze(np.sum(Yba-Y))</span><br><span class="line">    #save the updated result to the grads dict</span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db&#125;</span><br><span class="line"></span><br><span class="line">    return grads,cost</span><br><span class="line"></span><br><span class="line">def optimize(w,b,X,Y,epochs,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    :param w: (n,1) </span><br><span class="line">    :param b: scalar</span><br><span class="line">    :param X: (n,m)</span><br><span class="line">    :param Y: (1,n)</span><br><span class="line">    :param epochs: 迭代次数 </span><br><span class="line">    :param learning_rate: </span><br><span class="line">    :param l2: 正则化系数 </span><br><span class="line">    :return: params</span><br><span class="line">            grads save the final params ,used for test</span><br><span class="line">            costs save the cost</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    costs = []</span><br><span class="line"></span><br><span class="line">    for i in range(epochs):</span><br><span class="line">        grads,cost = propogate(w,b,X,Y)</span><br><span class="line">        dw = grads[&quot;dw&quot;]</span><br><span class="line">        db = grads[&quot;db&quot;]</span><br><span class="line"></span><br><span class="line">        w-=learning_rate*dw+l2*w</span><br><span class="line">        b-=learning_rate*db</span><br><span class="line"></span><br><span class="line">    params = &#123;&quot;w&quot;:w,&quot;b&quot;:b&#125;</span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db&#125;</span><br><span class="line"></span><br><span class="line">    return params,grads,costs</span><br><span class="line"></span><br><span class="line">def main(x_train, y_train,n,epoches,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;训练模型，并返回从x到y的映射。&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # 使用线性回归训练模型，根据训练集计算最优化参数</span><br><span class="line">    ## 请补全此处代码，替换以下示例</span><br><span class="line">    m = x_train.shape[0]</span><br><span class="line">    w = (np.random.randn(n,1))</span><br><span class="line">    X = np.zeros((n,m),dtype = np.float64)</span><br><span class="line">    b = np.float(0)</span><br><span class="line">    for i in range(n):</span><br><span class="line">        X[i,:] = x_train**(i+1)</span><br><span class="line">    Y = np.float64(np.reshape(y_train,newshape=(1,m)))</span><br><span class="line">    params,grads,costs = optimize(w,b,X,Y,epoches,learning_rate,l2)</span><br><span class="line">    w = params[&apos;w&apos;]</span><br><span class="line">    b = params[&apos;b&apos;]</span><br><span class="line">    def f(x):</span><br><span class="line">        ## 请补全此处代码，替换以下示例</span><br><span class="line">        m = x.shape[0]</span><br><span class="line"></span><br><span class="line">        X = np.zeros((n,m))</span><br><span class="line">        for i in range(n):</span><br><span class="line">            X[i,:] = x**(i+1)</span><br><span class="line">        y = b+np.dot(w.T,X)</span><br><span class="line">        return y.squeeze()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    return f</span><br></pre></td></tr></table></figure>
-<h4 id="result"><a href="#result" class="headerlink" title="result"></a>result</h4><p>参数：n=2 epochs = 100000 lr 1e-7</p>
-<p><img src="/home/alex/图片/2018-97.png" alt="filename alrey exists, renamed"></p>
-<h4 id="高斯基函数"><a href="#高斯基函数" class="headerlink" title="高斯基函数"></a>高斯基函数</h4><p><img src="/home/alex/图片/gaosiji.png" alt="upload succeful"></p>
-<h4 id="推导-2"><a href="#推导-2" class="headerlink" title="推导"></a>推导</h4><p><img src="/home/alex/图片/推导.png" alt="upload ssful"></p>
-<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def propogate(w,b,X,Y,mu,s):</span><br><span class="line"></span><br><span class="line">    m = X.shape[1]</span><br><span class="line">    Z = (X-mu)/s</span><br><span class="line">    A = np.exp(-(Z*Z)/2)</span><br><span class="line">    Yba = np.dot(w.T,A) + b</span><br><span class="line">    cost = np.squeeze((0.5/m *np.dot((Yba-Y),(Yba-Y).T)))</span><br><span class="line"></span><br><span class="line">    dY = 1./m*(Yba-Y)</span><br><span class="line">    dw = np.dot(A,dY.T)</span><br><span class="line">    db = np.squeeze(np.sum(dY))</span><br><span class="line">    dA = w*dY</span><br><span class="line">    dZ = dA*A*(-Z)</span><br><span class="line">    dmu = 1./m*np.sum(dZ*(-1/s),axis=1,keepdims=True)</span><br><span class="line">    ds = 1./m*np.sum(dZ*(-(X-mu)/(s*s)),axis=1,keepdims=True)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db,&quot;dmu&quot;:dmu,&quot;ds&quot;:ds&#125;</span><br><span class="line"></span><br><span class="line">    return grads,cost</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def optimize(w,b,X,Y,mu,s,epochs,learning_rate,l2):</span><br><span class="line"></span><br><span class="line">    costs = []</span><br><span class="line"></span><br><span class="line">    for i in range(epochs):</span><br><span class="line">        grads,cost = propogate(w,b,X,Y,mu,s)</span><br><span class="line">        dw = grads[&quot;dw&quot;]</span><br><span class="line">        db = grads[&quot;db&quot;]</span><br><span class="line">        dmu = grads[&quot;dmu&quot;]</span><br><span class="line">        ds = grads[&quot;ds&quot;]</span><br><span class="line"></span><br><span class="line">        w-=learning_rate*dw+l2*w</span><br><span class="line">        b-=learning_rate*db+l2*b</span><br><span class="line">        mu-=learning_rate*dmu+l2*mu</span><br><span class="line">        s -=learning_rate*ds+l2*s</span><br><span class="line"></span><br><span class="line">        costs.append(cost)</span><br><span class="line"></span><br><span class="line">    params = &#123;&quot;w&quot;:w,&quot;b&quot;:b,&quot;mu&quot;:mu,&quot;s&quot;:s&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    return params,costs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main(x_train, y_train,n,epoches,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;训练模型，并返回从x到y的映射。&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # 使用线性回归训练模型，根据训练集计算最优化参数</span><br><span class="line">    ## 请补全此处代码，替换以下示例</span><br><span class="line">    m = x_train.shape[0]</span><br><span class="line">    w = (np.random.randn(n,1))</span><br><span class="line">    # means of gaussian</span><br><span class="line">    mu = np.random.randn(n,1)</span><br><span class="line">    #I still have no idea why set like this?</span><br><span class="line">    for i in range(n):</span><br><span class="line">        mu[i,0]+=i*40</span><br><span class="line">    X = np.zeros((n,m),dtype = np.float64)</span><br><span class="line">    b = np.float(0)</span><br><span class="line">    for i in range(n):</span><br><span class="line">        X[i,:] = x_train</span><br><span class="line">    Y = np.float64(np.reshape(y_train,newshape=(1,m)))</span><br><span class="line"></span><br><span class="line">    #initalize s if s is too close to 0 then it will go wrong</span><br><span class="line">    while True:</span><br><span class="line">        flag = True</span><br><span class="line">        s = np.random.randn(n,1)</span><br><span class="line">        jump = np.int32(np.abs(s)&lt;1)</span><br><span class="line">        if(np.sum(jump))&gt;=1:</span><br><span class="line">            flag = False</span><br><span class="line">        if flag is True:</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line">    params,costs = optimize(w,b,X,Y,mu,s,epoches,learning_rate,l2)</span><br><span class="line">    w = params[&apos;w&apos;]</span><br><span class="line">    b = params[&apos;b&apos;]</span><br><span class="line">    mu = params[&apos;mu&apos;]</span><br><span class="line">    s = params[&apos;s&apos;]</span><br><span class="line">    def f(x):</span><br><span class="line">        ## 请补全此处代码，替换以下示例</span><br><span class="line">        m = x.shape[0]</span><br><span class="line"></span><br><span class="line">        X = np.zeros((n,m))</span><br><span class="line">        for i in range(n):</span><br><span class="line">            X[i,:] = x</span><br><span class="line">        Z = (X-mu)/s</span><br><span class="line">        A = np.exp(-(Z*Z)/2)</span><br><span class="line">        y = b+np.dot(w.T,A)</span><br><span class="line">        return y.squeeze()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    return f</span><br></pre></td></tr></table></figure>
-<p>参数：f = gaussian.main(x_train, y_train,3,500000,1e-2,0)</p>
-<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p><img src="/home/alex/图片/2018-100.png" alt="fileme already exists, renamed"></p>
-<h4 id="sigmoid-函数"><a href="#sigmoid-函数" class="headerlink" title="sigmoid 函数"></a>sigmoid 函数</h4><p><img src="/home/alex/图片/zhuanjiang.png" alt="upload succeful"></p>
-<h4 id="推导-3"><a href="#推导-3" class="headerlink" title="推导"></a>推导</h4><p>结果与高斯类似</p>
-<p><img src="/home/alex/图片/2018-99.png" alt="fiename already exists, renamed"></p>
-<h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def sigmoidFunction(z):</span><br><span class="line">    return 1./(1+np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def propogate(w,b,X,Y,mu,s):</span><br><span class="line"></span><br><span class="line">    m = X.shape[1]</span><br><span class="line">    Z = (X-mu)/s</span><br><span class="line">    A = sigmoidFunction(Z)</span><br><span class="line">    Yba = np.dot(w.T,A) + b</span><br><span class="line">    cost = np.squeeze((0.5/m *np.dot((Yba-Y),(Yba-Y).T)))</span><br><span class="line"></span><br><span class="line">    dY = 1./m*(Yba-Y)</span><br><span class="line">    dw = np.dot(A,dY.T)</span><br><span class="line">    db = np.squeeze(np.sum(dY))</span><br><span class="line">    dA = w*dY</span><br><span class="line">    dZ = dA*A*(1-A)</span><br><span class="line">    dmu = 1./m*np.sum(dZ*(-1./s),axis=1,keepdims=True)</span><br><span class="line">    ds = 1./m*np.sum(dZ*(-(X-mu)/(s*s)),axis=1,keepdims=True)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    grads = &#123;&quot;dw&quot;:dw,&quot;db&quot;:db,&quot;dmu&quot;:dmu,&quot;ds&quot;:ds&#125;</span><br><span class="line"></span><br><span class="line">    return grads,cost</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def optimize(w,b,X,Y,mu,s,epochs,learning_rate,l2):</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    costs = []</span><br><span class="line"></span><br><span class="line">    for i in range(epochs):</span><br><span class="line">        grads,cost = propogate(w,b,X,Y,mu,s)</span><br><span class="line">        dw = grads[&quot;dw&quot;]</span><br><span class="line">        db = grads[&quot;db&quot;]</span><br><span class="line">        dmu = grads[&quot;dmu&quot;]</span><br><span class="line">        ds = grads[&quot;ds&quot;]</span><br><span class="line"></span><br><span class="line">        w-=learning_rate*dw+l2*w</span><br><span class="line">        b-=learning_rate*db+l2*b</span><br><span class="line">        mu-=learning_rate*dmu+l2*mu</span><br><span class="line">        s -=learning_rate*ds+l2*s</span><br><span class="line"></span><br><span class="line">        costs.append(cost)</span><br><span class="line"></span><br><span class="line">    params = &#123;&quot;w&quot;:w,&quot;b&quot;:b,&quot;mu&quot;:mu,&quot;s&quot;:s&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    return params,costs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main(x_train, y_train,n,epoches,learning_rate,l2):</span><br><span class="line">    &quot;&quot;&quot;训练模型，并返回从x到y的映射。&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # 使用线性回归训练模型，根据训练集计算最优化参数</span><br><span class="line">    ## 请补全此处代码，替换以下示例</span><br><span class="line">    m = x_train.shape[0]</span><br><span class="line">    w = (np.random.randn(n,1))</span><br><span class="line">    # means of gaussian</span><br><span class="line">    mu = np.random.randn(n,1)</span><br><span class="line">    # mu is the mean of the sigmoid</span><br><span class="line">    for i in range(n):</span><br><span class="line">        mu[i,0]+= i*100/n</span><br><span class="line">    X = np.zeros((n,m),dtype = np.float64)</span><br><span class="line">    b = np.float(0)</span><br><span class="line">    for i in range(n):</span><br><span class="line">        X[i,:] = x_train</span><br><span class="line">    Y = np.float64(np.reshape(y_train,newshape=(1,m)))</span><br><span class="line"></span><br><span class="line">    #initalize s if s is too close to 0 then it will go wrong</span><br><span class="line">    while True:</span><br><span class="line">        flag = True</span><br><span class="line">        s = np.random.randn(n,1)</span><br><span class="line">        jump = np.int32(np.abs(s)&lt;1)</span><br><span class="line">        if(np.sum(jump))&gt;=1:</span><br><span class="line">            flag = False</span><br><span class="line">        if flag is True:</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line">    params,costs = optimize(w,b,X,Y,mu,s,epoches,learning_rate,l2)</span><br><span class="line">    w = params[&apos;w&apos;]</span><br><span class="line">    b = params[&apos;b&apos;]</span><br><span class="line">    mu = params[&apos;mu&apos;]</span><br><span class="line">    s = params[&apos;s&apos;]</span><br><span class="line">    def f(x):</span><br><span class="line">        ## 请补全此处代码，替换以下示例</span><br><span class="line">        m = x.shape[0]</span><br><span class="line"></span><br><span class="line">        X = np.zeros((n,m))</span><br><span class="line">        for i in range(n):</span><br><span class="line">            X[i,:] = x</span><br><span class="line">        Z = (X-mu)/s</span><br><span class="line">        A = sigmoidFunction(Z)</span><br><span class="line">        y = b+np.dot(w.T,A)</span><br><span class="line">        return y.squeeze()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    return f</span><br></pre></td></tr></table></figure>
-<p>参数：  f = sigmoid.main(x_train, y_train,10,100000,1e-2,0)</p>
-<h4 id="结果-1"><a href="#结果-1" class="headerlink" title="结果"></a>结果</h4><p><img src="/home/alex/图片/jieguo.png" alt="upload successful"></p>
-<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><p><a href="https://github.com/Haicang/PRML/blob/master/lab1/Report.ipynb" target="_blank" rel="noopener">https://github.com/Haicang/PRML/blob/master/lab1/Report.ipynb</a></p>
-<p><a href="https://blog.csdn.net/pipisorry/article/details/73770637" target="_blank" rel="noopener">https://blog.csdn.net/pipisorry/article/details/73770637</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/18/生产者与消费者模型-同步异步概念/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/18/生产者与消费者模型-同步异步概念/" itemprop="url">生产者与消费者模型&同步异步概念</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-18T13:01:48+08:00">
-                2018-12-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Ref：</p>
-<p><a href="https://blog.csdn.net/fuzhongmin05/article/details/54616344" target="_blank" rel="noopener">https://blog.csdn.net/fuzhongmin05/article/details/54616344</a></p>
-<p><img src="/home/alex/图片/expla.png" alt="upload succsful"></p>
-<p>code:</p>
-<p><img src="/home/alex/图片/code.png" alt="upload successl"></p>
-<p><strong><em>无法避免竞争</em></strong></p>
-<p>对count的访问没有做限制。</p>
-<p>这里有可能出现竞争条件，其原因是对count的访问未作限制。有可能出现以下情况：缓冲区为空，消费者刚刚读取count的值发现它为0，此时调度程序决定暂停消费者并启动运行生产者。生产者向缓冲区加入一个数据项，count加1。现在count的值变成了1，它推断认为count刚才为0，所以消费者此时一定在睡眠，于是生产者调用wakeup来唤醒消费者。</p>
-<p> 但是消费者在逻辑上并未睡眠，所以wakeup信号丢失，当消费者下次运行时，它将测试先前读取的count值，发现它为0。于是睡眠，生产者迟早会填满整个缓冲区，然后睡眠，这样一来，两个进程将永远睡眠下去。</p>
-<h3 id="引入信号量的操作"><a href="#引入信号量的操作" class="headerlink" title="引入信号量的操作"></a>引入信号量的操作</h3><p> Dijkstra建议设立两种操作：down和up（分别为一般化后的sleep和wakeup）。对一信号量执行down操作，则是检查其值是否大于0。若该值大于0，则将其减1（即用掉一个保存的唤醒信号）并继续；若该值为0，则进程将睡眠，而且此时down操作并未结束。检查数值、修改变量值以及可能发生的睡眠操作均作为一个单一的、不可分割的原子操作完成。保证一旦一个信号量操作开始，则在该操作完成或阻塞之前，其他进程均不允许访问该信号量。这种原子性对于解决同步问题和避免竞争条件是绝对必要的。所谓原子操作，是指一组相关联的操作要么都不间断地执行，要么不执行。</p>
-<p> up操作对信号量的值增1。如果一个或多个进程在该信号量上睡眠，无法完成一个先前的down操作，则由系统选择其中的一个（如随机挑选）并允许该进程完成它的down操作。于是，对一个有进程在其上睡眠的信号量执行一次up操作后，该信号量的值仍旧是0，但在其上睡眠的进程却少了一个。信号量的值增加1和唤醒一个进程同样也是不可分割的，不会有某个进程因执行up而阻塞，正如前面的模型中不会有进程因执行wakeup而阻塞一样。</p>
-<p> 在Dijkstra原来的论文中，他分别使用名称P和V而不是down和up，荷兰语中，Proberen的意思是尝试，Verhogen的含义是增加或升高。</p>
-<p>从物理上说明信号量的P、V操作的含义。 P(S)表示申请一个资源，S.value&gt;0表示有资源可用,其值为资源的数目；S.value=0表示无资源可用；S.value&lt;0, 则|S.value|表示S等待队列中的进程个数。V(S)表示释放一个资源，信号量的初值应该大于等于0。P操作相当于“等待一个信号”，而V操作相当于“发送一个信号”，在实现同步过程中，V操作相当于发送一个信号说合作者已经完成了某项任务，在实现互斥过程中，V操作相当于发送一个信号说临界资源可用了。实际上，在实现互斥时，P、V操作相当于申请资源和释放资源。</p>
-<p>该解决方案使用了三个信号量：一个称为full，用来记录充满缓冲槽数目，一个称为empty，记录空的缓冲槽总数；一个称为mutex，用来确保生产者和消费者不会同时访问缓冲区。full的初值为0，empty的初值为缓冲区中槽的数目，mutex的初值为1。供两个或多个进程使用的信号量，其初值为1，保证同时只有一个进程可以进入临界区，称作二元信号量。如果每个进程在进入临界区前都执行down操作，并在刚刚退出时执行一个up操作，就能够实现互斥。</p>
-<p> 在下面的例子中，我们实际上是通过两种不同的方式来使用信号量，两者之间的区别是很重要的，信号量mutex用于互斥，它用于保证任一时刻只有一个进程读写缓冲区和相关的变量。互斥是避免混乱所必需的操作。</p>
-<p>例题：</p>
-<p><img src="/home/alex/图片/mancao.png" alt="uplouccessful"></p>
-<p> items  就是full，记录满槽数目，初始值位0</p>
-<p> slots 就是empty，就是缓冲区中槽的数目,初始值为10</p>
-<p> mutex inital value  = 0</p>
-<p>那么insert function</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">P(slots);       //empty slot-1</span><br><span class="line">P(mutex);		//进入临界区</span><br><span class="line">insert_item</span><br><span class="line">V(mutex);		//离开临界区</span><br><span class="line">V(items);		//full slot+1</span><br></pre></td></tr></table></figure>
-<p>remove function</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">P(items);		//满槽数目-1</span><br><span class="line">P(mutex);		</span><br><span class="line">remove_item;</span><br><span class="line">V(mutex);</span><br><span class="line">V(slots);		//空槽数目+1</span><br></pre></td></tr></table></figure>
-<p>本例中，信号量保证缓冲区满的时候生产者停止运行，缓冲区空的时候消费者停止运行。</p>
-<h3 id="信号量用于同步"><a href="#信号量用于同步" class="headerlink" title="信号量用于同步"></a>信号量用于同步</h3><h4 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h4><p>一个进程执行某个请求，如果需要一段时间才能返回信息，那么进程会一直等待下去。也就是说直到收到返回信息才继续下去。</p>
-<h4 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h4><p>进程不需要一直等待下去，继续执行下面的操作，不管其他进程的状态。</p>
-<p>对于无界缓冲区问题，消费者只需关心缓冲区是否空即可</p>
-<p><img src="/home/alex/图片/empty.png" alt="upload suessful">。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1970,7 +1979,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
