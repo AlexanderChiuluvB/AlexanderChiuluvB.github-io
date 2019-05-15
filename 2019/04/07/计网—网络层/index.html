@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="data-plane role: forward datagrams from input links to output links control plane: coordinate the local ,per-router forwarding actions so that datagrams are ultimately transferred end -to end Control">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网—网络层">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/04/07/计网—网络层/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="data-plane role: forward datagrams from input links to output links control plane: coordinate the local ,per-router forwarding actions so that datagrams are ultimately transferred end -to end Control">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/control.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/路由器.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/IPV4.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ziwang.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/主机.png">
+<meta property="og:updated_time" content="2019-05-14T15:01:28.586Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计网—网络层">
+<meta name="twitter:description" content="data-plane role: forward datagrams from input links to output links control plane: coordinate the local ,per-router forwarding actions so that datagrams are ultimately transferred end -to end Control">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/control.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/04/07/计网—网络层/"/>
+
+
+
+
+
+  <title>计网—网络层 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/04/07/计网—网络层/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计网—网络层</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-07T23:20:38+08:00">
+                2019-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>data-plane role: forward datagrams from input links to output links</p>
+<p>control plane: coordinate the local ,per-router forwarding actions so that datagrams are ultimately transferred end -to end</p>
+<h3 id="Control-Plane"><a href="#Control-Plane" class="headerlink" title="Control Plane"></a>Control Plane</h3><h4 id="SDN-Approach"><a href="#SDN-Approach" class="headerlink" title="SDN Approach"></a>SDN Approach</h4><p>由远程服务器来决定以及分配转发表的值。</p>
+<p>远程服务器与路由器通过交换含转发表以及其他路由信息来进行信息交换</p>
+<p><img src="/home/alex/图片/control.png" alt="upload ccessful"></p>
+<h4 id="traditional-Approach"><a href="#traditional-Approach" class="headerlink" title="traditional Approach"></a>traditional Approach</h4><p>由路由算法来做决定以及分配转发表的值</p>
+<h4 id="网络层的三个主要功能"><a href="#网络层的三个主要功能" class="headerlink" title="网络层的三个主要功能"></a>网络层的三个主要功能</h4><p>1.连接建立</p>
+<p>2.转发</p>
+<p>3.路由选择</p>
+<p>路由器作用： 把数据报从入链路转到出链路</p>
+<h4 id="转发与路由选择"><a href="#转发与路由选择" class="headerlink" title="转发与路由选择"></a>转发与路由选择</h4><p>转发是把分组从一个输入链路接口转移到适当的输出链路接口的路由器基本动作。</p>
+<p>路由选择是网络范围的过程，决定分组从源到目的地所采取的端到端路径。</p>
+<h4 id="分组交换机"><a href="#分组交换机" class="headerlink" title="分组交换机"></a>分组交换机</h4><p>定义： 一台通用分组交换设备，根据分组首部字段中的值，从输入链路接口到输出链路接口转移分组。</p>
+<p>如果基于链路层字段做转发决定，为<em>链路层交换机</em></p>
+<p>如果基于网络层字段的值做转发决定，为<em>路由器</em></p>
+<h4 id="虚电路和数据报网络"><a href="#虚电路和数据报网络" class="headerlink" title="虚电路和数据报网络"></a>虚电路和数据报网络</h4><p>与运输层的UDP和TCP相似，网络层也能在两台主机之间提供无连接服务或者连接服务。无连接不需要建立握手，而连接在主机和主机之间需要进行握手</p>
+<p>虚电路： 仅在网络层提供链接服务的计算机网络</p>
+<p>数据报网络: 提供无连接服务的计算机网络</p>
+<p>运输层面向连接服务是在网络边缘的端系统实现的，而网络层的连接服务除了在端系统，还会在网络核心的路由器中实现。</p>
+<h5 id="虚电路网络"><a href="#虚电路网络" class="headerlink" title="虚电路网络"></a>虚电路网络</h5><p>虚电路的组成：</p>
+<p>1.源和目的主机之间的路径（一系列链路和路由器）</p>
+<p>2.VC号 沿着该路径的每段链路的一个号码</p>
+<p>3.每台路由器中的转发表表项</p>
+<p>虚电路建立的三个阶段：</p>
+<p>虚电路建立：发送运输层与网络层联系，指定接收方地址，等待网络建立虚电路</p>
+<p>网络层决定发送方与接收方之间的路径，即该虚电路的所有分组要通过的一系列链路与路由器。网络层也为沿着该路径的每条链路决定一个VC号。最后，网络层在沿着路径的每台路由器的转发表中增加一个表项。</p>
+<p>数据传送：一旦创建了虚电路，分组就可以沿着虚电路流动</p>
+<p>运输层的链接建立仅仅涉及两个端系统，但在网络层链接建立期间，端系统路径上的路由器也要参与虚电路的建立。</p>
+<h4 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络"></a>数据报网络</h4><p>每当端系统要发送分组，就为该分组加上目的端系统的地址，然后把分组推进网络中。不维护任何虚电路的状态信息。</p>
+<p>路由器每台都使用分组的目的地址来转发该分组，每台路由器有一个将目的地址映射到链路接口的转发表，当分组到达路由器的时候，路由器使用该分组的目的地址在转发表中查找合适的输出链路接口，然后路由器会把分组向该输出链路接口转发。</p>
+<p>路由器通过用分组的目的地址的前缀与转发表中的表项进行匹配，如果匹配的话路由器则向与该匹配项想联系的链路转发分组。有相同前缀的，选择前缀最长对应的链路接口，并且使用最长前缀匹配规则。</p>
+<p>数据报网络中路由器不维持连接状态信息，但是转发表维持。</p>
+<h4 id="路由器工作原理"><a href="#路由器工作原理" class="headerlink" title="路由器工作原理"></a>路由器工作原理</h4><p><img src="/home/alex/图片/路由器.png" alt="upload cessful"></p>
+<p>路由器体系结构：</p>
+<p>输入端口</p>
+<p>交换结构</p>
+<p>输出端口</p>
+<p>路由选择处理器</p>
+<ul>
+<li><p>路由器负责转发功能：把分组从入链路传送到出链路。</p>
+</li>
+<li><p>输入输出分组，交换结构实现的转发功能：路由器转发平面，用硬件来实现。</p>
+</li>
+<li><p>控制功能，即执行路由选择协议，路由器控制平面，由软件来实现</p>
+</li>
+</ul>
+<h5 id="输入端口"><a href="#输入端口" class="headerlink" title="输入端口"></a>输入端口</h5><p>输入端口的线路端接功能与链路层处理实现用于各个输入链路的物理层和链路层，路由器在输入端口用转发表来查找输出端口，使得到达的分组能够经过交换结构转发到输出端口。</p>
+<p>转发表是由路由选择处理器设计和更新的。</p>
+<h5 id="交换结构"><a href="#交换结构" class="headerlink" title="交换结构"></a>交换结构</h5><p>路由器的核心部位</p>
+<p>正是通过这种交换结构，分组才能实际地从一个输入端口交换到一个输出端口中。</p>
+<ul>
+<li>经内存交换</li>
+</ul>
+<p>端口会先通过中断方式向路由选择处理器发出信号，分组会被复制到内存当中，路由选择处理器会从首部中提取目的地址，然后再转发表中找出适当的输出端口，并把分组复制到输出端口的缓存中。</p>
+<p>如果内存带宽为每秒写进或者读内存Ｂ个分组，那么总的转发吞吐量必然小于Ｂ/２</p>
+<ul>
+<li>经总线交换</li>
+</ul>
+<p>不需要路由选择处理器的干预，输入端口经过一个共享总线把分组直接传送到输出端口，但一次只有一个分组能够跨越总线</p>
+<ul>
+<li>经互联网络交换</li>
+</ul>
+<p>某个时刻经过给定总线仅有一个分组能够发送。</p>
+<h4 id="主动队列管理"><a href="#主动队列管理" class="headerlink" title="主动队列管理"></a>主动队列管理</h4><p>在缓存填满之前随机丢弃或者在首部加标记一个分组，以便向发送方提供一个拥塞信号。</p>
+<p>RED：随机早期检测。</p>
+<p>详情看课本</p>
+<h4 id="网际协议"><a href="#网际协议" class="headerlink" title="网际协议"></a>网际协议</h4><p>网络层的三个主要组件：</p>
+<p>１．ＩＰ协议 完成网络层的编址与转发</p>
+<p>２．路由选择部分，决定了数据报从源到目的地所流经的路径</p>
+<p>３．报告数据报中的差错和对某些网络层信息请求进行相应的设施（ICMP）控制报文协议</p>
+<h4 id="IPv4-数据报格式"><a href="#IPv4-数据报格式" class="headerlink" title="IPv4 数据报格式"></a>IPv4 数据报格式</h4><p><img src="/home/alex/图片/IPV4.png" alt="upload succeful"></p>
+<p>链路层frame能够承载的最大数据量：最大传送单元MTU</p>
+<p>如果MTU比IP数据包长度要小，如何把这个过大的IP分组压缩到链路层帧的有效载荷字段？</p>
+<p>IP数据报分片，把数据报中的数据分片成两个或者更多个较小的ＩＰ数据报，用单独的链路层封装这些较小的ＩＰ数据报，然后向输出链路上发送这些帧，这些较小的数据报叫做片。</p>
+<p>同时ＩＰｖ４设计者把标志，标识，片偏移字段放在了ＩＰ数据报首部中。</p>
+<p>发送主机会为它发送的每个数据报的标识号加1，每个数据报具有初始数据报的源地址，目的地址和标识号。IP是一种不可靠服务，因此为了让目的主机绝对相信他已经收到了初始数据包的最后一个片，最后一个片的标志比特设为0.</p>
+<p>一台主机通常只有一条链路连接到网络，当主机的ＩＰ想发送一个数据报的时候，他就在该链路上发送。主机与物理链路之间的边界叫做接口，路由器的任务是从链路上接收数据报并且从某些其他链路转发出去，因此路由器必须拥有两条或者多条链路与它链接。</p>
+<p>每台主机和路由器都能发送和接收ＩＰ数据报，ＩＰ要求每台主机和路由器接口有自己的ＩＰ地址，因此一个ＩＰ地址技术上是和一个接口相关联的．</p>
+<p>每个ＩＰ地址长度为３２bit，ｅｇ</p>
+<p>193.32.216.9　可以表示为</p>
+<p>11000001 00100000 11011000 00001001</p>
+<p>用ＩＰ术语来说，互联若干个主机接口和路由器接口的网络形成一个子网。</p>
+<p><img src="/home/alex/图片/ziwang.png" alt="upload ful"></p>
+<p>这些主机接口与路由器接口形成一个子网。</p>
+<p>eg 223.1.1.0/24　/24　称为子网掩码</p>
+<p>指示了３２个ｂｉｔ最左侧的２４个ｂｉｔ定义子网地址　<strong>任何要连接到223.1.1.0 /24的主机都要求其地址具有223.1.1.xxx的形式</strong></p>
+<p>a.b.c.d/x 前x最高比特构成了IP地址的网络部分，称为网络前缀。</p>
+<p>该子网内部设备的IP地址将共享前缀，这样可以减少路由器中转发表的长度</p>
+<p>IP广播地址 255.255.255.255 主机发出一个目的地址为广播地址的数据报的时候，报文会交付给同一个网络中的所有主机。路由器会有选择的向临近子网转发该报文。</p>
+<h4 id="主机如何获得IP地址"><a href="#主机如何获得IP地址" class="headerlink" title="主机如何获得IP地址"></a>主机如何获得IP地址</h4><p>1.获取一块地址</p>
+<p>可以从ISP获取。</p>
+<p>2.获取主机地址，动态主机配置协议</p>
+<p>当有主机加入时候，DHCP服务器从当前可用地址池分配任意一个地址给它，每当一台主机离开的时候，地址会被收回到这个池中。</p>
+<p><img src="/home/alex/图片/主机.png" alt="upload essful"></p>
+<h5 id="DHCP-服务器发现"><a href="#DHCP-服务器发现" class="headerlink" title="DHCP 服务器发现"></a>DHCP 服务器发现</h5><p>DHCP客户主机生成包含DHCP发现报文的IP数据报，其中使用广播目的地址255.255.255.255并且使用本主机的源地址0.0.0.0，DHCP客户将该IP数据报传递给链路层，链路层然后把该帧光波导所有与该子网连接的子网</p>
+<h5 id="DHCP-服务器提供"><a href="#DHCP-服务器提供" class="headerlink" title="DHCP 服务器提供"></a>DHCP 服务器提供</h5><p>DHCP服务器收到一个DHCP发现报文的时候，用一个DHCP提供报文向客户作出相应。</p>
+<p>仍然使用255.255.255.255 广播地址。报文提供了IP地址租用期，网络掩码，IP地址等信息</p>
+<h5 id="DHCP-请求"><a href="#DHCP-请求" class="headerlink" title="DHCP 请求"></a>DHCP 请求</h5><p>新到达的客户从一个或多个服务器中提供选择一个，并向选中的服务器提供一个DHCP请求报文响应。</p>
+<h5 id="DHCP-ACK"><a href="#DHCP-ACK" class="headerlink" title="DHCP ACK"></a>DHCP ACK</h5><p>用DHCP ACK 报文对DHCP请求报文进行响应。</p>
+<p>3.网络地址的转换</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/14/强化学习/" rel="next" title="强化学习">
+                <i class="fa fa-chevron-left"></i> 强化学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/01/体系结构-存储器层次结构/" rel="prev" title="体系结构——指令级并行">
+                体系结构——指令级并行 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Control-Plane"><span class="nav-number">1.</span> <span class="nav-text">Control Plane</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SDN-Approach"><span class="nav-number">1.1.</span> <span class="nav-text">SDN Approach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#traditional-Approach"><span class="nav-number">1.2.</span> <span class="nav-text">traditional Approach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络层的三个主要功能"><span class="nav-number">1.3.</span> <span class="nav-text">网络层的三个主要功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转发与路由选择"><span class="nav-number">1.4.</span> <span class="nav-text">转发与路由选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分组交换机"><span class="nav-number">1.5.</span> <span class="nav-text">分组交换机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚电路和数据报网络"><span class="nav-number">1.6.</span> <span class="nav-text">虚电路和数据报网络</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#虚电路网络"><span class="nav-number">1.6.1.</span> <span class="nav-text">虚电路网络</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据报网络"><span class="nav-number">1.7.</span> <span class="nav-text">数据报网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由器工作原理"><span class="nav-number">1.8.</span> <span class="nav-text">路由器工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#输入端口"><span class="nav-number">1.8.1.</span> <span class="nav-text">输入端口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#交换结构"><span class="nav-number">1.8.2.</span> <span class="nav-text">交换结构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主动队列管理"><span class="nav-number">1.9.</span> <span class="nav-text">主动队列管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网际协议"><span class="nav-number">1.10.</span> <span class="nav-text">网际协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv4-数据报格式"><span class="nav-number">1.11.</span> <span class="nav-text">IPv4 数据报格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主机如何获得IP地址"><span class="nav-number">1.12.</span> <span class="nav-text">主机如何获得IP地址</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DHCP-服务器发现"><span class="nav-number">1.12.1.</span> <span class="nav-text">DHCP 服务器发现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DHCP-服务器提供"><span class="nav-number">1.12.2.</span> <span class="nav-text">DHCP 服务器提供</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DHCP-请求"><span class="nav-number">1.12.3.</span> <span class="nav-text">DHCP 请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DHCP-ACK"><span class="nav-number">1.12.4.</span> <span class="nav-text">DHCP ACK</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

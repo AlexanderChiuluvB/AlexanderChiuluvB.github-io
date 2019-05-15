@@ -272,6 +272,191 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/stack-and-heap-and-memory-leak/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/27/stack-and-heap-and-memory-leak/" itemprop="url">CSAPP-进程控制</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T23:40:00+08:00">
+                2018-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="获取进程ID"><a href="#获取进程ID" class="headerlink" title="获取进程ID"></a>获取进程ID</h3><p>每个进程都有一个唯一的正数进程ID，getpid函数返回调用进程的PID，getppid函数返回它的父进程的PID（创建调用进程的进程）</p>
+<h3 id="创建和终止进程"><a href="#创建和终止进程" class="headerlink" title="创建和终止进程"></a>创建和终止进程</h3><p>1.运行 </p>
+<p>2.停止</p>
+<p>3.终止</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	pid_t pid;</span><br><span class="line">    int x= 1;</span><br><span class="line">    </span><br><span class="line">    pid = Fork();</span><br><span class="line">    if(pid==0)&#123;</span><br><span class="line">		printf(&quot;child : x=%d\n&quot;,++x);    </span><br><span class="line">    	exit(0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	printf(&quot;parent: x=%d\n&quot;,--x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要点：</p>
+<p>1.fork函数只调用一次，但是会返回两次，一次是在父进程中，另外一次是在子进程中。</p>
+<p>2.父进程总会返回子进程的PID，在子进程当中，fork总会返回0</p>
+<p>3.并发执行，内核能够一任意方式交替执行它们逻辑控制流中的指令<br>在x86上，先完成父进程，再完成子进程,这个顺序不同的系统会不同，画出进程图，所有拓扑排序序列都可以。</p>
+<p>4.相同但是独立的地址空间，每个进程都有相同的用户栈，相同的本地变量值，堆等“环境”，但却是独立的，就是说一个进程改变内部的环境不会影响另外一个进程</p>
+<p>5.共享文件共享文件</p>
+<p>结果如下<br><img src="/home/alex/图片/2018-65.png" alt="filename  exists, renamed"></p>
+<p>所以上面程序的分析：</p>
+<p>pid==0，即子进程</p>
+<p>那如果是以下程序呢？</p>
+<p><img src="/home/alex/图片/pro.png" alt="upload succful"></p>
+<p><img src="/home/alex/图片/2018-66.png" alt="filename ready exists, renamed"></p>
+<p>解析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">先调用父进程，x=1，所以输出--x=0;</span><br><span class="line">然后调用子进程，子进程除了会执行if内的printf语句，同时还会执行if外的printf语句。</span><br></pre></td></tr></table></figure>
+<h3 id="回收子进程"><a href="#回收子进程" class="headerlink" title="回收子进程"></a>回收子进程</h3><p>当一个进程由于某种原因中止的时候，内核不会立刻把它从系统中清除，而是保存在一个已经终止的状态中，等待被父进程回收。</p>
+<p>所以一个终止了的但是还没有被回收的进程，成为僵死进程</p>
+<p>如果父进程终止了，内核会安排init进程成为它孤儿进程的养父，init进程的PID位1，是系统启动的时候由内核创建的，不会终止，是所有进程的祖先。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pid_t waitpid(pid_t pid,int *statsup,int options)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>pid参数用来判断等待集合的成员。</p>
+<p>如果pid&gt;0，那么等待集合就是一个单独的子进程，它的进程ID等于pid</p>
+<p>如果pid=-1，那么等待集合是由父进程的所有子进程组成的</p>
+<h4 id="wait函数"><a href="#wait函数" class="headerlink" title="wait函数"></a>wait函数</h4><p>wait函数是waitpid函数的简单版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid_t wait(int *statusp); // = waitpid(-1,&amp;status,0);</span><br></pre></td></tr></table></figure>
+<h3 id="让进程休眠"><a href="#让进程休眠" class="headerlink" title="让进程休眠"></a>让进程休眠</h3><p>//返回要休眠的秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unsigned int sleep(unsigned int secs);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int pause (void)</span><br><span class="line"></span><br><span class="line">让函数休眠，知道进程收到一个信号</span><br><span class="line">//always return -1</span><br></pre></td></tr></table></figure>
+<h3 id="加载并运行程序"><a href="#加载并运行程序" class="headerlink" title="加载并运行程序"></a>加载并运行程序</h3><p>execve函数在当前进程上下文当中加载并且运行一个新程序<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int execve(const char *filename,const char *argv[],const char *envp[])</span><br></pre></td></tr></table></figure></p>
+<p>execve函数加载并且运行可执行目标文件，且带参数列表argv和环境变量envp，只有当出现错误例如找不到filename的时候，execve才会返回到调用程序。</p>
+<p>execve函数调用一次，而且从不返回</p>
+<p>当execve加载了filename后，启动代码设置栈，并将控制传递给新程序的主函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc,char *argv,char **envp)</span><br></pre></td></tr></table></figure>
+<p>1.argc argv[]数组中非空指针的数量</p>
+<p>2.argv argb[]数组中的第一个条目</p>
+<p>3.envp 指向argv[]数组的第一个条目</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">char *getenv(const char *name) 函数</span><br><span class="line"></span><br><span class="line">搜索字符串 name==value,找到就返回一个指向其的指针，否则返回NULL；</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int setenv(const char *name,const char *newvalue,int overwrite)//当overwrite非0的时候，如果name不存在，那么setenv把“name=newvalue&quot;添加到数组当中</span><br><span class="line"></span><br><span class="line">unsetenv就是会删除它</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//查看函数的命令行参数和环境变量</span><br><span class="line"></span><br><span class="line">int main(int argc,char *argv[],char *envp[])</span><br><span class="line">  &#123;</span><br><span class="line">      int i;</span><br><span class="line">      printf(&quot;command-line arguments:\n&quot;);</span><br><span class="line">      for(i=0;argv[i]!=NULL;i++)&#123;</span><br><span class="line">  </span><br><span class="line">          printf(&quot;    argv[%2d]: %s\n&quot;,i,argv[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      printf(&quot;\n&quot;);</span><br><span class="line">      printf(&quot;environmental variables:\n&quot;);</span><br><span class="line">      for(i=0;envp[i]!=NULL;i++)&#123;</span><br><span class="line">  </span><br><span class="line">          printf(&quot;    envp[%2d]: %s\n&quot;,i,envp[i]);</span><br><span class="line">      &#125;</span><br><span class="line">      exit(0);</span><br><span class="line">  </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="用户栈的组织结构"><a href="#用户栈的组织结构" class="headerlink" title="用户栈的组织结构"></a>用户栈的组织结构</h3><p>动态链接器变量下的envp,argv,与argc是libc_start_main的栈帧</p>
+<p><img src="/home/alex/图片/yonghu.png" alt="upload succful"></p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>def：一条通知进程系统发生了一个某种类型事件的小信息</p>
+<p>传送一个信号到目的进程由两个不同步骤组成：</p>
+<h4 id="发送信号"><a href="#发送信号" class="headerlink" title="发送信号"></a>发送信号</h4><h5 id="进程组："><a href="#进程组：" class="headerlink" title="进程组："></a>进程组：</h5><p>每个进程属于一个进程组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid_t getpgrp(void); return id of id group</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int setpgid(pid_t pid,pit_t pgid);</span><br></pre></td></tr></table></figure>
+<h5 id="用-bin-kill发送信号"><a href="#用-bin-kill发送信号" class="headerlink" title="用/bin/kill发送信号"></a>用/bin/kill发送信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/bin/kill -9 15213</span><br><span class="line"></span><br><span class="line">/bin/kill -9 -15213 负的PID会导致信号被发送到进程组PID中的每个进程</span><br></pre></td></tr></table></figure>
+<h5 id="从键盘发射信号"><a href="#从键盘发射信号" class="headerlink" title="从键盘发射信号"></a>从键盘发射信号</h5><p>作业（job）用来表示为一条命令行求值而创建的进程，在任何时候，至多只有一个前台作业和0个或多个后台作业。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls | sort //会创建一个由两个进程组成的前台作业</span><br></pre></td></tr></table></figure>
+<h5 id="用kill发射信号"><a href="#用kill发射信号" class="headerlink" title="用kill发射信号"></a>用kill发射信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int kill (pid_t pid,int sig);</span><br><span class="line">成功则返回0，错误则返回-1</span><br><span class="line"></span><br><span class="line">如果pid大于0，则kill函数发送信号号码sig给进程pid，如果pid为0，则kill发送信号sig给调用进程所在进程组的每个进程，如果pid小于0，kill发送信号sig给进程组pig绝对值中的每个进程</span><br></pre></td></tr></table></figure>
+<h4 id="接收信号"><a href="#接收信号" class="headerlink" title="接收信号"></a>接收信号</h4><p>1.内核位每个进程在pending位向量维护着待处理信号的集合，而在blocked位向量维护着被阻塞的信号集合。所以任何时刻一种类型的信号只会被接收一次，在处理它的时候，会先把该类型的信号block，进程可以忽略信号，也可以捕捉这个信号，执行信号处理程序。</p>
+<p>2.当内核从一个异常处理程序返回的时候，准备吧控制传递给某个进程p的时候，会检查进程p违背阻塞的待处理信号集合。如果这个集合不为空，那么内核选择集合中的某个信号k（越小越好，因为linux里面编号越小，优先级越高），并且进入k的处理程序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/* 改变blocked向量的值，若oldset!=null，会用来保存以前blocked向量的值 */ </span><br><span class="line"></span><br><span class="line">int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);</span><br><span class="line"></span><br><span class="line">/* 初始化set为空集 */ int sigemptyset(sigset_t *set); /* 初始化set全为1，每个信号都填入blocked向量 */ </span><br><span class="line"></span><br><span class="line">int sigfillset(sigset *set); </span><br><span class="line"></span><br><span class="line">/* 添加、删除signum到set */ </span><br><span class="line">int sigaddset(sigset_t *set, int signum); int sigdelset(sigset_t *set, int signum);</span><br><span class="line"></span><br><span class="line">/* set中对应signum是否置1 */ </span><br><span class="line"></span><br><span class="line">int sigismember(const sigset_t *set, int signum);</span><br><span class="line">--------------------- </span><br><span class="line"></span><br><span class="line">原文：https://blog.csdn.net/WMLWONDER/article/details/53728630</span><br></pre></td></tr></table></figure>
+<p>singal函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sighandler_t signal(int signum,sighandler_t handler)</span><br></pre></td></tr></table></figure>
+<p>如果handler不是SIG_IGN或者SIG_DFL，handler 就是用户定义的函数的地址，这个函数叫做信号处理程序。这个过程叫<strong><em>设置信号处理程序</em></strong>，调用过程叫做捕获信号，执行信号处理过程叫做处理信号</p>
+<h5 id="阻塞和解除阻塞信号"><a href="#阻塞和解除阻塞信号" class="headerlink" title="阻塞和解除阻塞信号"></a>阻塞和解除阻塞信号</h5><p>隐式阻塞：例如信号s对应程序S，当在处理程序S的时候，如果发送进程一个信号s，那么直到S返回，s会一直是待处理而不被接收。</p>
+<p>显式阻塞：使用sigprocmask函数和其辅助函数，明确阻塞和解除阻塞选定的信号。</p>
+<h5 id="临时阻塞一个信号"><a href="#临时阻塞一个信号" class="headerlink" title="临时阻塞一个信号"></a>临时阻塞一个信号</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sigset_t mask,prev_mask;</span><br><span class="line">Sigemptyset(&amp;mask);</span><br><span class="line">Sigaddset(&amp;mask,SIGINT);</span><br><span class="line"></span><br><span class="line">//block sigint and save previous blocked set</span><br><span class="line"></span><br><span class="line">Sigprocmask(SIG_BLOCK，&amp;mask，&amp;prev_mask);</span><br><span class="line"></span><br><span class="line">	//Code region that will not be interrupt by SIGINT</span><br><span class="line">    </span><br><span class="line">Sigprocmask(SIG_SETMASK,&amp;prev_mask,NULL);</span><br></pre></td></tr></table></figure>
+<h5 id="非本地跳转"><a href="#非本地跳转" class="headerlink" title="非本地跳转"></a>非本地跳转</h5><p><img src="/home/alex/图片/2018-67.png" alt="filename aready exists, renamed"></p>
+<p>一些原则：</p>
+<p>1.注意保存与恢复errno</p>
+<p>2.当访问一个全局数据结构的时候，阻塞所有的信号</p>
+<p>3.用volatile声明全局变量，告诉编译器不要缓存这个变量，那么每次引用g的时候，都要从内存中读取g的数值。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/中断与异常的来源/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2027,195 +2212,6 @@ VALID 是否有效
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/03/CS230-DeepLearning-And-Neural-Networks/" itemprop="url">CS230 DeepLearning And Neural Networks</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-03T02:55:00+08:00">
-                2018-09-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/PRML/" itemprop="url" rel="index">
-                    <span itemprop="name">PRML</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="深度学习-——Coursera"><a href="#深度学习-——Coursera" class="headerlink" title="深度学习 ——Coursera"></a>深度学习 ——Coursera</h1><p>学习资源：<a href="https://github.com/Kulbear/deep-learning-coursera" target="_blank" rel="noopener">https://github.com/Kulbear/deep-learning-coursera</a></p>
-<p><a href="https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb" target="_blank" rel="noopener">https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb</a></p>
-<p>官网：<a href="https://cs230-stanford.github.io/" target="_blank" rel="noopener">https://cs230-stanford.github.io/</a></p>
-<h2 id="Basic-of-Neural-Network-of-Programming"><a href="#Basic-of-Neural-Network-of-Programming" class="headerlink" title="Basic of Neural Network of Programming"></a>Basic of Neural Network of Programming</h2><h3 id="Logistic-Regression-—-Binary-Classificatoin"><a href="#Logistic-Regression-—-Binary-Classificatoin" class="headerlink" title="Logistic Regression — Binary Classificatoin"></a>Logistic Regression — Binary Classificatoin</h3><p>如果想把图片作为输入，判断这张图片是否为一只猫<br>首先得了解如何在计算机中表示图片。</p>
-<p>图片可以表示为一个3<em>64</em>64的矩阵，分别记录着R，G，B三个颜色通道的数值</p>
-<p>然后定义一个向量x 让矩阵转化为一个向量，向量包含矩阵所有元素</p>
-<p>nx表示特征向量的维度</p>
-<p><img src="/home/alex/图片/cat.png" alt="image"></p>
-<p>X矩阵是把向量按列排列，相应的，结果Y也是按列排列<br>在python中，X.shape 返回数组（nx,m）对应行数和列数，也就是向量维度为nx，个数为m</p>
-<p><img src="/home/alex/图片/擦她.png" alt="image2"></p>
-<p><br></p>
-<h3 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h3><p>1.右上角的红色笔记不必理会</p>
-<p>2.sigma表示sigmoid函数，是一个squashing function，即把结果压缩到0-1范围内</p>
-<p><img src="/home/alex/图片/便.png" alt="image"></p>
-<p>下一步，为了改变w与b，需要定义一个cost function</p>
-<h5 id="w-is-an-nx-dimenstional-vector-while-b-is-a-real-number"><a href="#w-is-an-nx-dimenstional-vector-while-b-is-a-real-number" class="headerlink" title="w is an nx dimenstional vector,while b is a real number."></a>w is an nx dimenstional vector,while b is a real number.</h5><p>如果cost function是半个平方误差的话，可能只会找到局部最优解<br>所以我们这里使用<br><img src="/home/alex/图片/2018-0.png" alt="imgae"></p>
-<p><img src="/home/alex/图片/LR.png" alt="image"></p>
-<h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><p>不要把Loss function 和 cost function 混了！</p>
-<p>loss function 计算的是单个训练样本的误差</p>
-<p>而cost function 计算的是整个训练集的平均误差</p>
-<h3 id="Gradient-Descent"><a href="#Gradient-Descent" class="headerlink" title="Gradient Descent"></a>Gradient Descent</h3><p>梯度下降就是我们要来寻找全局最优点的方法</p>
-<p><img src="/home/alex/图片/GD.png" alt="image"><br><br></p>
-<p>1.learning rate 学习率，控制每一次迭代或者梯度下降法中步长大小</p>
-<p>2.那为什么右上角那个repeat能保证梯度下降是make sense的呢？<br><br><br>d(J)/dw 代表的是斜率，试想在全局最优点左侧，梯度是负数，相当于w加上了一个正数，那么<br>w就会向全局最优点靠近的方向移动。反之亦然，所以通过不停迭代最后一定会达到全局最优点。</p>
-<p><img src="/home/alex/图片/GD2.png" alt="image"></p>
-<h3 id="Computation-Graph"><a href="#Computation-Graph" class="headerlink" title="Computation Graph"></a>Computation Graph</h3><p>1.神经网络正向传播，计算输出，反向传播用来计算导数，为什么要这样组织呢？</p>
-<p><img src="/home/alex/图片/back.png" alt="image"></p>
-<p>反向传播意思是如果你要计算dj/da  按照红色箭头来计算（把从右到左得到的结果依次运用链式法则来求）</p>
-<h3 id="Logistic-Regression-Grdient-Descent-on-m-examples"><a href="#Logistic-Regression-Grdient-Descent-on-m-examples" class="headerlink" title="Logistic Regression Grdient Descent on m examples"></a>Logistic Regression Grdient Descent on m examples</h3><p><img src="/home/alex/图片/LRM.png" alt="image"></p>
-<p>两个循环，时间复杂度是M*N M为特征向量个数 N为特征数</p>
-<p>那如何摆脱这个循环呢？</p>
-<p>可以使用vectorization技巧</p>
-<h3 id="vectorization"><a href="#vectorization" class="headerlink" title="vectorization"></a>vectorization</h3><p><img src="/home/alex/图片/vec.png" alt="image"></p>
-<p>所以要使用向量化来加速代码的运行</p>
-<p>实际上，GPU和CPU都支持并行计算，SIMD指令，当时用内置函数的时候，例如np.dot，CPU和GPU会利用并行化进行更快的运算。</p>
-<h4 id="因此尽量避免使用显式的for循环"><a href="#因此尽量避免使用显式的for循环" class="headerlink" title="因此尽量避免使用显式的for循环"></a>因此尽量避免使用显式的for循环</h4><p>例如下例：</p>
-<p><img src="/home/alex/图片/vm.png" alt="image"></p>
-<p><img src="/home/alex/图片/nw.png" alt="image"></p>
-<h4 id="具体我们来看逻辑回归的向量化"><a href="#具体我们来看逻辑回归的向量化" class="headerlink" title="具体我们来看逻辑回归的向量化"></a>具体我们来看逻辑回归的向量化</h4><p><img src="/home/alex/图片/borad.png" alt="image"></p>
-<p>用<br><code>z = np.dot(w.T,x)+b</code><br>就可实现移除两个for循环的功能</p>
-<p>小知识：python中的broadcasting</p>
-<p>意思就是虽然b是常数，但是当与一个向量相加的时候，b自动扩展为一个与向量维度相同，值全部为b的向量。</p>
-<p>具体实现</p>
-<p><img src="/home/alex/图片/result.png" alt="image"></p>
-<h3 id="python-的-broadcasting"><a href="#python-的-broadcasting" class="headerlink" title="python 的 broadcasting"></a>python 的 broadcasting</h3><p>(axis=0)按列相加<br>(axis=1)按行相加</p>
-<p><img src="/home/alex/图片/bc.png" alt="image"></p>
-<p>小技巧，定义vector的时候，写为下半部分的形式，不要使用np.random.randn(5)这种rank为1的结构</p>
-<p><img src="/home/alex/图片/eg2.png" alt="image"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2270,7 +2266,7 @@ VALID 是否有效
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

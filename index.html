@@ -489,6 +489,225 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/04/07/计网—网络层/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/07/计网—网络层/" itemprop="url">计网—网络层</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-07T23:20:38+08:00">
+                2019-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>data-plane role: forward datagrams from input links to output links</p>
+<p>control plane: coordinate the local ,per-router forwarding actions so that datagrams are ultimately transferred end -to end</p>
+<h3 id="Control-Plane"><a href="#Control-Plane" class="headerlink" title="Control Plane"></a>Control Plane</h3><h4 id="SDN-Approach"><a href="#SDN-Approach" class="headerlink" title="SDN Approach"></a>SDN Approach</h4><p>由远程服务器来决定以及分配转发表的值。</p>
+<p>远程服务器与路由器通过交换含转发表以及其他路由信息来进行信息交换</p>
+<p><img src="/home/alex/图片/control.png" alt="upload ccessful"></p>
+<h4 id="traditional-Approach"><a href="#traditional-Approach" class="headerlink" title="traditional Approach"></a>traditional Approach</h4><p>由路由算法来做决定以及分配转发表的值</p>
+<h4 id="网络层的三个主要功能"><a href="#网络层的三个主要功能" class="headerlink" title="网络层的三个主要功能"></a>网络层的三个主要功能</h4><p>1.连接建立</p>
+<p>2.转发</p>
+<p>3.路由选择</p>
+<p>路由器作用： 把数据报从入链路转到出链路</p>
+<h4 id="转发与路由选择"><a href="#转发与路由选择" class="headerlink" title="转发与路由选择"></a>转发与路由选择</h4><p>转发是把分组从一个输入链路接口转移到适当的输出链路接口的路由器基本动作。</p>
+<p>路由选择是网络范围的过程，决定分组从源到目的地所采取的端到端路径。</p>
+<h4 id="分组交换机"><a href="#分组交换机" class="headerlink" title="分组交换机"></a>分组交换机</h4><p>定义： 一台通用分组交换设备，根据分组首部字段中的值，从输入链路接口到输出链路接口转移分组。</p>
+<p>如果基于链路层字段做转发决定，为<em>链路层交换机</em></p>
+<p>如果基于网络层字段的值做转发决定，为<em>路由器</em></p>
+<h4 id="虚电路和数据报网络"><a href="#虚电路和数据报网络" class="headerlink" title="虚电路和数据报网络"></a>虚电路和数据报网络</h4><p>与运输层的UDP和TCP相似，网络层也能在两台主机之间提供无连接服务或者连接服务。无连接不需要建立握手，而连接在主机和主机之间需要进行握手</p>
+<p>虚电路： 仅在网络层提供链接服务的计算机网络</p>
+<p>数据报网络: 提供无连接服务的计算机网络</p>
+<p>运输层面向连接服务是在网络边缘的端系统实现的，而网络层的连接服务除了在端系统，还会在网络核心的路由器中实现。</p>
+<h5 id="虚电路网络"><a href="#虚电路网络" class="headerlink" title="虚电路网络"></a>虚电路网络</h5><p>虚电路的组成：</p>
+<p>1.源和目的主机之间的路径（一系列链路和路由器）</p>
+<p>2.VC号 沿着该路径的每段链路的一个号码</p>
+<p>3.每台路由器中的转发表表项</p>
+<p>虚电路建立的三个阶段：</p>
+<p>虚电路建立：发送运输层与网络层联系，指定接收方地址，等待网络建立虚电路</p>
+<p>网络层决定发送方与接收方之间的路径，即该虚电路的所有分组要通过的一系列链路与路由器。网络层也为沿着该路径的每条链路决定一个VC号。最后，网络层在沿着路径的每台路由器的转发表中增加一个表项。</p>
+<p>数据传送：一旦创建了虚电路，分组就可以沿着虚电路流动</p>
+<p>运输层的链接建立仅仅涉及两个端系统，但在网络层链接建立期间，端系统路径上的路由器也要参与虚电路的建立。</p>
+<h4 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络"></a>数据报网络</h4><p>每当端系统要发送分组，就为该分组加上目的端系统的地址，然后把分组推进网络中。不维护任何虚电路的状态信息。</p>
+<p>路由器每台都使用分组的目的地址来转发该分组，每台路由器有一个将目的地址映射到链路接口的转发表，当分组到达路由器的时候，路由器使用该分组的目的地址在转发表中查找合适的输出链路接口，然后路由器会把分组向该输出链路接口转发。</p>
+<p>路由器通过用分组的目的地址的前缀与转发表中的表项进行匹配，如果匹配的话路由器则向与该匹配项想联系的链路转发分组。有相同前缀的，选择前缀最长对应的链路接口，并且使用最长前缀匹配规则。</p>
+<p>数据报网络中路由器不维持连接状态信息，但是转发表维持。</p>
+<h4 id="路由器工作原理"><a href="#路由器工作原理" class="headerlink" title="路由器工作原理"></a>路由器工作原理</h4><p><img src="/home/alex/图片/路由器.png" alt="upload cessful"></p>
+<p>路由器体系结构：</p>
+<p>输入端口</p>
+<p>交换结构</p>
+<p>输出端口</p>
+<p>路由选择处理器</p>
+<ul>
+<li><p>路由器负责转发功能：把分组从入链路传送到出链路。</p>
+</li>
+<li><p>输入输出分组，交换结构实现的转发功能：路由器转发平面，用硬件来实现。</p>
+</li>
+<li><p>控制功能，即执行路由选择协议，路由器控制平面，由软件来实现</p>
+</li>
+</ul>
+<h5 id="输入端口"><a href="#输入端口" class="headerlink" title="输入端口"></a>输入端口</h5><p>输入端口的线路端接功能与链路层处理实现用于各个输入链路的物理层和链路层，路由器在输入端口用转发表来查找输出端口，使得到达的分组能够经过交换结构转发到输出端口。</p>
+<p>转发表是由路由选择处理器设计和更新的。</p>
+<h5 id="交换结构"><a href="#交换结构" class="headerlink" title="交换结构"></a>交换结构</h5><p>路由器的核心部位</p>
+<p>正是通过这种交换结构，分组才能实际地从一个输入端口交换到一个输出端口中。</p>
+<ul>
+<li>经内存交换</li>
+</ul>
+<p>端口会先通过中断方式向路由选择处理器发出信号，分组会被复制到内存当中，路由选择处理器会从首部中提取目的地址，然后再转发表中找出适当的输出端口，并把分组复制到输出端口的缓存中。</p>
+<p>如果内存带宽为每秒写进或者读内存Ｂ个分组，那么总的转发吞吐量必然小于Ｂ/２</p>
+<ul>
+<li>经总线交换</li>
+</ul>
+<p>不需要路由选择处理器的干预，输入端口经过一个共享总线把分组直接传送到输出端口，但一次只有一个分组能够跨越总线</p>
+<ul>
+<li>经互联网络交换</li>
+</ul>
+<p>某个时刻经过给定总线仅有一个分组能够发送。</p>
+<h4 id="主动队列管理"><a href="#主动队列管理" class="headerlink" title="主动队列管理"></a>主动队列管理</h4><p>在缓存填满之前随机丢弃或者在首部加标记一个分组，以便向发送方提供一个拥塞信号。</p>
+<p>RED：随机早期检测。</p>
+<p>详情看课本</p>
+<h4 id="网际协议"><a href="#网际协议" class="headerlink" title="网际协议"></a>网际协议</h4><p>网络层的三个主要组件：</p>
+<p>１．ＩＰ协议 完成网络层的编址与转发</p>
+<p>２．路由选择部分，决定了数据报从源到目的地所流经的路径</p>
+<p>３．报告数据报中的差错和对某些网络层信息请求进行相应的设施（ICMP）控制报文协议</p>
+<h4 id="IPv4-数据报格式"><a href="#IPv4-数据报格式" class="headerlink" title="IPv4 数据报格式"></a>IPv4 数据报格式</h4><p><img src="/home/alex/图片/IPV4.png" alt="upload succeful"></p>
+<p>链路层frame能够承载的最大数据量：最大传送单元MTU</p>
+<p>如果MTU比IP数据包长度要小，如何把这个过大的IP分组压缩到链路层帧的有效载荷字段？</p>
+<p>IP数据报分片，把数据报中的数据分片成两个或者更多个较小的ＩＰ数据报，用单独的链路层封装这些较小的ＩＰ数据报，然后向输出链路上发送这些帧，这些较小的数据报叫做片。</p>
+<p>同时ＩＰｖ４设计者把标志，标识，片偏移字段放在了ＩＰ数据报首部中。</p>
+<p>发送主机会为它发送的每个数据报的标识号加1，每个数据报具有初始数据报的源地址，目的地址和标识号。IP是一种不可靠服务，因此为了让目的主机绝对相信他已经收到了初始数据包的最后一个片，最后一个片的标志比特设为0.</p>
+<p>一台主机通常只有一条链路连接到网络，当主机的ＩＰ想发送一个数据报的时候，他就在该链路上发送。主机与物理链路之间的边界叫做接口，路由器的任务是从链路上接收数据报并且从某些其他链路转发出去，因此路由器必须拥有两条或者多条链路与它链接。</p>
+<p>每台主机和路由器都能发送和接收ＩＰ数据报，ＩＰ要求每台主机和路由器接口有自己的ＩＰ地址，因此一个ＩＰ地址技术上是和一个接口相关联的．</p>
+<p>每个ＩＰ地址长度为３２bit，ｅｇ</p>
+<p>193.32.216.9　可以表示为</p>
+<p>11000001 00100000 11011000 00001001</p>
+<p>用ＩＰ术语来说，互联若干个主机接口和路由器接口的网络形成一个子网。</p>
+<p><img src="/home/alex/图片/ziwang.png" alt="upload ful"></p>
+<p>这些主机接口与路由器接口形成一个子网。</p>
+<p>eg 223.1.1.0/24　/24　称为子网掩码</p>
+<p>指示了３２个ｂｉｔ最左侧的２４个ｂｉｔ定义子网地址　<strong>任何要连接到223.1.1.0 /24的主机都要求其地址具有223.1.1.xxx的形式</strong></p>
+<p>a.b.c.d/x 前x最高比特构成了IP地址的网络部分，称为网络前缀。</p>
+<p>该子网内部设备的IP地址将共享前缀，这样可以减少路由器中转发表的长度</p>
+<p>IP广播地址 255.255.255.255 主机发出一个目的地址为广播地址的数据报的时候，报文会交付给同一个网络中的所有主机。路由器会有选择的向临近子网转发该报文。</p>
+<h4 id="主机如何获得IP地址"><a href="#主机如何获得IP地址" class="headerlink" title="主机如何获得IP地址"></a>主机如何获得IP地址</h4><p>1.获取一块地址</p>
+<p>可以从ISP获取。</p>
+<p>2.获取主机地址，动态主机配置协议</p>
+<p>当有主机加入时候，DHCP服务器从当前可用地址池分配任意一个地址给它，每当一台主机离开的时候，地址会被收回到这个池中。</p>
+<p><img src="/home/alex/图片/主机.png" alt="upload essful"></p>
+<h5 id="DHCP-服务器发现"><a href="#DHCP-服务器发现" class="headerlink" title="DHCP 服务器发现"></a>DHCP 服务器发现</h5><p>DHCP客户主机生成包含DHCP发现报文的IP数据报，其中使用广播目的地址255.255.255.255并且使用本主机的源地址0.0.0.0，DHCP客户将该IP数据报传递给链路层，链路层然后把该帧光波导所有与该子网连接的子网</p>
+<h5 id="DHCP-服务器提供"><a href="#DHCP-服务器提供" class="headerlink" title="DHCP 服务器提供"></a>DHCP 服务器提供</h5><p>DHCP服务器收到一个DHCP发现报文的时候，用一个DHCP提供报文向客户作出相应。</p>
+<p>仍然使用255.255.255.255 广播地址。报文提供了IP地址租用期，网络掩码，IP地址等信息</p>
+<h5 id="DHCP-请求"><a href="#DHCP-请求" class="headerlink" title="DHCP 请求"></a>DHCP 请求</h5><p>新到达的客户从一个或多个服务器中提供选择一个，并向选中的服务器提供一个DHCP请求报文响应。</p>
+<h5 id="DHCP-ACK"><a href="#DHCP-ACK" class="headerlink" title="DHCP ACK"></a>DHCP ACK</h5><p>用DHCP ACK 报文对DHCP请求报文进行响应。</p>
+<p>3.网络地址的转换</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/03/14/强化学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -743,8 +962,14 @@
 <p>持续HTTP连接的使用：整条持续链接期间，客户与服务器之间经由同一个服务器套接字交换HTTP报文，然而如果使用非持续HTTP链接，每一对请求/响应都创建一个新的TCP链接然后随之关闭。</p>
 <h3 id="无连接运输-UDP"><a href="#无连接运输-UDP" class="headerlink" title="无连接运输 UDP"></a>无连接运输 UDP</h3><p>在发送报文段之前，发送方和接收方的运输层实体之间没有握手。直接与IP打交道，UDP从应用程序得到数据，附加上用于多路复用和分解的源端口和源地址以及其他两个小字段，然后把形成的报文段交给网络层。网络层把运输层报文段封装到一个IP数据报中，然后尽力把报文段交付给接收主机。主机接收到报文段之后UDP使用目的端口把报文段中的数据交付给正确的应用程序。</p>
 <h3 id="面向连接的TCP"><a href="#面向连接的TCP" class="headerlink" title="面向连接的TCP"></a>面向连接的TCP</h3><p>应用进程开始向另外一个进程发送数据之前，两个进程必须先相互握手。即必须相互发送某些预备报文段，以确定数据传输的参数。</p>
-<p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
-<p>TCP链接点对点，是单个发送方与单个接收方之间的连接。</p>
+<ul>
+<li><p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
+</li>
+<li><p>TCP链接点对点，是单个发送方与单个接收方之间的连接。</p>
+</li>
+<li><p>面向连接：进行数据传输的时候首先要建立一条传输链接，相互发送某些预备的报文，链接双方要建立确保数据传输所需要的参数，传输完成之后要把链接释放掉。</p>
+</li>
+</ul>
 <p>TCP三次握手</p>
 <p>TCP会为每块客户数据配上一个TCP首部，从而形成多个TCP报文段，报文段被下传到网络层，网络层将其封装在网络层IP数据报中，然后再被发送到网络。</p>
 <h4 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h4><p>解决流水线的差错恢复两种基本方法：</p>
@@ -756,6 +981,121 @@
 <p>通过让发送方仅重传那些它怀疑在接收方出错的分组而避免了不必要的重传。</p>
 <p>就是接收方发现某帧出错之后，其后继续送来的正确的帧虽然不能立即递交给接收方的高层，但接收方可以收下来，存放在一个缓冲区中。</p>
 <p>同时要求发送方重新传送出错的那一帧，一旦收到重新传来的那个帧，就可以要把缓存区的其他帧一起按正确的顺序传递给高层。</p>
+<h3 id="TCP报文结构"><a href="#TCP报文结构" class="headerlink" title="TCP报文结构"></a>TCP报文结构</h3><p><img src="/home/alex/图片/children.png" alt="upload succful"></p>
+<p>数据偏移：TCP的首部长度，以32bit为单位</p>
+<p><img src="/home/alex/图片/zhkas.png" alt="upload ccessful"></p>
+<p>窗口大小16bit，用来指示接收方滑动窗口的大小，用于实现TCP的流量控制。</p>
+<p>校检和 实现对TCP数据的校检，所有16位字节计算反码和，然后取反</p>
+<p><img src="/home/alex/图片/2018-255.png" alt="filename aleady exists, renamed"></p>
+<p>红字解答： 900 - 1000 序号对应的数据将会存储在缓存当中，当536-899重传之后，会按序发送给应用，确保按需到达。</p>
+<p>报文段序号是第一个数据字节的字节流编号，确认号(ACK)是希望从对方接收到的数据的下一个字节的编号。</p>
+<p>可靠数据传输</p>
+<p>确保进程从接收缓存读出的数据流是非损坏的，连续的，非冗余的，按序的字节流。</p>
+<h4 id="TCP-sender-simulator"><a href="#TCP-sender-simulator" class="headerlink" title="TCP sender simulator"></a>TCP sender simulator</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">while&#123;</span><br><span class="line">	</span><br><span class="line">    1.receive data from app layer</span><br><span class="line">    2.create TCP segment with sequence number NextSeqNum</span><br><span class="line">    3.if (timer currently not running)</span><br><span class="line">    </span><br><span class="line">      start timer</span><br><span class="line">    4.pass segment to IP</span><br><span class="line">    5.NextSeqNum+=len(data)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    timer timeout</span><br><span class="line">    </span><br><span class="line">    1.重传超时报文段(retransmit not yet ACKed segment with smallest seq Number )</span><br><span class="line"></span><br><span class="line">	2.reset timer</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    收到ACK：</span><br><span class="line">    1.比较ACK与sendBase num</span><br><span class="line">    if(ACK &gt; sendBase num)&#123;</span><br><span class="line">    	ACK = sendBase</span><br><span class="line">        if(还有没有确认的报文)&#123;</span><br><span class="line">        	start timer</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重传定时器</p>
+<p>1.定时器只与最早的未被确认的报文段关联起来。</p>
+<p>2.采用自适应的重传计时策略</p>
+<p>往返时间的估算</p>
+<p>对于每一条TCP链接，维护一个变量EstimatedRTT,存放所估计的源到目的端的往返传输时间。</p>
+<p>如果定时器过期之前数据段被确认，则记录下该次TCP报文段的往返传输时间SampleRTT</p>
+<p>SampleRTT会变化，会使用若干最新的测量结果。</p>
+<p>具体使用指数加权移动平均</p>
+<p><img src="/home/alex/图片/2018-256.png" alt="filen already exists, renamed"></p>
+<h4 id="重传超时间隔"><a href="#重传超时间隔" class="headerlink" title="重传超时间隔"></a>重传超时间隔</h4><p>TCP重传超时间隔：加倍时间间隔</p>
+<p>TCP报文段超时并重传：对于重传报文段不更新RTT，把超时间隔加倍。</p>
+<h4 id="快速重传"><a href="#快速重传" class="headerlink" title="快速重传"></a>快速重传</h4><p>如果TCP发送方收到对同一数据的3个冗余ACK，就认为发生了丢包（2个的话可能是乱序到达引起的）</p>
+<p><img src="/home/alex/图片/kuaisu.png" alt="upl successful"></p>
+<h4 id="GBN-和-SR"><a href="#GBN-和-SR" class="headerlink" title="GBN 和 SR"></a>GBN 和 SR</h4><h5 id="GBN"><a href="#GBN" class="headerlink" title="GBN"></a>GBN</h5><p>累计确认：正确接收到但是失序的报文段不会被接收方逐个确认。</p>
+<p>定时器只与最早的未确认报文段关联起来</p>
+<p>代码看我github</p>
+<h5 id="SR"><a href="#SR" class="headerlink" title="SR"></a>SR</h5><p>超时发生的时候，只重传超时的一个报文段。</p>
+<p>TCP会把很多正确接收但失序的报文段缓存起来。</p>
+<h3 id="TCP流量控制"><a href="#TCP流量控制" class="headerlink" title="TCP流量控制"></a>TCP流量控制</h3><p>TCP为应用程序提供了流量控制服务，用来消除发送方使得接收方缓存溢出的可能性。</p>
+<p>TCP让发送方维护一个接收窗口的变量来提供流量控制，这个窗口用来给发送方指示接收方还有多少可用的缓存空间。</p>
+<p>TCP———双工： 各自都维护一个接收窗口。</p>
+<p>LastByteRead：主机B中的应用进程从缓存中读出的数据流的最后一个字节的编号。</p>
+<p>LastByteRevd：从网络中到达的并且已经放入主机B接收缓存中的数据流的最后一个字节的编号。</p>
+<p>TCP不允许已分配的缓存溢出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LastByteRevd - LastByteRead &lt;= Buffer</span><br></pre></td></tr></table></figure>
+<p>接收窗口用rwnd表示，根据缓存可用空间的数量来设置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rwnd = RevBuffer - [LastByteRevd - LastByteRead]</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-257.png" alt="filename alredy exists, renamed"></p>
+<p>具体实现</p>
+<p>1.主机B把当前rwnd值放到发送给主机A的报文段中接收窗口字段中，用来通知主机A它在该连接的缓存中还有多少可用空间。</p>
+<p>2.开始的时候主机B设定rwnd = RevBuffer ，主机A要保证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LastByteSent - LastByteAcked &lt;= rwnd</span><br></pre></td></tr></table></figure>
+<p>特殊情况讨论：</p>
+<p>当主机B接收窗口为0的时候，主机A继续发送一个只有一个字节数据的报文段。这些报文段会被接收方确认，最终缓存将开始清空。并且确认报文中将包含一个非0的值。</p>
+<p>这也就是(probe)，防止死锁</p>
+<h3 id="糊涂窗口综合征"><a href="#糊涂窗口综合征" class="headerlink" title="糊涂窗口综合征"></a>糊涂窗口综合征</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当发送端应用进程产生数据很慢、或接收端应用进程处理接收缓冲区数据很慢，或二者兼而有之；就会使应用进程间传送的报文段很小，特别是有效载荷很小。极端情况下，有效载荷可能只有1个字节；而传输开销有40字节(20字节的IP头+20字节的TCP头) 这种现象就叫糊涂窗口综合症。</span><br><span class="line"></span><br><span class="line">就是应用程序消耗数据比到达的慢</span><br></pre></td></tr></table></figure>
+<p>发送端引起的：</p>
+<p>如果发送端为产生数据很慢的应用程序服务(典型的有telnet应用)，例如，一次产生一个字节。这个应用程序一次将一个字节的数据写入发送端的TCP的缓存。如果发送端的TCP没有特定的指令，它就产生只包括一个字节数据的报文段。结果有很多41字节的IP数据报就在互连网中传来传去。解决的方法是防止发送端的TCP逐个字节地发送数据。必须强迫发送端的TCP收集数据，然后用一个更大的数据块来发送。发送端的TCP要等待多长时间呢？如果它等待过长，它就会使整个的过程产生较长的时延。如果它的等待时间不够长，它就可能发送较小的报文段，于是，Nagle找到了一个很好的解决方法，发明了Nagle算法。而他选择的等待时间是一个RTT,即下个ACK来到时。</p>
+<p>接收端引起的：</p>
+<p>接收端的TCP可能产生糊涂窗口综合症，如果它为消耗数据很慢的应用程序服务，例如，一次消耗一个字节。假定发送应用程序产生了1000字节的数据块，但接收应用程序每次只吸收1字节的数据。再假定接收端的TCP的输入缓存为4000字节。发送端先发送第一个4000字节的数据。接收端将它存储在其缓存中。现在缓存满了。它通知窗口大小为零，这表示发送端必须停止发送数据。接收应用程序从接收端的TCP的输入缓存中读取第一个字节的数据。在入缓存中现在有了1字节的空间。接收端的TCP宣布其窗口大小为1字节，这表示正渴望等待发送数据的发送端的TCP会把这个宣布当作一个好消息，并发送只包括一个字节数据的报文段。这样的过程一直继续下去。一个字节的数据被消耗掉，然后发送只包含一个字节数据的报文段。</p>
+<p>解决方法：</p>
+<p>接收方：</p>
+<p>1.仅当窗口大小显著增加之后才发送增加窗口的通告。显著增加意味着窗口大小到达缓冲区空间的一半或者一个MSS的时候。———— 推迟确认技术</p>
+<p>2.推迟确认的缺点是当确认延迟太大的时候，会导致不必要的重传，给TCP估计往返时间带来混乱。</p>
+<p>发送方：</p>
+<p>为了防止发送短的报文段，在发送报文段之前延迟，直到聚集足够多的数据量。采用Nagle算法来决定延迟的时间。</p>
+<h3 id="Nagle-算法"><a href="#Nagle-算法" class="headerlink" title="Nagle 算法"></a>Nagle 算法</h3><p>为了尽可能发送大块数据，避免网络中充斥着小数据块。任意时刻最多只能有一个未被确认的小段。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">if data is available &amp;&amp; window != MSS&#123;</span><br><span class="line"></span><br><span class="line">	send full segment</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">else&#123;</span><br><span class="line"></span><br><span class="line">	if there is unAcked data,then buffer the new data until an ACK arrives</span><br><span class="line">    </span><br><span class="line">    else&#123;</span><br><span class="line">    	send all new data now</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="TCP-连接管理"><a href="#TCP-连接管理" class="headerlink" title="TCP 连接管理"></a>TCP 连接管理</h3><p>三次握手：</p>
+<p><img src="/home/alex/图片/2018-258.png" alt="filename exists, renamed"></p>
+<p>三次握手原因：</p>
+<p>发送方要知道自己有没有发出去，对方有没有接收到。第三次握手是为了让服务端知道自己的发送能力是没问题的。</p>
+<p>第一次握手：客户端发送能力验证</p>
+<p>第二次握手：服务端的接受能力与客户端的接受能力验证</p>
+<p>第三次握手：服务端的发送能力验证（要求确认第二次握手发送成功了，问问客户端有没有成功）</p>
+<p>另外一原因是防止已经失效的链接重传到服务器端。<br>当客户A发送连接请求，但因连接请求报文丢失而未收到确认。于是A会再次重传一次连接请求，此时服务器端B收到再次重传的连接请求，建立了连接，然后进行数据传输，数据传输完了后，就释放了此连接。假设A第一次发送的连接请求并没有丢失，而是在网络结点中滞留了太长时间，以致在AB通信完后，才到达B。此时这个连接请求其实已经是被A认为丢失的了。如果不进行第三次握手，那么服务器B可能在收到这个已失效的连接请求后，进行确认，然后单方面进入ESTABLISHED状态，而A此时并不会对B的确认进行理睬，这样就白白的浪费了服务器的资源。如果进行了第三次握手，那么A不会向B发送确认，那个重传的连接请求就会失效。</p>
+<h4 id="释放连接"><a href="#释放连接" class="headerlink" title="释放连接"></a>释放连接</h4><p>释放连接可以看成四次挥手，当然FIN与ACK合并可以看成三次。</p>
+<p><img src="/home/alex/图片/buhuilai.png" alt="upload essful"></p>
+<h4 id="洪泛攻击"><a href="#洪泛攻击" class="headerlink" title="洪泛攻击"></a>洪泛攻击</h4><p><img src="/home/alex/图片/hongfan.png" alt="upload ssful"></p>
+<p><img src="/home/alex/图片/2018-260.png" alt="filenalready exists, renamed"></p>
+<p>好的参考网址</p>
+<p><a href="http://www.52im.net/thread-515-1-1.html" target="_blank" rel="noopener">http://www.52im.net/thread-515-1-1.html</a></p>
+<h4 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h4><h4 id="TCP拥塞控制原理"><a href="#TCP拥塞控制原理" class="headerlink" title="TCP拥塞控制原理"></a>TCP拥塞控制原理</h4><p>发送方如何限制它向其连接发送流量的速率？</p>
+<p>TCP链接可以维护一个拥塞窗口变量，其反映了网络的容量，限制发送方向网络注入数据的速度必须小于接受窗口和拥塞窗口中的最小值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LastByteSend- LastByteAcked &lt;= min(recvWindow,congestWindow)</span><br></pre></td></tr></table></figure>
+<p>发送方如何感知其到目的地之间的路径上存在拥塞？</p>
+<p>拥塞的时候路由器的缓存器溢出，导致报文段丢弃，引起发送方的丢失。</p>
+<p>路径上出现拥塞。</p>
+<p>TCP发送方发生”丢失”</p>
+<p>1.超时<br>2.连续收到3个冗余的ACK</p>
+<h5 id="自计时-self-clocking"><a href="#自计时-self-clocking" class="headerlink" title="自计时 self-clocking"></a>自计时 self-clocking</h5><p>使用对以前未确认的报文段的确认来触发拥塞窗口congestionWindow长度的增加</p>
+<h5 id="慢启动"><a href="#慢启动" class="headerlink" title="慢启动"></a>慢启动</h5><p><img src="/home/alex/图片/as.png" alt="upload ssful"></p>
+<h5 id="拥塞避免（加性增）"><a href="#拥塞避免（加性增）" class="headerlink" title="拥塞避免（加性增）"></a>拥塞避免（加性增）</h5><p>1.每个RTT窗口只能增加一个MSS</p>
+<p>2.rtt动态变化，TCP实现中通常采用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">congwindow = congwindow + MSS*(MSS/congwindow)</span><br></pre></td></tr></table></figure>
+<p>是一个线性上升的算法</p>
+<h5 id="出现拥塞"><a href="#出现拥塞" class="headerlink" title="出现拥塞"></a>出现拥塞</h5><p>1.TCP TAHOE (乘性减）</p>
+<p>TCP超时或者收到3个冗余的ACK的时候，需要重传</p>
+<p>ssthresh缩减为拥塞窗口一半，并且拥塞窗口恢复到原来初始窗口大小，进入slow start process</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssthresh = max(congWindow/2,MSS)</span><br><span class="line">congwindow = MSS</span><br></pre></td></tr></table></figure>
+<p>然后进入下面的快速恢复算法</p>
+<h5 id="快速回复，取消慢启动"><a href="#快速回复，取消慢启动" class="headerlink" title="快速回复，取消慢启动"></a>快速回复，取消慢启动</h5><p>TCP reno：</p>
+<p>在进入Fast recovery 之前，cwnd与sshthresh会被更新：</p>
+<ul>
+<li><p>cwnd = cwnd / 2</p>
+</li>
+<li><p>sshthresh=  cwnd</p>
+</li>
+<li><p>进入快速恢复算法 </p>
+</li>
+</ul>
+<p>真正的Fast recovery 算法如下：</p>
+<p><img src="/home/alex/图片/2018-261.png" alt="filename alry exists, renamed"></p>
+<h5 id="维护ssthresh变量"><a href="#维护ssthresh变量" class="headerlink" title="维护ssthresh变量"></a>维护ssthresh变量</h5><p>1.拥塞窗口小于阈值时候进入慢启动阶段</p>
+<p>2.大于该阈值的时候进入拥塞避免阶段</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><img src="/home/alex/图片/wangluo.png" alt="upload sucessful"></p>
+<p>1.慢启动 CongWindow &lt; ssthresh 窗口指数级增长</p>
+<p>2.拥塞避免 CongWindow &gt; ssthresh 线性增长</p>
+<p>3.收到3个冗余ACK而检测到丢包：</p>
+<p>ssthresh = CongWindow / 2</p>
+<p>CongWindow = ssthresh + (3*MSS)</p>
+<p>每收到一个冗余的ACK，CongWindow +=Mss</p>
+<p>超时前收到新的Ack，会直接进入拥塞避免阶段。</p>
+<p>4.<br>超时事件发生丢包的时候，ssthresh = CongWindow/2<br>CongWindow = 1 MSS</p>
 
           
         
@@ -1964,194 +2304,6 @@ Return the learned parameters
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/01/01/DL-C4W4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/01/DL-C4W4/" itemprop="url">DL-C4W4</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-01T15:58:22+08:00">
-                2019-01-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="人脸识别"><a href="#人脸识别" class="headerlink" title="人脸识别"></a>人脸识别</h3><h4 id="one-shot-learning"><a href="#one-shot-learning" class="headerlink" title="one shot learning"></a>one shot learning</h4><p><img src="/home/alex/图片/2018-159.png" alt="filename dy exists, renamed"></p>
-<p>因为公司的数据库里面很可能只有该名员工一张照片，因此用一张图片投入神经网络，通过softmax输出分类显然不可行。因此应该学习一个相似函数，如果函数的结果大于某个阈值，说明不匹配，否则说明匹配。</p>
-<h4 id="siamese-network"><a href="#siamese-network" class="headerlink" title="siamese network"></a>siamese network</h4><p><img src="/home/alex/图片/2018-160.png" alt="filename already enamed"></p>
-<p>x1投入网络中，得到全连接层一个output vector，这个vector维度是128x1,记为encoding of x1</p>
-<p>另外一张图片x2喂入网络，得到另外一个vector叫做encoding of x2</p>
-<p>然后把二者距离定义为二者编码之差的范数。</p>
-<p>更准确地说,神经网络的参数定义了一个编码函数f(x (i) ),如果给定输入图像x(i),这个网络会输出x (i) 的 128 维的编码。</p>
-<h4 id="三元组损失"><a href="#三元组损失" class="headerlink" title="三元组损失"></a>三元组损失</h4><p><img src="/home/alex/图片/2018-161.png" alt="filenamalready exists, renamed"></p>
-<p>目标：</p>
-<p><img src="/home/alex/图片/something.png" alt="upload succesul"></p>
-<p>遇到的问题：</p>
-<p>如果f总是输出0，上面式子无意义</p>
-<p>为了阻止网络出现这种情况,我们需要修改这个目标,也就是,这个不能是刚好小于等<br>于 0,应该是比 0 还要小,所以这个应该小于一个−a值(即||f(A) − f(P)|| 2 − ||f(A) −<br>f(N)|| 2 ≤ −a),这里的a是另一个超参数,这个就可以阻止网络输出无用的结果。按照惯<br>例,我们习惯写+a(即||f(A) − f(P)|| 2 − ||f(A) − f(N)|| 2 + a ≤ 0),而不是把−a写在后<br>面,它也叫做间隔(margin)</p>
-<p>总结：</p>
-<p>三元组损失函数的定义基于三张图片,假如三张图片A、 P、 N,即 anchor 样本、 positive<br>样本和 negative 样本,其中 positive 图片和 anchor 图片是同一个人,但是 negative 图片和<br>anchor 不是同一个人。</p>
-<h4 id="定义损失函数"><a href="#定义损失函数" class="headerlink" title="定义损失函数"></a>定义损失函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L(A, P, N) = max(||f(A) − f(P)|| 2 − ||f(A) − f(N)|| 2 + a, 0)</span><br></pre></td></tr></table></figure>
-<p>这是一个三元组定义的损失,整个网络的代价函数应该是训练集中这些单个三元组损失的总和。</p>
-<h4 id="挑选数据集"><a href="#挑选数据集" class="headerlink" title="挑选数据集"></a>挑选数据集</h4><p>现在我们来看,你如何选择这些三元组来形成训练集。一个问题是如果你从训练集中,<br>随机地选择A、 P和N,遵守A和P是同一个人,而A和N是不同的人这一原则。有个问题就是,<br>如果随机的选择它们,那么这个约束条件(d(A, P) + a ≤ d(A, N))很容易达到,因为随机<br>选择的图片,A和N比A和P差别很大的概率很大。我希望你还记得这个符号d(A, P)就是前几<br>个幻灯片里写的||f(A) − f(P)|| 2 ,d(A, N)就是||f(A) − f(N)|| 2 ,d(A, P) + a ≤ d(A, N)即<br>||f(A) − f(P)|| 2 + a ≤ ||f(A) − f(N)|| 2 。但是如果A和N是随机选择的不同的人,有很大的<br>可能性||f(A) − f(N)|| 2 会比左边这项||f(A) − f(P)|| 2 大,而且差距远大于a,这样网络并不<br>能从中学到什么。</p>
-<p>因此要挑选最难学习的，就是要挑选 d(A,P)约等于 d(A,N)的三元组，<br>只有这样梯度下降法才有用，才能学到有意义的参数。</p>
-<h4 id="summary"><a href="#summary" class="headerlink" title="summary"></a>summary</h4><p><img src="/home/alex/图片/waisting.png" alt="upload succesl"></p>
-<h3 id="人脸验证与二分类"><a href="#人脸验证与二分类" class="headerlink" title="人脸验证与二分类"></a>人脸验证与二分类</h3><p><img src="/home/alex/图片/learning.png" alt="upload ul"></p>
-<p><img src="/home/alex/图片/hundred.png" alt="uploadccessful"></p>
-<h4 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h4><p><img src="/home/alex/图片/预处理.png" alt="upload successful"></p>
-<p>如果这是一张新图片(编号 1),<br>当员工走进门时,希望门可以自动为他们打开,这个(编号 2)是在数据库中的图片,不需<br>要每次都计算这些特征(编号 6),不需要每次都计算这个嵌入,你可以提前计算好,那么<br>当一个新员工走近时,你可以使用上方的卷积网络来计算这些编码(编号 5),然后使用它,<br>^ 。<br>和预先计算好的编码进行比较,然后输出预测值</p>
-<h3 id="神经风格迁移"><a href="#神经风格迁移" class="headerlink" title="神经风格迁移"></a>神经风格迁移</h3><p><img src="/home/alex/图片/2018-162.png" alt="filename aeady exists, renamed"></p>
-<p>怎么判断生成图像的好坏呢?我们把这个代价函数定义为两个部分。<br>J content (C, G)<br>第一部分被称作内容代价,这是一个关于内容图片和生成图片的函数,它是用来度量生<br>成图片G的内容与内容图片C的内容有多相似。<br>J style (S, G)<br>然后我们会把结果加上一个风格代价函数,也就是关于S和G的函数,用来度量图片G的<br>风格和图片S的风格的相似度。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">J(G) = aJ content (C, G) + βJ style (S, G）</span><br></pre></td></tr></table></figure></p>
-<h4 id="梗概"><a href="#梗概" class="headerlink" title="梗概"></a>梗概</h4><p><img src="/home/alex/图片/梗概.png" alt="uplosuccessful"></p>
-<h4 id="content-cost-function"><a href="#content-cost-function" class="headerlink" title="content cost function"></a>content cost function</h4><p><img src="/home/alex/图片/2018-163.png" alt="filename eady exiss, renamed"></p>
-<p>现在你需要衡量假如有一个内容图片和一个生成图片他们在内容上的相似度,我们令这<br>个a [l][C] 和a [l][G] ,代表这两个图片C和G的l层的激活函数值。如果这两个激活值相似,那么<br>就意味着两个图片的内容相似。<br>1<br>我们定义这个: J content (C, G) = 2 ||a [l][C] − a [l][G] || 2 ,为两个激活值不同或者相似的程度,<br>我们取l层的隐含单元的激活值,按元素相减,内容图片的激活值与生成图片相比较,然后<br>510第四门课 卷积神经网络(Convolutional Neural Networks)-第四周 特殊应用:人脸识别和神经风格转换<br>(Special applications: Face recognition &amp;Neural style transfer)<br>1<br>取平方,也可以在前面加上归一化或者不加,比如 或者其他的,都影响不大,因为这都可以<br>2<br>由这个超参数 α 来调整(J(G) = aJ content (C, G) + βJ style (S, G))。</p>
-<h3 id="style-cost-function"><a href="#style-cost-function" class="headerlink" title="style cost function"></a>style cost function</h3><p><img src="/home/alex/图片/style.png" alt="upload successf"></p>
-<p><img src="/home/alex/图片/feifeili.png" alt="upload success"></p>
-<p><img src="/home/alex/图片/2018-164.png" alt="filenlready exists, renamed"></p>
-<p>对于这个风格矩阵,你要做的就是计算这个矩阵也就是G [l] 矩阵,它是个n c × n c 的矩阵,<br>也就是一个方阵。记住,因为这里有n c 个通道,所以矩阵的大小是n c × n c 。以便计算每一对<br>[l]<br>激活项的相关系数,所以G kk ′ 可以用来测量k通道与k′通道中的激活项之间的相关系数,k和<br>k′会在 1 到n c 之间取值,n c 就是l层中通道的总数量。</p>
-<p>可以看做这是两个通道间的协方差。</p>
-<h3 id="implementation"><a href="#implementation" class="headerlink" title="implementation"></a>implementation</h3><h4 id="using-an-ConvNet-to-compute-encodings"><a href="#using-an-ConvNet-to-compute-encodings" class="headerlink" title="using an ConvNet to compute encodings"></a>using an ConvNet to compute encodings</h4><p><img src="/home/alex/图片/2018-165.png" alt="filename already ets, renamed"></p>
-<p>这里使用的是Inception Network</p>
-<p>把两张图片分别转换成2个128维的向量，然后计算这两个向量的距离。</p>
-<p><img src="/home/alex/图片/howcan.png" alt="upload cessful"></p>
-<h4 id="compute-triplet-loss"><a href="#compute-triplet-loss" class="headerlink" title="compute triplet loss"></a>compute triplet loss</h4><p><img src="/home/alex/图片/thisss.png" alt="uploadcessful"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"># GRADED FUNCTION: triplet_loss</span><br><span class="line"></span><br><span class="line">def triplet_loss(y_true, y_pred, alpha = 0.2):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implementation of the triplet loss as defined by formula (3)</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    y_true -- true labels, required when you define a loss in Keras, you don&apos;t need it in this function.</span><br><span class="line">    y_pred -- python list containing three objects:</span><br><span class="line">            anchor -- the encodings for the anchor images, of shape (None, 128)</span><br><span class="line">            positive -- the encodings for the positive images, of shape (None, 128)</span><br><span class="line">            negative -- the encodings for the negative images, of shape (None, 128)</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    loss -- real number, value of the loss</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    anchor, positive, negative = y_pred[0], y_pred[1], y_pred[2]</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### (≈ 4 lines)</span><br><span class="line">    # Step 1: Compute the (encoding) distance between the anchor and the positive, you will need to sum over axis=-1</span><br><span class="line">    pos_dist = tf.reduce_sum(tf.square(tf.subtract(anchor,positive)),axis=-1)</span><br><span class="line">    # Step 2: Compute the (encoding) distance between the anchor and the negative, you will need to sum over axis=-1</span><br><span class="line">    neg_dist =  tf.reduce_sum(tf.square(tf.subtract(anchor,negative)),axis=-1)</span><br><span class="line">    # Step 3: subtract the two previous distances and add alpha.</span><br><span class="line">    basic_loss = tf.add(alpha,tf.subtract(pos_dist,neg_dist))</span><br><span class="line">    # Step 4: Take the maximum of basic_loss and 0.0. Sum over the training examples.</span><br><span class="line">    loss = tf.reduce_sum(tf.maximum(basic_loss,0))</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return loss</span><br></pre></td></tr></table></figure>
-<h4 id="verify"><a href="#verify" class="headerlink" title="verify"></a>verify</h4><p>这里设定阈值！与数据库中已有的照片进行比较</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"># GRADED FUNCTION: verify</span><br><span class="line"></span><br><span class="line">def verify(image_path, identity, database, model):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Function that verifies if the person on the &quot;image_path&quot; image is &quot;identity&quot;.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    image_path -- path to an image</span><br><span class="line">    identity -- string, name of the person you&apos;d like to verify the identity. Has to be a resident of the Happy house.</span><br><span class="line">    database -- python dictionary mapping names of allowed people&apos;s names (strings) to their encodings (vectors).</span><br><span class="line">    model -- your Inception model instance in Keras</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    dist -- distance between the image_path and the image of &quot;identity&quot; in the database.</span><br><span class="line">    door_open -- True, if the door should open. False otherwise.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Step 1: Compute the encoding for the image. Use img_to_encoding() see example above. (≈ 1 line)</span><br><span class="line">    encoding = img_to_encoding(image_path,model)</span><br><span class="line">    </span><br><span class="line">    # Step 2: Compute distance with identity&apos;s image (≈ 1 line)</span><br><span class="line">    dist = np.linalg.norm(database[identity]-encoding)</span><br><span class="line">    </span><br><span class="line">    # Step 3: Open the door if dist &lt; 0.7, else don&apos;t open (≈ 3 lines)</span><br><span class="line">    if dist&lt;0.7:</span><br><span class="line">        print(&quot;It&apos;s &quot; + str(identity) + &quot;, welcome home!&quot;)</span><br><span class="line">        door_open = True</span><br><span class="line">    else:</span><br><span class="line">        print(&quot;It&apos;s not &quot; + str(identity) + &quot;, please go away&quot;)</span><br><span class="line">        door_open = False</span><br><span class="line">        </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">    return dist, door_open</span><br></pre></td></tr></table></figure>
-<h3 id="face-recognition"><a href="#face-recognition" class="headerlink" title="face recognition"></a>face recognition</h3><p>在数据库中寻找dist与输入图片最小的，结果就是识别出来的人。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"> GRADED FUNCTION: who_is_it</span><br><span class="line"></span><br><span class="line">def who_is_it(image_path, database, model):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements face recognition for the happy house by finding who is the person on the image_path image.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    image_path -- path to an image</span><br><span class="line">    database -- database containing image encodings along with the name of the person on the image</span><br><span class="line">    model -- your Inception model instance in Keras</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    min_dist -- the minimum distance between image_path encoding and the encodings from the database</span><br><span class="line">    identity -- string, the name prediction for the person on image_path</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### </span><br><span class="line">    </span><br><span class="line">    ## Step 1: Compute the target &quot;encoding&quot; for the image. Use img_to_encoding() see example above. ## (≈ 1 line)</span><br><span class="line">    encoding = img_to_encoding(image_path,model)</span><br><span class="line">    </span><br><span class="line">    ## Step 2: Find the closest encoding ##</span><br><span class="line">    </span><br><span class="line">    # Initialize &quot;min_dist&quot; to a large value, say 100 (≈1 line)</span><br><span class="line">    min_dist = 100</span><br><span class="line">    </span><br><span class="line">    # Loop over the database dictionary&apos;s names and encodings.</span><br><span class="line">    for (name, db_enc) in database.items():</span><br><span class="line">        </span><br><span class="line">        # Compute L2 distance between the target &quot;encoding&quot; and the current &quot;emb&quot; from the database. (≈ 1 line)</span><br><span class="line">        dist = np.linalg.norm(db_enc-encoding)</span><br><span class="line"></span><br><span class="line">        # If this distance is less than the min_dist, then set min_dist to dist, and identity to name. (≈ 3 lines)</span><br><span class="line">        if dist&lt;min_dist:</span><br><span class="line">            min_dist = dist</span><br><span class="line">            identity = name</span><br><span class="line"></span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    if min_dist &gt; 0.7:</span><br><span class="line">        print(&quot;Not in the database.&quot;)</span><br><span class="line">    else:</span><br><span class="line">        print (&quot;it&apos;s &quot; + str(identity) + &quot;, the distance is &quot; + str(min_dist))</span><br><span class="line">        </span><br><span class="line">    return min_dist, identity</span><br></pre></td></tr></table></figure>
-<h3 id="Neural-Style-Transfer"><a href="#Neural-Style-Transfer" class="headerlink" title="Neural Style Transfer"></a>Neural Style Transfer</h3><h4 id="compute-the-content-cost"><a href="#compute-the-content-cost" class="headerlink" title="compute the content cost"></a>compute the content cost</h4><p>在网络里面，浅层的卷积网络倾向于检测一些如边缘与简单内容的低层次特征，深层的卷积网络倾向于检测一些高层次特征例如目标的类别等。</p>
-<p>我们目标是生成的图片G与输入图片C有相同的内容。假设选定了某层的激活层来代表图片的内容，在实践中，选择那些不太深也不太浅——即中间的网络。</p>
-<p>所以假定你选择一个隐含层，设定图片C作为预训练的VGG网络的输入，然后前向反馈，记a^[c]为你选择的隐含层的激活。 这将是一个维度为nHxnWxnC的张量。<br>对输入的图片G重复上述操作。</p>
-<p>我们定义损失函数如下</p>
-<p><img src="/home/alex/图片/2018-166.png" alt="filena already exists, renamed"></p>
-<p>这里的nH,nW,nC分别为你所选择的隐含层的高度，宽度与通道数目。</p>
-<p>为了方便计算J_content(C,G) ，需要把三维的volumns unrolled成二维的矩阵。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># GRADED FUNCTION: compute_content_cost</span><br><span class="line"></span><br><span class="line">def compute_content_cost(a_C, a_G):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Computes the content cost</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    a_C -- tensor of dimension (1, n_H, n_W, n_C), hidden layer activations representing content of the image C </span><br><span class="line">    a_G -- tensor of dimension (1, n_H, n_W, n_C), hidden layer activations representing content of the image G</span><br><span class="line">    </span><br><span class="line">    Returns: </span><br><span class="line">    J_content -- scalar that you compute using equation 1 above.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    # Retrieve dimensions from a_G (≈1 line)</span><br><span class="line">    m, n_H, n_W, n_C = a_G.get_shape().as_list()</span><br><span class="line">    </span><br><span class="line">    new_shape = [m,(n_H*n_W),n_C]</span><br><span class="line">    </span><br><span class="line">    # Reshape a_C and a_G (≈2 lines)</span><br><span class="line">    a_C_unrolled = tf.reshape(a_C,shape=new_shape)</span><br><span class="line">    a_G_unrolled = tf.reshape(a_G,shape=new_shape)</span><br><span class="line">    </span><br><span class="line">    # compute the cost with tensorflow (≈1 line)</span><br><span class="line">    J_content = 1/(4*n_H*n_W*n_C)*tf.reduce_sum(tf.square(tf.subtract(a_C_unrolled,a_G_unrolled)))</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return J_content</span><br></pre></td></tr></table></figure>
-<h4 id="STYLE-MATRIX"><a href="#STYLE-MATRIX" class="headerlink" title="STYLE MATRIX"></a>STYLE MATRIX</h4><p>在线性代数中，风格矩阵也叫作Gram矩阵.</p>
-<p>matrix G of set of vectors(v1,v2…vn)</p>
-<p>是任意两个向量vi,vj的点乘的矩阵，看作是来衡量vi<br>与vj是有多相似的。如果vi与vj很相似，得到的点乘也会越大。</p>
-<p>Gij=vTivj=np.dot(vi,vj)Gij=viTvj=np.dot(vi,vj). In other words, GijGij compares how similar vivi is to vjvj: </p>
-<p><img src="/home/alex/图片/af.png" alt="upload sucssful"></p>
-<p>这个矩阵维度是(nc,nc),nc是filter的数量，Gij的值衡量了filter_i的激活与filter_j的激活的相似程度。</p>
-<p>而矩阵的对角元素G_ii衡量了filter_i的活跃程度。举个例子，如果filter_i是用来检测竖直特征的，那么Gii就衡量了整张图片出现竖直特征的总体情况。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># GRADED FUNCTION: gram_matrix</span><br><span class="line"></span><br><span class="line">def gram_matrix(A):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Argument:</span><br><span class="line">    A -- matrix of shape (n_C, n_H*n_W)</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    GA -- Gram matrix of A, of shape (n_C, n_C)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ### (≈1 line)</span><br><span class="line">    GA =  tf.matmul(A,tf.transpose(A))</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return GA</span><br></pre></td></tr></table></figure>
-<h3 id="Style-cost"><a href="#Style-cost" class="headerlink" title="Style cost"></a>Style cost</h3><p>生成了风格矩阵之后，你的目标就是最小化风格图片的Gram矩阵与生成图片的Gram矩阵的距离。这就可以写出一个损失函数，然后转化为一个最优化问题就行。</p>
-<p><img src="/home/alex/图片/2018-167.png" alt="filename already ests, renamed"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"># GRADED FUNCTION: compute_layer_style_cost</span><br><span class="line"></span><br><span class="line">def compute_layer_style_cost(a_S, a_G):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Arguments:</span><br><span class="line">    a_S -- tensor of dimension (1, n_H, n_W, n_C), hidden layer activations representing style of the image S </span><br><span class="line">    a_G -- tensor of dimension (1, n_H, n_W, n_C), hidden layer activations representing style of the image G</span><br><span class="line">    </span><br><span class="line">    Returns: </span><br><span class="line">    J_style_layer -- tensor representing a scalar value, style cost defined above by equation (2)</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    # Retrieve dimensions from a_G (≈1 line)</span><br><span class="line">    m, n_H, n_W, n_C = a_G.get_shape().as_list()</span><br><span class="line">    </span><br><span class="line">    new_shape = [n_H*n_W,n_C]</span><br><span class="line">    # Reshape the images to have them of shape (n_C, n_H*n_W) (≈2 lines)</span><br><span class="line">    a_S = tf.reshape(a_S,new_shape)</span><br><span class="line">    a_S = tf.transpose(a_S)</span><br><span class="line">    a_G = tf.reshape(a_G,new_shape)</span><br><span class="line">    a_G = tf.transpose(a_G)</span><br><span class="line">    # Computing gram_matrices for both images S and G (≈2 lines)</span><br><span class="line">    GS = gram_matrix(a_S)</span><br><span class="line">    GG = gram_matrix(a_G)</span><br><span class="line"></span><br><span class="line">    # Computing the loss (≈1 line)</span><br><span class="line">    J_style_layer = 1/(4*(n_H*n_W*n_C)**2)*tf.reduce_sum(tf.square(tf.subtract(GS,GG)))</span><br><span class="line">    </span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    return J_style_layer</span><br></pre></td></tr></table></figure>
-<p>定义J_style</p>
-<p><img src="/home/alex/图片/J_style.png" alt="upload suessful"></p>
-<p>定义最终的cost</p>
-<p><img src="/home/alex/图片/cosst.png" alt="upload ccessful"></p>
-<p>再对这个损失函数求优化问题就行了。</p>
-<p>result：<br><img src="/home/alex/图片/2018-168.png" alt="filenamlready exists, renamed"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2206,7 +2358,7 @@ Return the learned parameters
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

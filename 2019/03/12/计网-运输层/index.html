@@ -89,7 +89,20 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ssssss.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-236.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-245.png">
-<meta property="og:updated_time" content="2019-04-28T07:35:51.486Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/children.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/zhkas.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-255.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-256.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/kuaisu.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-257.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-258.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/buhuilai.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/hongfan.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-260.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/as.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-261.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/wangluo.png">
+<meta property="og:updated_time" content="2019-05-12T11:50:22.794Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计网-运输层">
 <meta name="twitter:description" content="运输层协议在不同主机的应用进程之间提供了逻辑通信，通过逻辑通信，运行不同进程的主机就会好像直接相连一样。 而网络层提供了主机之间的逻辑联系。 发送端： 运输层把应用程序进程接收到的报文转换成运输层分组，成为运输层报文段。实现方法为把应用报文划分为较小的块，并为每块加上一个运输层首部以生成运输层报文段。在发送端系统当中，运输层把这些报文段传递给网络层，网络层将其封装为网络层分组，向目的地发送。网络路">
@@ -386,8 +399,14 @@
 <p>持续HTTP连接的使用：整条持续链接期间，客户与服务器之间经由同一个服务器套接字交换HTTP报文，然而如果使用非持续HTTP链接，每一对请求/响应都创建一个新的TCP链接然后随之关闭。</p>
 <h3 id="无连接运输-UDP"><a href="#无连接运输-UDP" class="headerlink" title="无连接运输 UDP"></a>无连接运输 UDP</h3><p>在发送报文段之前，发送方和接收方的运输层实体之间没有握手。直接与IP打交道，UDP从应用程序得到数据，附加上用于多路复用和分解的源端口和源地址以及其他两个小字段，然后把形成的报文段交给网络层。网络层把运输层报文段封装到一个IP数据报中，然后尽力把报文段交付给接收主机。主机接收到报文段之后UDP使用目的端口把报文段中的数据交付给正确的应用程序。</p>
 <h3 id="面向连接的TCP"><a href="#面向连接的TCP" class="headerlink" title="面向连接的TCP"></a>面向连接的TCP</h3><p>应用进程开始向另外一个进程发送数据之前，两个进程必须先相互握手。即必须相互发送某些预备报文段，以确定数据传输的参数。</p>
-<p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
-<p>TCP链接点对点，是单个发送方与单个接收方之间的连接。</p>
+<ul>
+<li><p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
+</li>
+<li><p>TCP链接点对点，是单个发送方与单个接收方之间的连接。</p>
+</li>
+<li><p>面向连接：进行数据传输的时候首先要建立一条传输链接，相互发送某些预备的报文，链接双方要建立确保数据传输所需要的参数，传输完成之后要把链接释放掉。</p>
+</li>
+</ul>
 <p>TCP三次握手</p>
 <p>TCP会为每块客户数据配上一个TCP首部，从而形成多个TCP报文段，报文段被下传到网络层，网络层将其封装在网络层IP数据报中，然后再被发送到网络。</p>
 <h4 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h4><p>解决流水线的差错恢复两种基本方法：</p>
@@ -399,6 +418,121 @@
 <p>通过让发送方仅重传那些它怀疑在接收方出错的分组而避免了不必要的重传。</p>
 <p>就是接收方发现某帧出错之后，其后继续送来的正确的帧虽然不能立即递交给接收方的高层，但接收方可以收下来，存放在一个缓冲区中。</p>
 <p>同时要求发送方重新传送出错的那一帧，一旦收到重新传来的那个帧，就可以要把缓存区的其他帧一起按正确的顺序传递给高层。</p>
+<h3 id="TCP报文结构"><a href="#TCP报文结构" class="headerlink" title="TCP报文结构"></a>TCP报文结构</h3><p><img src="/home/alex/图片/children.png" alt="upload succful"></p>
+<p>数据偏移：TCP的首部长度，以32bit为单位</p>
+<p><img src="/home/alex/图片/zhkas.png" alt="upload ccessful"></p>
+<p>窗口大小16bit，用来指示接收方滑动窗口的大小，用于实现TCP的流量控制。</p>
+<p>校检和 实现对TCP数据的校检，所有16位字节计算反码和，然后取反</p>
+<p><img src="/home/alex/图片/2018-255.png" alt="filename aleady exists, renamed"></p>
+<p>红字解答： 900 - 1000 序号对应的数据将会存储在缓存当中，当536-899重传之后，会按序发送给应用，确保按需到达。</p>
+<p>报文段序号是第一个数据字节的字节流编号，确认号(ACK)是希望从对方接收到的数据的下一个字节的编号。</p>
+<p>可靠数据传输</p>
+<p>确保进程从接收缓存读出的数据流是非损坏的，连续的，非冗余的，按序的字节流。</p>
+<h4 id="TCP-sender-simulator"><a href="#TCP-sender-simulator" class="headerlink" title="TCP sender simulator"></a>TCP sender simulator</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">while&#123;</span><br><span class="line">	</span><br><span class="line">    1.receive data from app layer</span><br><span class="line">    2.create TCP segment with sequence number NextSeqNum</span><br><span class="line">    3.if (timer currently not running)</span><br><span class="line">    </span><br><span class="line">      start timer</span><br><span class="line">    4.pass segment to IP</span><br><span class="line">    5.NextSeqNum+=len(data)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    timer timeout</span><br><span class="line">    </span><br><span class="line">    1.重传超时报文段(retransmit not yet ACKed segment with smallest seq Number )</span><br><span class="line"></span><br><span class="line">	2.reset timer</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    收到ACK：</span><br><span class="line">    1.比较ACK与sendBase num</span><br><span class="line">    if(ACK &gt; sendBase num)&#123;</span><br><span class="line">    	ACK = sendBase</span><br><span class="line">        if(还有没有确认的报文)&#123;</span><br><span class="line">        	start timer</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重传定时器</p>
+<p>1.定时器只与最早的未被确认的报文段关联起来。</p>
+<p>2.采用自适应的重传计时策略</p>
+<p>往返时间的估算</p>
+<p>对于每一条TCP链接，维护一个变量EstimatedRTT,存放所估计的源到目的端的往返传输时间。</p>
+<p>如果定时器过期之前数据段被确认，则记录下该次TCP报文段的往返传输时间SampleRTT</p>
+<p>SampleRTT会变化，会使用若干最新的测量结果。</p>
+<p>具体使用指数加权移动平均</p>
+<p><img src="/home/alex/图片/2018-256.png" alt="filen already exists, renamed"></p>
+<h4 id="重传超时间隔"><a href="#重传超时间隔" class="headerlink" title="重传超时间隔"></a>重传超时间隔</h4><p>TCP重传超时间隔：加倍时间间隔</p>
+<p>TCP报文段超时并重传：对于重传报文段不更新RTT，把超时间隔加倍。</p>
+<h4 id="快速重传"><a href="#快速重传" class="headerlink" title="快速重传"></a>快速重传</h4><p>如果TCP发送方收到对同一数据的3个冗余ACK，就认为发生了丢包（2个的话可能是乱序到达引起的）</p>
+<p><img src="/home/alex/图片/kuaisu.png" alt="upl successful"></p>
+<h4 id="GBN-和-SR"><a href="#GBN-和-SR" class="headerlink" title="GBN 和 SR"></a>GBN 和 SR</h4><h5 id="GBN"><a href="#GBN" class="headerlink" title="GBN"></a>GBN</h5><p>累计确认：正确接收到但是失序的报文段不会被接收方逐个确认。</p>
+<p>定时器只与最早的未确认报文段关联起来</p>
+<p>代码看我github</p>
+<h5 id="SR"><a href="#SR" class="headerlink" title="SR"></a>SR</h5><p>超时发生的时候，只重传超时的一个报文段。</p>
+<p>TCP会把很多正确接收但失序的报文段缓存起来。</p>
+<h3 id="TCP流量控制"><a href="#TCP流量控制" class="headerlink" title="TCP流量控制"></a>TCP流量控制</h3><p>TCP为应用程序提供了流量控制服务，用来消除发送方使得接收方缓存溢出的可能性。</p>
+<p>TCP让发送方维护一个接收窗口的变量来提供流量控制，这个窗口用来给发送方指示接收方还有多少可用的缓存空间。</p>
+<p>TCP———双工： 各自都维护一个接收窗口。</p>
+<p>LastByteRead：主机B中的应用进程从缓存中读出的数据流的最后一个字节的编号。</p>
+<p>LastByteRevd：从网络中到达的并且已经放入主机B接收缓存中的数据流的最后一个字节的编号。</p>
+<p>TCP不允许已分配的缓存溢出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LastByteRevd - LastByteRead &lt;= Buffer</span><br></pre></td></tr></table></figure>
+<p>接收窗口用rwnd表示，根据缓存可用空间的数量来设置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rwnd = RevBuffer - [LastByteRevd - LastByteRead]</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-257.png" alt="filename alredy exists, renamed"></p>
+<p>具体实现</p>
+<p>1.主机B把当前rwnd值放到发送给主机A的报文段中接收窗口字段中，用来通知主机A它在该连接的缓存中还有多少可用空间。</p>
+<p>2.开始的时候主机B设定rwnd = RevBuffer ，主机A要保证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LastByteSent - LastByteAcked &lt;= rwnd</span><br></pre></td></tr></table></figure>
+<p>特殊情况讨论：</p>
+<p>当主机B接收窗口为0的时候，主机A继续发送一个只有一个字节数据的报文段。这些报文段会被接收方确认，最终缓存将开始清空。并且确认报文中将包含一个非0的值。</p>
+<p>这也就是(probe)，防止死锁</p>
+<h3 id="糊涂窗口综合征"><a href="#糊涂窗口综合征" class="headerlink" title="糊涂窗口综合征"></a>糊涂窗口综合征</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当发送端应用进程产生数据很慢、或接收端应用进程处理接收缓冲区数据很慢，或二者兼而有之；就会使应用进程间传送的报文段很小，特别是有效载荷很小。极端情况下，有效载荷可能只有1个字节；而传输开销有40字节(20字节的IP头+20字节的TCP头) 这种现象就叫糊涂窗口综合症。</span><br><span class="line"></span><br><span class="line">就是应用程序消耗数据比到达的慢</span><br></pre></td></tr></table></figure>
+<p>发送端引起的：</p>
+<p>如果发送端为产生数据很慢的应用程序服务(典型的有telnet应用)，例如，一次产生一个字节。这个应用程序一次将一个字节的数据写入发送端的TCP的缓存。如果发送端的TCP没有特定的指令，它就产生只包括一个字节数据的报文段。结果有很多41字节的IP数据报就在互连网中传来传去。解决的方法是防止发送端的TCP逐个字节地发送数据。必须强迫发送端的TCP收集数据，然后用一个更大的数据块来发送。发送端的TCP要等待多长时间呢？如果它等待过长，它就会使整个的过程产生较长的时延。如果它的等待时间不够长，它就可能发送较小的报文段，于是，Nagle找到了一个很好的解决方法，发明了Nagle算法。而他选择的等待时间是一个RTT,即下个ACK来到时。</p>
+<p>接收端引起的：</p>
+<p>接收端的TCP可能产生糊涂窗口综合症，如果它为消耗数据很慢的应用程序服务，例如，一次消耗一个字节。假定发送应用程序产生了1000字节的数据块，但接收应用程序每次只吸收1字节的数据。再假定接收端的TCP的输入缓存为4000字节。发送端先发送第一个4000字节的数据。接收端将它存储在其缓存中。现在缓存满了。它通知窗口大小为零，这表示发送端必须停止发送数据。接收应用程序从接收端的TCP的输入缓存中读取第一个字节的数据。在入缓存中现在有了1字节的空间。接收端的TCP宣布其窗口大小为1字节，这表示正渴望等待发送数据的发送端的TCP会把这个宣布当作一个好消息，并发送只包括一个字节数据的报文段。这样的过程一直继续下去。一个字节的数据被消耗掉，然后发送只包含一个字节数据的报文段。</p>
+<p>解决方法：</p>
+<p>接收方：</p>
+<p>1.仅当窗口大小显著增加之后才发送增加窗口的通告。显著增加意味着窗口大小到达缓冲区空间的一半或者一个MSS的时候。———— 推迟确认技术</p>
+<p>2.推迟确认的缺点是当确认延迟太大的时候，会导致不必要的重传，给TCP估计往返时间带来混乱。</p>
+<p>发送方：</p>
+<p>为了防止发送短的报文段，在发送报文段之前延迟，直到聚集足够多的数据量。采用Nagle算法来决定延迟的时间。</p>
+<h3 id="Nagle-算法"><a href="#Nagle-算法" class="headerlink" title="Nagle 算法"></a>Nagle 算法</h3><p>为了尽可能发送大块数据，避免网络中充斥着小数据块。任意时刻最多只能有一个未被确认的小段。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">if data is available &amp;&amp; window != MSS&#123;</span><br><span class="line"></span><br><span class="line">	send full segment</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">else&#123;</span><br><span class="line"></span><br><span class="line">	if there is unAcked data,then buffer the new data until an ACK arrives</span><br><span class="line">    </span><br><span class="line">    else&#123;</span><br><span class="line">    	send all new data now</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="TCP-连接管理"><a href="#TCP-连接管理" class="headerlink" title="TCP 连接管理"></a>TCP 连接管理</h3><p>三次握手：</p>
+<p><img src="/home/alex/图片/2018-258.png" alt="filename exists, renamed"></p>
+<p>三次握手原因：</p>
+<p>发送方要知道自己有没有发出去，对方有没有接收到。第三次握手是为了让服务端知道自己的发送能力是没问题的。</p>
+<p>第一次握手：客户端发送能力验证</p>
+<p>第二次握手：服务端的接受能力与客户端的接受能力验证</p>
+<p>第三次握手：服务端的发送能力验证（要求确认第二次握手发送成功了，问问客户端有没有成功）</p>
+<p>另外一原因是防止已经失效的链接重传到服务器端。<br>当客户A发送连接请求，但因连接请求报文丢失而未收到确认。于是A会再次重传一次连接请求，此时服务器端B收到再次重传的连接请求，建立了连接，然后进行数据传输，数据传输完了后，就释放了此连接。假设A第一次发送的连接请求并没有丢失，而是在网络结点中滞留了太长时间，以致在AB通信完后，才到达B。此时这个连接请求其实已经是被A认为丢失的了。如果不进行第三次握手，那么服务器B可能在收到这个已失效的连接请求后，进行确认，然后单方面进入ESTABLISHED状态，而A此时并不会对B的确认进行理睬，这样就白白的浪费了服务器的资源。如果进行了第三次握手，那么A不会向B发送确认，那个重传的连接请求就会失效。</p>
+<h4 id="释放连接"><a href="#释放连接" class="headerlink" title="释放连接"></a>释放连接</h4><p>释放连接可以看成四次挥手，当然FIN与ACK合并可以看成三次。</p>
+<p><img src="/home/alex/图片/buhuilai.png" alt="upload essful"></p>
+<h4 id="洪泛攻击"><a href="#洪泛攻击" class="headerlink" title="洪泛攻击"></a>洪泛攻击</h4><p><img src="/home/alex/图片/hongfan.png" alt="upload ssful"></p>
+<p><img src="/home/alex/图片/2018-260.png" alt="filenalready exists, renamed"></p>
+<p>好的参考网址</p>
+<p><a href="http://www.52im.net/thread-515-1-1.html" target="_blank" rel="noopener">http://www.52im.net/thread-515-1-1.html</a></p>
+<h4 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h4><h4 id="TCP拥塞控制原理"><a href="#TCP拥塞控制原理" class="headerlink" title="TCP拥塞控制原理"></a>TCP拥塞控制原理</h4><p>发送方如何限制它向其连接发送流量的速率？</p>
+<p>TCP链接可以维护一个拥塞窗口变量，其反映了网络的容量，限制发送方向网络注入数据的速度必须小于接受窗口和拥塞窗口中的最小值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LastByteSend- LastByteAcked &lt;= min(recvWindow,congestWindow)</span><br></pre></td></tr></table></figure>
+<p>发送方如何感知其到目的地之间的路径上存在拥塞？</p>
+<p>拥塞的时候路由器的缓存器溢出，导致报文段丢弃，引起发送方的丢失。</p>
+<p>路径上出现拥塞。</p>
+<p>TCP发送方发生”丢失”</p>
+<p>1.超时<br>2.连续收到3个冗余的ACK</p>
+<h5 id="自计时-self-clocking"><a href="#自计时-self-clocking" class="headerlink" title="自计时 self-clocking"></a>自计时 self-clocking</h5><p>使用对以前未确认的报文段的确认来触发拥塞窗口congestionWindow长度的增加</p>
+<h5 id="慢启动"><a href="#慢启动" class="headerlink" title="慢启动"></a>慢启动</h5><p><img src="/home/alex/图片/as.png" alt="upload ssful"></p>
+<h5 id="拥塞避免（加性增）"><a href="#拥塞避免（加性增）" class="headerlink" title="拥塞避免（加性增）"></a>拥塞避免（加性增）</h5><p>1.每个RTT窗口只能增加一个MSS</p>
+<p>2.rtt动态变化，TCP实现中通常采用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">congwindow = congwindow + MSS*(MSS/congwindow)</span><br></pre></td></tr></table></figure>
+<p>是一个线性上升的算法</p>
+<h5 id="出现拥塞"><a href="#出现拥塞" class="headerlink" title="出现拥塞"></a>出现拥塞</h5><p>1.TCP TAHOE (乘性减）</p>
+<p>TCP超时或者收到3个冗余的ACK的时候，需要重传</p>
+<p>ssthresh缩减为拥塞窗口一半，并且拥塞窗口恢复到原来初始窗口大小，进入slow start process</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssthresh = max(congWindow/2,MSS)</span><br><span class="line">congwindow = MSS</span><br></pre></td></tr></table></figure>
+<p>然后进入下面的快速恢复算法</p>
+<h5 id="快速回复，取消慢启动"><a href="#快速回复，取消慢启动" class="headerlink" title="快速回复，取消慢启动"></a>快速回复，取消慢启动</h5><p>TCP reno：</p>
+<p>在进入Fast recovery 之前，cwnd与sshthresh会被更新：</p>
+<ul>
+<li><p>cwnd = cwnd / 2</p>
+</li>
+<li><p>sshthresh=  cwnd</p>
+</li>
+<li><p>进入快速恢复算法 </p>
+</li>
+</ul>
+<p>真正的Fast recovery 算法如下：</p>
+<p><img src="/home/alex/图片/2018-261.png" alt="filename alry exists, renamed"></p>
+<h5 id="维护ssthresh变量"><a href="#维护ssthresh变量" class="headerlink" title="维护ssthresh变量"></a>维护ssthresh变量</h5><p>1.拥塞窗口小于阈值时候进入慢启动阶段</p>
+<p>2.大于该阈值的时候进入拥塞避免阶段</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><img src="/home/alex/图片/wangluo.png" alt="upload sucessful"></p>
+<p>1.慢启动 CongWindow &lt; ssthresh 窗口指数级增长</p>
+<p>2.拥塞避免 CongWindow &gt; ssthresh 线性增长</p>
+<p>3.收到3个冗余ACK而检测到丢包：</p>
+<p>ssthresh = CongWindow / 2</p>
+<p>CongWindow = ssthresh + (3*MSS)</p>
+<p>每收到一个冗余的ACK，CongWindow +=Mss</p>
+<p>超时前收到新的Ack，会直接进入拥塞避免阶段。</p>
+<p>4.<br>超时事件发生丢包的时候，ssthresh = CongWindow/2<br>CongWindow = 1 MSS</p>
 
       
     </div>
@@ -516,7 +650,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -571,7 +705,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层协议"><span class="nav-number">1.</span> <span class="nav-text">运输层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用与多路分解"><span class="nav-number">1.2.</span> <span class="nav-text">多路复用与多路分解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运输层报文段中的源与目的端口字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">运输层报文段中的源与目的端口字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无连接的多路复用与分解"><span class="nav-number">1.3.</span> <span class="nav-text">无连接的多路复用与分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接的多路复用与分解"><span class="nav-number">1.4.</span> <span class="nav-text">连接的多路复用与分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接运输-UDP"><span class="nav-number">2.</span> <span class="nav-text">无连接运输 UDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向连接的TCP"><span class="nav-number">3.</span> <span class="nav-text">面向连接的TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构造可靠数据传输协议"><span class="nav-number">3.1.</span> <span class="nav-text">构造可靠数据传输协议</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层协议"><span class="nav-number">1.</span> <span class="nav-text">运输层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用与多路分解"><span class="nav-number">1.2.</span> <span class="nav-text">多路复用与多路分解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运输层报文段中的源与目的端口字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">运输层报文段中的源与目的端口字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无连接的多路复用与分解"><span class="nav-number">1.3.</span> <span class="nav-text">无连接的多路复用与分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接的多路复用与分解"><span class="nav-number">1.4.</span> <span class="nav-text">连接的多路复用与分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接运输-UDP"><span class="nav-number">2.</span> <span class="nav-text">无连接运输 UDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向连接的TCP"><span class="nav-number">3.</span> <span class="nav-text">面向连接的TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构造可靠数据传输协议"><span class="nav-number">3.1.</span> <span class="nav-text">构造可靠数据传输协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP报文结构"><span class="nav-number">4.</span> <span class="nav-text">TCP报文结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-sender-simulator"><span class="nav-number">4.1.</span> <span class="nav-text">TCP sender simulator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重传超时间隔"><span class="nav-number">4.2.</span> <span class="nav-text">重传超时间隔</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速重传"><span class="nav-number">4.3.</span> <span class="nav-text">快速重传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GBN-和-SR"><span class="nav-number">4.4.</span> <span class="nav-text">GBN 和 SR</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#GBN"><span class="nav-number">4.4.1.</span> <span class="nav-text">GBN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SR"><span class="nav-number">4.4.2.</span> <span class="nav-text">SR</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP流量控制"><span class="nav-number">5.</span> <span class="nav-text">TCP流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#糊涂窗口综合征"><span class="nav-number">6.</span> <span class="nav-text">糊涂窗口综合征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nagle-算法"><span class="nav-number">7.</span> <span class="nav-text">Nagle 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接管理"><span class="nav-number">8.</span> <span class="nav-text">TCP 连接管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#释放连接"><span class="nav-number">8.1.</span> <span class="nav-text">释放连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#洪泛攻击"><span class="nav-number">8.2.</span> <span class="nav-text">洪泛攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">8.3.</span> <span class="nav-text">拥塞控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP拥塞控制原理"><span class="nav-number">8.4.</span> <span class="nav-text">TCP拥塞控制原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#自计时-self-clocking"><span class="nav-number">8.4.1.</span> <span class="nav-text">自计时 self-clocking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#慢启动"><span class="nav-number">8.4.2.</span> <span class="nav-text">慢启动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#拥塞避免（加性增）"><span class="nav-number">8.4.3.</span> <span class="nav-text">拥塞避免（加性增）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#出现拥塞"><span class="nav-number">8.4.4.</span> <span class="nav-text">出现拥塞</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#快速回复，取消慢启动"><span class="nav-number">8.4.5.</span> <span class="nav-text">快速回复，取消慢启动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#维护ssthresh变量"><span class="nav-number">8.4.6.</span> <span class="nav-text">维护ssthresh变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">8.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>

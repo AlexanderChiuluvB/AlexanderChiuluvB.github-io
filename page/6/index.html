@@ -272,6 +272,195 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/03/CS230-DeepLearning-And-Neural-Networks/" itemprop="url">CS230 DeepLearning And Neural Networks</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-03T02:55:00+08:00">
+                2018-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PRML/" itemprop="url" rel="index">
+                    <span itemprop="name">PRML</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="深度学习-——Coursera"><a href="#深度学习-——Coursera" class="headerlink" title="深度学习 ——Coursera"></a>深度学习 ——Coursera</h1><p>学习资源：<a href="https://github.com/Kulbear/deep-learning-coursera" target="_blank" rel="noopener">https://github.com/Kulbear/deep-learning-coursera</a></p>
+<p><a href="https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb" target="_blank" rel="noopener">https://github.com/andersy005/deep-learning-specialization-coursera/blob/master/01-Neural-Networks-and-Deep-Learning/week2/Programming-Assignments/Python%2BBasics%2BWith%2BNumpy%2Bv2.ipynb</a></p>
+<p>官网：<a href="https://cs230-stanford.github.io/" target="_blank" rel="noopener">https://cs230-stanford.github.io/</a></p>
+<h2 id="Basic-of-Neural-Network-of-Programming"><a href="#Basic-of-Neural-Network-of-Programming" class="headerlink" title="Basic of Neural Network of Programming"></a>Basic of Neural Network of Programming</h2><h3 id="Logistic-Regression-—-Binary-Classificatoin"><a href="#Logistic-Regression-—-Binary-Classificatoin" class="headerlink" title="Logistic Regression — Binary Classificatoin"></a>Logistic Regression — Binary Classificatoin</h3><p>如果想把图片作为输入，判断这张图片是否为一只猫<br>首先得了解如何在计算机中表示图片。</p>
+<p>图片可以表示为一个3<em>64</em>64的矩阵，分别记录着R，G，B三个颜色通道的数值</p>
+<p>然后定义一个向量x 让矩阵转化为一个向量，向量包含矩阵所有元素</p>
+<p>nx表示特征向量的维度</p>
+<p><img src="/home/alex/图片/cat.png" alt="image"></p>
+<p>X矩阵是把向量按列排列，相应的，结果Y也是按列排列<br>在python中，X.shape 返回数组（nx,m）对应行数和列数，也就是向量维度为nx，个数为m</p>
+<p><img src="/home/alex/图片/擦她.png" alt="image2"></p>
+<p><br></p>
+<h3 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h3><p>1.右上角的红色笔记不必理会</p>
+<p>2.sigma表示sigmoid函数，是一个squashing function，即把结果压缩到0-1范围内</p>
+<p><img src="/home/alex/图片/便.png" alt="image"></p>
+<p>下一步，为了改变w与b，需要定义一个cost function</p>
+<h5 id="w-is-an-nx-dimenstional-vector-while-b-is-a-real-number"><a href="#w-is-an-nx-dimenstional-vector-while-b-is-a-real-number" class="headerlink" title="w is an nx dimenstional vector,while b is a real number."></a>w is an nx dimenstional vector,while b is a real number.</h5><p>如果cost function是半个平方误差的话，可能只会找到局部最优解<br>所以我们这里使用<br><img src="/home/alex/图片/2018-0.png" alt="imgae"></p>
+<p><img src="/home/alex/图片/LR.png" alt="image"></p>
+<h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><p>不要把Loss function 和 cost function 混了！</p>
+<p>loss function 计算的是单个训练样本的误差</p>
+<p>而cost function 计算的是整个训练集的平均误差</p>
+<h3 id="Gradient-Descent"><a href="#Gradient-Descent" class="headerlink" title="Gradient Descent"></a>Gradient Descent</h3><p>梯度下降就是我们要来寻找全局最优点的方法</p>
+<p><img src="/home/alex/图片/GD.png" alt="image"><br><br></p>
+<p>1.learning rate 学习率，控制每一次迭代或者梯度下降法中步长大小</p>
+<p>2.那为什么右上角那个repeat能保证梯度下降是make sense的呢？<br><br><br>d(J)/dw 代表的是斜率，试想在全局最优点左侧，梯度是负数，相当于w加上了一个正数，那么<br>w就会向全局最优点靠近的方向移动。反之亦然，所以通过不停迭代最后一定会达到全局最优点。</p>
+<p><img src="/home/alex/图片/GD2.png" alt="image"></p>
+<h3 id="Computation-Graph"><a href="#Computation-Graph" class="headerlink" title="Computation Graph"></a>Computation Graph</h3><p>1.神经网络正向传播，计算输出，反向传播用来计算导数，为什么要这样组织呢？</p>
+<p><img src="/home/alex/图片/back.png" alt="image"></p>
+<p>反向传播意思是如果你要计算dj/da  按照红色箭头来计算（把从右到左得到的结果依次运用链式法则来求）</p>
+<h3 id="Logistic-Regression-Grdient-Descent-on-m-examples"><a href="#Logistic-Regression-Grdient-Descent-on-m-examples" class="headerlink" title="Logistic Regression Grdient Descent on m examples"></a>Logistic Regression Grdient Descent on m examples</h3><p><img src="/home/alex/图片/LRM.png" alt="image"></p>
+<p>两个循环，时间复杂度是M*N M为特征向量个数 N为特征数</p>
+<p>那如何摆脱这个循环呢？</p>
+<p>可以使用vectorization技巧</p>
+<h3 id="vectorization"><a href="#vectorization" class="headerlink" title="vectorization"></a>vectorization</h3><p><img src="/home/alex/图片/vec.png" alt="image"></p>
+<p>所以要使用向量化来加速代码的运行</p>
+<p>实际上，GPU和CPU都支持并行计算，SIMD指令，当时用内置函数的时候，例如np.dot，CPU和GPU会利用并行化进行更快的运算。</p>
+<h4 id="因此尽量避免使用显式的for循环"><a href="#因此尽量避免使用显式的for循环" class="headerlink" title="因此尽量避免使用显式的for循环"></a>因此尽量避免使用显式的for循环</h4><p>例如下例：</p>
+<p><img src="/home/alex/图片/vm.png" alt="image"></p>
+<p><img src="/home/alex/图片/nw.png" alt="image"></p>
+<h4 id="具体我们来看逻辑回归的向量化"><a href="#具体我们来看逻辑回归的向量化" class="headerlink" title="具体我们来看逻辑回归的向量化"></a>具体我们来看逻辑回归的向量化</h4><p><img src="/home/alex/图片/borad.png" alt="image"></p>
+<p>用<br><code>z = np.dot(w.T,x)+b</code><br>就可实现移除两个for循环的功能</p>
+<p>小知识：python中的broadcasting</p>
+<p>意思就是虽然b是常数，但是当与一个向量相加的时候，b自动扩展为一个与向量维度相同，值全部为b的向量。</p>
+<p>具体实现</p>
+<p><img src="/home/alex/图片/result.png" alt="image"></p>
+<h3 id="python-的-broadcasting"><a href="#python-的-broadcasting" class="headerlink" title="python 的 broadcasting"></a>python 的 broadcasting</h3><p>(axis=0)按列相加<br>(axis=1)按行相加</p>
+<p><img src="/home/alex/图片/bc.png" alt="image"></p>
+<p>小技巧，定义vector的时候，写为下半部分的形式，不要使用np.random.randn(5)这种rank为1的结构</p>
+<p><img src="/home/alex/图片/eg2.png" alt="image"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/02/CSAPP-链接器（二）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -741,7 +930,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
