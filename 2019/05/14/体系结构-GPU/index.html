@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SIMD单指令多数据 向量体系结构 多媒体SIMD指令集扩展 与GPU VMIPS如果循环的迭代没有相关性，那么这种相关称为循环间相关。这些代码可以向量化。 向量处理器中，每个向量指令只会因为等待每个向量的第一个元素而等待一次。 向量执行时间取决于三个要素： 1.操作数向量的长度 2.操作之间的结构冒险 3.数据相关 护航指令组： 一组可以一直执行的向量指令。 钟鸣： 度量估计护航指令组的时间 执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="体系结构-向量体系结构&amp;CUDA编程">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2019/05/14/体系结构-GPU/index.html">
+<meta property="og:site_name" content="Alex Chiu">
+<meta property="og:description" content="SIMD单指令多数据 向量体系结构 多媒体SIMD指令集扩展 与GPU VMIPS如果循环的迭代没有相关性，那么这种相关称为循环间相关。这些代码可以向量化。 向量处理器中，每个向量指令只会因为等待每个向量的第一个元素而等待一次。 向量执行时间取决于三个要素： 1.操作数向量的长度 2.操作之间的结构冒险 3.数据相关 护航指令组： 一组可以一直执行的向量指令。 钟鸣： 度量估计护航指令组的时间 执">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-262.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-263.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-264.png">
+<meta property="og:updated_time" content="2019-05-15T07:46:40.525Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="体系结构-向量体系结构&amp;CUDA编程">
+<meta name="twitter:description" content="SIMD单指令多数据 向量体系结构 多媒体SIMD指令集扩展 与GPU VMIPS如果循环的迭代没有相关性，那么这种相关称为循环间相关。这些代码可以向量化。 向量处理器中，每个向量指令只会因为等待每个向量的第一个元素而等待一次。 向量执行时间取决于三个要素： 1.操作数向量的长度 2.操作之间的结构冒险 3.数据相关 护航指令组： 一组可以一直执行的向量指令。 钟鸣： 度量估计护航指令组的时间 执">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-262.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2019/05/14/体系结构-GPU/"/>
+
+
+
+
+
+  <title>体系结构-向量体系结构&CUDA编程 | Alex Chiu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alex Chiu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/05/14/体系结构-GPU/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">体系结构-向量体系结构&CUDA编程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-14T15:04:18+00:00">
+                2019-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="SIMD"><a href="#SIMD" class="headerlink" title="SIMD"></a>SIMD</h3><p>单指令多数据</p>
+<p>向量体系结构 多媒体SIMD指令集扩展 与GPU</p>
+<h4 id="VMIPS"><a href="#VMIPS" class="headerlink" title="VMIPS"></a>VMIPS</h4><p>如果循环的迭代没有相关性，那么这种相关称为循环间相关。这些代码可以向量化。</p>
+<p>向量处理器中，每个向量指令只会因为等待每个向量的第一个元素而等待一次。</p>
+<h4 id="向量执行时间"><a href="#向量执行时间" class="headerlink" title="向量执行时间"></a>向量执行时间</h4><p>取决于三个要素：</p>
+<p>1.操作数向量的长度</p>
+<p>2.操作之间的结构冒险</p>
+<p>3.数据相关</p>
+<p>护航指令组：</p>
+<p>一组可以一直执行的向量指令。</p>
+<p>钟鸣：</p>
+<p>度量估计护航指令组的时间</p>
+<p>执行由m个护航指令组构成的向量序列需要m次钟鸣，向量长度为n的时候，大约为mxn个时钟周期。</p>
+<h3 id="向量长度寄存器"><a href="#向量长度寄存器" class="headerlink" title="向量长度寄存器"></a>向量长度寄存器</h3><p>使用条带挖掘技术，把向量分割成不大于MVL大小的小向量来进行处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">//MVL 最大向量长度</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">low = 0；</span><br><span class="line"></span><br><span class="line">VL = (n%MVL) </span><br><span class="line"></span><br><span class="line">for (int j=0;j&lt; (n/MVL);j++)&#123;</span><br><span class="line"></span><br><span class="line">	for(int i=low;i&lt; low + VL;i++)&#123;</span><br><span class="line">    	//运算</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    low = low + VL</span><br><span class="line">    </span><br><span class="line">    VL = MVL // 复位为最大长度向量</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这段代码表示除了第一段部分长度为VL，向量其余长度都为MVL</p>
+<h4 id="向量遮罩寄存器"><a href="#向量遮罩寄存器" class="headerlink" title="向量遮罩寄存器"></a>向量遮罩寄存器</h4><p>代码向量化程度低的原因：</p>
+<p>1.存在IF条件语句</p>
+<p>2.稀疏矩阵</p>
+<p>于是向量遮罩寄存器可以把条件执行IF转换为直行代码序列，方便代码进行向量化。</p>
+<p>如果元素对应的向量遮罩寄存器对应数值为1，说明该数值不受该向量影响。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LV V1,RX</span><br><span class="line">LV V2,RY</span><br><span class="line">L.D F0,#0</span><br><span class="line">SNEVS.D V1,F0  #若V1(i)!=F0 ,则VM（i）设置为1</span><br><span class="line">SUBVV.D V1,V1,V2</span><br><span class="line">SV V1,RX</span><br></pre></td></tr></table></figure>
+<h4 id="内存组"><a href="#内存组" class="headerlink" title="内存组"></a>内存组</h4><p>为向量载入/存储单元提供带宽</p>
+<p>时钟周期提取或者存储一个字的初始化速率，约等于寄存器向存储器载入或者提取新字的速度，于是存储器必须能够生成或者接收那么多数据，将访问对象分散在多个独立的存储器中。</p>
+<h4 id="处理非连续存储器"><a href="#处理非连续存储器" class="headerlink" title="处理非连续存储器"></a>处理非连续存储器</h4><p>步幅：所要收集的寄存器元素之间的距离</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">for(int i=0;i&lt;100;i++)&#123;</span><br><span class="line"></span><br><span class="line">	for(int j=0;j&lt;100;j++)&#123;</span><br><span class="line">    </span><br><span class="line">		for(int k=0;k&lt;100;k++)&#123;</span><br><span class="line"></span><br><span class="line">			D[k][i] = A[i][j]+B[i][k]</span><br><span class="line">		&#125;    </span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>考虑双字，那么这里D的步幅就是100*8;<br>A的步幅为8</p>
+<p>当 组数/（步幅与组数的最小公倍数）&lt; 组繁忙时间</p>
+<p>例如 八个存储器组，组繁忙时间为6个时钟周期，总存储器延迟为12个时钟周期，以步幅1完成一个64元素的向量载入操作，需要时间？如果步幅32呢？</p>
+<p>第一种情况：步幅为1 </p>
+<p>12+64 = 76 周期</p>
+<p>第二种情况： 步幅为32</p>
+<p>8 / gcd(32,8) = 1 &lt; 6</p>
+<p>12 + 1 + 63 * 6 = 391</p>
+<p>第一次访问之后，对存储器的每次访问会和上一次访问发生冲突。</p>
+<h4 id="集中——分散：在向量体系结构中处理稀疏矩阵"><a href="#集中——分散：在向量体系结构中处理稀疏矩阵" class="headerlink" title="集中——分散：在向量体系结构中处理稀疏矩阵"></a>集中——分散：在向量体系结构中处理稀疏矩阵</h4><p>GPU中所有载入操作都是集中，所有存储都是分散。</p>
+<p>采用索引向量的集中——分散操作。VMIPS指令：LVI,SVI</p>
+<h4 id="图形处理器-GPU"><a href="#图形处理器-GPU" class="headerlink" title="图形处理器 GPU"></a>图形处理器 GPU</h4><p>CUDA（COMPUTE UNIFIED DEVICE ARCHITECTURE）</p>
+<p>CUDA为系统处理器生成C/C++,为GPU生成C和C++方言。</p>
+<p>编译器和硬件把许多CUDA线程聚合在一起，利用CPU各种并行类型：多线程，SIMD和指令级并行。这些线程被分块，执行的时候以32个线程为1组，称为线程块。执行整个线程的硬件为多线程SIMD处理器。</p>
+<p>CUDA编程模型是一个异构模型，需要CPU与GPU协同工作。</p>
+<p>host 指CPU以及内存</p>
+<p>device 指GPU及其内存</p>
+<p>host与device之间进行通信，可以进行数据拷贝。</p>
+<p>cuda程序执行流程：</p>
+<p>1.分配host内存，进行数据初始化</p>
+<p>2.分配device内存，然后host把数据拷贝到device上</p>
+<p>3.调用cuda的核函数在device上完成指定运算</p>
+<p>4.把device运算结果拷贝到host上</p>
+<p>5.释放device和host上分配内存。</p>
+<p>kernel 是device上线程并行执行的函数，核函数用<strong>global</strong> 符号声明，调用的时候要用&lt;&lt;grid,block&gt;&gt;来指定kernel要执行的线程数量。</p>
+<p>cuda中每一个线程都要执行核函数，并且每个线程会分配一个唯一的线程号thread ID，ID可以通过核函数的内置变量threadIdx来获得。</p>
+<p>GPU异构模型，需要用函数限定词来区分host与device上的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">__global__  </span><br><span class="line"></span><br><span class="line">返回类型一定要是void，不支持可变参数，kernel是异步的，host不会等你kernel执行完就执行下一步</span><br><span class="line"></span><br><span class="line">__device__</span><br><span class="line"></span><br><span class="line">在device上执行，仅从device中调用，不可以和__global__同时用</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">__host__ 在host上执行，尽可以从host上调用</span><br></pre></td></tr></table></figure>
+<p>GPU上有很多并行化的轻量级线程，kernel在device上执行的时候启动很多线程。</p>
+<p>一个kernel启动的所有线程成为一个网格(grid)同一个网格的线程共享相同的全局内存空间。</p>
+<p>grid是线程结构的第一层次，而一个grid又可以分为很多block（线程块）</p>
+<p>一个线程块包含很多线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dim3 grid（3，2）；</span><br><span class="line">dim3 block (5,3);</span><br><span class="line">kernel_fun&lt;&lt;&lt;grid,block&gt;&gt;&gt;(params..)</span><br><span class="line"></span><br><span class="line">grid为GRID中block的个数，</span><br><span class="line">block为block中thread的个数</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-262.png" alt="filena already exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-263.png" alt="filename already xists, renamed"></p>
+<p>用nvcc编译，文件名为xxx.cu</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">__global__ void vectorADD(int *a,int *b,int *c)&#123;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	int index = threadIdx.x; //当前线程序号</span><br><span class="line">	if(index &lt; blockDim.x)&#123;</span><br><span class="line">		c[index] = a[index] + b[index];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	int N = 10;</span><br><span class="line"></span><br><span class="line">	int *h_a = (int*) malloc (sizeof(int)*N);</span><br><span class="line">	int *h_b = (int*) malloc (sizeof(int)*N);</span><br><span class="line">	int *h_c = (int*) malloc (sizeof(int)*N);</span><br><span class="line"></span><br><span class="line">	/*initialize*/</span><br><span class="line"></span><br><span class="line">	for(int i=0;i&lt;10;i++)&#123;</span><br><span class="line"></span><br><span class="line">		h_a[i] = i;</span><br><span class="line">		h_b[i] = i;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	int size = sizeof(int)*N;</span><br><span class="line"></span><br><span class="line">	int *d_a;</span><br><span class="line">	int *d_b;</span><br><span class="line">	int *d_c;</span><br><span class="line"></span><br><span class="line">	//第一个参数是cpu内存中指针变量的地址，会改变实参的数据</span><br><span class="line">	cudaMalloc((void**)&amp;d_a,size);</span><br><span class="line">	cudaMalloc((void**)&amp;d_b,size);</span><br><span class="line">	cudaMalloc((void**)&amp;d_c,size);</span><br><span class="line"></span><br><span class="line">	//把本地数组拷贝到GPU内存</span><br><span class="line">	cudaMemcpy(d_a,h_a,size,cudaMemcpyHostToDevice);</span><br><span class="line">	cudaMemcpy(d_b,h_b,size,cudaMemcpyHostToDevice);</span><br><span class="line"></span><br><span class="line">	// 定义一个GPU运算块，由10个运算线程组成</span><br><span class="line">	dim3 DimBlock = N;</span><br><span class="line">	</span><br><span class="line">	//一个块，十个线程</span><br><span class="line">	vectorADD&lt;&lt;&lt;1,DimBlock&gt;&gt;&gt;(d_a,d_b,d_c);</span><br><span class="line">	</span><br><span class="line">	//把运算结果复制回host</span><br><span class="line">	cudaMemcpy(h_c,d_c,size,cudaMemcpyHostToHost);</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	cudaFree(d_a);</span><br><span class="line">	cudaFree(d_b);</span><br><span class="line">	cudaFree(d_c);</span><br><span class="line"></span><br><span class="line">	for(int j=0;j&lt;N;j++)</span><br><span class="line">		printf(&quot;%d\n&quot;,h_c[j]);</span><br><span class="line">	printf(&quot;\n&quot;);</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是上面的例子中，没有使用托管内存，其可以共同管理host与device中的内存，自动在host与device中进行数据传输。</p>
+<p><img src="/home/alex/图片/2018-264.png" alt="filename already sts, renamed"></p>
+<p>所有线程可以访问全局内存，每个线程块有local memory,而且还有包含共享内存，可以被线程块中所有线程共享，生命周期与线程块一致。</p>
+<p>grid之间通过global memory交换数据</p>
+<p>block之间不能相互通信，只能通过global memory共享数据</p>
+<p>即线程之间可以通过同步通信。</p>
+<h4 id="矩阵乘法实例："><a href="#矩阵乘法实例：" class="headerlink" title="矩阵乘法实例："></a>矩阵乘法实例：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">struct Matrix&#123;</span><br><span class="line">	</span><br><span class="line">	int width;</span><br><span class="line">	int height;</span><br><span class="line">	float *elements;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">__device__ float getElement(Matrix* A,int row,int col)&#123;</span><br><span class="line"></span><br><span class="line">	return A-&gt;elements[row*A-&gt;width+col];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__device__ void setElement(Matrix* A,int row,int col,float value)&#123;</span><br><span class="line"></span><br><span class="line">	A-&gt;elements[row*A-&gt;width+col] = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//每个线程计算一个元素</span><br><span class="line">__global__ void matMul(Matrix *A,Matrix *B,Matrix *C)&#123;</span><br><span class="line"></span><br><span class="line">	float Cvalue = 0;</span><br><span class="line">	//global index of a thread</span><br><span class="line">	int row = threadIdx.y + blockIdx.y * blockDim.y;</span><br><span class="line">	int col = threadIdx.x + blockIdx.x * blockDim.x;</span><br><span class="line">	</span><br><span class="line">	for(int i=0;i&lt;A-&gt;width;i++)&#123;</span><br><span class="line">		Cvalue += getElement(A,row,i)*getElement(B,i,col);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	setElement(C,row,col,Cvalue);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">	int width = 1&lt;&lt;10;</span><br><span class="line">	int height = 1&lt;&lt;10;</span><br><span class="line">	Matrix *A,*B,*C;</span><br><span class="line">	cudaMallocManaged((void**)&amp;A,sizeof(Matrix));</span><br><span class="line">	cudaMallocManaged((void**)&amp;B,sizeof(Matrix));</span><br><span class="line">	cudaMallocManaged((void**)&amp;C,sizeof(Matrix));</span><br><span class="line">	int nbytes = width*height*sizeof(float);	</span><br><span class="line">	cudaMallocManaged((void**)&amp;A-&gt;elements,nbytes);</span><br><span class="line">	cudaMallocManaged((void**)&amp;B-&gt;elements,nbytes);</span><br><span class="line">	cudaMallocManaged((void**)&amp;C-&gt;elements,nbytes);</span><br><span class="line"></span><br><span class="line">	A-&gt;height = height;</span><br><span class="line">	A-&gt;width = width;	</span><br><span class="line">	B-&gt;height = height;</span><br><span class="line">	B-&gt;width = width;</span><br><span class="line">	C-&gt;height = height;</span><br><span class="line">	C-&gt;width = width;</span><br><span class="line"></span><br><span class="line">	for(int i=0;i&lt;width*height;i++)&#123;</span><br><span class="line">		A-&gt;elements[i]  = 1.0;</span><br><span class="line">		B-&gt;elements[i]  = 2.0;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dim3 blockSize(32,32);</span><br><span class="line">	dim3 gridSize((width + blockSize.x -1) / blockSize.x,</span><br><span class="line">		(height+blockSize.y -1)/blockSize.y);</span><br><span class="line">	//kernel</span><br><span class="line">	matMul &lt;&lt;&lt; gridSize,blockSize&gt;&gt;&gt; (A,B,C);</span><br><span class="line"></span><br><span class="line">	//确保host 与device 是异步的</span><br><span class="line">	cudaDeviceSynchronize();</span><br><span class="line">	float maxError = 0.0;</span><br><span class="line">	for(int i=0;i&lt;width*height;i++)&#123;</span><br><span class="line">		maxError = fmax(maxError,fabs(C-&gt;elements[i]-2*width));</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;maxError&lt;&lt;endl;	</span><br><span class="line">	return 0;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/01/体系结构-存储器层次结构/" rel="next" title="体系结构——指令级并行">
+                <i class="fa fa-chevron-left"></i> 体系结构——指令级并行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Alex Chiu" />
+            
+              <p class="site-author-name" itemprop="name">Alex Chiu</p>
+              <p class="site-description motion-element" itemprop="description">Alex's personal blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SIMD"><span class="nav-number">1.</span> <span class="nav-text">SIMD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#VMIPS"><span class="nav-number">1.1.</span> <span class="nav-text">VMIPS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向量执行时间"><span class="nav-number">1.2.</span> <span class="nav-text">向量执行时间</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量长度寄存器"><span class="nav-number">2.</span> <span class="nav-text">向量长度寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#向量遮罩寄存器"><span class="nav-number">2.1.</span> <span class="nav-text">向量遮罩寄存器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存组"><span class="nav-number">2.2.</span> <span class="nav-text">内存组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理非连续存储器"><span class="nav-number">2.3.</span> <span class="nav-text">处理非连续存储器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#集中——分散：在向量体系结构中处理稀疏矩阵"><span class="nav-number">2.4.</span> <span class="nav-text">集中——分散：在向量体系结构中处理稀疏矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图形处理器-GPU"><span class="nav-number">2.5.</span> <span class="nav-text">图形处理器 GPU</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#矩阵乘法实例："><span class="nav-number">2.6.</span> <span class="nav-text">矩阵乘法实例：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alex Chiu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

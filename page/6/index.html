@@ -272,7 +272,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/03/CS230-DeepLearning-And-Neural-Networks/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/05/CSAPP-cache-lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -291,7 +291,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/03/CS230-DeepLearning-And-Neural-Networks/" itemprop="url">CS230 DeepLearning And Neural Networks</a></h1>
+                <a class="post-title-link" href="/2018/09/05/CSAPP-cache-lab/" itemprop="url">CSAPP-buflab</a></h1>
         
 
         <div class="post-meta">
@@ -303,8 +303,155 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-03T02:55:00+08:00">
-                2018-09-03
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-05T19:18:00+00:00">
+                2018-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="cache-lab"><a href="#cache-lab" class="headerlink" title="cache lab"></a>cache lab</h5><p>原函数返回地址—-&lt;<br>保存的%ebp值（栈帧指针）—-&lt;<br>缓冲区—-&lt;<br>缓冲区—-&lt;<br>。。。。<br>。。。。<br>%esp(栈指针)—-&lt;</p>
+<h3 id="Level2"><a href="#Level2" class="headerlink" title="Level2"></a>Level2</h3><p><img src="/home/alex/图片/c.png" alt="image"></p>
+<p>global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value</p>
+<p>我们现在要找到global_value的地址，发现</p>
+<p>0x804d100就是value的地址，0x804d108就是cookie的地址。因此我们想把0x804d100地址所在的数值改为我们的cookie</p>
+<p><img src="/home/alex/图片/p2.png" alt="image"></p>
+<p>建立p2.s文件</p>
+<p>注意x86是data-load 是利用register来完成的</p>
+<p><img src="/home/alex/图片/ps2.png" alt="image"></p>
+<p>把cookie值传到%eax 临时寄存器，然后把寄存器里面的数值传给global_value的地址</p>
+<p>最后把bang函数地址压栈，那么原来返回地址就会改为执行bang函数了。</p>
+<p>反汇编得到的代码：</p>
+<p><img src="/home/alex/图片/obj.png" alt="image"></p>
+<p>gdb调试寻找缓冲区的位置，注意缓冲区不是esp-0x38，而是ebp-0x28噢</p>
+<p>得到缓冲区首地址为0x55683938</p>
+<p>意思就是说返回地址变回缓冲区首地址，然后原函数返回的时候会跳到缓冲区地址，然后开始访问我们自己写的机器代码，实现把global_value值改为cookie的功能。</p>
+<p><img src="/home/alex/图片/2222.png" alt="image"></p>
+<p>最后结果：</p>
+<p><img src="/home/alex/图片/2018-1.png" alt="image"></p>
+<h3 id="level3"><a href="#level3" class="headerlink" title="level3"></a>level3</h3><p>是把返回地址改为cookie值，同时不改变原函数压栈情况</p>
+<p>因为覆盖栈的时候，会把ebp（基址指针给覆盖掉，所以先记录下基址的地址）</p>
+<p><img src="/home/alex/图片/getBuf.png" alt="image"></p>
+<p>汇编代码<br>我们应该要改变eax的值为cookie,同时把原来getbuf后一条指令的地址压栈</p>
+<p><img src="/home/alex/图片/cook.png" alt="image"></p>
+<p>然后为了求基址地址，这里折腾了好久，原来要求的不是寄存器本身的值，而是求寄存器指向的值</p>
+<p>但why？？？<br><img src="/home/alex/图片/re.png" alt="image"></p>
+<p>最后结果：</p>
+<p>b8 14 03 aa<br>65 68 be 8d<br>04 08 c3 00 &lt;—attack code<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>90 39 68 55 &lt;— address of ebp,to ensure that the original ebp doesn’t change<br>38 39 68 55 &lt;— initial address of buff zone</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/02/CS230-DeepLearning-And-Neural-Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/02/CS230-DeepLearning-And-Neural-Networks/" itemprop="url">CS230 DeepLearning And Neural Networks</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-02T18:55:00+00:00">
+                2018-09-02
               </time>
             
 
@@ -492,7 +639,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-02T21:01:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-02T13:01:00+00:00">
                 2018-09-02
               </time>
             
@@ -731,7 +878,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-31T21:08:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-31T13:08:00+00:00">
                 2018-08-31
               </time>
             
@@ -930,7 +1077,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

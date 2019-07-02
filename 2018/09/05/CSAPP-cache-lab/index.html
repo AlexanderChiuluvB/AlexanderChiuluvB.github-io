@@ -79,26 +79,27 @@
 
 
 
-<meta name="description" content="神经网络是什么 左下角，第一层就是计算a[1]，然后加上更新后的W【2】，b【2】，在第二层计算新的结果z【2】  注意一般不把输入层算在神经网络层内注意hidden layer 其实就是一个4x1的列矩阵 神经网络表示 符号右上角表示层数，右下角表示该层第几个结点 实际上可以把神经网络计算过错化为向量矩阵运算  Z （4X1） =  W (4X3) * x(3,1) +b(4,1) 激活函数ta">
+<meta name="description" content="cache lab原函数返回地址—-&amp;lt;保存的%ebp值（栈帧指针）—-&amp;lt;缓冲区—-&amp;lt;缓冲区—-&amp;lt;。。。。。。。。%esp(栈指针)—-&amp;lt; Level2 global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value 我们现在要找到global_value的地址，发现 0x804d100就是value的地址，0x804d1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CS230 Shallow Neural Networks">
-<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/10/CS230-Shallow-Neural-Networks/index.html">
+<meta property="og:title" content="CSAPP-buflab">
+<meta property="og:url" content="http://AlexanderChiuluvB.github.io/2018/09/05/CSAPP-cache-lab/index.html">
 <meta property="og:site_name" content="Alex Chiu">
-<meta property="og:description" content="神经网络是什么 左下角，第一层就是计算a[1]，然后加上更新后的W【2】，b【2】，在第二层计算新的结果z【2】  注意一般不把输入层算在神经网络层内注意hidden layer 其实就是一个4x1的列矩阵 神经网络表示 符号右上角表示层数，右下角表示该层第几个结点 实际上可以把神经网络计算过错化为向量矩阵运算  Z （4X1） =  W (4X3) * x(3,1) +b(4,1) 激活函数ta">
+<meta property="og:description" content="cache lab原函数返回地址—-&amp;lt;保存的%ebp值（栈帧指针）—-&amp;lt;缓冲区—-&amp;lt;缓冲区—-&amp;lt;。。。。。。。。%esp(栈指针)—-&amp;lt; Level2 global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value 我们现在要找到global_value的地址，发现 0x804d100就是value的地址，0x804d1">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sn.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/Presentation.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ss.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/NNRL.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ac1.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/relu.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/PAC.png">
-<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ressss.png">
-<meta property="og:updated_time" content="2018-10-13T19:23:47.757Z">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/c.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/p2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ps2.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/obj.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2222.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-1.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/getBuf.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/cook.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/re.png">
+<meta property="og:updated_time" content="2018-10-13T19:24:14.209Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CS230 Shallow Neural Networks">
-<meta name="twitter:description" content="神经网络是什么 左下角，第一层就是计算a[1]，然后加上更新后的W【2】，b【2】，在第二层计算新的结果z【2】  注意一般不把输入层算在神经网络层内注意hidden layer 其实就是一个4x1的列矩阵 神经网络表示 符号右上角表示层数，右下角表示该层第几个结点 实际上可以把神经网络计算过错化为向量矩阵运算  Z （4X1） =  W (4X3) * x(3,1) +b(4,1) 激活函数ta">
-<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/sn.png">
+<meta name="twitter:title" content="CSAPP-buflab">
+<meta name="twitter:description" content="cache lab原函数返回地址—-&amp;lt;保存的%ebp值（栈帧指针）—-&amp;lt;缓冲区—-&amp;lt;缓冲区—-&amp;lt;。。。。。。。。%esp(栈指针)—-&amp;lt; Level2 global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value 我们现在要找到global_value的地址，发现 0x804d100就是value的地址，0x804d1">
+<meta name="twitter:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/c.png">
 
 
 
@@ -128,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/09/10/CS230-Shallow-Neural-Networks/"/>
+  <link rel="canonical" href="http://AlexanderChiuluvB.github.io/2018/09/05/CSAPP-cache-lab/"/>
 
 
 
 
 
-  <title>CS230 Shallow Neural Networks | Alex Chiu</title>
+  <title>CSAPP-buflab | Alex Chiu</title>
   
 
 
@@ -281,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/10/CS230-Shallow-Neural-Networks/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/05/CSAPP-cache-lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -298,7 +299,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">CS230 Shallow Neural Networks</h1>
+          <h1 class="post-title" itemprop="name headline">CSAPP-buflab</h1>
         
 
         <div class="post-meta">
@@ -310,8 +311,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-10T04:19:00+08:00">
-                2018-09-10
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-05T19:18:00+00:00">
+                2018-09-05
               </time>
             
 
@@ -348,24 +349,34 @@
       
 
       
-        <h2 id="神经网络是什么"><a href="#神经网络是什么" class="headerlink" title="神经网络是什么"></a>神经网络是什么</h2><p><img src="/home/alex/图片/sn.png" alt="image"></p>
-<p>左下角，第一层就是计算a[1]，然后加上更新后的W【2】，b【2】，在第二层计算新的结果<br>z【2】</p>
-<p><img src="/home/alex/图片/Presentation.png" alt="image"></p>
-<h5 id="注意一般不把输入层算在神经网络层内"><a href="#注意一般不把输入层算在神经网络层内" class="headerlink" title="注意一般不把输入层算在神经网络层内"></a>注意一般不把输入层算在神经网络层内</h5><p>注意hidden layer 其实就是一个4x1的列矩阵</p>
-<h5 id="神经网络表示"><a href="#神经网络表示" class="headerlink" title="神经网络表示"></a>神经网络表示</h5><p><br><br><img src="/home/alex/图片/ss.png" alt="image"></p>
-<p>符号右上角表示层数，右下角表示该层第几个结点</p>
-<p>实际上可以把神经网络计算过错化为向量矩阵运算</p>
-<p><img src="/home/alex/图片/NNRL.png" alt="image"></p>
-<p>Z （4X1） =  W (4X3) * x(3,1) +b(4,1)</p>
-<h3 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h3><h4 id="tanh"><a href="#tanh" class="headerlink" title="tanh"></a>tanh</h4><p>用tanh效果会比sigmodi好，因为均值为0，说明能起到数据中心化效果</p>
-<p><img src="/home/alex/图片/ac1.png" alt="image"></p>
-<h4 id="线性整流函数（ReLU）"><a href="#线性整流函数（ReLU）" class="headerlink" title="线性整流函数（ReLU）"></a>线性整流函数（ReLU）</h4><p><img src="/home/alex/图片/relu.png" alt="image"></p>
-<p>使用ReLU 会使得神经网络学习的速度加快，因为在tanh与sigmoid当中，当斜率降低的时候，学习的速度也会相应的下降。</p>
-<p>而ReLu则会减少则种情况</p>
-<p><img src="/home/alex/图片/PAC.png" alt="image"></p>
-<p>一般而言，不用sigmoid</p>
-<h4 id="激活函数的导数"><a href="#激活函数的导数" class="headerlink" title="激活函数的导数"></a>激活函数的导数</h4><p>在反向传播的时候，需要计算激活函数的导数</p>
-<h4 id="神经网络的梯度下降"><a href="#神经网络的梯度下降" class="headerlink" title="神经网络的梯度下降"></a>神经网络的梯度下降</h4><p>重点关注dZ【1】 dW的计算原理<br><img src="/home/alex/图片/ressss.png" alt="image"></p>
+        <h5 id="cache-lab"><a href="#cache-lab" class="headerlink" title="cache lab"></a>cache lab</h5><p>原函数返回地址—-&lt;<br>保存的%ebp值（栈帧指针）—-&lt;<br>缓冲区—-&lt;<br>缓冲区—-&lt;<br>。。。。<br>。。。。<br>%esp(栈指针)—-&lt;</p>
+<h3 id="Level2"><a href="#Level2" class="headerlink" title="Level2"></a>Level2</h3><p><img src="/home/alex/图片/c.png" alt="image"></p>
+<p>global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value</p>
+<p>我们现在要找到global_value的地址，发现</p>
+<p>0x804d100就是value的地址，0x804d108就是cookie的地址。因此我们想把0x804d100地址所在的数值改为我们的cookie</p>
+<p><img src="/home/alex/图片/p2.png" alt="image"></p>
+<p>建立p2.s文件</p>
+<p>注意x86是data-load 是利用register来完成的</p>
+<p><img src="/home/alex/图片/ps2.png" alt="image"></p>
+<p>把cookie值传到%eax 临时寄存器，然后把寄存器里面的数值传给global_value的地址</p>
+<p>最后把bang函数地址压栈，那么原来返回地址就会改为执行bang函数了。</p>
+<p>反汇编得到的代码：</p>
+<p><img src="/home/alex/图片/obj.png" alt="image"></p>
+<p>gdb调试寻找缓冲区的位置，注意缓冲区不是esp-0x38，而是ebp-0x28噢</p>
+<p>得到缓冲区首地址为0x55683938</p>
+<p>意思就是说返回地址变回缓冲区首地址，然后原函数返回的时候会跳到缓冲区地址，然后开始访问我们自己写的机器代码，实现把global_value值改为cookie的功能。</p>
+<p><img src="/home/alex/图片/2222.png" alt="image"></p>
+<p>最后结果：</p>
+<p><img src="/home/alex/图片/2018-1.png" alt="image"></p>
+<h3 id="level3"><a href="#level3" class="headerlink" title="level3"></a>level3</h3><p>是把返回地址改为cookie值，同时不改变原函数压栈情况</p>
+<p>因为覆盖栈的时候，会把ebp（基址指针给覆盖掉，所以先记录下基址的地址）</p>
+<p><img src="/home/alex/图片/getBuf.png" alt="image"></p>
+<p>汇编代码<br>我们应该要改变eax的值为cookie,同时把原来getbuf后一条指令的地址压栈</p>
+<p><img src="/home/alex/图片/cook.png" alt="image"></p>
+<p>然后为了求基址地址，这里折腾了好久，原来要求的不是寄存器本身的值，而是求寄存器指向的值</p>
+<p>但why？？？<br><img src="/home/alex/图片/re.png" alt="image"></p>
+<p>最后结果：</p>
+<p>b8 14 03 aa<br>65 68 be 8d<br>04 08 c3 00 &lt;—attack code<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>90 39 68 55 &lt;— address of ebp,to ensure that the original ebp doesn’t change<br>38 39 68 55 &lt;— initial address of buff zone</p>
 
       
     </div>
@@ -390,8 +401,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/09/CSAPP-重定位/" rel="next" title="CSAPP-重定位">
-                <i class="fa fa-chevron-left"></i> CSAPP-重定位
+              <a href="/2018/09/02/CS230-DeepLearning-And-Neural-Networks/" rel="next" title="CS230 DeepLearning And Neural Networks">
+                <i class="fa fa-chevron-left"></i> CS230 DeepLearning And Neural Networks
               </a>
             
           </div>
@@ -400,8 +411,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/09/11/CSAPP-程序及指令/" rel="prev" title="CSAPP-程序及指令">
-                CSAPP-程序及指令 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/09/09/CSAPP-重定位/" rel="prev" title="CSAPP-重定位">
+                CSAPP-重定位 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -483,7 +494,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -538,7 +549,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络是什么"><span class="nav-number">1.</span> <span class="nav-text">神经网络是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#注意一般不把输入层算在神经网络层内"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">注意一般不把输入层算在神经网络层内</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#神经网络表示"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">神经网络表示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#激活函数"><span class="nav-number">1.1.</span> <span class="nav-text">激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tanh"><span class="nav-number">1.1.1.</span> <span class="nav-text">tanh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线性整流函数（ReLU）"><span class="nav-number">1.1.2.</span> <span class="nav-text">线性整流函数（ReLU）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#激活函数的导数"><span class="nav-number">1.1.3.</span> <span class="nav-text">激活函数的导数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#神经网络的梯度下降"><span class="nav-number">1.1.4.</span> <span class="nav-text">神经网络的梯度下降</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#cache-lab"><span class="nav-number">1.</span> <span class="nav-text">cache lab</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Level2"><span class="nav-number"></span> <span class="nav-text">Level2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level3"><span class="nav-number"></span> <span class="nav-text">level3</span></a></div>
             
 
           </div>

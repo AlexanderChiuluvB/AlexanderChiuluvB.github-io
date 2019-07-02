@@ -101,8 +101,10 @@
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-260.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/as.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/2018-261.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/ｍａｎｑｉｄｏｎｇ.png">
+<meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/yongsaibimian.png">
 <meta property="og:image" content="http://alexanderchiuluvb.github.io/home/alex/图片/wangluo.png">
-<meta property="og:updated_time" content="2019-05-12T11:50:22.794Z">
+<meta property="og:updated_time" content="2019-05-26T15:00:26.546Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计网-运输层">
 <meta name="twitter:description" content="运输层协议在不同主机的应用进程之间提供了逻辑通信，通过逻辑通信，运行不同进程的主机就会好像直接相连一样。 而网络层提供了主机之间的逻辑联系。 发送端： 运输层把应用程序进程接收到的报文转换成运输层分组，成为运输层报文段。实现方法为把应用报文划分为较小的块，并为每块加上一个运输层首部以生成运输层报文段。在发送端系统当中，运输层把这些报文段传递给网络层，网络层将其封装为网络层分组，向目的地发送。网络路">
@@ -318,7 +320,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-12T12:52:35+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-12T12:52:35-01:00">
                 2019-03-12
               </time>
             
@@ -380,6 +382,7 @@
 <h5 id="运输层报文段中的源与目的端口字段"><a href="#运输层报文段中的源与目的端口字段" class="headerlink" title="运输层报文段中的源与目的端口字段"></a>运输层报文段中的源与目的端口字段</h5><p><img src="/home/alex/图片/2018-236.png" alt="filename alrea exists, renamed"></p>
 <p>1.套接字有唯一标识符<br>2.每个报文段有特殊字段来指示该报文段所要交付到的套接字。</p>
 <p>在主机上的每个套接字能够分配一个端口号，当报文段到达主机时，运输层检查报文段中的目的端口号，并且将其定向到相应的套接字。然后报文段中的数据通过套接字进入其所连接的进程。</p>
+<p>校检和校验的范围：伪头部，ＵＤＰ头部以及数据　伪头部用于检查ＵＤＰ用户数据报是否正确到达了指定主机(目的ＩＰ地址)的指定端口号</p>
 <h4 id="无连接的多路复用与分解"><a href="#无连接的多路复用与分解" class="headerlink" title="无连接的多路复用与分解"></a>无连接的多路复用与分解</h4><p>无连接是指发送方和接收方的运输层实体之间没有握手。<br>UDP是通过（目的IP,目的端口号）来标识的。如果源IP和源端口号相同，那么会两个报文段会通过相同的套接字被定向到相同的目的进程。</p>
 <p>例子：</p>
 <p>主机A一个进程有UDP端口19157，他要发送一个应用程序数据块给位于主机B的另一个进程，该进程具有UDP端口46428,主机A的运输层创建一个运输层报文段，其中包括应用程序数据，源端口号以及目的端口号。</p>
@@ -398,6 +401,7 @@
 <p>操作系统接收到具有目的端口的连接请求报文段，该服务器进程在端口12000等待接受连接，并且创建一个新的套接字。</p>
 <p>持续HTTP连接的使用：整条持续链接期间，客户与服务器之间经由同一个服务器套接字交换HTTP报文，然而如果使用非持续HTTP链接，每一对请求/响应都创建一个新的TCP链接然后随之关闭。</p>
 <h3 id="无连接运输-UDP"><a href="#无连接运输-UDP" class="headerlink" title="无连接运输 UDP"></a>无连接运输 UDP</h3><p>在发送报文段之前，发送方和接收方的运输层实体之间没有握手。直接与IP打交道，UDP从应用程序得到数据，附加上用于多路复用和分解的源端口和源地址以及其他两个小字段，然后把形成的报文段交给网络层。网络层把运输层报文段封装到一个IP数据报中，然后尽力把报文段交付给接收主机。主机接收到报文段之后UDP使用目的端口把报文段中的数据交付给正确的应用程序。</p>
+<p>ＵＤＰ利用</p>
 <h3 id="面向连接的TCP"><a href="#面向连接的TCP" class="headerlink" title="面向连接的TCP"></a>面向连接的TCP</h3><p>应用进程开始向另外一个进程发送数据之前，两个进程必须先相互握手。即必须相互发送某些预备报文段，以确定数据传输的参数。</p>
 <ul>
 <li><p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
@@ -407,8 +411,9 @@
 <li><p>面向连接：进行数据传输的时候首先要建立一条传输链接，相互发送某些预备的报文，链接双方要建立确保数据传输所需要的参数，传输完成之后要把链接释放掉。</p>
 </li>
 </ul>
-<p>TCP三次握手</p>
+<p>TCP三次握手<a href="https://wenku.baidu.com/view/f0256510b207e87101f69e3143323968011cf40b.html?rec_flag=default" target="_blank" rel="noopener">https://wenku.baidu.com/view/f0256510b207e87101f69e3143323968011cf40b.html?rec_flag=default</a></p>
 <p>TCP会为每块客户数据配上一个TCP首部，从而形成多个TCP报文段，报文段被下传到网络层，网络层将其封装在网络层IP数据报中，然后再被发送到网络。</p>
+<p>目的是防止报文段在传输链接建立过程中出现差错，也保证发送方和接收方发送和接收数据能力没有差错。</p>
 <h4 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h4><p>解决流水线的差错恢复两种基本方法：</p>
 <p>1.回退N步(GBN)</p>
 <p>发送方在发完一个数据帧之后，连续发送若干个数据帧，即使在连续发送的过程中收到了接收方发来的应答帧，也可以继续发送。发送方在发完一个数据帧的时候都要设置超时定时器，当发送了N个帧之后，如果发现该N帧的前一个帧在计时器超时后仍未返回确认信息，则判断该帧出错或者丢失，发送方不得不重新发送出错帧以及其后的N帧。</p>
@@ -524,6 +529,22 @@
 <p><img src="/home/alex/图片/2018-261.png" alt="filename alry exists, renamed"></p>
 <h5 id="维护ssthresh变量"><a href="#维护ssthresh变量" class="headerlink" title="维护ssthresh变量"></a>维护ssthresh变量</h5><p>1.拥塞窗口小于阈值时候进入慢启动阶段</p>
 <p>2.大于该阈值的时候进入拥塞避免阶段</p>
+<h3 id="拥塞避免的总结"><a href="#拥塞避免的总结" class="headerlink" title="拥塞避免的总结"></a>拥塞避免的总结</h3><p>１.慢启动和拥塞避免</p>
+<p>慢启动：拥塞窗口小于阈值ssthresh的时候指数增加</p>
+<p>拥塞避免：拥塞窗口大于阈值的时候进入拥塞避免阶段(加性增)</p>
+<p>超时(丢失)的时候乘性减：每次超时，把ｔｈｒｅｓｈｏｌｄ设置为当前拥塞窗口的一半，并重新回到慢启动阶段</p>
+<p><img src="/home/alex/图片/ｍａｎｑｉｄｏｎｇ.png" alt="upload successl"></p>
+<p>慢启动是每次收到一个ＡＣＫ就增加一个ＭＳＳ，然而拥塞避免是每一个ＲＴＴ增加一个ＭＳＳ</p>
+<p>当检测到超时而丢包的时候，进入tahoe的慢启动</p>
+<p>ＴＣＰ出现拥塞：(tahoe)</p>
+<p>sstｈresh = max(congwindow/2,MSS)<br>congwindow = MSS(即初始窗口的大小)</p>
+<p>TCP出现拥塞:(Reno)(快速恢复)</p>
+<p>与ｔａｈｏｅ不同的是，他是进入拥塞避免阶段</p>
+<p>ssthresh = max(CongWindow/2,MSS)<br>CongWindow = ssthresh （设置为阈值）</p>
+<p>当检测到3个冗余的ACK的丢包的时候，进入快速恢复状态，<br> ssthresh = CongWindow /2 ， CongWindow = ssthresh+（3×MSS）</p>
+<p>如果收到冗余的ACK CongWindow+=MSS</p>
+<p>超时前收到新的ACK，直接进入拥塞避免阶段</p>
+<p><img src="/home/alex/图片/yongsaibimian.png" alt="upload cessful"></p>
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><img src="/home/alex/图片/wangluo.png" alt="upload sucessful"></p>
 <p>1.慢启动 CongWindow &lt; ssthresh 窗口指数级增长</p>
 <p>2.拥塞避免 CongWindow &gt; ssthresh 线性增长</p>
@@ -533,6 +554,18 @@
 <p>每收到一个冗余的ACK，CongWindow +=Mss</p>
 <p>超时前收到新的Ack，会直接进入拥塞避免阶段。</p>
 <p>4.<br>超时事件发生丢包的时候，ssthresh = CongWindow/2<br>CongWindow = 1 MSS</p>
+<p>UDP和TCP总结</p>
+<p>UDP 优点：</p>
+<p>１．协议简单，运行效率高<br>２．首部开销小，８个字节<br>３．支持一对一，多对多，一对多的交互通信</p>
+<p>缺点：<br>不可靠，容易发生丢包</p>
+<p>应用：</p>
+<p>追求速度，例如聊天工具，实时视频聊天</p>
+<p>ＴＣＰ优点：</p>
+<p>提供可靠的服务，ＴＣＰ传送的数据无差错，不丢失，不重复而且按序到达</p>
+<p>缺点：</p>
+<p>首部开销大，２０个字节</p>
+<p>会出现网络用塞，使得源主机发送效率降低。</p>
+<p>协议复杂，速度慢</p>
 
       
     </div>
@@ -650,7 +683,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -705,7 +738,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层协议"><span class="nav-number">1.</span> <span class="nav-text">运输层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用与多路分解"><span class="nav-number">1.2.</span> <span class="nav-text">多路复用与多路分解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运输层报文段中的源与目的端口字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">运输层报文段中的源与目的端口字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无连接的多路复用与分解"><span class="nav-number">1.3.</span> <span class="nav-text">无连接的多路复用与分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接的多路复用与分解"><span class="nav-number">1.4.</span> <span class="nav-text">连接的多路复用与分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接运输-UDP"><span class="nav-number">2.</span> <span class="nav-text">无连接运输 UDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向连接的TCP"><span class="nav-number">3.</span> <span class="nav-text">面向连接的TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构造可靠数据传输协议"><span class="nav-number">3.1.</span> <span class="nav-text">构造可靠数据传输协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP报文结构"><span class="nav-number">4.</span> <span class="nav-text">TCP报文结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-sender-simulator"><span class="nav-number">4.1.</span> <span class="nav-text">TCP sender simulator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重传超时间隔"><span class="nav-number">4.2.</span> <span class="nav-text">重传超时间隔</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速重传"><span class="nav-number">4.3.</span> <span class="nav-text">快速重传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GBN-和-SR"><span class="nav-number">4.4.</span> <span class="nav-text">GBN 和 SR</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#GBN"><span class="nav-number">4.4.1.</span> <span class="nav-text">GBN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SR"><span class="nav-number">4.4.2.</span> <span class="nav-text">SR</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP流量控制"><span class="nav-number">5.</span> <span class="nav-text">TCP流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#糊涂窗口综合征"><span class="nav-number">6.</span> <span class="nav-text">糊涂窗口综合征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nagle-算法"><span class="nav-number">7.</span> <span class="nav-text">Nagle 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接管理"><span class="nav-number">8.</span> <span class="nav-text">TCP 连接管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#释放连接"><span class="nav-number">8.1.</span> <span class="nav-text">释放连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#洪泛攻击"><span class="nav-number">8.2.</span> <span class="nav-text">洪泛攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">8.3.</span> <span class="nav-text">拥塞控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP拥塞控制原理"><span class="nav-number">8.4.</span> <span class="nav-text">TCP拥塞控制原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#自计时-self-clocking"><span class="nav-number">8.4.1.</span> <span class="nav-text">自计时 self-clocking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#慢启动"><span class="nav-number">8.4.2.</span> <span class="nav-text">慢启动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#拥塞避免（加性增）"><span class="nav-number">8.4.3.</span> <span class="nav-text">拥塞避免（加性增）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#出现拥塞"><span class="nav-number">8.4.4.</span> <span class="nav-text">出现拥塞</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#快速回复，取消慢启动"><span class="nav-number">8.4.5.</span> <span class="nav-text">快速回复，取消慢启动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#维护ssthresh变量"><span class="nav-number">8.4.6.</span> <span class="nav-text">维护ssthresh变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">8.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#运输层协议"><span class="nav-number">1.</span> <span class="nav-text">运输层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用与多路分解"><span class="nav-number">1.2.</span> <span class="nav-text">多路复用与多路分解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运输层报文段中的源与目的端口字段"><span class="nav-number">1.2.1.</span> <span class="nav-text">运输层报文段中的源与目的端口字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无连接的多路复用与分解"><span class="nav-number">1.3.</span> <span class="nav-text">无连接的多路复用与分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接的多路复用与分解"><span class="nav-number">1.4.</span> <span class="nav-text">连接的多路复用与分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接运输-UDP"><span class="nav-number">2.</span> <span class="nav-text">无连接运输 UDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向连接的TCP"><span class="nav-number">3.</span> <span class="nav-text">面向连接的TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构造可靠数据传输协议"><span class="nav-number">3.1.</span> <span class="nav-text">构造可靠数据传输协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP报文结构"><span class="nav-number">4.</span> <span class="nav-text">TCP报文结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-sender-simulator"><span class="nav-number">4.1.</span> <span class="nav-text">TCP sender simulator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重传超时间隔"><span class="nav-number">4.2.</span> <span class="nav-text">重传超时间隔</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速重传"><span class="nav-number">4.3.</span> <span class="nav-text">快速重传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GBN-和-SR"><span class="nav-number">4.4.</span> <span class="nav-text">GBN 和 SR</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#GBN"><span class="nav-number">4.4.1.</span> <span class="nav-text">GBN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SR"><span class="nav-number">4.4.2.</span> <span class="nav-text">SR</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP流量控制"><span class="nav-number">5.</span> <span class="nav-text">TCP流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#糊涂窗口综合征"><span class="nav-number">6.</span> <span class="nav-text">糊涂窗口综合征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nagle-算法"><span class="nav-number">7.</span> <span class="nav-text">Nagle 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接管理"><span class="nav-number">8.</span> <span class="nav-text">TCP 连接管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#释放连接"><span class="nav-number">8.1.</span> <span class="nav-text">释放连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#洪泛攻击"><span class="nav-number">8.2.</span> <span class="nav-text">洪泛攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞控制"><span class="nav-number">8.3.</span> <span class="nav-text">拥塞控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP拥塞控制原理"><span class="nav-number">8.4.</span> <span class="nav-text">TCP拥塞控制原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#自计时-self-clocking"><span class="nav-number">8.4.1.</span> <span class="nav-text">自计时 self-clocking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#慢启动"><span class="nav-number">8.4.2.</span> <span class="nav-text">慢启动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#拥塞避免（加性增）"><span class="nav-number">8.4.3.</span> <span class="nav-text">拥塞避免（加性增）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#出现拥塞"><span class="nav-number">8.4.4.</span> <span class="nav-text">出现拥塞</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#快速回复，取消慢启动"><span class="nav-number">8.4.5.</span> <span class="nav-text">快速回复，取消慢启动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#维护ssthresh变量"><span class="nav-number">8.4.6.</span> <span class="nav-text">维护ssthresh变量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拥塞避免的总结"><span class="nav-number">9.</span> <span class="nav-text">拥塞避免的总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">9.1.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>

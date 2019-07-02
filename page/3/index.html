@@ -272,6 +272,130 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/24/CS230-深层神经网络图像分类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/24/CS230-深层神经网络图像分类/" itemprop="url">CS230-深层神经网络图像分类</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-24T07:58:35-01:00">
+                2018-12-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><p><img src="/home/alex/图片/2018-102.png" alt="filename eady exists, renamed"></p>
+<p>每一张图片都可以把它转化为一个m*1的向量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># Reshape the training and test examples </span><br><span class="line">train_x_flatten = train_x_orig.reshape(train_x_orig.shape[0], -1).T   # The &quot;-1&quot; makes reshape flatten the remaining dimensions</span><br><span class="line">test_x_flatten = test_x_orig.reshape(test_x_orig.shape[0], -1).T</span><br><span class="line"></span><br><span class="line"># Standardize data to have feature values between 0 and 1.</span><br><span class="line">train_x = train_x_flatten/255.</span><br><span class="line">test_x = test_x_flatten/255.</span><br><span class="line"></span><br><span class="line">print (&quot;train_x&apos;s shape: &quot; + str(train_x.shape))</span><br><span class="line">print (&quot;test_x&apos;s shape: &quot; + str(test_x.shape))</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/what.png" alt="upload sussful"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False):#lr was 0.009</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Implements a L-layer neural network: [LINEAR-&gt;RELU]*(L-1)-&gt;LINEAR-&gt;SIGMOID.</span><br><span class="line">    </span><br><span class="line">    Arguments:</span><br><span class="line">    X -- data, numpy array of shape (number of examples, num_px * num_px * 3)</span><br><span class="line">    Y -- true &quot;label&quot; vector (containing 0 if cat, 1 if non-cat), of shape (1, number of examples)</span><br><span class="line">    layers_dims -- list containing the input size and each layer size, of length (number of layers + 1).</span><br><span class="line">    learning_rate -- learning rate of the gradient descent update rule</span><br><span class="line">    num_iterations -- number of iterations of the optimization loop</span><br><span class="line">    print_cost -- if True, it prints the cost every 100 steps</span><br><span class="line">    </span><br><span class="line">    Returns:</span><br><span class="line">    parameters -- parameters learnt by the model. They can then be used to predict.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    np.random.seed(1)</span><br><span class="line">    costs = []                         # keep track of cost</span><br><span class="line">    </span><br><span class="line">    # Parameters initialization.</span><br><span class="line">    ### START CODE HERE ###</span><br><span class="line">    parameters = initialize_parameters_deep(layers_dims)</span><br><span class="line">    ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">    # Loop (gradient descent)</span><br><span class="line">    for i in range(0, num_iterations):</span><br><span class="line"></span><br><span class="line">        # Forward propagation: [LINEAR -&gt; RELU]*(L-1) -&gt; LINEAR -&gt; SIGMOID.</span><br><span class="line">        ### START CODE HERE ### (≈ 1 line of code)</span><br><span class="line">        AL, caches = L_model_forward(X, parameters)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">        </span><br><span class="line">        # Compute cost.</span><br><span class="line">        ### START CODE HERE ### (≈ 1 line of code)</span><br><span class="line">        cost = compute_cost(AL, Y)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">    </span><br><span class="line">        # Backward propagation.</span><br><span class="line">        ### START CODE HERE ### (≈ 1 line of code)</span><br><span class="line">        grads = L_model_backward(AL, Y, caches)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line"> </span><br><span class="line">        # Update parameters.</span><br><span class="line">        ### START CODE HERE ### (≈ 1 line of code)</span><br><span class="line">        parameters = update_parameters(parameters, grads, learning_rate=learning_rate)</span><br><span class="line">        ### END CODE HERE ###</span><br><span class="line">                </span><br><span class="line">        # Print the cost every 100 training example</span><br><span class="line">        if print_cost and i % 100 == 0:</span><br><span class="line">            print (&quot;Cost after iteration %i: %f&quot; %(i, cost))</span><br><span class="line">        if print_cost and i % 100 == 0:</span><br><span class="line">            costs.append(cost)</span><br><span class="line">            </span><br><span class="line">    # plot the cost</span><br><span class="line">    plt.plot(np.squeeze(costs))</span><br><span class="line">    plt.ylabel(&apos;cost&apos;)</span><br><span class="line">    plt.xlabel(&apos;iterations (per tens)&apos;)</span><br><span class="line">    plt.title(&quot;Learning rate =&quot; + str(learning_rate))</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line">    return parameters</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/24/CS230-搭建深层的神经网络/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -303,7 +427,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-24T15:18:11+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-24T06:18:11-01:00">
                 2018-12-24
               </time>
             
@@ -453,7 +577,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-22T13:55:54+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-22T04:55:54-01:00">
                 2018-12-22
               </time>
             
@@ -596,7 +720,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-18T13:01:48+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-18T04:01:48-01:00">
                 2018-12-18
               </time>
             
@@ -744,7 +868,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-18T10:09:29+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-18T01:09:29-01:00">
                 2018-12-18
               </time>
             
@@ -872,7 +996,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-17T10:36:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-17T01:36:00-01:00">
                 2018-12-17
               </time>
             
@@ -1032,7 +1156,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T21:43:43+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T12:43:43-01:00">
                 2018-12-15
               </time>
             
@@ -1194,7 +1318,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T13:50:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T04:50:00-01:00">
                 2018-12-15
               </time>
             
@@ -1403,7 +1527,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T20:19:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T11:19:00-01:00">
                 2018-12-14
               </time>
             
@@ -1599,7 +1723,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T16:45:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T07:45:00-01:00">
                 2018-12-14
               </time>
             
@@ -1710,160 +1834,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/12/14/CSAPP-malloc-lab/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/14/CSAPP-malloc-lab/" itemprop="url">CSAPP-malloc lab</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-14T14:43:00+08:00">
-                2018-12-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSAPP/" itemprop="url" rel="index">
-                    <span itemprop="name">CSAPP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>所用策略：Segregated lists + best fits + explicit free list</p>
-<p><img src="/home/alex/图片/disanwei.png" alt="upload sucssful"></p>
-<p>堆的结构：<br>地址从上到下是从低到高<br><img src="/home/alex/图片/heap.png" alt="upload successful"></p>
-<p><img src="/home/alex/图片/fenlishipei.png" alt="upload ful"></p>
-<p>分离适配的原理：</p>
-<p>allocator 维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，被组织成某种类型的显式或者隐式链表，每个链表包含潜在的大小不同的块。</p>
-<p>为了分配，要先确定请求的大小的类，并且对适当的空闲链表做首次适配，如果找到，就分割，并把剩余部分查到空闲链表。如果找不到，就搜索下一个更大的类，如果还是没有，就向操作系统请求额外的堆内存，然后从这个堆内存中分配出一个块，并把剩余部分放在适当的大小类中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/* single word (4) or double word (8) alignment */</span><br><span class="line">#define ALIGNMENT 8</span><br><span class="line"></span><br><span class="line">/* rounds up to the nearest multiple of ALIGNMENT */</span><br><span class="line">#define ALIGN(size) (((size) + (ALIGNMENT-1)) &amp; ~0x7)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define WSIZE 4 //word and header/footer size</span><br><span class="line">#define DSIZE 8 //double word size (bytes)</span><br><span class="line"></span><br><span class="line">#define INITCHUNKSIZE (1&lt;&lt;6) //the size of extended heap </span><br><span class="line">#define CHUNKSIZE (1&lt;&lt;12) //extend heap </span><br><span class="line"></span><br><span class="line">#define MAX(x,y) ((x)&gt;(y))?(x):(y)</span><br><span class="line">#define MIN(x,y) ((x)&lt;(y))?(x):(y)</span><br><span class="line"></span><br><span class="line">#define PACK(size,alloc) ((size)|(alloc))</span><br><span class="line"></span><br><span class="line">//read and write a word at addr p</span><br><span class="line">#define GET(p) (*(unsigned int*)(p))</span><br><span class="line">#define PUT(p,val) (*(unsigned int*)(p) = (val))</span><br><span class="line"></span><br><span class="line">#define SET_PTR(p,ptr) (*(unsigned int*)(p) = (unsigned int)(ptr))</span><br><span class="line"></span><br><span class="line">#define GET_SIZE(p)  (GET(p)&amp;~0x7)</span><br><span class="line">#define GET_ALLOC(p)  (GET(p)&amp;0x1)</span><br><span class="line"></span><br><span class="line">//given block ptr bp,compute address of its header and footer</span><br><span class="line">#define HDRP(bp)  ((char*)(bp)-WSIZE)</span><br><span class="line">// (char*bp)+size -wsize= next&apos;s block&apos;s bp &apos;s position,-DSIZE,that means </span><br><span class="line">//  previous block&apos;s foot address</span><br><span class="line">#define FTRP(bp)  ((char*)(bp)+GET_SIZE(HDRP(bp))-DSIZE)</span><br><span class="line"></span><br><span class="line">#define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE((char *)(bp)-WSIZE))</span><br><span class="line">#define PREV_BLKP(bp) ((char *)(bp) - GET_SIZE((char *)(bp)-DSIZE))</span><br><span class="line"></span><br><span class="line">#define PRED_PTR(ptr) ((char*)(ptr))</span><br><span class="line">#define SUCC_PTR(ptr) ((char*)(ptr)+WSIZE)</span><br><span class="line"></span><br><span class="line">#define PRED(ptr) (*(char **)(ptr))</span><br><span class="line">#define SUCC(ptr) (*(char **)(SUCC_PTR(ptr)))</span><br><span class="line"></span><br><span class="line">#define SIZE_T_SIZE (ALIGN(sizeof(size_t)))</span><br><span class="line">#define LIST_SIZE 16</span><br></pre></td></tr></table></figure>
-<p>全局函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static void *extend_heap(size_t words);</span><br><span class="line">static void *coalesce(void *bp);</span><br><span class="line">static void *place(void *bp,size_t asize);</span><br><span class="line">static void insert(void *bp,size_t size);</span><br><span class="line">static void delete(void *bp);</span><br></pre></td></tr></table></figure></p>
-<p>初始化列表</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line"> * mm_init - initialize the malloc package.</span><br><span class="line"> */</span><br><span class="line">int mm_init(void)</span><br><span class="line">&#123;</span><br><span class="line">    void *heap;</span><br><span class="line">    if((heap=mem_sbrk(4*WSIZE))==(void*)-1)</span><br><span class="line">        return -1;</span><br><span class="line">    </span><br><span class="line">    int idx;</span><br><span class="line">	</span><br><span class="line">    //initialize the list</span><br><span class="line">    for(idx=0;idx&lt;LIST_SIZE;idx++)&#123;</span><br><span class="line">        list[idx] = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    //alignment padding</span><br><span class="line">    //按照上图堆的结构来初始化</span><br><span class="line">    PUT(heap,0);</span><br><span class="line">    PUT(heap+(1*WSIZE),PACK(DSIZE,1));  //prologue header</span><br><span class="line">    PUT(heap+(2*WSIZE),PACK(DSIZE,1)); //prologue footer</span><br><span class="line">    PUT(heap+(3*WSIZE),PACK(0,1)); //Epilogue header</span><br><span class="line"></span><br><span class="line">    if(extend_heap(INITCHUNKSIZE)==NULL)</span><br><span class="line">        return -1;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">/* </span><br><span class="line"> * mm_malloc - Allocate a block by incrementing the brk pointer.</span><br><span class="line"> *     Always allocate a block whose size is a multiple of the alignment.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">void *mm_malloc(size_t size)</span><br><span class="line">&#123;</span><br><span class="line">    //ignore spurious requeses</span><br><span class="line">    if(size==0)</span><br><span class="line">        return NULL;</span><br><span class="line">    </span><br><span class="line">    if(size&lt;=DSIZE)</span><br><span class="line">        size = 2*DSIZE;</span><br><span class="line">    else</span><br><span class="line">        size = ALIGN(size+DSIZE);</span><br><span class="line"></span><br><span class="line">    int idx = 0;</span><br><span class="line">    size_t ssize = size;</span><br><span class="line">    void *ptr = NULL;</span><br><span class="line"></span><br><span class="line">    while(idx&lt;LIST_SIZE)&#123;</span><br><span class="line">		//链表类的大小分别是 1 1 2 4 8 16 32...</span><br><span class="line">        // 分别存储 &#123;0&#125;,&#123;1&#125;,&#123;2,3&#125;,&#123;4,5,6,7&#125;..</span><br><span class="line">        // 通过循环 ssize&gt;&gt;=1 与idx,找到该分配的</span><br><span class="line">        //字节大小所在的链表</span><br><span class="line">        //然后再内嵌一个循环，在这个链表中寻找大小适			//合的pointer</span><br><span class="line">        if((ssize&lt;=1)&amp;&amp;(list[idx]!=NULL))&#123;</span><br><span class="line">            ptr = list[idx];</span><br><span class="line">            while(ptr&amp;&amp;((size&gt;GET_SIZE(HDRP(ptr)))))&#123;</span><br><span class="line">                ptr = PRED(ptr);</span><br><span class="line">            &#125;</span><br><span class="line">            //如果找到了就break</span><br><span class="line">            if(ptr!=NULL)</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        ssize&gt;&gt;=1;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //如果找不到，向系统申请额外的堆内存</span><br><span class="line">    if(ptr==NULL)&#123;</span><br><span class="line">        int extendsize = MAX(size,CHUNKSIZE);</span><br><span class="line">        if((ptr=extend_heap(extendsize))==NULL)</span><br><span class="line">            return NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //在free块中allocate size大小的块</span><br><span class="line">    ptr = place(ptr,size);</span><br><span class="line"></span><br><span class="line">    return ptr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void mm_free(void *ptr)</span><br><span class="line">&#123;</span><br><span class="line">    size_t size = GET_SIZE(HDRP(ptr));</span><br><span class="line"></span><br><span class="line">	//把该块头脚末位都标注为0，说明这一块是free</span><br><span class="line">    PUT(HDRP(ptr), PACK(size, 0));</span><br><span class="line">    PUT(FTRP(ptr), PACK(size, 0));</span><br><span class="line"></span><br><span class="line">    /* 插入分离空闲链表 */</span><br><span class="line">    insert_node(ptr, size);</span><br><span class="line">    /* 合并 */</span><br><span class="line">    coalesce(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1918,7 +1888,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

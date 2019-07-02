@@ -272,6 +272,172 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/29/DS-Graph/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/29/DS-Graph/" itemprop="url">DS-Topo,Bipartite,max flow&min cut</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T01:38:37-01:00">
+                2018-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Topological-Sort"><a href="#Topological-Sort" class="headerlink" title="Topological Sort"></a>Topological Sort</h3><h4 id="ver1-DFS"><a href="#ver1-DFS" class="headerlink" title="ver1 DFS"></a>ver1 DFS</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">for each unvisited node u in V:</span><br><span class="line">	DFS(u)</span><br><span class="line">    for each neighbour h of u:</span><br><span class="line">    	if(!visited)</span><br><span class="line">        	DFS(h)</span><br><span class="line">    finish DFS(u) // push_back u to the list</span><br><span class="line">reverse the list!</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/topo.png" alt="upload successl"></p>
+<h4 id="ver2-BFS-Khan"><a href="#ver2-BFS-Khan" class="headerlink" title="ver2 BFS (Khan)"></a>ver2 BFS (Khan)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">push vertices with no incoming edges to the queue</span><br><span class="line">while(!q.empty):</span><br><span class="line">	u = q.top </span><br><span class="line">    q.pop</span><br><span class="line">    for each neighbor x of u</span><br><span class="line">    	delete u-&gt;x</span><br><span class="line">        if x has no incoming edges,then push x to the queu</span><br><span class="line">//done</span><br></pre></td></tr></table></figure>
+<h3 id="Bipartite"><a href="#Bipartite" class="headerlink" title="Bipartite"></a>Bipartite</h3><h4 id="definition"><a href="#definition" class="headerlink" title="definition"></a>definition</h4><p><img src="/home/alex/图片/def.png" alt="upload successfl"></p>
+<p>1.说白了就是图的所有点可以分为两个set，每个set之间互相没有边，只有set与set之间的点有边。</p>
+<p>2.应用于无向图。</p>
+<h4 id="Bipartite-checker"><a href="#Bipartite-checker" class="headerlink" title="Bipartite checker"></a>Bipartite checker</h4><h4 id="ver1-DFS-1"><a href="#ver1-DFS-1" class="headerlink" title="ver1 DFS"></a>ver1 DFS</h4><p>每个点的邻居与它不同色（就是不同一个set）</p>
+<p>每个点与它的邻居的邻居同色，它邻居的邻居与它在同一个set</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for each unvisited vertex in u:</span><br><span class="line">	dfs(u)</span><br><span class="line">    for each neighbor v in u:</span><br><span class="line">    	if(v is unvisited)</span><br><span class="line">        	assign u as different color</span><br><span class="line">        else if u and v has same color</span><br><span class="line">        	break!</span><br><span class="line">            it is not a bipartite</span><br></pre></td></tr></table></figure>
+<h4 id="ver2-BFS"><a href="#ver2-BFS" class="headerlink" title="ver2 BFS"></a>ver2 BFS</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">push vertexs with no incoming edged to queue</span><br><span class="line">while(!queue.empty())</span><br><span class="line">	u = queue.top</span><br><span class="line">    q.pop</span><br><span class="line">    for v in neighbor in u</span><br><span class="line">    	if(v.color==u.color)</span><br><span class="line">        	exit;//no bipartite</span><br><span class="line">        else if unvisited </span><br><span class="line">        	assign different color to v</span><br></pre></td></tr></table></figure>
+<h3 id="max-flow"><a href="#max-flow" class="headerlink" title="max flow"></a>max flow</h3><h4 id="intro-to-mincut-problem"><a href="#intro-to-mincut-problem" class="headerlink" title="intro to mincut problem"></a>intro to mincut problem</h4><p><img src="/home/alex/图片/2018-46.png" alt="filename already exists, renmed"></p>
+<h4 id="intro-to-maxflow-problem"><a href="#intro-to-maxflow-problem" class="headerlink" title="intro to maxflow problem"></a>intro to maxflow problem</h4><p><img src="/home/alex/图片/2018-47.png" alt="filename already exists, rename"></p>
+<h3 id="Ford-Fulkerson-Algorithm"><a href="#Ford-Fulkerson-Algorithm" class="headerlink" title="Ford-Fulkerson Algorithm"></a>Ford-Fulkerson Algorithm</h3><p>mincut 和 maxflow problem 实际上是等价的，解决了其中一个，另外一个就自然解决了。</p>
+<p><img src="/home/alex/图片/2018-49.png" alt="filename already exists, reamed"></p>
+<p>如上图，a为开始点。各边左数字为capacity，右边数字为flow</p>
+<p>a-&gt;b满了，a-&gt;b有一个cut</p>
+<p>a-&gt;c不满，即（flow&lt;capacity）</p>
+<p>c-&gt;e满了（flow==capacity）</p>
+<p>c-&gt;d满了（flow==capacity）</p>
+<p>设点a,c为集合P，其余所有点为集合P‘</p>
+<p>则capacity of P-&gt;P’ 就等于maximum flow </p>
+<p><img src="/home/alex/图片/2018-50.png" alt="filename already exists, renaed"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Start with 0 flow</span><br><span class="line">while there exists an augmenting path:</span><br><span class="line">	find an augmenting path</span><br><span class="line">    compute bottleneck capacity</span><br><span class="line">    increase flow on that path by bottleneck 	 capacity</span><br></pre></td></tr></table></figure>
+<h5 id="Augmenting-Path"><a href="#Augmenting-Path" class="headerlink" title="Augmenting Path:"></a>Augmenting Path:</h5><p>find an <strong><em>undirected</em></strong> path from s to t such that:</p>
+<pre><code>can increase flow on forward edges(not full.)
+can decrease flow on backward edge(not empty.)
+</code></pre><h5 id="termination"><a href="#termination" class="headerlink" title="termination"></a>termination</h5><p>all paths from s to t are blocked by either a:</p>
+<p>full forward edge</p>
+<p>empty backward edge</p>
+<h5 id="relationship-between-flow-and-cuts"><a href="#relationship-between-flow-and-cuts" class="headerlink" title="relationship between flow and cuts"></a>relationship between flow and cuts</h5><p><img src="/home/alex/图片/flow.png" alt="upload succesful"></p>
+<p><img src="/home/alex/图片/lizi.png" alt="upload succsful"></p>
+<h5 id="network-of-flow"><a href="#network-of-flow" class="headerlink" title="network of flow"></a>network of flow</h5><p><img src="/home/alex/图片/shenzong.png" alt="upload succeful"></p>
+<p><img src="/home/alex/图片/ziyou.png" alt="upload successl"></p>
+<p><img src="/home/alex/图片/path.png" alt="upload successf"></p>
+<p><img src="/home/alex/图片/pm.png" alt="upload succsful"></p>
+<p><img src="/home/alex/图片/max.png" alt="upload succeful"></p>
+<p>so how to find mincut from maxflow f?</p>
+<p>start from s,find the forward edge that is not full or backward edge that is not empty</p>
+<p><img src="/home/alex/图片/bengk.png" alt="upload succesl"></p>
+<h3 id="Ford-fulkerson算法"><a href="#Ford-fulkerson算法" class="headerlink" title="Ford-fulkerson算法"></a>Ford-fulkerson算法</h3><p>Ford-fulkerson算法就是： 不断在残留网络中找增广路，直到没有为止。</p>
+<p> Time complexity : O(C*E) ,C 是容量和</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Time complexity of the above algorithm is O(max_flow * E). We run a loop while there is an augmenting path. In worst case, we may add 1 unit flow in every iteration. Therefore the time complexity becomes O(max_flow * E).</span><br></pre></td></tr></table></figure>
+<h4 id="Dinic-算法"><a href="#Dinic-算法" class="headerlink" title="Dinic 算法"></a>Dinic 算法</h4><p>Dinic: 每次寻找最短的增广路until找不到，可证明最多能找V次。</p>
+<p>Time complexity : O（V^2E）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1) Initialize residual graph G as given graph.</span><br><span class="line">1) Do BFS of G to construct a level graph (or</span><br><span class="line">   assign levels to vertices) and also check if </span><br><span class="line">   more flow is possible.</span><br><span class="line">    a) If more flow is not possible, then return.</span><br><span class="line">    b) Send multiple flows in G using level graph </span><br><span class="line">       until blocking flow is reached. Here using </span><br><span class="line">       level graph means, in every flow,</span><br><span class="line">       levels of path nodes should be 0, 1, 2...</span><br><span class="line">       (in order) from s to t.</span><br></pre></td></tr></table></figure>
+<p>A flow is <strong><em>Blocking Flow</em></strong> if no more flow can be sent using level graph, i.e., no more s-t path exists such that path vertices have current levels 0, 1, 2… in order. </p>
+<h3 id="Dinic-code-Kattis-maximum-flow"><a href="#Dinic-code-Kattis-maximum-flow" class="headerlink" title="Dinic code-Kattis maximum flow"></a>Dinic code-Kattis maximum flow</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"> #include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdbool.h&gt;</span><br><span class="line">#include &lt;bits/stdc++.h&gt;</span><br><span class="line">#define M 50</span><br><span class="line">#define N 50</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">//https://www.geeksforgeeks.org/dinics-algorithm-maximum-flow/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct Edge &#123;</span><br><span class="line"></span><br><span class="line">    int to;</span><br><span class="line">    unsigned long rev;//store index of reverse edge in adjacency</span><br><span class="line">    int flow, cap;//cap is capacity</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class Dinic &#123;</span><br><span class="line">    using AdjacencyList=vector&lt; vector&lt;Edge&gt; &gt;;</span><br><span class="line"></span><br><span class="line">    bool bfs() &#123;</span><br><span class="line">        queue&lt;int&gt; q;</span><br><span class="line">        q.push(source);</span><br><span class="line">        fill(begin(levels), end(levels), -1);</span><br><span class="line">        levels[source] = 0;</span><br><span class="line">        while (!q.empty()) &#123;</span><br><span class="line">            const auto now = q.front(); q.pop();</span><br><span class="line">            for (const auto&amp; e : adjList[now]) &#123;</span><br><span class="line">                if (levels[e.to] == -1 &amp;&amp; e.flow &lt; e.cap) &#123;</span><br><span class="line">                    q.push(e.to);</span><br><span class="line">                    levels[e.to] = levels[now] + 1;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return levels[sink] != -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //a dfs based function to send flow after BFS</span><br><span class="line">//has figured out that there is a possible flow</span><br><span class="line">//and constructed levels.This function called multiple times for a</span><br><span class="line">//a single call of BFS</span><br><span class="line">//flow: current flow sent by parent function call</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    int dfs(int v, int flow) &#123;</span><br><span class="line">        if (flow == 0) return 0;</span><br><span class="line">        if (v == sink) return flow;</span><br><span class="line">        for (int &amp; i = currentEdge[v]; i &lt; (int) adjList[v].size(); ++i) &#123;</span><br><span class="line">            Edge&amp; edge = adjList[v][i];</span><br><span class="line">            if (levels[v] + 1 == levels[edge.to]) &#123;</span><br><span class="line">                const auto minimalFlow = dfs(edge.to, min(flow, edge.cap - edge.flow));</span><br><span class="line">                if (minimalFlow &gt; 0) &#123;</span><br><span class="line">                    //add flow to current edge</span><br><span class="line">                    edge.flow += minimalFlow;</span><br><span class="line">                    //subtract flow from reverse edge</span><br><span class="line">                    adjList[edge.to][edge.rev].flow -= minimalFlow;</span><br><span class="line">                    return minimalFlow;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    vector&lt;int&gt; levels, currentEdge;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line"></span><br><span class="line">    int source, sink;</span><br><span class="line">    AdjacencyList adjList;</span><br><span class="line"></span><br><span class="line">    void AddEdge(int a, int b, int cap) &#123;</span><br><span class="line">        //ADJList动态变化，节省空间</span><br><span class="line">        if (max(a, b) &gt;= (int) adjList.size()) &#123;</span><br><span class="line">            adjList.resize(max(a, b) + 1);</span><br><span class="line">            levels.resize(max(a, b) + 1);</span><br><span class="line">            currentEdge.resize(max(a, b) + 1);</span><br><span class="line">        &#125;</span><br><span class="line">        const auto rev_a = adjList[b].size();</span><br><span class="line">        const auto rev_b = adjList[a].size();</span><br><span class="line">        adjList[a].push_back(&#123;b, rev_a, 0, cap&#125;);</span><br><span class="line">        adjList[b].push_back(&#123;a, rev_b, 0, 0&#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int MaxFlow(int s, int t) &#123;</span><br><span class="line">        source = s;</span><br><span class="line">        sink = t;</span><br><span class="line">        int flow = 0;</span><br><span class="line">        //augment the flow while there is path</span><br><span class="line">        //from source to sink</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            int m = bfs();</span><br><span class="line">            if (!m) break;</span><br><span class="line">            fill(begin(currentEdge), end(currentEdge), 0);</span><br><span class="line">            while (int pushed = dfs(source, INT_MAX)) &#123;</span><br><span class="line">                flow += pushed;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return flow;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    int n,m,s,t;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;m&gt;&gt;s&gt;&gt;t;</span><br><span class="line">    Dinic d;</span><br><span class="line">    d.sink =s;</span><br><span class="line">    d.source = t;</span><br><span class="line">    vector&lt;vector&lt;int&gt;&gt;flow(n,vector&lt;int&gt;(n,0));</span><br><span class="line">    for(int i=0;i&lt;m;i++)&#123;</span><br><span class="line">        int u,v,c;</span><br><span class="line">        cin&gt;&gt;u&gt;&gt;v&gt;&gt;c;</span><br><span class="line">        //flow[u][v] = c;</span><br><span class="line">        d.AddEdge(u,v,c);</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;n&lt;&lt;&quot; &quot;&lt;&lt;d.MaxFlow(s,t)&lt;&lt;&quot; &quot;;</span><br><span class="line">    //SIZE is the number of edges used in the solution</span><br><span class="line">    //</span><br><span class="line">    int size = 0;</span><br><span class="line">    vector&lt;tuple&lt;int,int,int&gt;&gt;ans;</span><br><span class="line">    for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">        for(auto &amp;e:d.adjList[i])&#123;</span><br><span class="line">            if(e.flow&gt;0)</span><br><span class="line">            &#123;</span><br><span class="line">                size++;</span><br><span class="line">                ans.push_back(&#123;i,e.to,e.flow&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;size&lt;&lt;endl;</span><br><span class="line">    for(auto &amp;t:ans)&#123;</span><br><span class="line">        int from = get&lt;0&gt;(t);</span><br><span class="line">        int to = get&lt;1&gt;(t);</span><br><span class="line">        int f = get&lt;2&gt;(t);</span><br><span class="line">        cout&lt;&lt;from&lt;&lt;&quot; &quot;&lt;&lt;to&lt;&lt;&quot; &quot;&lt;&lt;f&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/27/stack-and-heap-and-memory-leak/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -303,7 +469,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T23:40:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T15:40:00+00:00">
                 2018-10-27
               </time>
             
@@ -488,7 +654,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T22:48:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-27T14:48:00+00:00">
                 2018-10-27
               </time>
             
@@ -718,7 +884,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-20T23:11:27+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-20T15:11:27+00:00">
                 2018-10-20
               </time>
             
@@ -881,7 +1047,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/15/CSAPP-存储层次结构/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/14/CSAPP-存储层次结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -900,7 +1066,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/10/15/CSAPP-存储层次结构/" itemprop="url">CSAPP 存储层次结构/Cahce</a></h1>
+                <a class="post-title-link" href="/2018/10/14/CSAPP-存储层次结构/" itemprop="url">CSAPP 存储层次结构/Cahce</a></h1>
         
 
         <div class="post-meta">
@@ -912,8 +1078,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T06:01:00+08:00">
-                2018-10-15
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-14T22:01:00+00:00">
+                2018-10-14
               </time>
             
 
@@ -1205,7 +1371,7 @@ VALID 是否有效
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/12/Program-Optimization/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/11/Program-Optimization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -1224,7 +1390,7 @@ VALID 是否有效
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/10/12/Program-Optimization/" itemprop="url">Program Optimization && Pipeline &&Architecture Lab</a></h1>
+                <a class="post-title-link" href="/2018/10/11/Program-Optimization/" itemprop="url">Program Optimization && Pipeline &&Architecture Lab</a></h1>
         
 
         <div class="post-meta">
@@ -1236,8 +1402,8 @@ VALID 是否有效
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T07:39:00+08:00">
-                2018-10-12
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-11T23:39:00+00:00">
+                2018-10-11
               </time>
             
 
@@ -1420,7 +1586,7 @@ VALID 是否有效
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/09/CSAPP-第四章-处理器体系结构/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/10/08/CSAPP-第四章-处理器体系结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -1439,7 +1605,7 @@ VALID 是否有效
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/10/09/CSAPP-第四章-处理器体系结构/" itemprop="url">CSAPP 第四章 处理器体系结构——Y86流水线基本原理</a></h1>
+                <a class="post-title-link" href="/2018/10/08/CSAPP-第四章-处理器体系结构/" itemprop="url">CSAPP 第四章 处理器体系结构——Y86流水线基本原理</a></h1>
         
 
         <div class="post-meta">
@@ -1451,8 +1617,8 @@ VALID 是否有效
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T03:18:00+08:00">
-                2018-10-09
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-08T19:18:00+00:00">
+                2018-10-08
               </time>
             
 
@@ -1581,7 +1747,7 @@ VALID 是否有效
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/11/CSAPP-程序及指令/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/10/CSAPP-程序及指令/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -1600,7 +1766,7 @@ VALID 是否有效
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/11/CSAPP-程序及指令/" itemprop="url">CSAPP-程序及指令</a></h1>
+                <a class="post-title-link" href="/2018/09/10/CSAPP-程序及指令/" itemprop="url">CSAPP-程序及指令</a></h1>
         
 
         <div class="post-meta">
@@ -1612,8 +1778,8 @@ VALID 是否有效
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-11T05:16:00+08:00">
-                2018-09-11
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-10T21:16:00+00:00">
+                2018-09-10
               </time>
             
 
@@ -1779,7 +1945,7 @@ VALID 是否有效
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/10/CS230-Shallow-Neural-Networks/">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/09/CS230-Shallow-Neural-Networks/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Alex Chiu">
@@ -1798,7 +1964,7 @@ VALID 是否有效
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/10/CS230-Shallow-Neural-Networks/" itemprop="url">CS230 Shallow Neural Networks</a></h1>
+                <a class="post-title-link" href="/2018/09/09/CS230-Shallow-Neural-Networks/" itemprop="url">CS230 Shallow Neural Networks</a></h1>
         
 
         <div class="post-meta">
@@ -1810,8 +1976,8 @@ VALID 是否有效
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-10T04:19:00+08:00">
-                2018-09-10
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-09T20:19:00+00:00">
+                2018-09-09
               </time>
             
 
@@ -1947,7 +2113,7 @@ VALID 是否有效
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-09T23:56:00+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-09T15:56:00+00:00">
                 2018-09-09
               </time>
             
@@ -2065,153 +2231,6 @@ VALID 是否有效
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2018/09/06/CSAPP-cache-lab/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/06/CSAPP-cache-lab/" itemprop="url">CSAPP-buflab</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T03:18:00+08:00">
-                2018-09-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h5 id="cache-lab"><a href="#cache-lab" class="headerlink" title="cache lab"></a>cache lab</h5><p>原函数返回地址—-&lt;<br>保存的%ebp值（栈帧指针）—-&lt;<br>缓冲区—-&lt;<br>缓冲区—-&lt;<br>。。。。<br>。。。。<br>%esp(栈指针)—-&lt;</p>
-<h3 id="Level2"><a href="#Level2" class="headerlink" title="Level2"></a>Level2</h3><p><img src="/home/alex/图片/c.png" alt="image"></p>
-<p>global_value 是个全局变量，不在栈中，因此需要写一个函数把global_value值改为value</p>
-<p>我们现在要找到global_value的地址，发现</p>
-<p>0x804d100就是value的地址，0x804d108就是cookie的地址。因此我们想把0x804d100地址所在的数值改为我们的cookie</p>
-<p><img src="/home/alex/图片/p2.png" alt="image"></p>
-<p>建立p2.s文件</p>
-<p>注意x86是data-load 是利用register来完成的</p>
-<p><img src="/home/alex/图片/ps2.png" alt="image"></p>
-<p>把cookie值传到%eax 临时寄存器，然后把寄存器里面的数值传给global_value的地址</p>
-<p>最后把bang函数地址压栈，那么原来返回地址就会改为执行bang函数了。</p>
-<p>反汇编得到的代码：</p>
-<p><img src="/home/alex/图片/obj.png" alt="image"></p>
-<p>gdb调试寻找缓冲区的位置，注意缓冲区不是esp-0x38，而是ebp-0x28噢</p>
-<p>得到缓冲区首地址为0x55683938</p>
-<p>意思就是说返回地址变回缓冲区首地址，然后原函数返回的时候会跳到缓冲区地址，然后开始访问我们自己写的机器代码，实现把global_value值改为cookie的功能。</p>
-<p><img src="/home/alex/图片/2222.png" alt="image"></p>
-<p>最后结果：</p>
-<p><img src="/home/alex/图片/2018-1.png" alt="image"></p>
-<h3 id="level3"><a href="#level3" class="headerlink" title="level3"></a>level3</h3><p>是把返回地址改为cookie值，同时不改变原函数压栈情况</p>
-<p>因为覆盖栈的时候，会把ebp（基址指针给覆盖掉，所以先记录下基址的地址）</p>
-<p><img src="/home/alex/图片/getBuf.png" alt="image"></p>
-<p>汇编代码<br>我们应该要改变eax的值为cookie,同时把原来getbuf后一条指令的地址压栈</p>
-<p><img src="/home/alex/图片/cook.png" alt="image"></p>
-<p>然后为了求基址地址，这里折腾了好久，原来要求的不是寄存器本身的值，而是求寄存器指向的值</p>
-<p>但why？？？<br><img src="/home/alex/图片/re.png" alt="image"></p>
-<p>最后结果：</p>
-<p>b8 14 03 aa<br>65 68 be 8d<br>04 08 c3 00 &lt;—attack code<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>00 00 00 00<br>90 39 68 55 &lt;— address of ebp,to ensure that the original ebp doesn’t change<br>38 39 68 55 &lt;— initial address of buff zone</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2266,7 +2285,7 @@ VALID 是否有效
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

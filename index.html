@@ -272,6 +272,195 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/05/14/体系结构-GPU/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Alex Chiu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alex Chiu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/14/体系结构-GPU/" itemprop="url">体系结构-向量体系结构&CUDA编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-14T15:04:18+00:00">
+                2019-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="SIMD"><a href="#SIMD" class="headerlink" title="SIMD"></a>SIMD</h3><p>单指令多数据</p>
+<p>向量体系结构 多媒体SIMD指令集扩展 与GPU</p>
+<h4 id="VMIPS"><a href="#VMIPS" class="headerlink" title="VMIPS"></a>VMIPS</h4><p>如果循环的迭代没有相关性，那么这种相关称为循环间相关。这些代码可以向量化。</p>
+<p>向量处理器中，每个向量指令只会因为等待每个向量的第一个元素而等待一次。</p>
+<h4 id="向量执行时间"><a href="#向量执行时间" class="headerlink" title="向量执行时间"></a>向量执行时间</h4><p>取决于三个要素：</p>
+<p>1.操作数向量的长度</p>
+<p>2.操作之间的结构冒险</p>
+<p>3.数据相关</p>
+<p>护航指令组：</p>
+<p>一组可以一直执行的向量指令。</p>
+<p>钟鸣：</p>
+<p>度量估计护航指令组的时间</p>
+<p>执行由m个护航指令组构成的向量序列需要m次钟鸣，向量长度为n的时候，大约为mxn个时钟周期。</p>
+<h3 id="向量长度寄存器"><a href="#向量长度寄存器" class="headerlink" title="向量长度寄存器"></a>向量长度寄存器</h3><p>使用条带挖掘技术，把向量分割成不大于MVL大小的小向量来进行处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">//MVL 最大向量长度</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">low = 0；</span><br><span class="line"></span><br><span class="line">VL = (n%MVL) </span><br><span class="line"></span><br><span class="line">for (int j=0;j&lt; (n/MVL);j++)&#123;</span><br><span class="line"></span><br><span class="line">	for(int i=low;i&lt; low + VL;i++)&#123;</span><br><span class="line">    	//运算</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    low = low + VL</span><br><span class="line">    </span><br><span class="line">    VL = MVL // 复位为最大长度向量</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这段代码表示除了第一段部分长度为VL，向量其余长度都为MVL</p>
+<h4 id="向量遮罩寄存器"><a href="#向量遮罩寄存器" class="headerlink" title="向量遮罩寄存器"></a>向量遮罩寄存器</h4><p>代码向量化程度低的原因：</p>
+<p>1.存在IF条件语句</p>
+<p>2.稀疏矩阵</p>
+<p>于是向量遮罩寄存器可以把条件执行IF转换为直行代码序列，方便代码进行向量化。</p>
+<p>如果元素对应的向量遮罩寄存器对应数值为1，说明该数值不受该向量影响。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LV V1,RX</span><br><span class="line">LV V2,RY</span><br><span class="line">L.D F0,#0</span><br><span class="line">SNEVS.D V1,F0  #若V1(i)!=F0 ,则VM（i）设置为1</span><br><span class="line">SUBVV.D V1,V1,V2</span><br><span class="line">SV V1,RX</span><br></pre></td></tr></table></figure>
+<h4 id="内存组"><a href="#内存组" class="headerlink" title="内存组"></a>内存组</h4><p>为向量载入/存储单元提供带宽</p>
+<p>时钟周期提取或者存储一个字的初始化速率，约等于寄存器向存储器载入或者提取新字的速度，于是存储器必须能够生成或者接收那么多数据，将访问对象分散在多个独立的存储器中。</p>
+<h4 id="处理非连续存储器"><a href="#处理非连续存储器" class="headerlink" title="处理非连续存储器"></a>处理非连续存储器</h4><p>步幅：所要收集的寄存器元素之间的距离</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">for(int i=0;i&lt;100;i++)&#123;</span><br><span class="line"></span><br><span class="line">	for(int j=0;j&lt;100;j++)&#123;</span><br><span class="line">    </span><br><span class="line">		for(int k=0;k&lt;100;k++)&#123;</span><br><span class="line"></span><br><span class="line">			D[k][i] = A[i][j]+B[i][k]</span><br><span class="line">		&#125;    </span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>考虑双字，那么这里D的步幅就是100*8;<br>A的步幅为8</p>
+<p>当 组数/（步幅与组数的最小公倍数）&lt; 组繁忙时间</p>
+<p>例如 八个存储器组，组繁忙时间为6个时钟周期，总存储器延迟为12个时钟周期，以步幅1完成一个64元素的向量载入操作，需要时间？如果步幅32呢？</p>
+<p>第一种情况：步幅为1 </p>
+<p>12+64 = 76 周期</p>
+<p>第二种情况： 步幅为32</p>
+<p>8 / gcd(32,8) = 1 &lt; 6</p>
+<p>12 + 1 + 63 * 6 = 391</p>
+<p>第一次访问之后，对存储器的每次访问会和上一次访问发生冲突。</p>
+<h4 id="集中——分散：在向量体系结构中处理稀疏矩阵"><a href="#集中——分散：在向量体系结构中处理稀疏矩阵" class="headerlink" title="集中——分散：在向量体系结构中处理稀疏矩阵"></a>集中——分散：在向量体系结构中处理稀疏矩阵</h4><p>GPU中所有载入操作都是集中，所有存储都是分散。</p>
+<p>采用索引向量的集中——分散操作。VMIPS指令：LVI,SVI</p>
+<h4 id="图形处理器-GPU"><a href="#图形处理器-GPU" class="headerlink" title="图形处理器 GPU"></a>图形处理器 GPU</h4><p>CUDA（COMPUTE UNIFIED DEVICE ARCHITECTURE）</p>
+<p>CUDA为系统处理器生成C/C++,为GPU生成C和C++方言。</p>
+<p>编译器和硬件把许多CUDA线程聚合在一起，利用CPU各种并行类型：多线程，SIMD和指令级并行。这些线程被分块，执行的时候以32个线程为1组，称为线程块。执行整个线程的硬件为多线程SIMD处理器。</p>
+<p>CUDA编程模型是一个异构模型，需要CPU与GPU协同工作。</p>
+<p>host 指CPU以及内存</p>
+<p>device 指GPU及其内存</p>
+<p>host与device之间进行通信，可以进行数据拷贝。</p>
+<p>cuda程序执行流程：</p>
+<p>1.分配host内存，进行数据初始化</p>
+<p>2.分配device内存，然后host把数据拷贝到device上</p>
+<p>3.调用cuda的核函数在device上完成指定运算</p>
+<p>4.把device运算结果拷贝到host上</p>
+<p>5.释放device和host上分配内存。</p>
+<p>kernel 是device上线程并行执行的函数，核函数用<strong>global</strong> 符号声明，调用的时候要用&lt;&lt;grid,block&gt;&gt;来指定kernel要执行的线程数量。</p>
+<p>cuda中每一个线程都要执行核函数，并且每个线程会分配一个唯一的线程号thread ID，ID可以通过核函数的内置变量threadIdx来获得。</p>
+<p>GPU异构模型，需要用函数限定词来区分host与device上的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">__global__  </span><br><span class="line"></span><br><span class="line">返回类型一定要是void，不支持可变参数，kernel是异步的，host不会等你kernel执行完就执行下一步</span><br><span class="line"></span><br><span class="line">__device__</span><br><span class="line"></span><br><span class="line">在device上执行，仅从device中调用，不可以和__global__同时用</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">__host__ 在host上执行，尽可以从host上调用</span><br></pre></td></tr></table></figure>
+<p>GPU上有很多并行化的轻量级线程，kernel在device上执行的时候启动很多线程。</p>
+<p>一个kernel启动的所有线程成为一个网格(grid)同一个网格的线程共享相同的全局内存空间。</p>
+<p>grid是线程结构的第一层次，而一个grid又可以分为很多block（线程块）</p>
+<p>一个线程块包含很多线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dim3 grid（3，2）；</span><br><span class="line">dim3 block (5,3);</span><br><span class="line">kernel_fun&lt;&lt;&lt;grid,block&gt;&gt;&gt;(params..)</span><br><span class="line"></span><br><span class="line">grid为GRID中block的个数，</span><br><span class="line">block为block中thread的个数</span><br></pre></td></tr></table></figure>
+<p><img src="/home/alex/图片/2018-262.png" alt="filena already exists, renamed"></p>
+<p><img src="/home/alex/图片/2018-263.png" alt="filename already xists, renamed"></p>
+<p>用nvcc编译，文件名为xxx.cu</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">__global__ void vectorADD(int *a,int *b,int *c)&#123;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	int index = threadIdx.x; //当前线程序号</span><br><span class="line">	if(index &lt; blockDim.x)&#123;</span><br><span class="line">		c[index] = a[index] + b[index];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	int N = 10;</span><br><span class="line"></span><br><span class="line">	int *h_a = (int*) malloc (sizeof(int)*N);</span><br><span class="line">	int *h_b = (int*) malloc (sizeof(int)*N);</span><br><span class="line">	int *h_c = (int*) malloc (sizeof(int)*N);</span><br><span class="line"></span><br><span class="line">	/*initialize*/</span><br><span class="line"></span><br><span class="line">	for(int i=0;i&lt;10;i++)&#123;</span><br><span class="line"></span><br><span class="line">		h_a[i] = i;</span><br><span class="line">		h_b[i] = i;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	int size = sizeof(int)*N;</span><br><span class="line"></span><br><span class="line">	int *d_a;</span><br><span class="line">	int *d_b;</span><br><span class="line">	int *d_c;</span><br><span class="line"></span><br><span class="line">	//第一个参数是cpu内存中指针变量的地址，会改变实参的数据</span><br><span class="line">	cudaMalloc((void**)&amp;d_a,size);</span><br><span class="line">	cudaMalloc((void**)&amp;d_b,size);</span><br><span class="line">	cudaMalloc((void**)&amp;d_c,size);</span><br><span class="line"></span><br><span class="line">	//把本地数组拷贝到GPU内存</span><br><span class="line">	cudaMemcpy(d_a,h_a,size,cudaMemcpyHostToDevice);</span><br><span class="line">	cudaMemcpy(d_b,h_b,size,cudaMemcpyHostToDevice);</span><br><span class="line"></span><br><span class="line">	// 定义一个GPU运算块，由10个运算线程组成</span><br><span class="line">	dim3 DimBlock = N;</span><br><span class="line">	</span><br><span class="line">	//一个块，十个线程</span><br><span class="line">	vectorADD&lt;&lt;&lt;1,DimBlock&gt;&gt;&gt;(d_a,d_b,d_c);</span><br><span class="line">	</span><br><span class="line">	//把运算结果复制回host</span><br><span class="line">	cudaMemcpy(h_c,d_c,size,cudaMemcpyHostToHost);</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	cudaFree(d_a);</span><br><span class="line">	cudaFree(d_b);</span><br><span class="line">	cudaFree(d_c);</span><br><span class="line"></span><br><span class="line">	for(int j=0;j&lt;N;j++)</span><br><span class="line">		printf(&quot;%d\n&quot;,h_c[j]);</span><br><span class="line">	printf(&quot;\n&quot;);</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是上面的例子中，没有使用托管内存，其可以共同管理host与device中的内存，自动在host与device中进行数据传输。</p>
+<p><img src="/home/alex/图片/2018-264.png" alt="filename already sts, renamed"></p>
+<p>所有线程可以访问全局内存，每个线程块有local memory,而且还有包含共享内存，可以被线程块中所有线程共享，生命周期与线程块一致。</p>
+<p>grid之间通过global memory交换数据</p>
+<p>block之间不能相互通信，只能通过global memory共享数据</p>
+<p>即线程之间可以通过同步通信。</p>
+<h4 id="矩阵乘法实例："><a href="#矩阵乘法实例：" class="headerlink" title="矩阵乘法实例："></a>矩阵乘法实例：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">struct Matrix&#123;</span><br><span class="line">	</span><br><span class="line">	int width;</span><br><span class="line">	int height;</span><br><span class="line">	float *elements;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">__device__ float getElement(Matrix* A,int row,int col)&#123;</span><br><span class="line"></span><br><span class="line">	return A-&gt;elements[row*A-&gt;width+col];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__device__ void setElement(Matrix* A,int row,int col,float value)&#123;</span><br><span class="line"></span><br><span class="line">	A-&gt;elements[row*A-&gt;width+col] = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//每个线程计算一个元素</span><br><span class="line">__global__ void matMul(Matrix *A,Matrix *B,Matrix *C)&#123;</span><br><span class="line"></span><br><span class="line">	float Cvalue = 0;</span><br><span class="line">	//global index of a thread</span><br><span class="line">	int row = threadIdx.y + blockIdx.y * blockDim.y;</span><br><span class="line">	int col = threadIdx.x + blockIdx.x * blockDim.x;</span><br><span class="line">	</span><br><span class="line">	for(int i=0;i&lt;A-&gt;width;i++)&#123;</span><br><span class="line">		Cvalue += getElement(A,row,i)*getElement(B,i,col);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	setElement(C,row,col,Cvalue);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">	int width = 1&lt;&lt;10;</span><br><span class="line">	int height = 1&lt;&lt;10;</span><br><span class="line">	Matrix *A,*B,*C;</span><br><span class="line">	cudaMallocManaged((void**)&amp;A,sizeof(Matrix));</span><br><span class="line">	cudaMallocManaged((void**)&amp;B,sizeof(Matrix));</span><br><span class="line">	cudaMallocManaged((void**)&amp;C,sizeof(Matrix));</span><br><span class="line">	int nbytes = width*height*sizeof(float);	</span><br><span class="line">	cudaMallocManaged((void**)&amp;A-&gt;elements,nbytes);</span><br><span class="line">	cudaMallocManaged((void**)&amp;B-&gt;elements,nbytes);</span><br><span class="line">	cudaMallocManaged((void**)&amp;C-&gt;elements,nbytes);</span><br><span class="line"></span><br><span class="line">	A-&gt;height = height;</span><br><span class="line">	A-&gt;width = width;	</span><br><span class="line">	B-&gt;height = height;</span><br><span class="line">	B-&gt;width = width;</span><br><span class="line">	C-&gt;height = height;</span><br><span class="line">	C-&gt;width = width;</span><br><span class="line"></span><br><span class="line">	for(int i=0;i&lt;width*height;i++)&#123;</span><br><span class="line">		A-&gt;elements[i]  = 1.0;</span><br><span class="line">		B-&gt;elements[i]  = 2.0;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dim3 blockSize(32,32);</span><br><span class="line">	dim3 gridSize((width + blockSize.x -1) / blockSize.x,</span><br><span class="line">		(height+blockSize.y -1)/blockSize.y);</span><br><span class="line">	//kernel</span><br><span class="line">	matMul &lt;&lt;&lt; gridSize,blockSize&gt;&gt;&gt; (A,B,C);</span><br><span class="line"></span><br><span class="line">	//确保host 与device 是异步的</span><br><span class="line">	cudaDeviceSynchronize();</span><br><span class="line">	float maxError = 0.0;</span><br><span class="line">	for(int i=0;i&lt;width*height;i++)&#123;</span><br><span class="line">		maxError = fmax(maxError,fabs(C-&gt;elements[i]-2*width));</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;maxError&lt;&lt;endl;	</span><br><span class="line">	return 0;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/05/01/体系结构-存储器层次结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -303,7 +492,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-01T16:15:44+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-01T08:15:44+00:00">
                 2019-05-01
               </time>
             
@@ -520,7 +709,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-07T23:20:38+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-07T23:20:38+00:00">
                 2019-04-07
               </time>
             
@@ -562,6 +751,7 @@
           
             <p>data-plane role: forward datagrams from input links to output links</p>
 <p>control plane: coordinate the local ,per-router forwarding actions so that datagrams are ultimately transferred end -to end</p>
+<p><a href="https://allenwu.itscoder.com/ji-suan-ji-wang-luo" target="_blank" rel="noopener">https://allenwu.itscoder.com/ji-suan-ji-wang-luo</a><br>知识点总结</p>
 <h3 id="Control-Plane"><a href="#Control-Plane" class="headerlink" title="Control Plane"></a>Control Plane</h3><h4 id="SDN-Approach"><a href="#SDN-Approach" class="headerlink" title="SDN Approach"></a>SDN Approach</h4><p>由远程服务器来决定以及分配转发表的值。</p>
 <p>远程服务器与路由器通过交换含转发表以及其他路由信息来进行信息交换</p>
 <p><img src="/home/alex/图片/control.png" alt="upload ccessful"></p>
@@ -652,14 +842,22 @@
 <h4 id="主机如何获得IP地址"><a href="#主机如何获得IP地址" class="headerlink" title="主机如何获得IP地址"></a>主机如何获得IP地址</h4><p>1.获取一块地址</p>
 <p>可以从ISP获取。</p>
 <p>2.获取主机地址，动态主机配置协议</p>
-<p>当有主机加入时候，DHCP服务器从当前可用地址池分配任意一个地址给它，每当一台主机离开的时候，地址会被收回到这个池中。</p>
+<p>当有主机加入时候，DHCP服务器从当前可用地址池分配任意一个地址给它，每当一台主机离开的时候，地址会被收回到这个池中。除了主机IP地址的分配，还允许主机知道他的子网掩码，第一跳路由器地址与本地DNS服务器的地址。</p>
 <p><img src="/home/alex/图片/主机.png" alt="upload essful"></p>
-<h5 id="DHCP-服务器发现"><a href="#DHCP-服务器发现" class="headerlink" title="DHCP 服务器发现"></a>DHCP 服务器发现</h5><p>DHCP客户主机生成包含DHCP发现报文的IP数据报，其中使用广播目的地址255.255.255.255并且使用本主机的源地址0.0.0.0，DHCP客户将该IP数据报传递给链路层，链路层然后把该帧光波导所有与该子网连接的子网</p>
+<h5 id="DHCP-服务器发现"><a href="#DHCP-服务器发现" class="headerlink" title="DHCP 服务器发现"></a>DHCP 服务器发现</h5><p>DHCP客户主机生成包含DHCP发现报文的IP数据报，其中使用广播目的地址255.255.255.255并且使用本主机的源地址0.0.0.0，DHCP客户将该IP数据报传递给链路层，链路层然后把该帧广播到所有与该子网连接的子网</p>
 <h5 id="DHCP-服务器提供"><a href="#DHCP-服务器提供" class="headerlink" title="DHCP 服务器提供"></a>DHCP 服务器提供</h5><p>DHCP服务器收到一个DHCP发现报文的时候，用一个DHCP提供报文向客户作出相应。</p>
 <p>仍然使用255.255.255.255 广播地址。报文提供了IP地址租用期，网络掩码，IP地址等信息</p>
 <h5 id="DHCP-请求"><a href="#DHCP-请求" class="headerlink" title="DHCP 请求"></a>DHCP 请求</h5><p>新到达的客户从一个或多个服务器中提供选择一个，并向选中的服务器提供一个DHCP请求报文响应。</p>
 <h5 id="DHCP-ACK"><a href="#DHCP-ACK" class="headerlink" title="DHCP ACK"></a>DHCP ACK</h5><p>用DHCP ACK 报文对DHCP请求报文进行响应。</p>
 <p>3.网络地址的转换</p>
+<p><img src="/home/alex/图片/ocean.png" alt="upload ccessful"></p>
+<p><img src="/home/alex/图片/2018-265.png" alt="filename already exists, renamed"></p>
+<p>NAT路由器通过NAT转换表来指导应该把某个分组转发给哪个内部主机,NAT转换表包含了端口号和IP地址。</p>
+<h4 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h4><p>因特网控制报文协议</p>
+<p>用于主机与路由器彼此沟通网络层的信息。典型用途是差错报告。</p>
+<p>工作原理：</p>
+<p>源主机向目的主机发送一系列普通的ＩＰ数据报，这些数据报每个携带了一个具有不可到达ＵＤＰ端口号的ＵＤＰ报文段，数据包的ＴＴＬ逐个增加。第Ｎ个数据报到达第Ｎ台路由器的时候，第ｎ台路由器观察到这个数据包的ＴＴＬ刚好过期。路由器会丢弃该数据报并发送一个ＩＣＭＰ告警报给源主机，这个告警报包含了路由器的名字以及ＩＰ地址。</p>
+<h4 id="IPV6"><a href="#IPV6" class="headerlink" title="IPV6"></a>IPV6</h4><p>dual stack 使得该方法的IPV6还会有完整的IPV4实现。</p>
 
           
         
@@ -739,7 +937,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-14T10:04:11+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-14T01:04:11-01:00">
                 2019-03-14
               </time>
             
@@ -879,7 +1077,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-12T12:52:35+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-12T12:52:35-01:00">
                 2019-03-12
               </time>
             
@@ -943,6 +1141,7 @@
 <h5 id="运输层报文段中的源与目的端口字段"><a href="#运输层报文段中的源与目的端口字段" class="headerlink" title="运输层报文段中的源与目的端口字段"></a>运输层报文段中的源与目的端口字段</h5><p><img src="/home/alex/图片/2018-236.png" alt="filename alrea exists, renamed"></p>
 <p>1.套接字有唯一标识符<br>2.每个报文段有特殊字段来指示该报文段所要交付到的套接字。</p>
 <p>在主机上的每个套接字能够分配一个端口号，当报文段到达主机时，运输层检查报文段中的目的端口号，并且将其定向到相应的套接字。然后报文段中的数据通过套接字进入其所连接的进程。</p>
+<p>校检和校验的范围：伪头部，ＵＤＰ头部以及数据　伪头部用于检查ＵＤＰ用户数据报是否正确到达了指定主机(目的ＩＰ地址)的指定端口号</p>
 <h4 id="无连接的多路复用与分解"><a href="#无连接的多路复用与分解" class="headerlink" title="无连接的多路复用与分解"></a>无连接的多路复用与分解</h4><p>无连接是指发送方和接收方的运输层实体之间没有握手。<br>UDP是通过（目的IP,目的端口号）来标识的。如果源IP和源端口号相同，那么会两个报文段会通过相同的套接字被定向到相同的目的进程。</p>
 <p>例子：</p>
 <p>主机A一个进程有UDP端口19157，他要发送一个应用程序数据块给位于主机B的另一个进程，该进程具有UDP端口46428,主机A的运输层创建一个运输层报文段，其中包括应用程序数据，源端口号以及目的端口号。</p>
@@ -961,6 +1160,7 @@
 <p>操作系统接收到具有目的端口的连接请求报文段，该服务器进程在端口12000等待接受连接，并且创建一个新的套接字。</p>
 <p>持续HTTP连接的使用：整条持续链接期间，客户与服务器之间经由同一个服务器套接字交换HTTP报文，然而如果使用非持续HTTP链接，每一对请求/响应都创建一个新的TCP链接然后随之关闭。</p>
 <h3 id="无连接运输-UDP"><a href="#无连接运输-UDP" class="headerlink" title="无连接运输 UDP"></a>无连接运输 UDP</h3><p>在发送报文段之前，发送方和接收方的运输层实体之间没有握手。直接与IP打交道，UDP从应用程序得到数据，附加上用于多路复用和分解的源端口和源地址以及其他两个小字段，然后把形成的报文段交给网络层。网络层把运输层报文段封装到一个IP数据报中，然后尽力把报文段交付给接收主机。主机接收到报文段之后UDP使用目的端口把报文段中的数据交付给正确的应用程序。</p>
+<p>ＵＤＰ利用</p>
 <h3 id="面向连接的TCP"><a href="#面向连接的TCP" class="headerlink" title="面向连接的TCP"></a>面向连接的TCP</h3><p>应用进程开始向另外一个进程发送数据之前，两个进程必须先相互握手。即必须相互发送某些预备报文段，以确定数据传输的参数。</p>
 <ul>
 <li><p>TCP链接提供的是<strong>全双工服务</strong>，如果两个进程之间存在TCP链接，那么应用层数据可以在进程B和进程A之间相互流动。</p>
@@ -970,8 +1170,9 @@
 <li><p>面向连接：进行数据传输的时候首先要建立一条传输链接，相互发送某些预备的报文，链接双方要建立确保数据传输所需要的参数，传输完成之后要把链接释放掉。</p>
 </li>
 </ul>
-<p>TCP三次握手</p>
+<p>TCP三次握手<a href="https://wenku.baidu.com/view/f0256510b207e87101f69e3143323968011cf40b.html?rec_flag=default" target="_blank" rel="noopener">https://wenku.baidu.com/view/f0256510b207e87101f69e3143323968011cf40b.html?rec_flag=default</a></p>
 <p>TCP会为每块客户数据配上一个TCP首部，从而形成多个TCP报文段，报文段被下传到网络层，网络层将其封装在网络层IP数据报中，然后再被发送到网络。</p>
+<p>目的是防止报文段在传输链接建立过程中出现差错，也保证发送方和接收方发送和接收数据能力没有差错。</p>
 <h4 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h4><p>解决流水线的差错恢复两种基本方法：</p>
 <p>1.回退N步(GBN)</p>
 <p>发送方在发完一个数据帧之后，连续发送若干个数据帧，即使在连续发送的过程中收到了接收方发来的应答帧，也可以继续发送。发送方在发完一个数据帧的时候都要设置超时定时器，当发送了N个帧之后，如果发现该N帧的前一个帧在计时器超时后仍未返回确认信息，则判断该帧出错或者丢失，发送方不得不重新发送出错帧以及其后的N帧。</p>
@@ -1087,6 +1288,22 @@
 <p><img src="/home/alex/图片/2018-261.png" alt="filename alry exists, renamed"></p>
 <h5 id="维护ssthresh变量"><a href="#维护ssthresh变量" class="headerlink" title="维护ssthresh变量"></a>维护ssthresh变量</h5><p>1.拥塞窗口小于阈值时候进入慢启动阶段</p>
 <p>2.大于该阈值的时候进入拥塞避免阶段</p>
+<h3 id="拥塞避免的总结"><a href="#拥塞避免的总结" class="headerlink" title="拥塞避免的总结"></a>拥塞避免的总结</h3><p>１.慢启动和拥塞避免</p>
+<p>慢启动：拥塞窗口小于阈值ssthresh的时候指数增加</p>
+<p>拥塞避免：拥塞窗口大于阈值的时候进入拥塞避免阶段(加性增)</p>
+<p>超时(丢失)的时候乘性减：每次超时，把ｔｈｒｅｓｈｏｌｄ设置为当前拥塞窗口的一半，并重新回到慢启动阶段</p>
+<p><img src="/home/alex/图片/ｍａｎｑｉｄｏｎｇ.png" alt="upload successl"></p>
+<p>慢启动是每次收到一个ＡＣＫ就增加一个ＭＳＳ，然而拥塞避免是每一个ＲＴＴ增加一个ＭＳＳ</p>
+<p>当检测到超时而丢包的时候，进入tahoe的慢启动</p>
+<p>ＴＣＰ出现拥塞：(tahoe)</p>
+<p>sstｈresh = max(congwindow/2,MSS)<br>congwindow = MSS(即初始窗口的大小)</p>
+<p>TCP出现拥塞:(Reno)(快速恢复)</p>
+<p>与ｔａｈｏｅ不同的是，他是进入拥塞避免阶段</p>
+<p>ssthresh = max(CongWindow/2,MSS)<br>CongWindow = ssthresh （设置为阈值）</p>
+<p>当检测到3个冗余的ACK的丢包的时候，进入快速恢复状态，<br> ssthresh = CongWindow /2 ， CongWindow = ssthresh+（3×MSS）</p>
+<p>如果收到冗余的ACK CongWindow+=MSS</p>
+<p>超时前收到新的ACK，直接进入拥塞避免阶段</p>
+<p><img src="/home/alex/图片/yongsaibimian.png" alt="upload cessful"></p>
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><img src="/home/alex/图片/wangluo.png" alt="upload sucessful"></p>
 <p>1.慢启动 CongWindow &lt; ssthresh 窗口指数级增长</p>
 <p>2.拥塞避免 CongWindow &gt; ssthresh 线性增长</p>
@@ -1096,6 +1313,18 @@
 <p>每收到一个冗余的ACK，CongWindow +=Mss</p>
 <p>超时前收到新的Ack，会直接进入拥塞避免阶段。</p>
 <p>4.<br>超时事件发生丢包的时候，ssthresh = CongWindow/2<br>CongWindow = 1 MSS</p>
+<p>UDP和TCP总结</p>
+<p>UDP 优点：</p>
+<p>１．协议简单，运行效率高<br>２．首部开销小，８个字节<br>３．支持一对一，多对多，一对多的交互通信</p>
+<p>缺点：<br>不可靠，容易发生丢包</p>
+<p>应用：</p>
+<p>追求速度，例如聊天工具，实时视频聊天</p>
+<p>ＴＣＰ优点：</p>
+<p>提供可靠的服务，ＴＣＰ传送的数据无差错，不丢失，不重复而且按序到达</p>
+<p>缺点：</p>
+<p>首部开销大，２０个字节</p>
+<p>会出现网络用塞，使得源主机发送效率降低。</p>
+<p>协议复杂，速度慢</p>
 
           
         
@@ -1175,7 +1404,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-02T10:32:24+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-02T10:32:24-01:00">
                 2019-03-02
               </time>
             
@@ -1220,7 +1449,7 @@
 <ul>
 <li>发起通信的进程被标记为客户，会话开始时候等待联系的进程是服务器。</li>
 </ul>
-<h4 id="进程与计算机网络之间的借口"><a href="#进程与计算机网络之间的借口" class="headerlink" title="进程与计算机网络之间的借口"></a>进程与计算机网络之间的借口</h4><p>进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。</p>
+<h4 id="进程与计算机网络之间的接口"><a href="#进程与计算机网络之间的接口" class="headerlink" title="进程与计算机网络之间的接口"></a>进程与计算机网络之间的接口</h4><p>进程通过一个称为套接字(socket)的软件接口向网络发送报文和从网络接收报文。</p>
 <ul>
 <li>当一个进程想向位于另外一台主机上的另外一个进程发送报文的时候，它会把报文推出该门(socket)，该发送进程假定该门到另外一侧之间有运输的基础设施。一旦该报文抵达目的主机，他会通过接收进程的套接字传递，然后接收进程对该报文进行处理。</li>
 </ul>
@@ -1491,7 +1720,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-15T20:27:33+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-15T11:27:33-01:00">
                 2019-02-15
               </time>
             
@@ -1628,7 +1857,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-13T16:51:13+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-13T07:51:13-01:00">
                 2019-02-13
               </time>
             
@@ -1783,7 +2012,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-10T13:32:24+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-10T04:32:24-01:00">
                 2019-02-10
               </time>
             
@@ -1969,7 +2198,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-11T13:46:03+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-11T04:46:03-01:00">
                 2019-01-11
               </time>
             
@@ -2109,201 +2338,6 @@ Return the learned parameters
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://AlexanderChiuluvB.github.io/2019/01/03/DL-C5W1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Alex Chiu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alex Chiu">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/03/DL-C5W1/" itemprop="url">DL-C5W1</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-03T14:47:59+08:00">
-                2019-01-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="RNN"><a href="#RNN" class="headerlink" title="RNN"></a>RNN</h3><p>循环神经网络是从左向右扫描数据,同时每个时间步的参数也是共享的,所以下页幻灯<br>片中我们会详细讲述它的一套参数,我们用W ax 来表示管理着从x <1> 到隐藏层的连接的一系列参数,每个时间步使用的都是相同的参数W ax 。而激活值也就是水平联系是由参数W aa 决<br>定的,同时每一个时间步都使用相同的参数W aa ,同样的输出结果由W ya 决定。下图详细讲述<br>这些参数是如何起作用。</1></p>
-<p><img src="/home/alex/图片/letitgo.png" alt="upad successful"></p>
-<p>意思是说当预测y^[3]的时候不仅仅需要输入的x^[3]信息，还需要输入的x^[1],x^[2]信息。</p>
-<h4 id="forward-propagation"><a href="#forward-propagation" class="headerlink" title="forward propagation"></a>forward propagation</h4><p><img src="/home/alex/图片/thisone.png" alt="upload sful"></p>
-<h4 id="simplification-notation"><a href="#simplification-notation" class="headerlink" title="simplification notation"></a>simplification notation</h4><p><img src="/home/alex/图片/notation.png" alt="upload succesul"></p>
-<p><img src="/home/alex/图片/2018-169.png" alt="filename already existsenamed"></p>
-<p><img src="/home/alex/图片/2018-170.png" alt="filename already exists, enamed"></p>
-<h4 id="backward-propagation"><a href="#backward-propagation" class="headerlink" title="backward propagation"></a>backward propagation</h4><p><img src="/home/alex/图片/fanxiangchuanbo.png" alt="upload succeul"></p>
-<p>求导示意图：</p>
-<p><img src="/home/alex/图片/求导.png" alt="upload succesul"></p>
-<h4 id="RNN种类"><a href="#RNN种类" class="headerlink" title="RNN种类"></a>RNN种类</h4><p><img src="/home/alex/图片/2018-171.png" alt="filename lready exists, renamed"></p>
-<ol>
-<li><p>1 to 1 </p>
-</li>
-<li><p>1 to many 音乐生成、序列生成</p>
-</li>
-<li><p>many to 1 情感判断</p>
-</li>
-<li><p>many to many 如 name entity recognition</p>
-</li>
-<li><p>many to many 如 翻译，例如输入的x是中文，输出的y是英文</p>
-</li>
-</ol>
-<h3 id="训练一个语言模型"><a href="#训练一个语言模型" class="headerlink" title="训练一个语言模型"></a>训练一个语言模型</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><p>建立一个字典，把输入句子每个单词转化为对应的one-hot向量。</p>
-<p>有时候要在句子末尾添加一个EOS标记，表示句子的结束。未知的词用UNK来代替。</p>
-<h4 id="2"><a href="#2" class="headerlink" title="2."></a>2.</h4><p><img src="/home/alex/图片/RNN model.png" alt="uplo successful"></p>
-<p>建立RNN模型，x^[1]会被设为一个0向量，在之前的a^[0]也会被设为一个0向量，于是a^[1]要做的是通过softmax进行一些预测来计算第一个词可能会是什么，结果就是y^[1]，这一步就是通过一个softmax层来预测字典中任意单词会是第一个词的概率，输出是softmax的计算结果，结果个数就是字典的词的个数。</p>
-<p><img src="/home/alex/图片/2018-172.png" alt="filename already exists, renamed"></p>
-<p>然后预测第二个词：是在考虑预测了第一个词的基础上预测到第二个词的概率。</p>
-<p>如此类推，这是一个全概率公式。</p>
-<p>把这三个概率相乘，含义就是最后得到这个含3个词的整个句子的概率。</p>
-<h3 id="对新序列采样"><a href="#对新序列采样" class="headerlink" title="对新序列采样"></a>对新序列采样</h3><p>训练了一个序列模型之后，想要了解这个模型学到了什么，一种非正式方法就是进行一次新序列采样。</p>
-<p><img src="/home/alex/图片/2018-173.png" alt="fileme already exists, renamed"></p>
-<p>就是如何从RNN语言模型中生成一个随机选择的句子：</p>
-<p>第一步要做的就是对你想要模型生成的第一个词进行采样,于是你输入x <1> = 0,<br>a <0> = 0,现在你的第一个时间步得到的是所有可能的输出是经过 softmax 层后得到的概率,<br>然后根据这个 softmax 的分布进行随机采样。Softmax 分布给你的信息就是第一个词 a 的概<br>率是多少,第一个词是 aaron 的概率是多少,第一个词是 zulu 的概率是多少,还有第一个词<br>是 UNK(未知标识)的概率是多少,这个标识可能代表句子的结尾,然后对这个向量使用例<br>如 numpy 命令, np.random.choice (上图编号 3 所示),来根据向量中这些概率的分布<br>进行采样,这样就能对第一个词进行采样了。</0></1></p>
-<p>然后再到下一个时间步,无论你得到什么样的用 one-hot 码表示的选择结果,都把它传<br>递到下一个时间步,然后对第三个词进行采样。不管得到什么都把它传递下去,一直这样直<br>到最后一个时间步。</p>
-<p>这就得到了一个随机生成的句子。</p>
-<h3 id="基于字符的语言生成模型"><a href="#基于字符的语言生成模型" class="headerlink" title="基于字符的语言生成模型"></a>基于字符的语言生成模型</h3><p>对于英文来说，字典仅包含26个英文字母大小写，标点符号等等。</p>
-<p>优点：不必担心出现未知的的标识。</p>
-<p>缺点：不能像基于词汇的模型，可以捕捉长范围上下文的关系，而且计算成本会很高。</p>
-<h3 id="RNN的问题"><a href="#RNN的问题" class="headerlink" title="RNN的问题"></a>RNN的问题</h3><p>1.因为梯度消失，不擅长处理长期依赖的问题。</p>
-<p><img src="/home/alex/图片/2018-174.png" alt="filename lready exists, renamed"></p>
-<p>对于 RNN,首先从左到右前向传播,然后反向传播。但是反向传播会很困难,因为同样的梯度消失的问题,后面层的输出误差很难影响前面层的计算，实际上很难让一个神经网络能够意识到他要记住看到的是单数名词还是复数名词。</p>
-<p>2.对于梯度爆炸问题则比较好解决。</p>
-<p>一个方法是 gradient clipping,意思是观察你的梯度向量，如果它大于某个阈值，则缩放梯度向量，保证他不会太大。</p>
-<h3 id="GRU-（gated-recurrent-unit）"><a href="#GRU-（gated-recurrent-unit）" class="headerlink" title="GRU （gated recurrent unit）"></a>GRU （gated recurrent unit）</h3><p>门控循环单元</p>
-<p><img src="/home/alex/图片/2018-175.png" alt="fename already exists, renamed"></p>
-<p>GRU 单元将会有个新的变量称为c,代表细胞(cell),即记忆细胞(下图编号 1 所示)。记忆细胞<br>的作用是提供了记忆的能力,比如说一只猫是单数还是复数,所以当它看到之后的句子的时<br>候,它仍能够判断句子的主语是单数还是复数。于是在时间t处,有记忆细胞c <t> ,然后我<br>们看的是,GRU 实际上输出了激活值a <t> ,c <t> = a <t> (下图编号 2 所示)。于是我们想<br>要使用不同的符号c和a来表示记忆细胞的值和输出的激活值,即使它们是一样的。我现在使<br>用这个标记是因为当我们等会说到 LSTMs 的时候,这两个会是不同的值,但是现在对于 GRU,c <t> 的值等于a <t> 的激活值。</t></t></t></t></t></t></p>
-<p>所以这些等式表示了 GRU 单元的计算,在每个时间步,我们将用一个候选值重写记忆<br>细胞,即c̃ <t> 的值,所以它就是个候选值,替代了c <t> 的值。然后我们用 tanh 激活函数来<br>计算, c̃ <t> = tanh(W c [c &lt;t−1&gt; , x <t> ] + b c ),所以c̃ <t> 的值就是个替代值,代替表示c <t> 的值<br>(下图编号 3 所示)。</t></t></t></t></t></t></p>
-<p><img src="/home/alex/图片/GRU.png" alt="uplsuccessful"></p>
-<p>所以我们接下来要给 GRU 用的式子就是c <t> = Γ u ∗ c̃ <t> + (1 − Γ u ) ∗ c &lt;t−1&gt; (上图编号<br>1 所示)。你应该注意到了,如果这个更新值Γ u = 1,也就是说把这个新值,即c <t> 设为候<br>选值(Γ u = 1时简化上式,c <t> = c̃ <t> )。将门值设为 1(上图编号 2 所示),然后往前再<br>更新这个值。对于所有在这中间的值,你应该把门的值设为 0,即Γ u = 0,意思就是说不更<br>新它,就用旧的值。因为如果Γ u = 0,则c <t> = c &lt;t−1&gt; ,c <t> 等于旧的值。</t></t></t></t></t></t></t></p>
-<h4 id="完整的GRU单元"><a href="#完整的GRU单元" class="headerlink" title="完整的GRU单元"></a>完整的GRU单元</h4><p><img src="/home/alex/图片/kmt.png" alt="uplo successful"></p>
-<p>  总结：</p>
-<p>  GRU是用于解决RNN深层网络中梯度弥散问题的一种结构，引入gamma门参数用来决定该时间步的激活层是来自于上一层（保留记忆）还是新计算的结果（不保留记忆）</p>
-<p><img src="/home/alex/图片/2018-177.png" alt="filename already exists,enamed"></p>
-<h3 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h3><p>回顾GRU<br><img src="/home/alex/图片/LSTM.png" alt="upload l"></p>
-<p><img src="/home/alex/图片/2018-178.png" alt="filename already exists,enamed"></p>
-<p>我们像以前那样有一个更新门Γ u 和表示更新的参数W u ,Γ u = σ(W u [a &lt;t−1&gt; , x <t> ] + b u )(上图编号 5 所示)。一个 LSTM 的新特性是不只有一个更新门控制,这里的这两项(上图编号 6,7 所示),我们将用不同的项来代替它们,要用别的项来取代Γ u 和1 − Γ u ,这里(上图编号 6 所示)我们用Γ u 。</t></p>
-<p>然后这里(上图编号 7 所示)用<em>遗忘门</em>(the forget gate),我们叫它Γ f ,所以这个Γ f =<br>σ(W f [a &lt;t−1&gt; , x <t> ] + b f )(上图编号 8 所示);</t></p>
-<p>然后我们有一个新的输出门,Γ o = σ(W o [a &lt;t−1&gt; , x <t> ]+&gt; b o )(上图编号 9 所示);</t></p>
-<p>于是记忆细胞的更新值c <t> = Γ u ∗ c̃ <t> + Γ f ∗ c &lt;t−1&gt; (上图编号 10 所示);<br>所以这给了记忆细胞选择权去维持旧的值c &lt;t−1&gt; 或者就加上新的值c̃ <t> ,所以这里用了<br>单独的更新门Γ u 和遗忘门Γ f ,然后这个表示更新门(Γ u = σ(W u [a &lt;t−1&gt; , x <t> ] + b u )上图编号 5 所示);</t></t></t></t></p>
-<p>遗忘门(Γ f = σ(W f [a &lt;t−1&gt; , x <t> ] + b f )上图编号 8 所示)和输出门(上图编号 9 所示)。</t></p>
-<p>最后a <t> = c <t> 的式子会变成a <t> = Γ o ∗ c <t> 。</t></t></t></t></p>
-<h4 id="peephole-connection"><a href="#peephole-connection" class="headerlink" title="peephole connection"></a>peephole connection</h4><p>门值不仅取决于a &lt;t−1&gt; 和x <t> ,有时候也可以偷窥一下c &lt;t−1&gt; 的值(上图编号 13 所示),<br>这叫做“窥视孔连接”(peephole connection)。虽然不是个好听的名字,但是你想,“偷窥孔<br>连接”其实意思就是门值不仅取决于a &lt;t−1&gt; 和x <t> ,也取决于上一个记忆细胞的值(c &lt;t−1&gt; ),<br>然后“偷窥孔连接”就可以结合这三个门(Γ u 、Γ f 、Γ o )来计算了</t></t></p>
-<p><img src="/home/alex/图片/jiuming.png" alt="upload succesul"></p>
-<p><img src="/home/alex/图片/qiupiandao.png" alt="uploaduccessful"></p>
-<p>详情可见 <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener">http://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
-<h4 id="forward-propagate"><a href="#forward-propagate" class="headerlink" title="forward propagate"></a>forward propagate</h4><p><img src="/home/alex/图片/2018-179.png" alt="filename already ists, renamed"></p>
-<p><img src="/home/alex/图片/2018-180.png" alt="filename aready exists, renamed"></p>
-<p><img src="/home/alex/图片/2018-181.png" alt="filename aleady exists, renamed"></p>
-<p><img src="/home/alex/图片/2018-182.png" alt="filename aeady exists, renamed"></p>
-<p>这里的i_t就是update gate,f_t就是forget gate</p>
-<h3 id="BRNN"><a href="#BRNN" class="headerlink" title="BRNN"></a>BRNN</h3><p><img src="/home/alex/图片/2018-183.png" alt="filenamready exists, renamed"></p>
-<p><img src="/home/alex/图片/2018-184.png" alt="filename already exists,enamed"></p>
-<h3 id="Deep-RNN"><a href="#Deep-RNN" class="headerlink" title="Deep RNN"></a>Deep RNN</h3><p><img src="/home/alex/图片/ssssz.png" alt="upload succsful"></p>
-<p>不再用原来的a <0> 表示 0 时刻的激活值了,而是用a [1]<0> 来表示第一层<br>(上图编号 4 所示),所以我们现在用a [l]<t> 来表示第 l 层的激活值,这个<t>表示第t个时<br>间点,这样就可以表示。第一层第一个时间点的激活值a [1]<1> ,这(a [1]<2> )就是第一层第<br>二个时间点的激活值,a [1]<3> 和a [1]<4> 。然后我们把这些(上图编号 4 方框内所示的部分)<br>堆叠在上面,这就是一个有三个隐层的新的网络。<br>我们看个具体的例子,看看这个值(a [2]<3> ,上图编号 5 所示)是怎么算的。激活值<br>a [2]<3> 有两个输入,一个是从下面过来的输入(上图编号 6 所示),还有一个是从左边过来<br>[2]<br>[2]<br>的输入(上图编号 7 所示),a [2]<3> = g(W a [a [2]<2> , a [1]<3> ] + b a ),这就是这个激活值的计算方法。参数W a 和b a 在这一层的计算里都一样,相对应地第一层也有自己的参数W a[1]<br>和b a 。</3></2></3></3></3></4></3></2></1></t></t></0></0></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2358,7 +2392,7 @@ Return the learned parameters
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
